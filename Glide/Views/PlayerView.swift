@@ -25,6 +25,8 @@ struct PlayerView: View {
     @State private var hideTask: Task<Void, Never>?
     @State private var suppressTapUntil = Date.distantPast
     @State private var settingsOpen = false
+    private enum SettingsAction { case diagnostic, videoInfo, subtitleImport }
+    @State private var pendingSettingsAction: SettingsAction?
     @State private var diagnosticOpen = false
     @State private var videoInfoOpen = false
     @State private var episodesOpen = false
@@ -42,6 +44,10 @@ struct PlayerView: View {
     @State private var queueReload = 0
     @State private var pendingAutomaticAdvance = false
     private var current: Video { queue.current! } // Presented only after collecting a nonempty queue.
+    private var nextVideo: Video? { queue.canGoForward ? queue.ordered[queue.index + 1] : nil }
+    private var warmupKey: String {
+        current.id + ":" + (nextVideo?.id ?? "") + ":\(playback.frameReady):\(playback.loading):\(playback.isPlaying):\(playback.rate):\(scenePhase == .active)"
+    }
     private var selectedMediaSource: CatalogItem.Source? {
         videoDetail?.MediaSources?.first(where: { $0.Id == playback.resource?.mediaSourceID }) ?? videoDetail?.MediaSources?.first
     }
@@ -60,6 +66,11 @@ struct PlayerView: View {
                     },
                     onSpeedPreset: { playback.setRate($0); scheduleHide() }, onHUD: showHUD)
                     .ignoresSafeArea()
+                if !playback.frameReady && playback.error == nil {
+                    if let server = library.servers.first(where: { $0.id == current.sourceID }), server.kind == .jellyfin, let id = current.remoteID {
+                        CatalogArtwork(item: CatalogItem(Id: id, Name: current.title, Type: current.mediaType), server: server, contentMode: .fit).opacity(0.45).allowsHitTesting(false)
+                    } else { VideoArtwork(video: current, contentMode: .fit).opacity(0.45).allowsHitTesting(false) }
+                }
                 if let text = SubtitleCue.visible(externalSubtitles, time: playback.time, delay: subtitleDelay) {
                     VStack { Spacer(); Text(text).font(.system(size: 20 * PlaybackPreferences.subtitleScale / 100, weight: .medium)).multilineTextAlignment(.center)
                         .foregroundStyle(.white).padding(6).background(.black.opacity(0.6), in: RoundedRectangle(cornerRadius: 5))
@@ -118,6 +129,13 @@ struct PlayerView: View {
             if manuallyRotated, let initialOrientation { ScreenRotation.request(ScreenRotation.mask(for: initialOrientation)) { _ in } }
         }
         .task(id: queueReload) { await expandQueue() }
+        .task(id: warmupKey) {
+            guard playback.frameReady, !playback.loading, playback.isPlaying,
+                  playback.rate == 1, scenePhase == .active, let nextVideo else { playback.cancelWarmup(); return }
+            try? await Task.sleep(for: .seconds(1))
+            guard !Task.isCancelled else { return }
+            await playback.prepareNext(nextVideo, library: library)
+        }
         .fileImporter(isPresented: $importingSubtitle, allowedContentTypes: [.plainText, UTType(filenameExtension: "srt") ?? .plainText, UTType(filenameExtension: "vtt") ?? .plainText]) { result in
             do {
                 let url = try result.get()
@@ -135,7 +153,15 @@ struct PlayerView: View {
             NavigationStack { DiagnosticView(diagnostic: playback.diagnostic).toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { diagnosticOpen = false } } } }
         }
         .sheet(isPresented: $videoInfoOpen, onDismiss: { scheduleHide() }) { videoInfoPanel }
-        .sheet(isPresented: $settingsOpen, onDismiss: { scheduleHide() }) { settingsPanel }
+        .sheet(isPresented: $settingsOpen, onDismiss: {
+            let action = pendingSettingsAction; pendingSettingsAction = nil
+            switch action {
+            case .diagnostic: diagnosticOpen = true
+            case .videoInfo: videoInfoOpen = true
+            case .subtitleImport: importingSubtitle = true
+            case nil: scheduleHide()
+            }
+        }) { settingsPanel }
         .sheet(isPresented: $episodesOpen, onDismiss: { scheduleHide() }) {
             EpisodePickerView(videos: queue.source.filter { $0.mediaType == "Episode" }, currentID: current.id,
                               loading: queueLoading, failed: queueLoadError,
@@ -184,8 +210,8 @@ struct PlayerView: View {
                     Button("画中画", systemImage: "pip") { playback.pictureInPicture.toggle(); if playback.pictureInPicture.possible { settingsOpen = false } }.accessibilityIdentifier("player.pip")
                     if let message = playback.pictureInPicture.message { Text(message).font(.caption) }
                     AirPlayControl().frame(height: 44)
-                    Button("视频信息", systemImage: "info.circle") { settingsOpen = false; videoInfoOpen = true }
-                    Button("播放诊断", systemImage: "waveform.path.ecg") { settingsOpen = false; diagnosticOpen = true }.accessibilityIdentifier("player.diagnostic")
+                    Button("视频信息", systemImage: "info.circle") { pendingSettingsAction = .videoInfo; settingsOpen = false }
+                    Button("播放诊断", systemImage: "waveform.path.ecg") { pendingSettingsAction = .diagnostic; settingsOpen = false }.accessibilityIdentifier("player.diagnostic")
                     if playback.syncError != nil { Button("重试同步进度") { playback.save(); playback.report("Progress") } }
                 }
                 Button(library.favorites.contains(current.id) ? "取消收藏" : "收藏视频", systemImage: "heart") { library.toggleFavorite(current); settingsOpen = false }
@@ -200,7 +226,7 @@ struct PlayerView: View {
                 Section("播放速度") { ForEach([0.5, 0.75, 1.0, 1.25, 1.5, 2.0], id: \.self) { rate in Button("\(rate.formatted())×" + (playback.rate == Float(rate) ? " ✓" : "")) { playback.setRate(Float(rate)); scheduleHide() } } }
                 Section("画面") { Button(filled ? "完整显示画面" : "填满屏幕") { filled.toggle() } }
                 Section("外部字幕") {
-                    Button("导入 SRT / VTT 字幕") { settingsOpen = false; importingSubtitle = true }
+                    Button("导入 SRT / VTT 字幕") { pendingSettingsAction = .subtitleImport; settingsOpen = false }
                     if !externalSubtitles.isEmpty {
                         Stepper("字幕延迟：\(subtitleDelay, specifier: "%.1f") 秒", value: $subtitleDelay, in: -30...30, step: 0.5)
                         Stepper("字幕底部距离：\(Int(subtitleBottom))%", value: $subtitleBottom, in: 5...35, step: 2)
@@ -342,7 +368,9 @@ struct PlayerView: View {
                 complete = episodes.map { $0.video(server: server) }
             }
             try Task.checkCancellation()
-            queue.replaceVideos(complete)
+            if isEpisode { library.rememberEpisodes(complete) }
+            let regular = isEpisode ? complete.filter { current.seasonNumber == 0 ? $0.seasonNumber == 0 : $0.seasonNumber != 0 } : complete
+            queue.replaceVideos(regular)
             library.remember(complete)
             queueExpansionComplete = true
             if pendingAutomaticAdvance {

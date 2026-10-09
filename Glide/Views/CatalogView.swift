@@ -98,14 +98,27 @@ struct CatalogView: View {
         guard reset || !loading else { return }
         let key = requestKey
         let id = UUID(); generation = id; loading = true; error = nil
+        let retainedCursor = refresh && loadedRequestKey == key ? min(nextIndex, 1200) : 0
+        let retainedAnchor = visiblePosterID ?? retainedPosterID
         let start = reset ? 0 : nextIndex
         defer { if generation == id { loading = false } }
         do {
-            let page = try await MediaClient.shared.catalogPage(server: server, parentID: folder.id, type: shows ? "Series" : "Movie", start: start, order: order, search: query.trimmingCharacters(in: .whitespacesAndNewlines), refresh: refresh)
+            var page = try await MediaClient.shared.catalogPage(server: server, parentID: folder.id, type: shows ? "Series" : "Movie", start: start, order: order, search: query.trimmingCharacters(in: .whitespacesAndNewlines), refresh: refresh)
+            var cursor = start + page.Items.count
+            while reset && cursor < retainedCursor && cursor < page.TotalRecordCount {
+                try Task.checkCancellation()
+                let extra = try await MediaClient.shared.catalogPage(server: server, parentID: folder.id, type: shows ? "Series" : "Movie", start: cursor, order: order, search: query.trimmingCharacters(in: .whitespacesAndNewlines), refresh: refresh)
+                guard !extra.Items.isEmpty else { throw MediaError.message("分页没有进展，请刷新重试。") }
+                page.Items += extra.Items; cursor += extra.Items.count; page.TotalRecordCount = extra.TotalRecordCount
+            }
             try Task.checkCancellation(); guard id == generation && key == requestKey else { return }
             var known = Set(reset ? [] : items.map(\.id)); let added = page.Items.filter { known.insert($0.id).inserted }
             guard start + page.Items.count >= page.TotalRecordCount || !added.isEmpty else { throw MediaError.message("分页没有进展，请刷新重试。") }
-            if reset { items = added; loadedRequestKey = key; visiblePosterID = nil; retainedPosterID = nil }
+            if reset {
+                items = added; loadedRequestKey = key
+                let anchor = refresh && items.contains(where: { $0.id == retainedAnchor }) ? retainedAnchor : nil
+                visiblePosterID = anchor; retainedPosterID = anchor
+            }
             else { items += added }
             nextIndex = start + page.Items.count; total = page.TotalRecordCount
         } catch { if !Task.isCancelled && id == generation { self.error = error.localizedDescription } }
@@ -147,6 +160,7 @@ struct CatalogDetailView: View {
     @State private var playing: PlaySelection?
     @State private var trackSheet: TrackKind?
     @State private var downloadMessage: String?
+    @State private var confirmingDownload = false
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     var episodeQueue: [CatalogItem] = []
     private var item: CatalogItem { detail ?? initial }
@@ -161,7 +175,13 @@ struct CatalogDetailView: View {
                 detailHero
                 if loading { ProgressView("读取媒体信息…") }
                 if let error { Text(error).foregroundStyle(.orange); Button("重试") { Task { await load() } } }
-                if isSeries { seasonSection }
+                if isSeries {
+                    Button { startSeries() } label: {
+                        Label(seriesPlayTitle, systemImage: "play.fill").font(.headline).frame(maxWidth: .infinity).padding(18)
+                            .background(GlideTheme.accent, in: RoundedRectangle(cornerRadius: 16)).foregroundStyle(.black)
+                    }.disabled(seriesTarget == nil).accessibilityIdentifier("detail.seriesPlay")
+                    seasonSection
+                }
                 if !isSeries {
                     Button { startFromBeginning = false; start() } label: {
                         Label(WatchProgress.canResume(position: library.resumePosition(item.video(server: server)), duration: item.video(server: server).duration) ? "继续观看" : "开始播放", systemImage: "play.fill")
@@ -176,7 +196,8 @@ struct CatalogDetailView: View {
                             do {
                                 let watched = item.UserData?.Played != true
                                 try await MediaClient.shared.setWatched(watched, video: item.video(server: server), server: server)
-                                library.positions[item.video(server: server).id] = 0
+                                let video = item.video(server: server)
+                                library.positions[video.id] = watched ? (video.duration > 0 ? video.duration : nil) : 0
                                 library.progressSnapshots[item.video(server: server).id] = nil; library.persistProgress()
                                 UserDefaults.standard.set(library.positions, forKey: "positions")
                                 await load(refresh: true)
@@ -184,10 +205,7 @@ struct CatalogDetailView: View {
                         } }
                     }.font(.subheadline)
                     playbackOptions
-                    Button { Task {
-                        do { try await DownloadStore.shared.enqueue(item: item, server: server, sourceID: source?.Id); downloadMessage = "已加入后台下载，可在离线下载中查看进度。" }
-                        catch { downloadMessage = error.localizedDescription }
-                    } } label: { Label("下载原文件", systemImage: "arrow.down.circle").frame(maxWidth: .infinity, minHeight: 44) }.accessibilityIdentifier("detail.download")
+                    Button { confirmingDownload = true } label: { Label("下载原文件", systemImage: "arrow.down.circle").frame(maxWidth: .infinity, minHeight: 44) }.accessibilityIdentifier("detail.download")
                     if let downloadMessage { Text(downloadMessage).font(.caption).foregroundStyle(GlideTheme.muted) }
                     NavigationLink("离线下载") { DownloadsView(library: library) }
                 }
@@ -218,13 +236,22 @@ struct CatalogDetailView: View {
         }.background(GlideTheme.background).navigationBarTitleDisplayMode(.inline)
             .task(id: initial.id) { await load() }
             .refreshable { await load(refresh: true) }
+            .confirmationDialog("下载原文件？", isPresented: $confirmingDownload, titleVisibility: .visible) {
+                Button("加入下载队列") { Task {
+                    do { try await DownloadStore.shared.enqueue(item: item, server: server, sourceID: source?.Id); downloadMessage = "已加入下载队列，可在离线中查看进度。" }
+                    catch { downloadMessage = error.localizedDescription }
+                } }.accessibilityIdentifier("detail.confirmDownload")
+                Button("取消", role: .cancel) { }
+            } message: {
+                Text(downloadDescription)
+            }
             .sheet(item: $trackSheet) { kind in
                 TrackChoicesView(title: kind == .audio ? "选择声音" : "选择字幕", streams: source?.MediaStreams?.filter { $0.Type == (kind == .audio ? "Audio" : "Subtitle") } ?? [], selection: kind == .audio ? $audioIndex : $subtitleIndex, allowsOff: kind == .subtitle)
             }
             .task(id: seasonID) { await loadEpisodes() }
             .fullScreenCover(item: $playing) { selection in
                 PlayerView(library: library, queue: selection.queue, scopeName: item.SeriesName ?? item.Name,
-                           cinematic: true, initialTracks: tracks, initialResumeAt: startFromBeginning ? 0 : nil)
+                           cinematic: true, initialTracks: isSeries ? TrackSelection() : tracks, initialResumeAt: startFromBeginning ? 0 : nil, loadFullQueue: selection.loadFullQueue)
             }
     }
     private var detailHero: some View {
@@ -313,9 +340,11 @@ struct CatalogDetailView: View {
             let loaded = try await MediaClient.shared.catalogDetail(server: server, id: initial.id, refresh: refresh)
             try Task.checkCancellation()
             detail = loaded; sourceID = loaded.MediaSources?.first?.Id ?? ""
+            library.remember([loaded.video(server: server)])
             if loaded.Type == "Series" {
                 seasons = try await MediaClient.shared.catalogItems(server: server, parentID: loaded.id, type: "Season", refresh: refresh)
-                seasonID = seasons.first?.id ?? ""
+                let savedSeason = library.continueWatching.first { $0.video.sourceID == server.id && $0.video.seriesID == loaded.id }?.video.seasonNumber
+                seasonID = seasons.first(where: { $0.IndexNumber == savedSeason })?.id ?? seasons.first(where: { $0.IndexNumber != 0 })?.id ?? seasons.first?.id ?? ""
             }
         } catch { if !Task.isCancelled { self.error = error.localizedDescription } }
     }
@@ -330,22 +359,45 @@ struct CatalogDetailView: View {
             if selected == seasonID { episodes = loaded }
         } catch { if !Task.isCancelled && selected == seasonID { episodeError = error.localizedDescription } }
     }
+    private var downloadDescription: String {
+        let size = source?.Size.map { ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) } ?? "大小由服务器提供"
+        return "\(source?.Container?.uppercased() ?? "原文件") · \(size)。占用本机空间，按队列下载。离线播放仍需设备支持原文件编码。"
+    }
+    private var seriesEntry: ContinueWatchingItem? {
+        library.continueWatching.first { $0.video.sourceID == server.id && $0.video.seriesID == item.id }
+    }
+    private var seriesTarget: Video? {
+        if let entry = seriesEntry { return entry.video }
+        return episodes.first?.video(server: server)
+    }
+    private var seriesPlayTitle: String {
+        if let entry = seriesEntry {
+            if entry.finished { return "从头观看" }
+            let prefix = WatchProgress.canResume(position: library.resumePosition(entry.video), duration: entry.video.duration) ? "继续" : "播放"
+            return prefix + " " + entry.episodeLabel
+        }
+        return episodes.first.map { "播放 " + $0.episodeLabel } ?? "正在读取剧集…"
+    }
+    private func completeSeries(_ id: String) -> () async throws -> [Video] {
+        let server = server
+        return { try await MediaClient.shared.catalogItems(server: server, parentID: id, type: "Episode").map { $0.video(server: server) } }
+    }
+    private func startSeries() {
+        guard let target = seriesTarget else { return }
+        startFromBeginning = seriesEntry?.finished == true
+        library.remember([target])
+        playing = PlaySelection(queue: PlaybackQueue(videos: [target], mode: .sequential), scopeName: item.Name, loadFullQueue: completeSeries(item.id))
+    }
     private func start() {
         guard !starting else { return }
-        starting = true; error = nil
-        Task { @MainActor in
-            defer { starting = false }
-            do {
-                var entries = episodeQueue.isEmpty ? [item] : CatalogItem.episodeOrder(episodeQueue)
-                if item.Type == "Episode", let series = item.SeriesId {
-                    entries = CatalogItem.episodeOrder(try await MediaClient.shared.catalogItems(server: server, parentID: series, type: "Episode"))
-                    if !entries.contains(where: { $0.id == item.id }) { entries.append(item); entries = CatalogItem.episodeOrder(entries) }
-                }
-                let videos = entries.map { ($0.id == item.id ? item : $0).video(server: server) }
-                library.remember(videos)
-                playing = PlaySelection(queue: PlaybackQueue(videos: videos, mode: .sequential, startID: item.video(server: server).id), scopeName: item.Name)
-            } catch { self.error = "无法准备剧集队列，请重试。" }
-        }
+        error = nil
+        // A selected episode is immediately playable; retrieve the rest after its first frame.
+        let entries = episodeQueue.isEmpty ? [item] : CatalogItem.episodeOrder(episodeQueue)
+        let videos = entries.map { ($0.id == item.id ? item : $0).video(server: server) }
+            .filter { item.Type != "Episode" || item.ParentIndexNumber == 0 || $0.seasonNumber != 0 }
+        library.remember(videos)
+        playing = PlaySelection(queue: PlaybackQueue(videos: videos, mode: .sequential, startID: item.video(server: server).id), scopeName: item.Name,
+                                loadFullQueue: item.SeriesId.map(completeSeries))
     }
 }
 
@@ -353,12 +405,13 @@ struct CatalogDetailView: View {
 struct CatalogArtwork: View {
     var item: CatalogItem
     var server: MediaServer
+    var contentMode: ContentMode = .fill
     @State private var image: UIImage?
     var body: some View {
         ZStack {
             GlideTheme.panel
             if let image { GeometryReader { proxy in
-                Image(uiImage: image).resizable().scaledToFill().frame(width: proxy.size.width, height: proxy.size.height).clipped()
+                Image(uiImage: image).resizable().aspectRatio(contentMode: contentMode).frame(width: proxy.size.width, height: proxy.size.height).clipped()
             }.allowsHitTesting(false) }
             else { Image(systemName: item.Type == "Person" ? "person.crop.rectangle" : item.Type == "Series" ? "tv" : "film").font(.largeTitle).foregroundStyle(GlideTheme.muted) }
         }.clipped().task(id: server.id.uuidString + item.id + (item.ImageTags?["Primary"] ?? "")) {

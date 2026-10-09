@@ -46,6 +46,29 @@ import Testing
     #expect(AutomaticPlaybackPolicy.nextStep(after: 3, stalled: true, preservingVideo: false) == nil)
 }
 
+@Test func nativeNegotiationPreservesHEVCButConstrainsAVCToSDR() throws {
+    for quality in [PlaybackQuality.automatic, .compatible, .hd1080, .hd720] {
+        let body = JellyfinPlaybackPolicy.body(userID: "user", quality: quality)
+        let profile = try #require(body["DeviceProfile"] as? [String: Any])
+        let codecs = try #require(profile["CodecProfiles"] as? [[String: Any]])
+        let avc = try #require(codecs.first { $0["Codec"] as? String == "h264" })
+        let conditions = try #require(avc["Conditions"] as? [[String: Any]])
+        #expect(conditions.first { $0["Property"] as? String == "VideoRangeType" }?["Value"] as? String == "SDR")
+        #expect(conditions.first { $0["Property"] as? String == "VideoBitDepth" }?["Value"] as? String == "8")
+        #expect(!codecs.contains { $0["Codec"] as? String == "hevc" }, "HDR-compatible native HEVC is not forced to SDR")
+        let transcode = try #require(profile["TranscodingProfiles"] as? [[String: Any]])
+        if quality == .automatic || quality == .compatible {
+            #expect(transcode[0]["Container"] as? String == "mp4")
+            #expect(transcode[0]["VideoCodec"] as? String == "h264,hevc")
+        } else {
+            #expect(transcode[0]["VideoCodec"] as? String == "h264")
+        }
+    }
+    let encoded = JellyfinPlaybackPolicy.transcodeURL(URL(string: "https://nas.test/master.m3u8?VideoCodec=hevc&H264-RangeType=HDR10&api_key=token")!, quality: .hd1080)
+    #expect(NativeColorPolicy.outputOptions(encoded).codec == "h264")
+    #expect(NativeColorPolicy.outputOptions(encoded).range == "SDR")
+}
+
 @Test func hd720ForcesLowerBitrateAndResolution() throws {
     let body = JellyfinPlaybackPolicy.body(userID: "user", quality: .hd720)
     #expect(body["EnableDirectPlay"] as? Bool == false)

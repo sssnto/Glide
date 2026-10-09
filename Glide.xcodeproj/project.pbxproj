@@ -26,6 +26,7 @@
 		5E457ADD6E5F01F91F48A2AA /* Glide/Views/TrackChoicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D102E8F72AECB9B626CCD86 /* Glide/Views/TrackChoicesView.swift */; };
 		723FE6665816622EB2179E30 /* Glide/Core/OfflineMediaFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC596BA4F074EC994F8F463 /* Glide/Core/OfflineMediaFiles.swift */; };
 		7C25D5E502CCC338F9F9BEF4 /* Glide/Core/PlaybackIntelligence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D33B6DF4B5238A7D4381196 /* Glide/Core/PlaybackIntelligence.swift */; };
+		7E6F03B313155F4748F1F27A /* Glide/Core/ContinuousWatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B1A500BCE7880D315C366A /* Glide/Core/ContinuousWatching.swift */; };
 		7ECA85A969AF5C0C05BCDCD5 /* Glide/Views/Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D45204B4F2C39A229C8F2C4 /* Glide/Views/Theme.swift */; };
 		88EB11E1C3A3A2E1EBE23B15 /* Glide/Services/PlaybackPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1CD7D3E610F1423AA6DF331 /* Glide/Services/PlaybackPreferences.swift */; };
 		89A001E7E8964E5E80A2B05C /* Glide/Views/CatalogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E64E4554E3A4F3B9BCE64D /* Glide/Views/CatalogView.swift */; };
@@ -42,14 +43,15 @@
 		CB48D750F431066D531B9088 /* Glide/Services/PlaybackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2AE59A6ADF34DE1845D365 /* Glide/Services/PlaybackController.swift */; };
 		CD63F28388C5702BE490BA12 /* Glide/Views/PersonalLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B02A04C19ABBC7B4524A72 /* Glide/Views/PersonalLibraryView.swift */; };
 		CEF650271C8F4C25A3CD5818 /* Glide/Services/PlaybackAudioSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E63C50C803DDF54551C9780 /* Glide/Services/PlaybackAudioSession.swift */; };
+		D0F03F881DBA0E00A2A6E674 /* Glide/Services/PlaybackWarmup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87BCC9908235A8E6EC280D82 /* Glide/Services/PlaybackWarmup.swift */; };
 		D15E48D90E27B54FBE6564D4 /* Glide/Views/PersonMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0FF3A2D2ECA8A545CF0E78 /* Glide/Views/PersonMediaView.swift */; };
 		D49DE395CA1F94F917F43239 /* Glide/Views/PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030955A1AB8E9CA1DFF2BC87 /* Glide/Views/PlayerView.swift */; };
+		E7813E9B03A849C6A2E1F004 /* Glide/Views/EpisodePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7813E9B03A849C6A2E1F003 /* Glide/Views/EpisodePickerView.swift */; };
 		EA39442CFC0047DC9AD726B0 /* Glide/Services/MediaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC19A9EB591ABBA8F31195AD /* Glide/Services/MediaClient.swift */; };
 		EAC86F7B06D235469D144723 /* Glide/Core/PlaybackQuality.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2F874F747C20BE1346622D /* Glide/Core/PlaybackQuality.swift */; };
 		EDF1950F996B027BD249D172 /* Glide/Resources/PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4DFFD94745173472A3ADFAE9 /* Glide/Resources/PrivacyInfo.xcprivacy */; };
 		F659E3682F9B49E68C6FE2A1 /* Glide/Core/CatalogMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66DE99BCFE045DAE13E6681 /* Glide/Core/CatalogMedia.swift */; };
 		FBA1B26D75CE842237C68813 /* Glide/LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6432BC37CF1E1EF0AA928233 /* Glide/LibraryStore.swift */; };
-		E7813E9B03A849C6A2E1F004 /* Glide/Views/EpisodePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7813E9B03A849C6A2E1F003 /* Glide/Views/EpisodePickerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,10 +90,12 @@
 		7DC596BA4F074EC994F8F463 /* Glide/Core/OfflineMediaFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/OfflineMediaFiles.swift; sourceTree = SOURCE_ROOT; };
 		84BC83AB31913AAE638DBED4 /* Glide/Views/PinnedDirectoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/PinnedDirectoriesView.swift; sourceTree = SOURCE_ROOT; };
 		84E64E4554E3A4F3B9BCE64D /* Glide/Views/CatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/CatalogView.swift; sourceTree = SOURCE_ROOT; };
+		87BCC9908235A8E6EC280D82 /* Glide/Services/PlaybackWarmup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/PlaybackWarmup.swift; sourceTree = SOURCE_ROOT; };
 		9B908DAB7041C39316AEE4BD /* Glide/GlideApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/GlideApp.swift; sourceTree = SOURCE_ROOT; };
 		9C97F708B1EF3AED4A5AE0E1 /* Glide/Views/AdaptiveLibraryRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/AdaptiveLibraryRoot.swift; sourceTree = SOURCE_ROOT; };
 		9D3AD977850B7EAC0E4F6585 /* GlideUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = GlideUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9E63C50C803DDF54551C9780 /* Glide/Services/PlaybackAudioSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/PlaybackAudioSession.swift; sourceTree = SOURCE_ROOT; };
+		A1B1A500BCE7880D315C366A /* Glide/Core/ContinuousWatching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/ContinuousWatching.swift; sourceTree = SOURCE_ROOT; };
 		A3D6FB927E870567722BA7C0 /* Glide/Views/SourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/SourcesView.swift; sourceTree = SOURCE_ROOT; };
 		A83C8CAF5402899506703BAB /* Glide/Services/Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/Credentials.swift; sourceTree = SOURCE_ROOT; };
 		B1CD7D3E610F1423AA6DF331 /* Glide/Services/PlaybackPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/PlaybackPreferences.swift; sourceTree = SOURCE_ROOT; };
@@ -102,12 +106,12 @@
 		DC19A9EB591ABBA8F31195AD /* Glide/Services/MediaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/MediaClient.swift; sourceTree = SOURCE_ROOT; };
 		E2DC07DC259F668E7E0F8E3B /* Glide/Services/MediaCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/MediaCache.swift; sourceTree = SOURCE_ROOT; };
 		E66DE99BCFE045DAE13E6681 /* Glide/Core/CatalogMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/CatalogMedia.swift; sourceTree = SOURCE_ROOT; };
+		E7813E9B03A849C6A2E1F003 /* Glide/Views/EpisodePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/EpisodePickerView.swift; sourceTree = SOURCE_ROOT; };
 		EE933493E88C858BF979BEAC /* Glide/Services/PictureInPicture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/PictureInPicture.swift; sourceTree = SOURCE_ROOT; };
 		F54269A2C69007C432784A01 /* Glide/Core/Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/Models.swift; sourceTree = SOURCE_ROOT; };
 		F8071E5A04B6688FE96FB4AF /* Glide/Core/BrowseOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/BrowseOptions.swift; sourceTree = SOURCE_ROOT; };
 		F8EFD46C035C87ED6906105A /* Glide/Views/PrivacySupportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/PrivacySupportView.swift; sourceTree = SOURCE_ROOT; };
 		FFA273B3ABF5DC56145F3E64 /* Glide/Resources/demo2.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Glide/Resources/demo2.mp4; sourceTree = SOURCE_ROOT; };
-		E7813E9B03A849C6A2E1F003 /* Glide/Views/EpisodePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Views/EpisodePickerView.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +128,8 @@
 		B28B7AF69320201D1CF206EB = {
 			isa = PBXGroup;
 			children = (
+				A1B1A500BCE7880D315C366A /* Glide/Core/ContinuousWatching.swift */,
+				87BCC9908235A8E6EC280D82 /* Glide/Services/PlaybackWarmup.swift */,
 				F8071E5A04B6688FE96FB4AF /* Glide/Core/BrowseOptions.swift */,
 				E66DE99BCFE045DAE13E6681 /* Glide/Core/CatalogMedia.swift */,
 				6BD3F57752F38D9740EB3D1F /* Glide/Core/CatalogSort.swift */,
@@ -273,6 +279,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E6F03B313155F4748F1F27A /* Glide/Core/ContinuousWatching.swift in Sources */,
+				D0F03F881DBA0E00A2A6E674 /* Glide/Services/PlaybackWarmup.swift in Sources */,
 				42DA54F46A80294808323793 /* Glide/Core/BrowseOptions.swift in Sources */,
 				F659E3682F9B49E68C6FE2A1 /* Glide/Core/CatalogMedia.swift in Sources */,
 				283CAA6E9EE47ED135F24068 /* Glide/Core/CatalogSort.swift in Sources */,
@@ -358,7 +366,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = FR9RTRV9BC;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Glide/Info.plist;
@@ -366,7 +374,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.songpeng.glide;
 				PRODUCT_NAME = Glide;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
@@ -382,7 +390,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = FR9RTRV9BC;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Glide/Info.plist;
@@ -390,7 +398,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.songpeng.glide;
 				PRODUCT_NAME = Glide;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;

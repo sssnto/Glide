@@ -3,7 +3,7 @@
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlsplit, parse_qs
 from pathlib import Path
-import json, re, base64, subprocess, tempfile, os, time
+import json, re, base64, subprocess, tempfile, os, time, shutil
 
 resources = Path(__file__).resolve().parents[1] / 'Glide/Resources'
 hls = Path(tempfile.mkdtemp(prefix='glide-hls-'))
@@ -14,9 +14,13 @@ black_frame_fixture = os.environ.get('GLIDE_BLACK_FRAME_FIXTURE') == '1'
 slow_direct_fixture = os.environ.get('GLIDE_SLOW_DIRECT_FIXTURE') == '1'
 hls_master_fixture = os.environ.get('GLIDE_HLS_MASTER_FIXTURE') == '1'
 if hls_master_fixture:
+    sdr = hls/'sdr'
+    sdr.mkdir()
+    for asset in hls.glob('demo0*'):
+        shutil.copy2(asset, sdr/asset.name)
     # Model a server whose master advertises SDR/baseline, although the encoded
-    # H.264 segments carry PQ/high. AVPlayer rejects the master with -12927;
-    # the self-contained media playlist remains decodable.
+    # H.264 segments carry PQ/high. Some native runtimes reject this with
+    # -12927; others decode it. The client must inspect the actual output.
     subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-stream_loop', '-1', '-i', str(resources/'demo0.mp4'), '-t', '60',
                     '-c:v', 'libx264', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
                     '-color_trc', 'smpte2084', '-color_primaries', 'bt2020', '-colorspace', 'bt709',
@@ -89,11 +93,16 @@ class Handler(BaseHTTPRequestHandler):
             source = {'Id': item, 'SupportsDirectPlay': not force_transcode}
             if force_transcode: source['TranscodingUrl'] = prefix+f'/streams/{"demo0" if item == "broken" else item}.m3u8?api_key=fixture-token'
             if hls_master_fixture and item == 'broken':
+                profiles = data['DeviceProfile']['CodecProfiles']
+                avc = next(profile for profile in profiles if profile['Codec'] == 'h264')
+                assert any(c['Property'] == 'VideoRangeType' and c['Value'] == 'SDR' for c in avc['Conditions'])
+                assert any(c['Property'] == 'VideoBitDepth' and c['Value'] == '8' for c in avc['Conditions'])
                 source['SupportsDirectPlay'] = False
                 source['SupportsDirectStream'] = False
                 source['MediaStreams'] = [dict(Index=0, Type='Video', Codec='hevc', Profile='Main 10', BitDepth=10,
-                                              Width=3840, Height=2160, VideoRangeType='DOVIWithHDR10', DvProfile=8)]
-                source['TranscodingUrl'] = prefix+'/streams/broken/master.m3u8?api_key=fixture-token'
+                                              Width=3840, Height=1920, VideoRangeType='HDR10', ColorTransfer='smpte2084', ColorPrimaries='bt2020', ColorSpace='bt2020nc')]
+                rendition = 'sdr' if force_transcode else 'broken'
+                source['TranscodingUrl'] = prefix+f'/streams/{rendition}/master.m3u8?api_key=fixture-token&VideoCodec=h264'
             return self.send(200, json.dumps({'MediaSources':[source], 'PlaySessionId':item+'-session'}).encode())
         if '/Sessions/Playing' in path:
             assert 'PositionTicks' in data
@@ -104,8 +113,19 @@ class Handler(BaseHTTPRequestHandler):
         if path == '/debug/metrics': return self.send(200, json.dumps(metrics).encode())
         metrics[path] = metrics.get(path,0)+1
         if hls_master_fixture and path == prefix+'/streams/broken/master.m3u8':
+            q = parse_qs(urlsplit(self.path).query)
+            assert q.get('h264-rangetype') == ['SDR']
+            assert q.get('AllowVideoStreamCopy') == ['false']
             master = '#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-STREAM-INF:BANDWIDTH=8000000,VIDEO-RANGE=SDR,CODECS="avc1.424029,mp4a.40.2",RESOLUTION=480x854\n../demo0.m3u8?api_key=fixture-token\n'
             return self.send(200, master.encode(), 'application/vnd.apple.mpegurl')
+        if hls_master_fixture and path.startswith(prefix+'/streams/sdr/'):
+            if path.endswith('/master.m3u8'):
+                q = parse_qs(urlsplit(self.path).query)
+                assert q.get('h264-rangetype') == ['SDR']
+                assert q.get('AllowVideoStreamCopy') == ['false']
+                master = '#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-STREAM-INF:BANDWIDTH=800000,VIDEO-RANGE=SDR,CODECS="avc1.64001e,mp4a.40.2"\ndemo0.m3u8?api_key=fixture-token\n'
+                return self.send(200, master.encode(), 'application/vnd.apple.mpegurl')
+            return self.media(sdr/Path(path).name)
         if path.startswith(prefix) and not '/streams/' in path and not self.jelly_auth(): return self.send(401)
         if path == prefix+'/Items/person-b/Images/Primary': return self.send(404)
         if path.endswith('/Images/Primary'):

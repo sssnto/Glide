@@ -47,6 +47,7 @@ final class GlideUITests: XCTestCase {
         let download = app.buttons["detail.download"]
         for _ in 0..<5 { if download.isHittable { break }; app.swipeUp() }
         XCTAssertTrue(download.isHittable); download.press(forDuration: 0.15)
+        XCTAssertTrue(app.buttons["加入下载队列"].firstMatch.waitForExistence(timeout: 5)); app.buttons["加入下载队列"].firstMatch.tap()
         let state = app.staticTexts["download.state." + fixtureID]
         open(app.buttons["离线下载"], until: state)
         // First fixture response is truncated; integrity validation must reject it.
@@ -80,9 +81,39 @@ final class GlideUITests: XCTestCase {
         app.buttons["sources.open"].tap()
         let fixture = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "source.", fixtureName)).firstMatch
         XCTAssertTrue(fixture.waitForExistence(timeout: 5)); fixture.swipeLeft()
-        app.buttons["移除"].tap(); app.buttons["完成"].tap()
+        app.buttons["移除"].tap(); app.buttons["移除来源，保留已下载影片"].firstMatch.tap(); app.buttons["完成"].tap()
         app.tabBars.buttons["离线"].tap()
-        XCTAssertFalse(app.buttons["offline.play." + fixtureID].exists, "Removing the source must also remove its downloaded files")
+        XCTAssertTrue(offline.waitForExistence(timeout: 10), "Removing a source may retain completed local files")
+        let afterRemove = fixtureMetric(streamPath)
+        open(offline, until: canvas)
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "已显示画面"), object: canvas)], timeout: 15), .completed)
+        XCTAssertEqual(fixtureMetric(streamPath), afterRemove)
+        app.buttons["返回片库"].tap()
+        offline.swipeLeft(); app.buttons["删除"].firstMatch.tap()
+        XCTAssertFalse(offline.exists)
+    }
+
+    @MainActor func testPreparedLocalNextItem() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments += ["-controlsDelay", "30", "-preferredAudioLanguage", "", "-preferredSubtitleLanguage", "", "-forcedSubtitlesOnly", "NO"]
+        app.launch()
+        if !app.buttons["demo.play"].exists {
+            if !app.buttons["sources.open"].exists, app.buttons["媒体库"].exists { app.buttons["媒体库"].tap() }
+            app.buttons["sources.open"].tap(); app.buttons["离线演示片库"].tap()
+        }
+        app.segmentedControls.buttons["顺序播放"].tap(); app.buttons["demo.play"].tap()
+        let canvas = app.otherElements["player.canvas"]
+        XCTAssertTrue(canvas.waitForExistence(timeout: 10))
+        let elapsed = app.staticTexts["player.elapsed"]
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label >= %@", "00:03"), object: elapsed)], timeout: 10), .completed)
+        app.buttons["下一个视频"].tap()
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "已显示画面"), object: canvas)], timeout: 15), .completed)
+        app.buttons["暂停"].tap()
+        app.buttons["播放设置"].tap(); app.buttons["player.diagnostic"].tap()
+        XCTAssertTrue(app.buttons["diagnostic.share"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "warmup_hit")).firstMatch.exists, "A completed local asset preparation is reused by the next item")
+        app.buttons["完成"].tap(); app.buttons["返回片库"].tap()
     }
 
     @MainActor func testRapidReopenKeepsNativePlaybackResponsive() throws {
@@ -131,7 +162,9 @@ final class GlideUITests: XCTestCase {
     @MainActor func testIdleAutoHideThenTapShowsControls() throws {
         continueAfterFailure = false
         let app = XCUIApplication()
-        app.launchArguments += ["-controlsDelay", "2"]
+        // Accessibility snapshots can arrive >2 seconds after a tap. Keep the
+        // controls visible long enough to observe one wake-up after auto-hide.
+        app.launchArguments += ["-controlsDelay", "6"]
         app.launch()
         if !app.buttons["demo.play"].exists {
             if !app.buttons["sources.open"].exists, app.buttons["媒体库"].exists { app.buttons["媒体库"].tap() }
@@ -145,11 +178,11 @@ final class GlideUITests: XCTestCase {
         let canvas = app.otherElements["player.canvas"]
         XCTAssertTrue(canvas.waitForExistence(timeout: 15))
         let settings = app.buttons["播放设置"]
-        let hidden = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: settings)
-        XCTAssertEqual(XCTWaiter.wait(for: [hidden], timeout: 10), .completed,
+        let hidden = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false OR hittable == false"), object: settings)
+        XCTAssertEqual(XCTWaiter.wait(for: [hidden], timeout: 12), .completed,
                        "Controls should auto-hide without user interaction")
         canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)).tap()
-        XCTAssertTrue(settings.waitForExistence(timeout: 2),
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == true AND hittable == true"), object: settings)], timeout: 3), .completed,
                       "One short tap after automatic hiding must bring controls back")
     }
 
@@ -470,7 +503,7 @@ final class GlideUITests: XCTestCase {
         let fixture = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "source.", "Glide WebDAV Fixture")).firstMatch
         XCTAssertTrue(fixture.waitForExistence(timeout: 5))
         fixture.swipeLeft()
-        app.buttons["移除"].tap()
+        app.buttons["移除"].tap(); app.buttons["同时删除此来源的离线影片"].firstMatch.tap()
         app.buttons["完成"].tap()
     }
 
@@ -540,6 +573,7 @@ final class GlideUITests: XCTestCase {
         app.swipeUp()
         let download = app.buttons["detail.download"]
         XCTAssertTrue(download.waitForExistence(timeout: 8)); download.tap()
+        XCTAssertTrue(app.buttons["加入下载队列"].firstMatch.waitForExistence(timeout: 5)); app.buttons["加入下载队列"].firstMatch.tap()
         app.buttons["离线下载"].tap()
         let offline = app.buttons["offline.play.demo0"]
         XCTAssertTrue(offline.waitForExistence(timeout: 30))
@@ -555,7 +589,7 @@ final class GlideUITests: XCTestCase {
         app.buttons["媒体库"].tap()
         XCTAssertTrue(app.buttons["sources.open"].waitForExistence(timeout: 8)); app.buttons["sources.open"].tap()
         let fixture = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "source.", fixtureName)).firstMatch
-        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["完成"].tap()
+        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["同时删除此来源的离线影片"].firstMatch.tap(); app.buttons["完成"].tap()
     }
 
     private func fixtureMetric(_ path: String) -> Int {
@@ -584,31 +618,44 @@ final class GlideUITests: XCTestCase {
         if !app.buttons["sources.open"].exists, app.buttons["媒体库"].exists { app.buttons["媒体库"].tap() }
         XCTAssertTrue(app.buttons["sources.open"].waitForExistence(timeout: 8))
         app.buttons["sources.open"].tap()
-        for _ in 0..<8 {
-            if app.buttons["sources.add"].isHittable { break }
-            app.collectionViews.firstMatch.swipeUp()
+        var fixtureName = "Glide Recovery Fixture"
+        let existing = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@ AND label CONTAINS %@", "source.", fixtureName, "127.0.0.1:8768")).firstMatch
+        if existing.exists {
+            // A failed run can leave its local fixture source behind. Reuse
+            // that source rather than accumulating more accounts on retries.
+            for _ in 0..<8 {
+                if existing.isHittable { break }
+                app.collectionViews.firstMatch.swipeUp()
+            }
+            XCTAssertTrue(existing.isHittable)
+            existing.tap()
+        } else {
+            for _ in 0..<8 {
+                if app.buttons["sources.add"].isHittable { break }
+                app.collectionViews.firstMatch.swipeUp()
+            }
+            XCTAssertTrue(app.buttons["sources.add"].waitForExistence(timeout: 5))
+            app.buttons["sources.add"].tap()
+            let name = app.textFields["名称（可选）"]
+            if !name.waitForExistence(timeout: 5), app.buttons["sources.add"].isHittable { app.buttons["sources.add"].tap() }
+            XCTAssertTrue(name.waitForExistence(timeout: 5))
+            fixtureName += " " + String(UUID().uuidString.prefix(6))
+            name.tap()
+            if !app.keyboards.firstMatch.waitForExistence(timeout: 3) { name.tap() }
+            name.typeText(fixtureName)
+            let address = app.textFields["服务器地址"]
+            address.tap(); address.typeText("http://127.0.0.1:8768/mock/jellyfin")
+            let username = app.textFields["用户名"]
+            username.tap(); username.typeText("demo")
+            let password = app.secureTextFields["密码"]
+            password.tap(); password.typeText("demo\n")
+            app.buttons["sources.connect"].tap()
+            let addSourceClosed = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: app.navigationBars["添加媒体源"])
+            let waitResult1 = await XCTWaiter.fulfillment(of: [addSourceClosed], timeout: 15)
+            XCTAssertEqual(waitResult1, .completed, "Fixture login should close the add-source form")
+            XCTAssertTrue(app.buttons["完成"].waitForExistence(timeout: 15))
+            app.buttons["完成"].tap()
         }
-        XCTAssertTrue(app.buttons["sources.add"].waitForExistence(timeout: 5))
-        app.buttons["sources.add"].tap()
-        let name = app.textFields["名称（可选）"]
-        if !name.waitForExistence(timeout: 5), app.buttons["sources.add"].isHittable { app.buttons["sources.add"].tap() }
-        XCTAssertTrue(name.waitForExistence(timeout: 5))
-        let fixtureName = "Glide Recovery Fixture " + String(UUID().uuidString.prefix(6))
-        name.tap()
-        if !app.keyboards.firstMatch.waitForExistence(timeout: 3) { name.tap() }
-        name.typeText(fixtureName)
-        let address = app.textFields["服务器地址"]
-        address.tap(); address.typeText("http://127.0.0.1:8768/mock/jellyfin")
-        let username = app.textFields["用户名"]
-        username.tap(); username.typeText("demo")
-        let password = app.secureTextFields["密码"]
-        password.tap(); password.typeText("demo\n")
-        app.buttons["sources.connect"].tap()
-        let addSourceClosed = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: app.navigationBars["添加媒体源"])
-        let waitResult1 = await XCTWaiter.fulfillment(of: [addSourceClosed], timeout: 15)
-        XCTAssertEqual(waitResult1, .completed, "Fixture login should close the add-source form")
-        XCTAssertTrue(app.buttons["完成"].waitForExistence(timeout: 15))
-        app.buttons["完成"].tap()
         let movies = app.buttons["folder.fixture-movies"]
         let ready = XCTNSPredicateExpectation(predicate: NSPredicate(format: "isHittable == true"), object: movies)
         if await XCTWaiter.fulfillment(of: [ready], timeout: 5) != .completed, app.buttons["完成"].isHittable { app.buttons["完成"].tap() }
@@ -617,15 +664,33 @@ final class GlideUITests: XCTestCase {
         XCTAssertEqual(waitResult2, .completed)
         movies.tap()
         XCTAssertTrue(app.buttons["catalog.sort"].waitForExistence(timeout: 10))
-        app.buttons["catalog.sort"].tap(); app.buttons["评分"].tap()
-        app.buttons["catalog.sort"].tap(); app.buttons["改为降序"].tap()
-        XCTAssertTrue(app.buttons["catalog.broken"].waitForExistence(timeout: 10)); app.buttons["catalog.broken"].tap()
+        let recoveryCard = app.buttons["catalog.broken"]
+        XCTAssertTrue(recoveryCard.waitForExistence(timeout: 10))
+        let cardReady = XCTNSPredicateExpectation(predicate: NSPredicate(format: "isHittable == true"), object: recoveryCard)
+        let cardWait = await XCTWaiter.fulfillment(of: [cardReady], timeout: 10)
+        XCTAssertEqual(cardWait, .completed)
+        recoveryCard.tap()
         XCTAssertTrue(app.buttons["detail.play"].waitForExistence(timeout: 10))
-        app.buttons["detail.play"].tap()
+        app.buttons["从头播放"].tap()
         let delivery = app.staticTexts["player.delivery"]
-        let expectedDelivery = masterFixture ? "服务器流（方式待确认）" : "视频转码"
-        let converted = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == %@", expectedDelivery), object: delivery)
+        let allowedDeliveries = masterFixture ? ["服务器流（方式待确认）", "视频转码"] : ["视频转码"]
+        let converted = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value IN %@", allowedDeliveries), object: delivery)
         let waitResult3 = await XCTWaiter.fulfillment(of: [converted], timeout: 45)
+        if waitResult3 != .completed {
+            if !app.buttons["播放设置"].isHittable { app.otherElements["player.canvas"].tap() }
+            if app.buttons["播放设置"].isHittable {
+                app.buttons["播放设置"].tap()
+                if app.buttons["player.diagnostic"].waitForExistence(timeout: 3) {
+                    app.buttons["player.diagnostic"].tap()
+                    let json = app.staticTexts["diagnostic.json"]
+                    if json.waitForExistence(timeout: 3) {
+                        let diagnostic = XCTAttachment(string: json.label)
+                        diagnostic.name = "Recovery failure diagnostic"; diagnostic.lifetime = .keepAlways; add(diagnostic)
+                        print("Local recovery fixture diagnostic: " + json.label)
+                    }
+                }
+            }
+        }
         XCTAssertEqual(waitResult3, .completed)
         let recoveredFrame = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "已显示画面"), object: app.otherElements["player.canvas"])
         let waitResult4 = await XCTWaiter.fulfillment(of: [recoveredFrame], timeout: 20)
@@ -638,26 +703,32 @@ final class GlideUITests: XCTestCase {
         XCTAssertEqual(waitResult5, .completed, "HLS should report loaded segments")
         if !app.buttons["暂停"].isHittable { app.otherElements["player.canvas"].tap() }
         XCTAssertTrue(app.buttons["暂停"].waitForExistence(timeout: 10)); app.buttons["暂停"].tap()
-        XCTAssertEqual(delivery.value as? String, expectedDelivery)
+        let finalDelivery = delivery.value as? String ?? ""
+        XCTAssertTrue(allowedDeliveries.contains(finalDelivery))
         XCTAssertFalse(app.buttons["player.quality"].exists)
         let recovered = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         recovered.name = "Recovered video frame"; recovered.lifetime = .keepAlways; add(recovered)
         let firstNegotiations = fixtureMetric("/mock/jellyfin/Items/broken/PlaybackInfo")
         if masterFixture {
-            XCTAssertEqual(firstNegotiations - negotiationBaseline, 1, "A bad master must not cause repeated resolution downgrades")
+            XCTAssertEqual(firstNegotiations - negotiationBaseline, finalDelivery == "视频转码" ? 2 : 1,
+                           "The HDR master may play as native SDR or recover once; it must never be unwrapped")
             app.buttons["播放设置"].tap()
             XCTAssertTrue(app.buttons["player.diagnostic"].waitForExistence(timeout: 5))
             app.buttons["player.diagnostic"].tap()
             let json = app.staticTexts["diagnostic.json"]
             XCTAssertTrue(json.waitForExistence(timeout: 5))
-            XCTAssertTrue(json.label.contains("hls_single_variant"))
-            XCTAssertTrue(json.label.contains("\"playlistMode\" : \"media\""))
-            XCTAssertTrue(json.label.contains("DOVIWithHDR10"))
-            XCTAssertFalse(json.label.contains("item_failed"))
+            XCTAssertFalse(json.label.contains("hls_single_variant"), "HDR source must retain native master validation")
+            XCTAssertTrue(json.label.contains("\"playlistMode\" : \"master\""))
+            XCTAssertTrue(json.label.contains("HDR10"))
+            XCTAssertTrue(json.label.contains("hdr_sdr_output_requested"))
+            XCTAssertTrue(json.label.contains("\"requestedOutputRange\" : \"SDR\""))
+            let fields = try JSONSerialization.jsonObject(with: Data(json.label.utf8)) as? [String: Any]
+            XCTAssertEqual(fields?["outputColorTransfer"] as? String, "ITU_R_709_2", "The native decoded-frame probe must provide actual SDR color evidence")
+            XCTAssertEqual(fields?["outputColorEvidence"] as? String, "decodedFrame")
             app.buttons["完成"].tap()
         }
         app.buttons["返回片库"].tap()
-        if firstNegotiations - negotiationBaseline == 2 {
+        if !masterFixture && firstNegotiations - negotiationBaseline == 2 {
             // A stuck direct stream must be remembered after conversion succeeds.
             XCTAssertTrue(app.buttons["detail.play"].waitForExistence(timeout: 8))
             app.buttons["detail.play"].tap()
@@ -668,16 +739,9 @@ final class GlideUITests: XCTestCase {
             XCTAssertEqual(fixtureMetric("/mock/jellyfin/Items/broken/PlaybackInfo"), firstNegotiations + 1)
             app.buttons["返回片库"].tap()
         }
-        app.navigationBars.buttons.element(boundBy: 0).tap(); app.buttons["媒体库"].tap()
-        XCTAssertTrue(app.buttons["sources.open"].waitForExistence(timeout: 8)); app.buttons["sources.open"].tap()
-        let fixture = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "source.", fixtureName)).firstMatch
-        XCTAssertTrue(app.navigationBars["媒体来源"].waitForExistence(timeout: 5))
-        for _ in 0..<8 {
-            if fixture.isHittable { break }
-            app.collectionViews.firstMatch.swipeUp()
-        }
-        XCTAssertTrue(fixture.waitForExistence(timeout: 5))
-        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["完成"].tap()
+        // Keep this dedicated local fixture account for repeatable playback
+        // runs. Source deletion is covered by the offline integrity test.
+        app.navigationBars.buttons.element(boundBy: 0).tap()
     }
 
 
@@ -740,7 +804,7 @@ final class GlideUITests: XCTestCase {
         app.navigationBars.buttons.element(boundBy: 0).tap(); app.buttons["媒体库"].tap()
         XCTAssertTrue(app.buttons["sources.open"].waitForExistence(timeout: 8)); app.buttons["sources.open"].tap()
         let fixture = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "source.", fixtureName)).firstMatch
-        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["完成"].tap()
+        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["同时删除此来源的离线影片"].firstMatch.tap(); app.buttons["完成"].tap()
     }
 
     @MainActor func testPersonPortraitAndRelatedMedia() throws {
@@ -797,7 +861,7 @@ final class GlideUITests: XCTestCase {
         app.buttons["媒体库"].tap()
         XCTAssertTrue(app.buttons["sources.open"].waitForExistence(timeout: 8)); app.buttons["sources.open"].tap()
         let fixture = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "source.", fixtureName)).firstMatch
-        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["完成"].tap()
+        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["同时删除此来源的离线影片"].firstMatch.tap(); app.buttons["完成"].tap()
     }
 
     @MainActor func testMovieAndTelevisionCatalog() throws {
@@ -883,7 +947,7 @@ final class GlideUITests: XCTestCase {
         XCTAssertTrue(app.buttons["sources.open"].waitForExistence(timeout: 8))
         app.buttons["sources.open"].tap()
         let fixture = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "source.", fixtureName)).firstMatch
-        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["完成"].tap()
+        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["同时删除此来源的离线影片"].firstMatch.tap(); app.buttons["完成"].tap()
     }
 
     @MainActor func testEpisodeSwipeAndSelection() throws {
@@ -968,16 +1032,25 @@ final class GlideUITests: XCTestCase {
         open(app.buttons["player.episode.demo2"], until: app.buttons["player.episodes"])
         XCTAssertEqual(app.staticTexts["player.elapsed"].label, elapsed)
         XCTAssertTrue(app.buttons["播放"].exists)
+        let beforeLock = canvas.label
         app.buttons["锁定触控"].press(forDuration: 0.15)
+        XCTAssertTrue(app.buttons["解锁触控"].waitForExistence(timeout: 4), "Lock action must visibly enter the locked state")
         swipeEpisode(forward: true)
+        let lockShot = XCTAttachment(screenshot: app.screenshot()); lockShot.name = "Episode locked"; lockShot.lifetime = .keepAlways; add(lockShot)
+        XCTAssertEqual(canvas.label, beforeLock)
         XCTAssertTrue(canvas.label.contains("Episode Ten"), "Locking disables episode swipes")
         app.buttons["解锁触控"].press(forDuration: 0.15)
         open(app.buttons["返回片库"], until: app.buttons["detail.play"])
+        app.tabBars.buttons["继续与收藏"].tap()
+        let showRows = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "personal.video.", fixtureName))
+        XCTAssertTrue(showRows.firstMatch.waitForExistence(timeout: 8)); XCTAssertEqual(showRows.count, 1, "Episode history is one series entry")
+        XCTAssertTrue(showRows.firstMatch.label.contains("Fixture Show"))
+        app.tabBars.buttons["片库"].tap()
         app.navigationBars.buttons.element(boundBy: 0).press(forDuration: 0.15)
         app.navigationBars.buttons.element(boundBy: 0).press(forDuration: 0.15)
         open(app.buttons["媒体库"], until: app.buttons["sources.open"])
         open(app.buttons["sources.open"], until: app.buttons["sources.add"])
-        connected.swipeLeft(); app.buttons["移除"].tap(); app.buttons["完成"].tap()
+        connected.swipeLeft(); app.buttons["移除"].tap(); app.buttons["同时删除此来源的离线影片"].firstMatch.tap(); app.buttons["完成"].tap()
     }
 
     @MainActor func testScopeSortAndPinnedDirectory() throws {
@@ -988,6 +1061,7 @@ final class GlideUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments += ["-homeBrowseView", "videos"]
         app.launch()
+        if !app.buttons["sources.open"].exists, app.buttons["媒体库"].exists { app.buttons["媒体库"].tap() }
         app.buttons["sources.open"].tap()
         app.buttons["sources.add"].tap()
         let name = app.textFields["名称（可选）"]
@@ -1040,20 +1114,29 @@ final class GlideUITests: XCTestCase {
         XCTAssertTrue(pin.waitForExistence(timeout: 5))
         pin.tap()
         XCTAssertTrue(app.buttons["library.sort"].waitForExistence(timeout: 8))
-        XCTAssertTrue(app.buttons["library.sort"].label.contains("名称降序"))
+        XCTAssertTrue(app.buttons["library.sort"].label.contains("名称升序"), "Opening a saved view restores its own original sort rule")
         app.buttons["library.scope"].tap(); app.buttons["仅当前层"].tap()
         XCTAssertTrue(app.staticTexts["仅当前层 · 共 0 个视频"].waitForExistence(timeout: 8))
         app.terminate(); app.launch()
         XCTAssertTrue(app.staticTexts["仅当前层 · 共 0 个视频"].waitForExistence(timeout: 10))
-        XCTAssertTrue(app.buttons["library.sort"].label.contains("名称降序"))
+        XCTAssertTrue(app.buttons["library.sort"].label.contains("名称升序"), "Opening a saved view restores its own original sort rule")
         app.buttons["pins.open"].tap()
         XCTAssertTrue(pin.waitForExistence(timeout: 5), "Pinned directory survives relaunch")
+        pin.swipeRight()
+        if !app.textFields["bookmark.name"].exists { app.buttons["编辑"].tap() }
+        let savedName = app.textFields["bookmark.name"]
+        XCTAssertTrue(savedName.waitForExistence(timeout: 5)); savedName.tap()
+        savedName.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: (savedName.value as? String ?? "").count) + "家庭常看")
+        app.buttons["bookmark.sort"].tap(); app.buttons["名称降序"].firstMatch.tap()
+        app.buttons["bookmark.mode"].tap(); app.buttons["随机播放"].firstMatch.tap()
+        app.buttons["bookmark.save"].tap()
+        XCTAssertTrue(pin.waitForExistence(timeout: 5)); XCTAssertTrue(pin.label.contains("家庭常看"))
         pin.swipeLeft(); app.buttons["取消固定"].tap()
         app.buttons["完成"].tap()
         XCTAssertTrue(app.buttons["directory.pin"].label.contains("固定此目录"))
         app.buttons["sources.open"].tap()
         let fixture = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "source.", fixtureName)).firstMatch
-        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["完成"].tap()
+        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["同时删除此来源的离线影片"].firstMatch.tap(); app.buttons["完成"].tap()
     }
 
     @MainActor func testScopedSearchAndPersonalLibrary() throws {
@@ -1144,7 +1227,7 @@ final class GlideUITests: XCTestCase {
         app.tabBars.buttons["片库"].tap()
         app.buttons["sources.open"].tap()
         let fixture = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "source.", fixtureName)).firstMatch
-        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["完成"].tap()
+        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["同时删除此来源的离线影片"].firstMatch.tap(); app.buttons["完成"].tap()
     }
 
     @MainActor func testFlattenedLibraryVideos() throws {
@@ -1234,7 +1317,7 @@ final class GlideUITests: XCTestCase {
         XCTAssertFalse(browse.exists, "Library selection itself has no video/directory switch")
         open(app.buttons["sources.open"], until: app.buttons["sources.add"])
         let fixture = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "source.", fixtureName)).firstMatch
-        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["完成"].tap()
+        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["同时删除此来源的离线影片"].firstMatch.tap(); app.buttons["完成"].tap()
     }
 
     @MainActor func testRecursiveDirectoryPlaybackModes() throws {
@@ -1297,7 +1380,7 @@ final class GlideUITests: XCTestCase {
         app.segmentedControls.buttons["顺序播放"].tap()
         app.buttons["sources.open"].tap()
         let fixture = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "source.", fixtureName)).firstMatch
-        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["完成"].tap()
+        fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["同时删除此来源的离线影片"].firstMatch.tap(); app.buttons["完成"].tap()
     }
 
     @MainActor func testStageSettingsAndDiagnostics() throws {
@@ -1330,7 +1413,7 @@ final class GlideUITests: XCTestCase {
             let identifier = query.firstMatch.identifier
             let fixture = app.buttons[identifier]
             guard fixture.exists else { continue }
-            fixture.swipeLeft(); app.buttons["移除"].tap()
+            fixture.swipeLeft(); app.buttons["移除"].tap(); app.buttons["同时删除此来源的离线影片"].firstMatch.tap()
             let removed = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: fixture)
             XCTAssertEqual(XCTWaiter.wait(for: [removed], timeout: 5), .completed)
         }

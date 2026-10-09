@@ -82,5 +82,8 @@ struct DirectoryBookmark: Codable, Identifiable, Equatable {
     var name: String
     var jellyPath: [MediaFolder]
     var davPath: [URL]
+    var options: BrowseOptions? = nil
+    var mode: PlaybackMode? = nil
+    var accountID: String? = nil
     var id: String { sourceID.uuidString + ":" + (jellyPath.last?.id ?? davPath.last?.absoluteString ?? "root") }
 }

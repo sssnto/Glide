@@ -31,12 +31,17 @@ struct LibraryView: View {
     @State private var queueError: String?
     @State private var resultVideos: [Video] = []
     @State private var resultKey: String?
+    @State private var resultOwner: String?
     @State private var failedKey: String?
     @State private var searchError: String?
     @State private var searchedCount = 0
     @State private var filterAttempt = 0
     @State private var pendingPersonalVideo: Video?
     @State private var pendingBookmark: DirectoryBookmark?
+    @State private var visibleID: String?
+    private var positionKey: String { library.scopeKey + ":" + homeBrowseView.rawValue + ":" + term + ":" + String(favoritesOnly) }
+    private func restorePosition() { visibleID = library.browserPositions[positionKey] }
+
     private var term: String { search.trimmingCharacters(in: .whitespacesAndNewlines) }
     private var usesFilters: Bool { !term.isEmpty || favoritesOnly }
     private var showsDirectories: Bool { library.selectedID != nil && (isLibraryRoot || homeBrowseView == .directories) }
@@ -46,10 +51,11 @@ struct LibraryView: View {
         [library.scopeKey, library.contentRevision.uuidString, term, String(library.loading),
          favoritesOnly ? library.favorites.sorted().joined(separator: "|") + ":favorites" : "all", String(filterAttempt)].joined(separator: "\n")
     }
+    private var resultScope: String { library.scopeKey + ":" + term + ":" + (favoritesOnly ? library.favorites.sorted().joined(separator: "|") : "all") }
     private var filtering: Bool { usesFilters && !isLibraryRoot && resultKey != filterKey && failedKey != filterKey }
 
     private var filtered: [Video] {
-        usesFilters ? (resultKey == filterKey ? resultVideos : []) : library.videos
+        usesFilters ? (resultOwner == resultScope ? resultVideos : []) : library.videos
     }
     var body: some View {
         Group {
@@ -72,7 +78,6 @@ struct LibraryView: View {
                     VStack(alignment: .leading, spacing: 22) {
                         if library.selectedID == nil { demoHero }
                         else if !isLibraryRoot { serverHero }
-                        if !usesFilters { continueWatching }
                         pinnedSection
                         if library.selectedID != nil && !isLibraryRoot {
                             Picker("浏览方式", selection: $homeBrowseView) {
@@ -103,24 +108,29 @@ struct LibraryView: View {
                             playbackToolbar
                         }
                         if showsVideos {
-                            if filtering {
+                            if filtering && filtered.isEmpty {
                                 ProgressView("正在搜索当前范围…已读取 \(searchedCount) 个视频")
                                     .font(.caption).frame(maxWidth: .infinity).padding(24).accessibilityIdentifier("search.loading")
-                            } else if usesFilters && failedKey == filterKey {
+                            } else if usesFilters && failedKey == filterKey && filtered.isEmpty {
                                 VStack(alignment: .leading, spacing: 12) {
                                     Text(searchError ?? "搜索失败，请重试。").font(.subheadline)
                                     Button("重试搜索") { filterAttempt += 1 }
                                 }.padding().background(GlideTheme.panel, in: RoundedRectangle(cornerRadius: 16))
-                            } else if library.loading { ProgressView("正在读取媒体库…").frame(maxWidth: .infinity).padding(30) }
+                            } else if library.loading && filtered.isEmpty { ProgressView("正在读取媒体库…").frame(maxWidth: .infinity).padding(30) }
                             else if filtered.isEmpty && library.error == nil {
                                 ContentUnavailableView(favoritesOnly ? "此范围还没有收藏" : search.isEmpty ? "这里还没有视频" : "没有匹配的视频", systemImage: favoritesOnly ? "heart" : "film", description: Text(favoritesOnly ? "播放时点亮爱心，把喜欢的留住。" : "检查媒体库权限，或换一个文件夹。"))
                             } else {
                                 LazyVGrid(columns: [GridItem(.adaptive(minimum: geometry.size.width > 600 ? 210 : 145), spacing: 14, alignment: .top)], spacing: 22) {
                                     ForEach(filtered) { video in
-                                        videoCard(video)
+                                        videoCard(video).id("video:" + video.id)
                                             .task { if !usesFilters && video.id == library.videos.last?.id { await library.more() } }
                                     }
-                                }
+                                }.scrollTargetLayout()
+                            }
+                            if library.loading && !filtered.isEmpty { ProgressView("正在更新…").font(.caption).frame(maxWidth: .infinity) }
+                            if !filtered.isEmpty && usesFilters && failedKey == filterKey {
+                                Text(searchError ?? "更新失败，已保留原结果。").font(.caption).foregroundStyle(.orange)
+                                Button("重试搜索") { filterAttempt += 1 }
                             }
                             if library.hasMore && !usesFilters {
                                 Button("加载更多视频（\(library.nextIndex) / \(library.total)）") { Task { await library.more() } }.frame(maxWidth: .infinity)
@@ -145,17 +155,31 @@ struct LibraryView: View {
                         .frame(maxWidth: 1100)
                         .frame(maxWidth: .infinity)
                 }
-                .refreshable { await library.reload() }
+                .scrollPosition(id: $visibleID, anchor: .top)
+                .onChange(of: visibleID) { _, id in
+                    if let id, filtered.contains(where: { "video:" + $0.id == id }) || library.folders.contains(where: { "folder:" + $0.id == id }) || library.directories.contains(where: { "folder:" + $0.id == id }) {
+                        library.browserPositions[positionKey] = id
+                    }
+                }
+                .refreshable {
+                    let anchor = visibleID
+                    await library.reload()
+                    visibleID = anchor
+                }
+                .onAppear { restorePosition() }
                 .id(homeBrowseView)
                 .onChange(of: homeBrowseView) { _, _ in
-                    cancelPreparation(); queueError = nil
+                    cancelPreparation(); queueError = nil; visibleID = nil
                 }
             }.background(GlideTheme.background)
         }
-        .task { if library.selectedID != nil { await library.reload() } }
+        .task { if library.selectedID != nil && library.videos.isEmpty && library.folders.isEmpty && library.directories.isEmpty && !library.loading { await library.reload() }; restorePosition() }
         .task(id: filterTaskKey) { await searchCurrentScope() }
         .onChange(of: library.scopeKey) { _, _ in cancelPreparation(); queueError = nil }
-        .onChange(of: library.locationKey) { _, _ in search = ""; favoritesOnly = false }
+        .onChange(of: library.locationKey) { _, _ in search = ""; favoritesOnly = false; restorePosition() }
+        .onChange(of: library.browseOptions) { _, _ in visibleID = nil }
+        .onChange(of: search) { _, _ in visibleID = nil }
+        .onChange(of: favoritesOnly) { _, _ in visibleID = nil }
         .onDisappear { cancelPreparation() }
         .overlay { preparationOverlay }
         .alert("无法准备播放队列", isPresented: Binding(get: { queueError != nil }, set: { if !$0 { queueError = nil } })) { Button("知道了") { queueError = nil } } message: { Text(queueError ?? "") }
@@ -178,7 +202,7 @@ struct LibraryView: View {
             }
         }
         .fullScreenCover(item: $selection) { selection in
-            PlayerView(library: library, queue: selection.queue, scopeName: selection.scopeName, loadFullQueue: selection.loadFullQueue)
+            PlayerView(library: library, queue: selection.queue, scopeName: selection.scopeName, cinematic: ["Movie", "Episode"].contains(selection.queue.current?.mediaType ?? ""), loadFullQueue: selection.loadFullQueue)
         }
     }
     private func searchCurrentScope() async {
@@ -194,28 +218,10 @@ struct LibraryView: View {
             guard key == filterKey else { return }
             resultVideos = all.filter { (query.isEmpty || $0.title.localizedCaseInsensitiveContains(query)) && (favoriteIDs == nil || favoriteIDs!.contains($0.id)) }
             library.remember(resultVideos)
-            resultKey = key; failedKey = nil
+            resultKey = key; resultOwner = resultScope; failedKey = nil
         } catch {
             guard !Task.isCancelled, key == filterKey else { return }
             searchError = error.localizedDescription; failedKey = key
-        }
-    }
-    @ViewBuilder private var continueWatching: some View {
-        if library.selectedID == nil || isLibraryRoot, let video = library.recentVideos.first(where: { $0.sourceID == library.selectedID }) {
-            Button {
-                selection = PlaySelection(queue: PlaybackQueue(videos: [video], mode: .sequential), scopeName: "继续观看")
-            } label: {
-                HStack(spacing: 14) {
-                    VideoArtwork(video: video).frame(width: 90, height: 64).clipShape(RoundedRectangle(cornerRadius: 10))
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("继续观看").font(.caption).foregroundStyle(GlideTheme.accent)
-                        Text(video.title).font(.subheadline.weight(.medium)).lineLimit(1)
-                        Text("已观看 " + library.resumePosition(video).mediaTime).font(.caption).foregroundStyle(GlideTheme.muted)
-                    }
-                    Spacer(minLength: 0)
-                    Image(systemName: "play.fill").foregroundStyle(GlideTheme.accent)
-                }.padding(14).background(GlideTheme.panel, in: RoundedRectangle(cornerRadius: 16))
-            }.buttonStyle(.plain).accessibilityIdentifier("library.resume")
         }
     }
     private var isLibraryRoot: Bool { library.selectedServer?.kind == .jellyfin && library.jellyPath.isEmpty }
@@ -249,7 +255,7 @@ struct LibraryView: View {
             selection = PlaySelection(queue: PlaybackQueue(videos: resultVideos, mode: mode, startID: selected?.id), scopeName: name)
             return
         }
-        if !usesFilters, !library.videos.isEmpty, selected == nil || library.videos.contains(where: { $0.id == selected?.id }) {
+        if !usesFilters, mode == .sequential || !library.hasMore, !library.videos.isEmpty, selected == nil || library.videos.contains(where: { $0.id == selected?.id }) {
             let completeScope = scope
             let needsExpansion = library.hasMore
             let loader: (() async throws -> [Video])? = needsExpansion ? {
@@ -349,16 +355,16 @@ struct LibraryView: View {
                         LibraryFolderTile(title: folder.name, server: server, folder: folder, isLibrary: isLibraryRoot) {
                             Task { await library.enter(folder) }
                         }
-                            .accessibilityIdentifier("folder." + folder.id)
+                            .accessibilityIdentifier("folder." + folder.id).id("folder:" + folder.id)
                             .task { if folder.id == orderedFolders.last?.id && library.hasMoreFolders { await library.moreFolders() } }
                     }
                     ForEach(library.folderSort.sorted(library.directories)) { entry in
                         LibraryFolderTile(title: entry.name, server: server, directory: entry) {
                             Task { await library.enter(entry.url) }
                         }
-                            .accessibilityIdentifier("folder." + entry.id)
+                            .accessibilityIdentifier("folder." + entry.id).id("folder:" + entry.id)
                     }
-                }
+                }.scrollTargetLayout()
             }
         }
         if library.hasMoreFolders { Button("加载更多目录") { Task { await library.moreFolders() } }.font(.subheadline) }
@@ -447,22 +453,30 @@ struct LibraryView: View {
         }.foregroundStyle(GlideTheme.muted)
     }
     @ViewBuilder private var pinnedSection: some View {
-        if (isLibraryRoot || library.selectedID == nil) && !library.bookmarks.isEmpty {
+        let eligible = library.bookmarks.filter { $0.sourceID == library.selectedID && LibraryExperience(collectionType: $0.jellyPath.first?.collectionType) == .home }
+        if (isLibraryRoot || library.selectedServer?.kind == .webDAV && library.path.isEmpty) && !eligible.isEmpty {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    Text("固定目录").font(.headline)
+                    Text("常用刷看").font(.headline)
                     Spacer()
                     Button("管理") { sheet = .pins }.font(.caption).frame(minHeight: 44)
                 }
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
-                        ForEach(library.bookmarks) { bookmark in
+                        ForEach(eligible) { bookmark in
+                            HStack(spacing: 8) {
                             Button { Task { await library.openBookmark(bookmark) } } label: {
                                 VStack(alignment: .leading, spacing: 6) {
                                     Label(bookmark.name, systemImage: "pin.fill").font(.subheadline).lineLimit(1)
                                     Text(library.servers.first { $0.id == bookmark.sourceID }?.name ?? "来源已移除").font(.caption).foregroundStyle(GlideTheme.muted).lineLimit(1)
                                 }.padding(14).background(GlideTheme.panel, in: RoundedRectangle(cornerRadius: 14))
                             }.buttonStyle(.plain).accessibilityIdentifier("quickPin." + bookmark.id)
+                            Button { Task {
+                                guard await library.openBookmark(bookmark) else { return }
+                                startPlayback()
+                            } } label: { Image(systemName: "play.fill").frame(width: 44, height: 44) }
+                                .accessibilityLabel("刷看 " + bookmark.name).accessibilityIdentifier("quickPin.play." + bookmark.id)
+                            }
                         }
                     }
                 }
@@ -472,7 +486,7 @@ struct LibraryView: View {
     private func videoCard(_ video: Video) -> some View {
         Button { startPlayback(selected: video, useFilters: true) } label: {
             VStack(alignment: .leading, spacing: 10) {
-                VideoPreviewArtwork(video: video)
+                VideoPreviewArtwork(video: video, server: library.servers.first { $0.id == video.sourceID })
                     .overlay(alignment: .bottomTrailing) { Text(video.duration.mediaTime).font(.system(size: 9, weight: .semibold, design: .monospaced)).padding(6).background(.black.opacity(0.4), in: Capsule()).padding(9) }
                     .overlay(alignment: .topLeading) { if library.favorites.contains(video.id) { Image(systemName: "heart.fill").font(.caption).foregroundStyle(GlideTheme.accent).padding(10) } }
                     .clipShape(RoundedRectangle(cornerRadius: 18))

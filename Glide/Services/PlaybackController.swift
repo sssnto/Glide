@@ -4,6 +4,11 @@ import UIKit
 
 @MainActor @Observable
 final class PlaybackController {
+    @ObservationIgnored private let warmup = PlaybackWarmup()
+    func prepareNext(_ video: Video, library: LibraryStore) async {
+        await warmup.prepare(video, server: library.servers.first { $0.id == video.sourceID })
+    }
+    func cancelWarmup() { warmup.cancel() }
     let player = AVPlayer()
     @ObservationIgnored weak var videoLayer: AVPlayerLayer?
     var tracks = TrackSelection()
@@ -79,6 +84,8 @@ final class PlaybackController {
     private var library: LibraryStore?
     private var authenticated: AuthenticatedAsset?
     private var loadTask: Task<Void, Never>?
+    private var formatTask: Task<Void, Never>?
+    private var colorProbe: AVPlayerItemVideoOutput?
     private let audioSessionOwner = UUID()
     @ObservationIgnored nonisolated(unsafe) private var observer: Any?
     private var itemObservation: NSKeyValueObservation?
@@ -147,6 +154,7 @@ final class PlaybackController {
         diagnostic.attemptSeconds.append(elapsed)
         diagnostic.errorCode = nil; diagnostic.errorDomain = nil; diagnostic.errorChain = nil
         diagnostic.event("first_frame")
+        inspectOutputFormat()
         if learnConversionRoute, resource?.delivery == .videoConversion, supportsTranscoding, let video = current {
             PlaybackRouteMemory().rememberVideoConversion(for: video.id)
             diagnostic.event("route_learned_video_conversion")
@@ -160,6 +168,76 @@ final class PlaybackController {
                 self.playbackNotice = nil
             }
         }
+    }
+    private func inspectOutputFormat() {
+        guard let item = player.currentItem else { return }
+        let token = generation
+        formatTask?.cancel()
+        formatTask = Task { [weak self] in
+            // HLS tracks may only become available after the first decoded frame.
+            for _ in 0..<4 {
+                guard !Task.isCancelled else { return }
+                guard let self, token == generation, item === player.currentItem else { return }
+                if let probe = colorProbe,
+                   let frame = probe.copyPixelBuffer(forItemTime: item.currentTime(), itemTimeForDisplay: nil) {
+                    // Preserve wide color in this diagnostic output. These are
+                    // decoded-frame attachments, not compressed codec evidence.
+                    diagnostic.outputColorTransfer = PlaybackDiagnostic.token(CVBufferCopyAttachment(frame, kCVImageBufferTransferFunctionKey, nil) as? String)
+                    diagnostic.outputColorPrimaries = PlaybackDiagnostic.token(CVBufferCopyAttachment(frame, kCVImageBufferColorPrimariesKey, nil) as? String)
+                    diagnostic.outputColorMatrix = PlaybackDiagnostic.token(CVBufferCopyAttachment(frame, kCVImageBufferYCbCrMatrixKey, nil) as? String)
+                    diagnostic.outputColorEvidence = "decodedFrame"
+                    item.remove(probe); colorProbe = nil
+                    if NativeColorPolicy.unexpectedHDRTransfer(requestedRange: diagnostic.requestedOutputRange, actualTransfer: diagnostic.outputColorTransfer) {
+                        diagnostic.event("unexpected_hdr_output")
+                        recoverOrFail("服务器未返回请求的 SDR 视频。请检查 Jellyfin HDR 色调映射设置。", videoFailed: true)
+                        return
+                    }
+                }
+                if let format = await Self.videoFormat(for: item) {
+                    guard !Task.isCancelled, token == generation, item === player.currentItem else { return }
+                    let subtype = CMFormatDescriptionGetMediaSubType(format)
+                    let bytes = [UInt8((subtype >> 24) & 255), UInt8((subtype >> 16) & 255), UInt8((subtype >> 8) & 255), UInt8(subtype & 255)]
+                    diagnostic.outputVideoCodec = PlaybackDiagnostic.token(String(bytes: bytes, encoding: .ascii))
+                    // HLS track descriptions can expose only codec/matrix. Do
+                    // not discard a pending frame probe or overwrite its color
+                    // attachments with missing track metadata.
+                    if diagnostic.outputColorEvidence != "decodedFrame" {
+                        diagnostic.outputColorTransfer = PlaybackDiagnostic.token(CMFormatDescriptionGetExtension(format, extensionKey: kCMFormatDescriptionExtension_TransferFunction) as? String)
+                        diagnostic.outputColorPrimaries = PlaybackDiagnostic.token(CMFormatDescriptionGetExtension(format, extensionKey: kCMFormatDescriptionExtension_ColorPrimaries) as? String)
+                        diagnostic.outputColorMatrix = PlaybackDiagnostic.token(CMFormatDescriptionGetExtension(format, extensionKey: kCMFormatDescriptionExtension_YCbCrMatrix) as? String)
+                        if diagnostic.outputColorTransfer != nil { diagnostic.outputColorEvidence = "compressedTrack" }
+                    }
+                    if NativeColorPolicy.unsupportedAVCOutput(codec: diagnostic.outputVideoCodec, transfer: diagnostic.outputColorTransfer) {
+                        diagnostic.event("unsupported_avc_hdr_output")
+                        recoverOrFail("服务器返回的视频色彩格式不兼容。请检查 Jellyfin HDR 色调映射设置。", videoFailed: true)
+                        return
+                    }
+                    if diagnostic.outputColorTransfer != nil {
+                        if let probe = colorProbe { item.remove(probe); colorProbe = nil }
+                        return
+                    }
+                }
+                try? await Task.sleep(for: .milliseconds(500))
+            }
+            guard !Task.isCancelled, let self, token == generation else { return }
+            if let probe = colorProbe { item.remove(probe); colorProbe = nil }
+            if diagnostic.outputColorTransfer == nil { diagnostic.event("output_color_unavailable") }
+            if diagnostic.outputVideoCodec == nil { diagnostic.event("output_codec_unavailable") }
+        }
+    }
+    private static func videoFormat(for item: AVPlayerItem) async -> CMFormatDescription? {
+        // AVURLAsset inspection can return no tracks for HLS. Inspect the
+        // tracks actually presented by the player item before file metadata.
+        for track in item.tracks.compactMap(\.assetTrack) {
+            guard !Task.isCancelled else { return nil }
+            if track.mediaType == .video,
+               let formats = try? await track.load(.formatDescriptions), let format = formats.first {
+                return format
+            }
+        }
+        guard !Task.isCancelled,
+              let track = try? await item.asset.loadTracks(withMediaType: .video).first else { return nil }
+        return try? await track.load(.formatDescriptions).first
     }
     private func updatePlaybackState() {
         guard current != nil, player.currentItem != nil, error == nil else { return }
@@ -219,6 +297,7 @@ final class PlaybackController {
     func open(_ video: Video, library: LibraryStore, resumeAt: Double? = nil, autoplay: Bool = true, recovering: Bool = false, recordsProgress: Bool = true) {
         let sameVideo = recovering && current?.id == video.id
         let server = library.servers.first { $0.id == video.sourceID }
+        let prepared = !recovering && !tracks.requiresServerSelection ? warmup.take(video, server: server) : nil
         stop()
         self.recordsProgress = recordsProgress
         if !sameVideo {
@@ -237,6 +316,9 @@ final class PlaybackController {
         diagnostic.firstFrameSeconds = nil; diagnostic.resourceReadySeconds = nil; diagnostic.playerReadySeconds = nil
         diagnostic.outputWidth = nil; diagnostic.outputHeight = nil; diagnostic.observedBitrate = nil; diagnostic.delivery = ""
         diagnostic.outputVideoCodec = nil; diagnostic.outputColorTransfer = nil; diagnostic.playlistMode = nil
+        diagnostic.outputColorPrimaries = nil; diagnostic.outputColorMatrix = nil
+        diagnostic.outputColorEvidence = nil
+        diagnostic.requestedOutputCodec = nil; diagnostic.requestedOutputRange = nil
         attemptStarted = Date(); resourceReadyAt = nil; receivedFrame = false; bufferingStarted = nil; bufferingStartedAfterFrame = false; stallTracker = PlaybackStallTracker(); state("连接中")
         self.library = library; current = video; loading = true; error = nil; syncError = nil
         // Let AVPlayer wait for playable media before advancing its clock. For
@@ -294,7 +376,8 @@ final class PlaybackController {
                 guard !Task.isCancelled, token == generation else { return }
                 let resolvedResume = resume
                 if tracks.audioIndex == nil && tracks.subtitleIndex == nil, let server, server.kind == .jellyfin,
-                   (!PlaybackPreferences.audioLanguage.isEmpty || !PlaybackPreferences.subtitleLanguage.isEmpty) {
+                   (!PlaybackPreferences.audioLanguage.isEmpty || !PlaybackPreferences.subtitleLanguage.isEmpty || PlaybackPreferences.subtitlesOff) {
+                    if PlaybackPreferences.subtitlesOff { tracks.subtitleIndex = -1 }
                     if let detail = try? await MediaClient.shared.catalogDetail(server: server, id: video.remoteID ?? "") {
                         guard !Task.isCancelled, token == generation else { return }
                         let streams = detail.MediaSources?.first(where: { self.tracks.mediaSourceID == nil || $0.Id == self.tracks.mediaSourceID })?.MediaStreams ?? []
@@ -310,6 +393,7 @@ final class PlaybackController {
                 self.state("准备画面")
                 let resource: PlaybackResource
                 if !bypassLocalFile, let local = DownloadStore.shared.localURL(videoID: video.id) { resource = PlaybackResource(url: local, delivery: .local) }
+                else if let prepared, requestedQuality == .automatic { resource = prepared.resource; diagnostic.event("warmup_hit") }
                 else { resource = try await MediaClient.shared.playback(video: video, server: server, quality: requestedQuality, tracks: tracks) }
                 guard !Task.isCancelled, token == generation else {
                     if let server {
@@ -328,6 +412,14 @@ final class PlaybackController {
                 diagnostic.width = resource.videoStream?.Width; diagnostic.height = resource.videoStream?.Height; diagnostic.level = resource.videoStream?.Level
                 diagnostic.videoRangeType = PlaybackDiagnostic.token(resource.videoStream?.VideoRangeType)
                 diagnostic.dolbyVisionProfile = resource.videoStream?.DvProfile
+                diagnostic.sourceColorTransfer = PlaybackDiagnostic.token(resource.videoStream?.ColorTransfer)
+                diagnostic.sourceColorPrimaries = PlaybackDiagnostic.token(resource.videoStream?.ColorPrimaries)
+                diagnostic.sourceColorSpace = PlaybackDiagnostic.token(resource.videoStream?.ColorSpace)
+                let requestedOutput = NativeColorPolicy.outputOptions(resource.url)
+                diagnostic.requestedOutputCodec = requestedOutput.codec; diagnostic.requestedOutputRange = requestedOutput.range
+                if requestedOutput.range == "SDR", NativeColorPolicy.isHDR(range: resource.videoStream?.VideoRangeType, transfer: resource.videoStream?.ColorTransfer) {
+                    diagnostic.event("hdr_sdr_output_requested")
+                }
                 if resource.isTranscoding {
                     diagnostic.playlistMode = resource.usesMediaPlaylist ? "media" : "master"
                     if resource.usesMediaPlaylist { diagnostic.event("hls_single_variant") }
@@ -335,9 +427,18 @@ final class PlaybackController {
                 diagnostic.event("resource_ready_" + resource.delivery.rawValue)
                 diagnostic.resourceReadySeconds = Date().timeIntervalSince(attemptStarted)
                 let asset: AVURLAsset
-                if resource.headers.isEmpty { asset = AVURLAsset(url: resource.url, options: [AVURLAssetAllowsCellularAccessKey: PlaybackPreferences.cellularPlayback]) }
+                if let prepared, requestedQuality == .automatic, resource.url == prepared.resource.url { asset = prepared.asset; self.authenticated = prepared.loader }
+                else if resource.headers.isEmpty { asset = AVURLAsset(url: resource.url, options: [AVURLAssetAllowsCellularAccessKey: PlaybackPreferences.cellularPlayback]) }
                 else { let loader = AuthenticatedAsset(url: resource.url, headers: resource.headers, allowsCellular: PlaybackPreferences.cellularPlayback); self.authenticated = loader; asset = loader.asset }
                 let item = AVPlayerItem(asset: asset)
+                if resource.prefersFirstHDRVariant {
+                    item.startsOnFirstEligibleVariant = true
+                    diagnostic.event("hls_hdr_initial_variant")
+                }
+                if resource.isTranscoding, NativeColorPolicy.isHDR(range: resource.videoStream?.VideoRangeType, transfer: resource.videoStream?.ColorTransfer) {
+                    let probe = AVPlayerItemVideoOutput(outputSettings: [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange, AVVideoAllowWideColorKey: true])
+                    colorProbe = probe; item.add(probe)
+                }
                 if let rule = AVTextStyleRule(textMarkupAttributes: [kCMTextMarkupAttribute_RelativeFontSize as String: PlaybackPreferences.subtitleScale]) { item.textStyleRules = [rule] }
                 item.preferredForwardBufferDuration = NativePlaybackPolicy.forwardBufferDuration(local: resource.url.isFileURL, firstFrame: false, rate: rate)
                 if requestedQuality == .hd1080 { item.preferredPeakBitRate = 8_000_000 }
@@ -379,16 +480,6 @@ final class PlaybackController {
                     else if let option = subtitleOptions.first(where: { !PlaybackPreferences.subtitleLanguage.isEmpty && LanguagePreference.normalized($0.extendedLanguageTag) == LanguagePreference.normalized(PlaybackPreferences.subtitleLanguage) && (!PlaybackPreferences.forcedOnly || $0.hasMediaCharacteristic(.containsOnlyForcedSubtitles)) }) { selectSubtitle(option) }
                 } else if tracks.subtitleIndex == -1 {
                     selectSubtitle(nil)
-                }
-                // Technical output inspection must not delay applying track
-                // preferences, or let an older load mutate a newer session.
-                if let track = try? await asset.loadTracks(withMediaType: .video).first,
-                   let descriptions = try? await track.load(.formatDescriptions), let format = descriptions.first {
-                    guard !Task.isCancelled, token == generation, item === player.currentItem else { return }
-                    let subtype = CMFormatDescriptionGetMediaSubType(format)
-                    let bytes = [UInt8((subtype >> 24) & 255), UInt8((subtype >> 16) & 255), UInt8((subtype >> 8) & 255), UInt8(subtype & 255)]
-                    diagnostic.outputVideoCodec = PlaybackDiagnostic.token(String(bytes: bytes, encoding: .ascii))
-                    diagnostic.outputColorTransfer = PlaybackDiagnostic.token(CMFormatDescriptionGetExtension(format, extensionKey: kCMFormatDescriptionExtension_TransferFunction) as? String)
                 }
             } catch {
                 guard !Task.isCancelled, token == generation else { return }
@@ -523,8 +614,11 @@ final class PlaybackController {
         }
     }
     func stop() {
+        warmup.cancel()
         Self.lastDiagnostic = diagnostic
         watchdog?.cancel(); watchdog = nil
+        formatTask?.cancel(); formatTask = nil
+        if let colorProbe { player.currentItem?.remove(colorProbe) }; colorProbe = nil
         bufferingTask?.cancel(); bufferingTask = nil
         pendingSeekTarget = nil; pendingStartPosition = nil; seekID = UUID()
         save()

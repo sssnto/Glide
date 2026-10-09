@@ -21,6 +21,7 @@ struct PlaybackResource {
     var videoStream: CatalogItem.Stream?
     var supportsDirectStream: Bool?
     var usesMediaPlaylist = false
+    var prefersFirstHDRVariant = false
     var sessionReportMethod: String { delivery == .direct || delivery == .local ? "DirectPlay" : delivery == .remux || delivery == .audioConversion ? "DirectStream" : "Transcode" }
 }
 
@@ -129,7 +130,7 @@ final class MediaClient {
     func basic(server: MediaServer, password: String? = nil) -> String {
         "Basic " + Data("\(server.username):\(password ?? Credentials.read(server.id) ?? "")".utf8).base64EncodedString()
     }
-    func playback(video: Video, server: MediaServer?, quality: PlaybackQuality = .automatic, tracks: TrackSelection = TrackSelection()) async throws -> PlaybackResource {
+    func playback(video: Video, server: MediaServer?, quality: PlaybackQuality = .automatic, tracks: TrackSelection = TrackSelection(), directOnly: Bool = false) async throws -> PlaybackResource {
         guard let server else {
             guard let url = video.url else { throw MediaError.message("找不到播放地址。") }
             return PlaybackResource(url: url, delivery: url.isFileURL ? .local : .direct)
@@ -157,9 +158,15 @@ final class MediaClient {
             let url = ServerURL.endpoint(server.address, "Videos/\(item)/stream", query: ["static": "true", "MediaSourceId": source.Id, "api_key": token])
             return PlaybackResource(url: url, sessionID: info.PlaySessionId, mediaSourceID: source.Id, videoStream: stream, supportsDirectStream: source.SupportsDirectStream)
         }
+        // Warmup may negotiate capabilities, but must never request an HLS URL
+        // or create a competing server conversion for a video not yet selected.
+        if directOnly { throw MediaError.message("此视频不适合预备原画播放。") }
         guard let path = source.TranscodingUrl, let url = URL(string: path, relativeTo: server.address.appendingPathComponent(""))?.absoluteURL, ServerURL.sameOrigin(server.address, url) else { throw MediaError.message("此格式需要 Jellyfin 转码；请在服务器上启用转码权限。") }
         if quality == .compatible, source.SupportsDirectStream != true { throw MediaError.message("服务器没有提供兼容的视频流。") }
-        let streamURL = JellyfinPlaybackPolicy.transcodeURL(url, quality: quality)
+        let sourceIsHDR = NativeColorPolicy.isHDR(range: stream?.VideoRangeType, transfer: stream?.ColorTransfer)
+        let nativeURL = quality == .automatic || quality == .compatible
+            ? NativeColorPolicy.preferHEVCForHDR(url, sourceCodec: stream?.Codec, sourceIsHDR: sourceIsHDR) : url
+        let streamURL = NativeColorPolicy.constrainAVC(JellyfinPlaybackPolicy.transcodeURL(nativeURL, quality: quality), sourceIsHDR: sourceIsHDR)
         if quality == .compatible && PlaybackDelivery.negotiated(url: streamURL, quality: quality) != .remux && PlaybackDelivery.negotiated(url: streamURL, quality: quality) != .audioConversion {
             throw MediaError.message("服务器没有提供可直接播放的视频流。")
         }
@@ -169,7 +176,11 @@ final class MediaClient {
             do {
                 let master = try await request(streamURL, headers: ["Authorization": authorization(token)])
                 try Task.checkCancellation()
-                if let media = NativeHLSPlaylist.mediaURL(master: streamURL, data: master) {
+                if quality == .automatic || quality == .compatible {
+                    resource.prefersFirstHDRVariant = Self.hardwareVideoCodecs.split(separator: ",").contains("hevc")
+                        && NativeHLSPlaylist.prefersFirstHDRVariant(master: streamURL, data: master, sourceCodec: stream?.Codec, sourceIsHDR: sourceIsHDR)
+                }
+                if let media = NativeHLSPlaylist.mediaURL(master: streamURL, data: master, sourceIsHDR: sourceIsHDR) {
                     resource.url = media; resource.usesMediaPlaylist = true
                 }
             } catch {

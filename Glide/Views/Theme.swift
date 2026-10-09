@@ -47,6 +47,8 @@ struct LandscapeArt: View {
 struct VideoArtwork: View {
     var video: Video
     var contentMode: ContentMode = .fill
+    var server: MediaServer? = nil
+    @State private var cachedImage: UIImage?
     var body: some View {
         ZStack {
             if let index = video.demoIndex { LandscapeArt(index: index) }
@@ -55,43 +57,48 @@ struct VideoArtwork: View {
                 Image(systemName: "film.stack").font(.system(size: 40, weight: .ultraLight)).foregroundStyle(GlideTheme.muted)
                 if let url = video.artwork {
                     GeometryReader { geometry in
-                        AsyncImage(url: url) { phase in
-                            if let image = phase.image {
-                                image.resizable().aspectRatio(contentMode: contentMode)
-                                    .frame(width: geometry.size.width, height: geometry.size.height)
+                        if server != nil {
+                            if let cachedImage { Image(uiImage: cachedImage).resizable().aspectRatio(contentMode: contentMode).frame(width: geometry.size.width, height: geometry.size.height) }
+                        } else {
+                            AsyncImage(url: url) { phase in
+                                if let image = phase.image { image.resizable().aspectRatio(contentMode: contentMode).frame(width: geometry.size.width, height: geometry.size.height) }
                             }
                         }
                     }.allowsHitTesting(false)
                 }
             }
-        }.clipped()
+        }.clipped().task(id: video.id + (video.artwork?.absoluteString ?? "") + (server?.userID ?? "")) {
+            guard let server, let url = video.artwork else { return }
+            let image = try? await ArtworkCache.shared.image(server: server, url: url, pixels: 640)
+            if !Task.isCancelled { cachedImage = image }
+        }
     }
 }
 
 /// Family clips keep their own image proportions, including portrait recordings.
 struct VideoPreviewArtwork: View {
     var video: Video
+    var server: MediaServer? = nil
+    @State private var image: UIImage?
     var body: some View {
         Group {
-            if let index = video.demoIndex {
-                LandscapeArt(index: index).aspectRatio(16.0 / 9.0, contentMode: .fit)
-            } else {
+            if let index = video.demoIndex { LandscapeArt(index: index).aspectRatio(16.0 / 9.0, contentMode: .fit) }
+            else if let image { Image(uiImage: image).resizable().scaledToFit().frame(maxWidth: .infinity) }
+            else if server == nil {
                 AsyncImage(url: video.artwork) { phase in
-                    if let image = phase.image {
-                        image.resizable().scaledToFit()
-                            .frame(maxWidth: .infinity)
-                    } else {
-                        GlideTheme.panel
-                            .overlay {
-                                Image(systemName: "film.stack")
-                                    .font(.system(size: 40, weight: .ultraLight))
-                                    .foregroundStyle(GlideTheme.muted)
-                            }
-                            .aspectRatio(16.0 / 9.0, contentMode: .fit)
-                    }
+                    if let loaded = phase.image { loaded.resizable().scaledToFit().frame(maxWidth: .infinity) }
+                    else { placeholder }
                 }
-            }
+            } else { placeholder }
+        }.task(id: video.id + (server?.userID ?? "")) {
+            guard let server, let url = video.artwork else { return }
+            let loaded = try? await ArtworkCache.shared.image(server: server, url: url, pixels: 640)
+            if !Task.isCancelled { image = loaded }
         }
+    }
+    private var placeholder: some View {
+        GlideTheme.panel.overlay { Image(systemName: "film.stack").font(.system(size: 40, weight: .ultraLight)).foregroundStyle(GlideTheme.muted) }
+            .aspectRatio(16.0 / 9.0, contentMode: .fit)
     }
 }
 

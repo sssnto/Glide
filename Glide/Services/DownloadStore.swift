@@ -13,6 +13,7 @@ struct OfflineDownload: Codable, Identifiable {
     var progress: Double = 0
     var message: String?
     var expectedBytes: Int64?
+    var artworkData: Data? = nil
 }
 
 @MainActor @Observable
@@ -22,6 +23,7 @@ final class DownloadStore: NSObject, URLSessionDownloadDelegate {
     static let maintenanceID = "com.songpeng.glide.download-maintenance"
     private(set) var entries: [OfflineDownload] = []
     @ObservationIgnored private var session: URLSession!
+    @ObservationIgnored private var scheduling = false
     @ObservationIgnored private var validations: [String: Task<Void, Never>] = [:]
     @ObservationIgnored var backgroundCompletion: (() -> Void)?
     private nonisolated static var directory: URL { FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("OfflineMedia", isDirectory: true) }
@@ -42,13 +44,13 @@ final class DownloadStore: NSObject, URLSessionDownloadDelegate {
     }
     func enqueue(item: CatalogItem, server: MediaServer, sourceID: String?) async throws {
         let video = item.video(server: server)
-        guard !entries.contains(where: { $0.id == video.id && ["下载中", "已暂停", "校验中", "已完成"].contains($0.state) }) else { return }
+        guard !entries.contains(where: { $0.id == video.id && ["等待下载", "下载中", "已暂停", "校验中", "已完成"].contains($0.state) }) else { return }
         guard let source = item.MediaSources?.first, sourceID == nil || sourceID == source.Id else { throw MediaError.message("离线下载暂支持默认媒体版本。") }
         let ext = source.Container?.lowercased() ?? ""
         guard ["mp4", "mov", "m4v"].contains(ext) else { throw MediaError.message("离线播放暂支持 MP4 / MOV / M4V 原文件。此版本请在线使用 Jellyfin 转码。") }
         guard let token = Credentials.read(server.id), let remoteID = video.remoteID else { throw MediaError.message("请重新登录。") }
         let available = (try? FileManager.default.attributesOfFileSystem(forPath: Self.directory.path)[.systemFreeSize] as? NSNumber)?.int64Value ?? Int64.max
-        let allocated = entries.reduce(Int64(0)) { $0 + ($1.expectedBytes ?? 0) }
+        let allocated = entries.filter { $0.id != video.id }.reduce(Int64(0)) { $0 + ($1.expectedBytes ?? 0) }
         guard allocated + (source.Size ?? 0) <= PlaybackPreferences.downloadLimit else { throw MediaError.message("超过离线容量预算，请清理下载或在设置中调整。") }
         guard available > (source.Size ?? 0) + 200 * 1024 * 1024 else { throw MediaError.message("设备剩余空间不足，请先清理存储。") }
         var request = URLRequest(url: ServerURL.endpoint(server.address, "Items/\(remoteID)/Download"))
@@ -61,9 +63,17 @@ final class DownloadStore: NSObject, URLSessionDownloadDelegate {
             Self.files.remove(previous.filename)
         }
         entries.removeAll { $0.id == video.id }
-        entries.append(OfflineDownload(video: PersonalVideo(video: video).video, serverID: server.id, filename: filename, expectedBytes: source.Size))
+        entries.append(OfflineDownload(video: PersonalVideo(video: video).video, serverID: server.id, filename: filename, state: "等待下载", expectedBytes: source.Size))
         persist()
-        let task = session.downloadTask(with: request); task.taskDescription = filename; task.resume()
+        let task = session.downloadTask(with: request); task.taskDescription = filename
+        await advanceQueue()
+        Task {
+            if let url = video.artwork, let image = try? await ArtworkCache.shared.image(server: server, url: url, pixels: 320),
+               let data = image.jpegData(compressionQuality: 0.8), data.count < 1_000_000,
+               let index = self.entries.firstIndex(where: { $0.filename == filename }) {
+                self.entries[index].artworkData = data; self.persist()
+            }
+        }
         scheduleMaintenance()
     }
     func localURL(videoID: String) -> URL? {
@@ -74,9 +84,9 @@ final class DownloadStore: NSObject, URLSessionDownloadDelegate {
     func pause(_ id: String) async {
         guard let entry = entries.first(where: { $0.id == id }) else { return }
         let tasks = await session.allTasks
-        guard let index = entries.firstIndex(where: { $0.filename == entry.filename && $0.state == "下载中" }) else { return }
+        guard let index = entries.firstIndex(where: { $0.filename == entry.filename && ["等待下载", "下载中"].contains($0.state) }) else { return }
         for task in tasks where task.taskDescription == entry.filename { task.suspend() }
-        entries[index].state = "已暂停"; persist()
+        entries[index].state = "已暂停"; persist(); await advanceQueue()
     }
     func resume(_ id: String, library: LibraryStore) async {
         guard let entry = entries.first(where: { $0.id == id }) else { return }
@@ -88,7 +98,7 @@ final class DownloadStore: NSObject, URLSessionDownloadDelegate {
             beginValidation(entry.filename); return
         }
         if let task = tasks.first(where: { $0.taskDescription == entry.filename && ($0.state == .suspended || $0.state == .running) }) {
-            entries[index].state = "下载中"; entries[index].message = nil; task.resume(); persist(); return
+            entries[index].state = "等待下载"; entries[index].message = nil; task.suspend(); entries.append(entries.remove(at: index)); persist(); await advanceQueue(); return
         }
         guard let server = library.servers.first(where: { $0.id == entry.serverID }), let remoteID = entry.video.remoteID, let token = Credentials.read(server.id) else {
             entries[index].state = "下载失败"; entries[index].message = "请先重新登录此媒体来源。"; persist(); return
@@ -101,17 +111,39 @@ final class DownloadStore: NSObject, URLSessionDownloadDelegate {
         let filename = UUID().uuidString + "." + (entry.filename as NSString).pathExtension
         Self.files.remove(entry.filename)
         entries[index].filename = filename
-        entries[index].state = "下载中"; entries[index].progress = 0; entries[index].message = "正在重新下载。"
-        let task = session.downloadTask(with: request); task.taskDescription = filename; task.resume(); persist()
+        entries[index].state = "等待下载"; entries[index].progress = 0; entries[index].message = "正在重新下载。"
+        entries.append(entries.remove(at: index))
+        let task = session.downloadTask(with: request); task.taskDescription = filename; persist(); await advanceQueue()
     }
     func remove(_ id: String) {
         guard let entry = entries.first(where: { $0.id == id }) else { return }
         entries.removeAll { $0.id == id }; persist()
         validations[entry.filename]?.cancel()
         Self.files.remove(entry.filename)
-        session.getAllTasks { tasks in tasks.filter { $0.taskDescription == entry.filename }.forEach { $0.cancel() } }
+        session.getAllTasks { tasks in
+            tasks.filter { $0.taskDescription == entry.filename }.forEach { $0.cancel() }
+            Task { @MainActor in await self.advanceQueue() }
+        }
     }
-    func removeServer(_ id: UUID) { entries.filter { $0.serverID == id }.map(\.id).forEach(remove) }
+    func removeServer(_ id: UUID, includingCompleted: Bool = false) {
+        entries.filter { $0.serverID == id && (includingCompleted || $0.state != "已完成") }.map(\.id).forEach(remove)
+    }
+    var allocatedBytes: Int64 { entries.reduce(0) { $0 + ($1.expectedBytes ?? 0) } }
+    private func advanceQueue() async {
+        guard !scheduling else { return }; scheduling = true
+        defer { scheduling = false }
+        let tasks = await session.allTasks
+        let active = Set(entries.filter { $0.state == "下载中" }.map(\.filename))
+        var queued = entries.filter { $0.state == "等待下载" }.map(\.filename)
+        while let next = OfflineQueuePolicy.next(queued: queued, active: active),
+              let index = entries.firstIndex(where: { $0.filename == next && $0.state == "等待下载" }) {
+            guard let task = tasks.first(where: { $0.taskDescription == next && $0.state == .suspended }) else {
+                entries[index].state = "已中断"; entries[index].message = "下载任务已失效，请重新登录来源后重试。"; persist()
+                queued.removeFirst(); continue
+            }
+            entries[index].state = "下载中"; task.resume(); persist(); return
+        }
+    }
     private func persist() { if let data = try? JSONEncoder().encode(entries) { try? data.write(to: Self.manifest, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication]) } }
     func reconcile() async {
         let knownFiles = Set(entries.map(\.filename))
@@ -126,12 +158,12 @@ final class DownloadStore: NSObject, URLSessionDownloadDelegate {
                 // Recover a transfer whose process ended during validation or publication.
                 beginValidation(filename); continue
             }
-            if ["下载中", "已暂停", "校验中"].contains(entries[index].state) && !active.contains(entries[index].filename) {
+            if ["等待下载", "下载中", "已暂停", "校验中"].contains(entries[index].state) && !active.contains(entries[index].filename) {
                 entries[index].state = "已中断"; entries[index].message = "下载任务已结束，可在此处重试下载。"
             }
             if entries[index].state == "已完成" && localURL(videoID: entries[index].id) == nil { entries[index].state = "文件已移除" }
         }
-        persist()
+        persist(); await advanceQueue()
     }
     private func scheduleMaintenance() {
         let request = BGProcessingTaskRequest(identifier: Self.maintenanceID)
@@ -157,13 +189,14 @@ final class DownloadStore: NSObject, URLSessionDownloadDelegate {
             Task { @MainActor in
                 guard self.entries.contains(where: { $0.filename == filename }) else { Self.files.remove(filename); return }
                 self.beginValidation(filename)
+                await self.advanceQueue()
             }
         } catch {
             let message = error.localizedDescription
             Task { @MainActor in
                 guard self.validations[filename] == nil,
                       let index = self.entries.firstIndex(where: { $0.filename == filename && !["校验中", "已完成"].contains($0.state) }) else { return }
-                self.entries[index].state = "下载失败"; self.entries[index].message = message; self.persist()
+                self.entries[index].state = "下载失败"; self.entries[index].message = message; self.persist(); await self.advanceQueue()
             }
         }
     }
@@ -205,14 +238,14 @@ final class DownloadStore: NSObject, URLSessionDownloadDelegate {
                 // A valid transfer can be retried locally if only publication failed.
                 if !verified { files.remove(filename) }
             }
-            self.persist()
+            self.persist(); await self.advanceQueue()
         }
     }
     nonisolated func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         guard let error else { return }; let id = task.taskDescription
         Task { @MainActor in
             guard let index = self.entries.firstIndex(where: { $0.filename == id && $0.state == "下载中" }) else { return }
-            self.entries[index].state = "下载失败"; self.entries[index].message = error.localizedDescription; self.persist()
+            self.entries[index].state = "下载失败"; self.entries[index].message = error.localizedDescription; self.persist(); await self.advanceQueue()
         }
     }
     nonisolated func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {

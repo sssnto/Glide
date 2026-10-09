@@ -5,8 +5,10 @@ struct SourcesView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var adding = false
     @State private var editing: MediaServer?
+    @State private var removing: MediaServer?
     var body: some View {
         NavigationStack {
+            ScrollViewReader { proxy in
             List {
                 Section {
                     Button { library.showDemo(); dismiss() } label: {
@@ -29,11 +31,11 @@ struct SourcesView: View {
                                 if library.selectedID == server.id { Image(systemName: "checkmark.circle.fill").foregroundStyle(GlideTheme.accent) }
                             }.padding(.vertical, 6)
                         }
-                        .accessibilityIdentifier("source." + server.id.uuidString)
-                        .swipeActions { Button("移除", role: .destructive) { library.remove(server) }; Button("重新登录") { editing = server }.tint(.blue) }
+                        .accessibilityIdentifier("source." + server.id.uuidString).id(server.id)
+                        .swipeActions { Button("移除", role: .destructive) { removing = server }; Button("重新登录") { editing = server }.tint(.blue) }
                         .contextMenu { Button("编辑与重新登录") { editing = server } }
                     }
-                    Button { adding = true } label: { Label("添加媒体源", systemImage: "plus.circle.fill") }.accessibilityIdentifier("sources.add")
+
                 }
                 Section { NavigationLink("设置") { SettingsView(library: library) } }
                 Section {
@@ -42,9 +44,23 @@ struct SourcesView: View {
                 }.font(.footnote).foregroundStyle(.secondary)
             }.scrollContentBackground(.hidden).background(GlideTheme.background)
                 .navigationTitle("媒体来源")
-                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { dismiss() } } }
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) { Button { adding = true } label: { Label("添加媒体源", systemImage: "plus") }.accessibilityIdentifier("sources.add") }
+                    ToolbarItem(placement: .confirmationAction) { Button("完成") { dismiss() } }
+                }
+                .confirmationDialog("移除媒体来源", isPresented: Binding(get: { removing != nil }, set: { if !$0 { removing = nil } }), titleVisibility: .visible) {
+                    if let server = removing {
+                        Button("移除来源，保留已下载影片", role: .destructive) { library.remove(server); removing = nil }
+                        Button("同时删除此来源的离线影片", role: .destructive) { library.remove(server, includingDownloads: true); removing = nil }
+                    }
+                    Button("取消", role: .cancel) { removing = nil }
+                } message: { Text("未完成的下载会停止；本机收藏与历史会移除。服务器文件不受影响。") }
                 .sheet(isPresented: $adding) { AddSourceView(library: library) }
                 .sheet(item: $editing) { ReconnectSourceView(library: library, server: $0) }
+                .onAppear { if let id = library.selectedID { proxy.scrollTo(id, anchor: .center) } }
+                .onChange(of: library.selectedID) { _, id in if let id { proxy.scrollTo(id, anchor: .center) } }
+                .onChange(of: adding) { _, open in if !open, let id = library.selectedID { proxy.scrollTo(id, anchor: .center) } }
+            }
         }.tint(GlideTheme.accent)
     }
 }

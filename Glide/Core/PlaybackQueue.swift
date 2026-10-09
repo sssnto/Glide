@@ -1,6 +1,6 @@
 import Foundation
 
-enum PlaybackMode: String, CaseIterable, Identifiable {
+enum PlaybackMode: String, Codable, CaseIterable, Identifiable {
     case sequential, random
     var id: String { rawValue }
     var title: String { self == .sequential ? "顺序播放" : "随机播放" }

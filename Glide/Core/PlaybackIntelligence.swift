@@ -45,7 +45,60 @@ enum NativePlaybackPolicy {
 /// the media playlist decodes. Only unwrap one self-contained AVC rendition;
 /// HDR/HEVC, adaptive masters and external tracks/session keys stay intact.
 enum NativeHLSPlaylist {
-    static func mediaURL(master: URL, data: Data) -> URL? {
+    /// Prefer the first native HDR rendition only when the server actually
+    /// declares one first. Keep the entire master and native eligibility checks.
+    static func prefersFirstHDRVariant(master: URL, data: Data, sourceCodec: String?, sourceIsHDR: Bool) -> Bool {
+        guard sourceIsHDR, sourceCodec?.lowercased() == "hevc",
+              data.count <= 262_144, let text = String(data: data, encoding: .utf8) else { return false }
+        let lines = text.split(whereSeparator: \.isNewline).map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        guard lines.first == "#EXTM3U",
+              !lines.contains(where: { $0.hasPrefix("#EXT-X-DEFINE:") || $0.hasPrefix("#EXT-X-CONTENT-STEERING:") }) else { return false }
+        var attributes: [String: String]?
+        for line in lines.dropFirst() {
+            if line.hasPrefix("#EXT-X-STREAM-INF:") {
+                guard attributes == nil, let parsed = streamAttributes(String(line.dropFirst("#EXT-X-STREAM-INF:".count))) else { return false }
+                attributes = parsed
+            } else if !line.isEmpty && !line.hasPrefix("#") {
+                guard let attributes,
+                      let bandwidth = attributes["BANDWIDTH"].flatMap(Int.init), bandwidth > 0,
+                      ["PQ", "HLG"].contains(attributes["VIDEO-RANGE"] ?? ""),
+                      let codecs = attributes["CODECS"]?.split(separator: ",").map({ $0.trimmingCharacters(in: .whitespaces) }),
+                      codecs.contains(where: { $0.hasPrefix("hvc1.") || $0.hasPrefix("hev1.") }),
+                      !codecs.contains(where: { $0.hasPrefix("avc1.") || $0.hasPrefix("avc3.") || $0.hasPrefix("av01.") || $0.hasPrefix("dvh1.") || $0.hasPrefix("dvhe.") }),
+                      let url = URL(string: line, relativeTo: master)?.absoluteURL,
+                      ServerURL.sameOrigin(master, url), url.pathExtension.lowercased() == "m3u8",
+                      url != master, url.user == nil, url.password == nil else { return false }
+                return true
+            }
+        }
+        return false
+    }
+    private static func streamAttributes(_ text: String) -> [String: String]? {
+        var fields: [String] = [], field = "", quoted = false
+        for character in text {
+            if character == "\"" { quoted.toggle() }
+            if character == ",", !quoted { fields.append(field); field = "" }
+            else { field.append(character) }
+        }
+        guard !quoted else { return nil }
+        fields.append(field)
+        var result: [String: String] = [:]
+        for field in fields {
+            let pair = field.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
+            guard pair.count == 2 else { return nil }
+            let key = pair[0].trimmingCharacters(in: .whitespaces)
+            var value = pair[1].trimmingCharacters(in: .whitespaces)
+            guard !key.isEmpty, !value.isEmpty, result[key] == nil else { return nil }
+            if value.first == "\"", value.last == "\"" { value.removeFirst(); value.removeLast() }
+            guard !value.contains("\"") else { return nil }
+            result[key] = value
+        }
+        return result
+    }
+    static func mediaURL(master: URL, data: Data, sourceIsHDR: Bool = false) -> URL? {
+        // An SDR declaration cannot prove that an HDR source was tone-mapped.
+        // Keep the master, so native validation cannot be bypassed by this repair.
+        guard !sourceIsHDR else { return nil }
         guard data.count <= 262_144, let text = String(data: data, encoding: .utf8) else { return nil }
         let lines = text.split(whereSeparator: \.isNewline).map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
         guard lines.first == "#EXTM3U" else { return nil }
@@ -80,6 +133,55 @@ enum NativeHLSPlaylist {
             parts.queryItems = (parts.queryItems ?? []) + [token]
         }
         return parts.url
+    }
+}
+
+enum NativeColorPolicy {
+    static func isHDR(range: String?, transfer: String? = nil) -> Bool {
+        // Explicit PQ/HLG transfer metadata takes precedence over an SDR label.
+        if hdrTransfer(transfer) { return true }
+        let range = (range ?? "").uppercased()
+        if range == "SDR" || range == "DOVIWITHSDR" { return false }
+        return range.contains("HDR") || range.contains("HLG") || range.contains("DOVI")
+    }
+    private static func hdrTransfer(_ transfer: String?) -> Bool {
+        let value = (transfer ?? "").uppercased()
+        return value.contains("2084") || value.contains("HLG") || value.contains("B67") || value == "PQ"
+    }
+    static func unsupportedAVCOutput(codec: String?, transfer: String?) -> Bool {
+        ["avc1", "avc3", "h264"].contains((codec ?? "").lowercased()) && hdrTransfer(transfer)
+    }
+    static func unexpectedHDRTransfer(requestedRange: String?, actualTransfer: String?) -> Bool {
+        requestedRange?.uppercased() == "SDR" && hdrTransfer(actualTransfer)
+    }
+    static func outputOptions(_ url: URL) -> (codec: String?, range: String?) {
+        let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
+        let codec = items.last { $0.name.lowercased() == "videocodec" }?.value
+        // A codec-qualified option says nothing about other HLS candidates.
+        let rangeKey = ["h264", "hevc"].contains(codec?.lowercased() ?? "") ? codec!.lowercased() + "-rangetype" : nil
+        let range = rangeKey.flatMap { key in items.last { $0.name.lowercased() == key }?.value }
+        return (codec.flatMap(PlaybackDiagnostic.token), range.flatMap(PlaybackDiagnostic.token))
+    }
+    static func preferHEVCForHDR(_ url: URL, sourceCodec: String?, sourceIsHDR: Bool) -> URL {
+        guard sourceIsHDR, sourceCodec?.lowercased() == "hevc",
+              var parts = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let value = parts.queryItems?.last(where: { $0.name.lowercased() == "videocodec" })?.value else { return url }
+        let candidates = value.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces).lowercased() }
+        // The negotiated candidate list already reflects device capabilities.
+        // Request HEVC for HDR. A server may still add an AVC fallback to its
+        // master; inspect the actual master before influencing initial selection.
+        guard candidates.count > 1, candidates.contains("hevc") else { return url }
+        parts.queryItems = (parts.queryItems ?? []).filter { $0.name.lowercased() != "videocodec" } + [URLQueryItem(name: "VideoCodec", value: "hevc")]
+        return parts.url ?? url
+    }
+    static func constrainAVC(_ url: URL, sourceIsHDR: Bool) -> URL {
+        guard sourceIsHDR, outputOptions(url).codec?.lowercased() == "h264",
+              var parts = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return url }
+        let overrides = ["h264-rangetype": "SDR", "AllowVideoStreamCopy": "false"]
+        let keys = Set(overrides.keys.map { $0.lowercased() })
+        parts.queryItems = (parts.queryItems ?? []).filter { !keys.contains($0.name.lowercased()) }
+            + overrides.sorted { $0.key < $1.key }.map { URLQueryItem(name: $0.key, value: $0.value) }
+        return parts.url ?? url
     }
 }
 
@@ -153,7 +255,7 @@ struct ProgressSnapshot: Codable, Equatable {
 
 /// Export only structured technical fields. Never serialize Error.localizedDescription, URL, title or stream DisplayTitle.
 struct PlaybackDiagnostic: Codable {
-    var schema = 3
+    var schema = 4
     var version = ""
     var system = ""
     var device = ""
@@ -172,6 +274,14 @@ struct PlaybackDiagnostic: Codable {
     var dolbyVisionProfile: Int?
     var outputVideoCodec: String?
     var outputColorTransfer: String?
+    var sourceColorTransfer: String?
+    var sourceColorPrimaries: String?
+    var sourceColorSpace: String?
+    var outputColorPrimaries: String?
+    var outputColorMatrix: String?
+    var outputColorEvidence: String?
+    var requestedOutputCodec: String?
+    var requestedOutputRange: String?
     var playlistMode: String?
     var firstFrameSeconds: Double?
     var totalFirstFrameSeconds: Double?

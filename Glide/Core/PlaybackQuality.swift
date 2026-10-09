@@ -80,14 +80,21 @@ enum JellyfinPlaybackPolicy {
         let bitrate = quality == .hd1080 ? 8_000_000 : quality == .hd720 ? 3_000_000 : 200_000_000
         var profile: [String: Any] = ["Name": "Glide iOS", "MaxStreamingBitrate": bitrate,
             "DirectPlayProfiles": [["Container": "mp4,m4v,mov", "Type": "Video", "VideoCodec": directVideoCodecs, "AudioCodec": "aac,mp3,alac"]],
-            "TranscodingProfiles": [["Container": quality == .compatible ? "mp4" : "ts", "Type": "Video", "Protocol": "hls", "VideoCodec": quality == .compatible ? directVideoCodecs : "h264", "AudioCodec": "aac", "Context": "Streaming", "MaxAudioChannels": "2", "MinSegments": 2, "BreakOnNonKeyFrames": false]]]
+            "TranscodingProfiles": [["Container": quality == .compatible || quality == .automatic ? "mp4" : "ts", "Type": "Video", "Protocol": "hls", "VideoCodec": quality == .compatible || quality == .automatic ? directVideoCodecs : "h264", "AudioCodec": "aac", "Context": "Streaming", "MaxAudioChannels": "2", "MinSegments": 2, "BreakOnNonKeyFrames": false]]]
+        // Native HEVC can retain HDR in fMP4. AVC conversion must target SDR,
+        // rather than advertising H.264 High 10 / PQ as a usable iOS output.
+        var avcConditions: [[String: Any]] = [
+            ["Condition": "EqualsAny", "Property": "VideoRangeType", "Value": "SDR", "IsRequired": false],
+            ["Condition": "LessThanEqual", "Property": "VideoBitDepth", "Value": "8", "IsRequired": false],
+            ["Condition": "EqualsAny", "Property": "VideoProfile", "Value": "baseline|constrained baseline|main|high", "IsRequired": false]]
         if quality == .hd1080 || quality == .hd720 {
             let width = quality == .hd720 ? "1280" : "1920"
             let height = quality == .hd720 ? "720" : "1080"
-            profile["CodecProfiles"] = [["Type": "Video", "Codec": "h264", "Conditions": [
+            avcConditions += [
                 ["Condition": "LessThanEqual", "Property": "Width", "Value": width, "IsRequired": true],
-                ["Condition": "LessThanEqual", "Property": "Height", "Value": height, "IsRequired": true]]]]
+                ["Condition": "LessThanEqual", "Property": "Height", "Value": height, "IsRequired": true]]
         }
+        profile["CodecProfiles"] = [["Type": "Video", "Codec": "h264", "Conditions": avcConditions]]
         return ["UserId": userID, "DeviceProfile": profile, "MaxStreamingBitrate": bitrate, "StartTimeTicks": 0,
                 "EnableDirectPlay": quality == .automatic || quality == .original, "EnableDirectStream": quality == .automatic || quality == .compatible,
                 "EnableTranscoding": quality != .original && quality != .compatible, "AllowVideoStreamCopy": quality != .hd1080 && quality != .hd720,
@@ -97,8 +104,8 @@ enum JellyfinPlaybackPolicy {
         guard quality == .hd1080 || quality == .hd720 else { return url }
         var parts = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         let limits = quality == .hd720
-            ? ["MaxWidth": "1280", "MaxHeight": "720", "VideoBitrate": "2808000", "AudioBitrate": "192000", "AllowVideoStreamCopy": "false", "AllowAudioStreamCopy": "false"]
-            : ["MaxWidth": "1920", "MaxHeight": "1080", "VideoBitrate": "7808000", "AudioBitrate": "192000", "AllowVideoStreamCopy": "false", "AllowAudioStreamCopy": "false"]
+            ? ["MaxWidth": "1280", "MaxHeight": "720", "VideoBitrate": "2808000", "AudioBitrate": "192000", "AllowVideoStreamCopy": "false", "AllowAudioStreamCopy": "false", "VideoCodec": "h264", "h264-rangetype": "SDR"]
+            : ["MaxWidth": "1920", "MaxHeight": "1080", "VideoBitrate": "7808000", "AudioBitrate": "192000", "AllowVideoStreamCopy": "false", "AllowAudioStreamCopy": "false", "VideoCodec": "h264", "h264-rangetype": "SDR"]
         let keys = Set(limits.keys.map { $0.lowercased() })
         parts.queryItems = (parts.queryItems ?? []).filter { !keys.contains($0.name.lowercased()) }
             + limits.sorted { $0.key < $1.key }.map { URLQueryItem(name: $0.key, value: $0.value) }

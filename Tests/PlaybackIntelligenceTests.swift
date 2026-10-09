@@ -70,7 +70,7 @@ import Testing
     for i in 0..<40 { value.event("event_\(i)") }
     #expect(value.events.count == 30)
     #expect(!value.export.contains("api_key"))
-    #expect(value.schema == 3)
+    #expect(value.schema == 4)
 }
 
 @Test func nativeHLSUnwrapsOnlyOneSelfContainedRendition() throws {
@@ -111,6 +111,108 @@ import Testing
         #expect(NativeHLSPlaylist.mediaURL(master: master, data: Data(text.utf8)) == nil)
     }
     #expect(NativeHLSPlaylist.mediaURL(master: master, data: Data(repeating: 32, count: 262_145)) == nil)
+}
+
+@Test func hdrSourceNeverBypassesHLSMasterValidation() {
+    let master = URL(string: "https://nas.test/master.m3u8?api_key=secret")!
+    let data = Data("#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=8000000,VIDEO-RANGE=SDR,CODECS=\"avc1.424029,mp4a.40.2\"\nmain.m3u8\n".utf8)
+    #expect(NativeHLSPlaylist.mediaURL(master: master, data: data, sourceIsHDR: true) == nil)
+    #expect(NativeHLSPlaylist.mediaURL(master: master, data: data, sourceIsHDR: false) != nil)
+    #expect(NativeColorPolicy.isHDR(range: "HDR10"))
+    #expect(NativeColorPolicy.isHDR(range: "DOVIWithHDR10"))
+    #expect(NativeColorPolicy.isHDR(range: nil, transfer: "smpte2084"))
+    #expect(!NativeColorPolicy.isHDR(range: "SDR", transfer: "bt709"))
+    #expect(!NativeColorPolicy.isHDR(range: "DOVIWithSDR"))
+}
+
+@Test func nativeHDRInitialSelectionRequiresFirstDeclaredHEVCHDRVariant() {
+    let master = URL(string: "https://nas.test/master.m3u8?api_key=secret")!
+    let hdr = "#EXT-X-STREAM-INF:BANDWIDTH=22000000,CODECS=\"hvc1.2.4.L150.B0,mp4a.40.2\",VIDEO-RANGE=PQ,AUDIO=\"audio\"\nmain.m3u8\n"
+    let sdr = "#EXT-X-STREAM-INF:BANDWIDTH=22000000,CODECS=\"avc1.42E029,mp4a.40.2\",VIDEO-RANGE=SDR\nsdr.m3u8\n"
+    let header = "#EXTM3U\n#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID=\"audio\",URI=\"audio.m3u8\"\n"
+    func prefers(_ text: String, codec: String = "hevc", isHDR: Bool = true) -> Bool {
+        NativeHLSPlaylist.prefersFirstHDRVariant(master: master, data: Data(text.utf8), sourceCodec: codec, sourceIsHDR: isHDR)
+    }
+    #expect(prefers(header + hdr + sdr))
+    #expect(prefers(header + hdr.replacingOccurrences(of: "VIDEO-RANGE=PQ", with: "VIDEO-RANGE=HLG") + sdr))
+    #expect(!prefers(header + sdr + hdr), "Never request the first variant when SDR is first")
+    #expect(!prefers(header + hdr, codec: "h264"))
+    #expect(!prefers(header + hdr, isHDR: false))
+    #expect(!prefers(header + hdr.replacingOccurrences(of: "VIDEO-RANGE=PQ", with: "VIDEO-RANGE=SDR")))
+    #expect(NativeHLSPlaylist.mediaURL(master: master, data: Data((header + hdr + sdr).utf8), sourceIsHDR: true) == nil,
+            "Audio renditions and the complete HDR master remain intact")
+}
+
+@Test func nativeHDRInitialSelectionRejectsAmbiguousAndInvalidMasters() {
+    let master = URL(string: "https://nas.test/master.m3u8?api_key=secret")!
+    let stream = "#EXT-X-STREAM-INF:BANDWIDTH=22000000,CODECS=\"hvc1.2.4.L150.B0,mp4a.40.2\",VIDEO-RANGE=PQ\nmain.m3u8\n"
+    func prefers(_ text: String) -> Bool {
+        NativeHLSPlaylist.prefersFirstHDRVariant(master: master, data: Data(text.utf8), sourceCodec: "hevc", sourceIsHDR: true)
+    }
+    for uri in ["https://other.test/main.m3u8", "http://nas.test/main.m3u8", "https://user:password@nas.test/main.m3u8", "main.mp4", "master.m3u8?api_key=secret"] {
+        #expect(!prefers("#EXTM3U\n" + stream.replacingOccurrences(of: "main.m3u8", with: uri)))
+    }
+    for change in [stream.replacingOccurrences(of: "hvc1.", with: "not-hvc1."),
+                   stream.replacingOccurrences(of: "BANDWIDTH=22000000", with: "BANDWIDTH=0"),
+                   stream.replacingOccurrences(of: "VIDEO-RANGE=PQ", with: "VIDEO-RANGE=PQ,VIDEO-RANGE=SDR"),
+                   stream.replacingOccurrences(of: "mp4a.40.2\"", with: "mp4a.40.2"),
+                   stream.replacingOccurrences(of: "main.m3u8", with: "#EXT-X-STREAM-INF:BANDWIDTH=1000\nmain.m3u8")] {
+        #expect(!prefers("#EXTM3U\n" + change))
+    }
+    for tag in ["#EXT-X-DEFINE:NAME=\"codec\",VALUE=\"hevc\"", "#EXT-X-CONTENT-STEERING:SERVER-URI=\"steering.json\""] {
+        #expect(!prefers("#EXTM3U\n" + tag + "\n" + stream))
+    }
+    #expect(!prefers("#EXTM3U\n#EXTINF:4\nsegment.ts"))
+    #expect(!NativeHLSPlaylist.prefersFirstHDRVariant(master: master, data: Data(repeating: 32, count: 262_145), sourceCodec: "hevc", sourceIsHDR: true))
+}
+
+@Test func hdrAVCConversionHasOneSDRConstraintWithoutChangingCopyOrHEVC() throws {
+    let original = URL(string: "https://nas.test/master.m3u8?VideoCodec=h264&H264-RangeType=HDR10&AllowVideoStreamCopy=true&api_key=secret&PlaySessionId=abc")!
+    let fixed = NativeColorPolicy.constrainAVC(original, sourceIsHDR: true)
+    let pairs = try #require(URLComponents(url: fixed, resolvingAgainstBaseURL: false)?.queryItems)
+    #expect(pairs.filter { $0.name.lowercased() == "h264-rangetype" }.count == 1)
+    #expect(NativeColorPolicy.outputOptions(fixed).range == "SDR")
+    #expect(pairs.first { $0.name == "AllowVideoStreamCopy" }?.value == "false")
+    #expect(pairs.first { $0.name == "api_key" }?.value == "secret")
+    #expect(pairs.first { $0.name == "PlaySessionId" }?.value == "abc")
+    #expect(NativeColorPolicy.constrainAVC(original, sourceIsHDR: false) == original)
+    for codec in ["hevc", "copy", "h264,hevc"] {
+        let copy = URL(string: "https://nas.test/master.m3u8?VideoCodec=" + codec)!
+        #expect(NativeColorPolicy.constrainAVC(copy, sourceIsHDR: true) == copy)
+    }
+}
+
+@Test func outputColorValidationDoesNotGuessFromTenBitOrBT2020Alone() {
+    #expect(NativeColorPolicy.unsupportedAVCOutput(codec: "avc1", transfer: "SMPTE_ST_2084_PQ"))
+    #expect(NativeColorPolicy.unsupportedAVCOutput(codec: "avc3", transfer: "ITU_R_2100_HLG"))
+    #expect(!NativeColorPolicy.unsupportedAVCOutput(codec: "hvc1", transfer: "SMPTE_ST_2084_PQ"))
+    #expect(!NativeColorPolicy.unsupportedAVCOutput(codec: "avc1", transfer: "ITU_R_709_2"))
+    #expect(!NativeColorPolicy.unsupportedAVCOutput(codec: "avc1", transfer: nil))
+    #expect(!NativeColorPolicy.isHDR(range: nil, transfer: "bt2020"))
+    #expect(NativeColorPolicy.isHDR(range: "SDR", transfer: "smpte2084"))
+    #expect(NativeColorPolicy.isHDR(range: "DOVIWithSDR", transfer: "arib-std-b67"))
+    #expect(NativeColorPolicy.unexpectedHDRTransfer(requestedRange: "SDR", actualTransfer: "SMPTE_ST_2084_PQ"))
+    #expect(!NativeColorPolicy.unexpectedHDRTransfer(requestedRange: nil, actualTransfer: "SMPTE_ST_2084_PQ"))
+    #expect(!NativeColorPolicy.unexpectedHDRTransfer(requestedRange: "SDR", actualTransfer: "ITU_R_709_2"))
+}
+
+@Test func nativeHDRPrefersNegotiatedHEVCAndKeepsCodecQualifiedRangesSeparate() throws {
+    let original = URL(string: "https://nas.test/master.m3u8?videoCodec=h264,hevc&h264-rangetype=SDR&api_key=secret&PlaySessionId=abc")!
+    let selected = NativeColorPolicy.preferHEVCForHDR(original, sourceCodec: "HEVC", sourceIsHDR: true)
+    let items = try #require(URLComponents(url: selected, resolvingAgainstBaseURL: false)?.queryItems)
+    #expect(items.filter { $0.name.lowercased() == "videocodec" }.count == 1)
+    #expect(NativeColorPolicy.outputOptions(selected).codec == "hevc")
+    #expect(NativeColorPolicy.outputOptions(selected).range == nil, "AVC SDR does not describe HEVC HDR")
+    #expect(NativeColorPolicy.outputOptions(original).range == nil, "Multiple candidates have no single requested dynamic range")
+    #expect(items.first { $0.name == "api_key" }?.value == "secret")
+    #expect(items.first { $0.name == "PlaySessionId" }?.value == "abc")
+    #expect(NativeColorPolicy.preferHEVCForHDR(original, sourceCodec: "hevc", sourceIsHDR: false) == original)
+    #expect(NativeColorPolicy.preferHEVCForHDR(original, sourceCodec: "h264", sourceIsHDR: true) == original)
+    let avcOnly = URL(string: "https://nas.test/master.m3u8?VideoCodec=h264&h264-rangetype=SDR")!
+    #expect(NativeColorPolicy.preferHEVCForHDR(avcOnly, sourceCodec: "hevc", sourceIsHDR: true) == avcOnly)
+    #expect(NativeColorPolicy.outputOptions(avcOnly).range == "SDR")
+    let hevcRange = URL(string: "https://nas.test/master.m3u8?VideoCodec=hevc&hevc-rangetype=HDR10&h264-rangetype=SDR")!
+    #expect(NativeColorPolicy.outputOptions(hevcRange).range == "HDR10")
 }
 
 @Test func nativeDecoderDiagnosticsRetainCodesWithoutSensitiveErrorText() throws {

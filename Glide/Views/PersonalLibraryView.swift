@@ -6,7 +6,12 @@ struct PersonalLibraryView: View {
     var presentedAsSheet = true
     @Environment(\.dismiss) private var dismiss
     @State private var favorites = false
-    private var videos: [Video] { favorites ? library.favoriteVideos : library.recentVideos }
+    private var entries: [ContinueWatchingItem] {
+        if favorites {
+            return library.favoriteVideos.map { ContinueWatchingItem(id: $0.id, video: $0, historyIDs: [$0.id], lastPlayedAt: .distantPast) }
+        }
+        return library.continueWatching
+    }
     var body: some View {
         NavigationStack {
             List {
@@ -16,56 +21,60 @@ struct PersonalLibraryView: View {
                         Text("我的收藏").tag(true)
                     }.pickerStyle(.segmented).accessibilityIdentifier("personal.mode")
                 }.listRowBackground(Color.clear)
-                if videos.isEmpty {
-                    ContentUnavailableView(favorites ? "还没有收藏" : "还没有未看完的视频", systemImage: favorites ? "heart" : "play.circle", description: Text(favorites ? "播放时点亮爱心，或长按封面收藏。旧版收藏会在浏览对应目录时补全。" : "观看进度会保存在此设备，回来时接着看。"))
+                if entries.isEmpty {
+                    ContentUnavailableView(favorites ? "还没有收藏" : "还没有观看记录", systemImage: favorites ? "heart" : "play.circle", description: Text(favorites ? "播放时点亮爱心，或长按封面收藏。" : "电影和节目会在这里继续观看；家庭刷看不保存历史。"))
                         .listRowBackground(Color.clear)
                 }
-                ForEach(videos) { video in
-                    Button { onPlay(video); if presentedAsSheet { dismiss() } } label: {
+                ForEach(entries) { entry in
+                    Button { onPlay(entry.video); if presentedAsSheet { dismiss() } } label: {
                         HStack(spacing: 14) {
-                            VideoArtwork(video: video).frame(width: 76, height: 90).clipShape(RoundedRectangle(cornerRadius: 12))
+                            VideoArtwork(video: cover(entry), server: library.servers.first { $0.id == entry.video.sourceID }).frame(width: 76, height: 102).clipShape(RoundedRectangle(cornerRadius: 12))
                             VStack(alignment: .leading, spacing: 7) {
-                                Text(video.title).font(.headline).lineLimit(2)
-                                Text(sourceName(video)).font(.caption).foregroundStyle(GlideTheme.muted)
+                                Text(favorites ? entry.video.title : entry.title).font(.headline).lineLimit(2)
+                                Text(sourceName(entry.video)).font(.caption).foregroundStyle(GlideTheme.muted)
                                 if !favorites {
-                                    Text("已观看 " + library.resumePosition(video).mediaTime).font(.caption).foregroundStyle(GlideTheme.muted)
-                                    if video.duration > 0 { ProgressView(value: min(library.resumePosition(video), video.duration), total: video.duration).tint(GlideTheme.accent) }
+                                    if !entry.episodeLabel.isEmpty { Text(entry.episodeLabel).font(.caption).foregroundStyle(GlideTheme.accent) }
+                                    Text(entry.finished ? "已看完 · 从头观看" : library.resumePosition(entry.video) > 1 ? "已观看 " + library.resumePosition(entry.video).mediaTime : "下一集")
+                                        .font(.caption).foregroundStyle(GlideTheme.muted)
+                                    if !entry.finished, entry.video.duration > 0 { ProgressView(value: min(library.resumePosition(entry.video), entry.video.duration), total: entry.video.duration).tint(GlideTheme.accent) }
                                 }
                             }
                             Spacer(minLength: 0)
                             Image(systemName: "play.fill").foregroundStyle(GlideTheme.accent)
                         }.padding(.vertical, 5)
-                    }.buttonStyle(.plain).accessibilityIdentifier("personal.video." + (video.remoteID ?? video.id))
+                    }.buttonStyle(.plain).accessibilityIdentifier("personal.video." + (entry.video.remoteID ?? entry.video.id))
                         .listRowBackground(GlideTheme.panel)
                         .contextMenu {
-                            Button(favorites ? "取消收藏" : "删除播放记录", role: .destructive) { remove(video) }
-                        }
-                        .swipeActions {
-                            Button(favorites ? "取消收藏" : "移除记录", role: .destructive) {
-                                remove(video)
+                            if let series = entry.video.seriesID, let server = library.servers.first(where: { $0.id == entry.video.sourceID }) {
+                                NavigationLink("查看节目与全部集数") { CatalogDetailView(library: library, server: server, initial: CatalogItem(Id: series, Name: entry.title, Type: "Series")) }
                             }
+                            Button(favorites ? "取消收藏" : "删除播放记录", role: .destructive) { remove(entry) }
                         }
-                }
-                .onDelete { indices in
-                    let selected = indices.map { videos[$0] }
-                    selected.forEach(remove)
-                }
+                        .swipeActions { Button(favorites ? "取消收藏" : "移除记录", role: .destructive) { remove(entry) } }
+                }.onDelete { indices in indices.map { entries[$0] }.forEach(remove) }
                 Section {
-                    Text("可通过编辑、左滑或长按删除本机记录；不会删除服务器上的影片。播放进度会尝试与 Jellyfin 同步；删除本机历史不会重置服务器进度。")
+                    Text("剧集按节目整理。移除历史只影响本机，不重置服务器进度或删除文件；收藏独立保留。")
                         .font(.footnote).foregroundStyle(GlideTheme.muted)
                 }.listRowBackground(Color.clear)
             }.scrollContentBackground(.hidden).background(GlideTheme.background)
                 .navigationTitle("继续与收藏")
+                .task { await library.refreshContinueWatching() }
+                .refreshable { await library.refreshContinueWatching(refresh: true) }
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) { EditButton().disabled(videos.isEmpty) }
+                    ToolbarItem(placement: .topBarLeading) { EditButton().disabled(entries.isEmpty) }
                     if presentedAsSheet { ToolbarItem(placement: .confirmationAction) { Button("完成") { dismiss() } } }
                 }
         }.tint(GlideTheme.accent)
     }
-    private func remove(_ video: Video) {
-        if favorites { library.toggleFavorite(video) } else { library.removeHistory(video) }
+    private func remove(_ entry: ContinueWatchingItem) {
+        if favorites { library.toggleFavorite(entry.video) } else { library.removeContinueWatching(entry) }
     }
-    private func sourceName(_ video: Video) -> String {
-        library.servers.first { $0.id == video.sourceID }?.name ?? "离线演示"
+    private func cover(_ entry: ContinueWatchingItem) -> Video {
+        var video = entry.video
+        if !favorites, let series = video.seriesID, let server = library.servers.first(where: { $0.id == video.sourceID }) {
+            video.artwork = ServerURL.endpoint(server.address, "Items/\(series)/Images/Primary", query: ["maxWidth": "320"])
+        }
+        return video
     }
+    private func sourceName(_ video: Video) -> String { library.servers.first { $0.id == video.sourceID }?.name ?? "离线演示" }
 }

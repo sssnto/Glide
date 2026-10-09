@@ -60,6 +60,7 @@ struct CatalogItem: Codable, Identifiable, Equatable {
     struct Stream: Codable, Identifiable, Equatable {
         var Index: Int; var `Type`: String; var DisplayTitle: String?; var Language: String?; var Codec: String?; var IsDefault: Bool?; var IsForced: Bool?; var Width: Int?; var Height: Int?; var BitDepth: Int?; var Profile: String?; var Level: Double?; var CodecTag: String?
         var VideoRangeType: String?; var DvProfile: Int?
+        var ColorTransfer: String?; var ColorPrimaries: String?; var ColorSpace: String?
         var id: Int { Index }
         var label: String { DisplayTitle ?? [Language, Codec].compactMap { $0 }.joined(separator: " · ").nonempty ?? "轨道 \(Index)" }
     }
@@ -78,7 +79,7 @@ struct CatalogItem: Codable, Identifiable, Equatable {
               duration: Double(RunTimeTicks ?? 0) / 10_000_000,
               resume: Double(UserData?.PlaybackPositionTicks ?? 0) / 10_000_000,
               mediaType: Type, seriesID: SeriesId, seriesTitle: SeriesName,
-              seasonNumber: ParentIndexNumber, episodeNumber: IndexNumber)
+              seasonNumber: ParentIndexNumber, episodeNumber: IndexNumber, isWatched: UserData?.Played)
     }
     static func episodeOrder(_ items: [CatalogItem]) -> [CatalogItem] {
         items.sorted {

@@ -36,6 +36,7 @@ struct Video: Identifiable, Equatable, Codable {
     var seriesTitle: String? = nil
     var seasonNumber: Int? = nil
     var episodeNumber: Int? = nil
+    var isWatched: Bool? = nil
 }
 
 struct DAVEntry: Identifiable, Equatable {

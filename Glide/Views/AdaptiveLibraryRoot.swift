@@ -25,7 +25,7 @@ struct AdaptiveLibraryRoot: View {
                 default: LibraryView(library: library)
                 }
             }.fullScreenCover(item: $personalPlayback) { video in
-                PlayerView(library: library, queue: PlaybackQueue(videos: [video], mode: .sequential), scopeName: "个人片库")
+                PlayerView(library: library, queue: PlaybackQueue(videos: [video], mode: .sequential), scopeName: "个人片库", cinematic: ["Movie", "Episode"].contains(video.mediaType ?? ""))
             }
         } else {
             TabView(selection: $phoneTab) {
@@ -44,7 +44,7 @@ struct AdaptiveLibraryRoot: View {
             }
             .tint(GlideTheme.accent)
             .fullScreenCover(item: $personalPlayback) { video in
-                PlayerView(library: library, queue: PlaybackQueue(videos: [video], mode: .sequential), scopeName: "个人片库")
+                PlayerView(library: library, queue: PlaybackQueue(videos: [video], mode: .sequential), scopeName: "个人片库", cinematic: ["Movie", "Episode"].contains(video.mediaType ?? ""))
             }
         }
     }
