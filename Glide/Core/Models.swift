@@ -49,6 +49,22 @@ struct DAVEntry: Identifiable, Equatable {
     var displayDate: Date? { createdAt ?? modifiedAt }
 }
 
+enum MediaFilePath {
+    /// Display a file location, never the credentials or query of a remote URL.
+    static func display(_ value: String?) -> String? {
+        guard let value else { return nil }
+        let text = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return nil }
+        guard text.contains("://") || text.lowercased().hasPrefix("file:") else { return text }
+        guard var parts = URLComponents(string: text), parts.scheme != nil else { return nil }
+        parts.user = nil; parts.password = nil; parts.query = nil; parts.fragment = nil
+        guard let url = parts.url else { return nil }
+        if url.isFileURL { return url.path }
+        guard url.host != nil else { return nil }
+        return url.absoluteString.removingPercentEncoding ?? url.absoluteString
+    }
+}
+
 enum MediaTimestamp {
     static func parse(_ text: String?) -> Date? {
         guard let text, !text.isEmpty else { return nil }

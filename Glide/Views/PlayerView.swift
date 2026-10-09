@@ -29,6 +29,7 @@ struct PlayerView: View {
     @State private var pendingSettingsAction: SettingsAction?
     @State private var diagnosticOpen = false
     @State private var videoInfoOpen = false
+    @State private var pathCopied = false
     @State private var episodesOpen = false
     @State private var videoDetail: CatalogItem?
     @State private var importingSubtitle = false
@@ -49,7 +50,16 @@ struct PlayerView: View {
         current.id + ":" + (nextVideo?.id ?? "") + ":\(playback.frameReady):\(playback.loading):\(playback.isPlaying):\(playback.rate):\(scenePhase == .active)"
     }
     private var selectedMediaSource: CatalogItem.Source? {
-        videoDetail?.MediaSources?.first(where: { $0.Id == playback.resource?.mediaSourceID }) ?? videoDetail?.MediaSources?.first
+        if let id = playback.resource?.mediaSourceID ?? playback.tracks.mediaSourceID { return videoDetail?.MediaSources?.first { $0.Id == id } }
+        return videoDetail?.MediaSources?.first
+    }
+    private var filePath: String? {
+        if let url = playback.resource?.url, url.isFileURL { return MediaFilePath.display(url.absoluteString) }
+        if let path = MediaFilePath.display(playback.resource?.sourcePath) { return path }
+        if let path = MediaFilePath.display(selectedMediaSource?.Path) { return path }
+        // WebDAV has a file URL; a Jellyfin /stream URL is not the source path.
+        if current.remoteID == nil { return MediaFilePath.display((playback.resource?.url ?? current.url)?.absoluteString) }
+        return nil
     }
     var body: some View {
         GeometryReader { geometry in
@@ -168,10 +178,13 @@ struct PlayerView: View {
                               onRetry: { queueReload += 1 }, onSelect: selectEpisode)
         }
         .task(id: videoInfoOpen ? current.id : "") {
+            pathCopied = false
             guard videoInfoOpen, let server = library.servers.first(where: { $0.id == current.sourceID }),
                   server.kind == .jellyfin, let id = current.remoteID else { videoDetail = nil; return }
             videoDetail = nil
-            videoDetail = try? await MediaClient.shared.catalogDetail(server: server, id: id)
+            let detail = try? await MediaClient.shared.catalogDetail(server: server, id: id)
+            guard !Task.isCancelled, current.remoteID == id else { return }
+            videoDetail = detail
         }
         .onChange(of: settingsOpen) { _, open in if open { hideTask?.cancel() } else { scheduleHide() } }
         .onChange(of: episodesOpen) { _, open in if open { hideTask?.cancel() } else { scheduleHide() } }
@@ -282,12 +295,39 @@ struct PlayerView: View {
                     if let bitrate = playback.diagnostic.observedBitrate {
                         LabeledContent("当前码率", value: String(format: "%.1f Mb/s", Double(bitrate) / 1_000_000))
                     }
+                    if playback.resource?.url.isFileURL == false, let ahead = playback.diagnostic.bufferedAheadSeconds {
+                        LabeledContent("已缓冲", value: String(format: "%.1f 秒", ahead))
+                            .accessibilityIdentifier("player.info.bufferedAhead")
+                    }
                 }
-                if let source = selectedMediaSource {
-                    Section("文件") {
+                Section("文件") {
+                    if let path = filePath {
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Text(playback.resource?.url.isFileURL == true ? "本机文件路径" : "文件路径")
+                                Spacer()
+                                Button(pathCopied ? "已复制" : "复制路径", systemImage: pathCopied ? "checkmark" : "doc.on.doc") {
+                                    UIPasteboard.general.string = path; pathCopied = true
+                                }
+                                    .font(.footnote)
+                                    .accessibilityIdentifier("player.info.copyPath")
+                            }
+                            Text(path)
+                                .font(.system(.footnote, design: .monospaced))
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .textSelection(.enabled)
+                                .accessibilityIdentifier("player.info.path")
+                        }
+                    } else {
+                        LabeledContent("文件路径", value: "服务器未提供")
+                    }
+                    if let source = selectedMediaSource {
                         if let container = source.Container { LabeledContent("封装", value: container.uppercased()) }
                         if let size = source.Size { LabeledContent("大小", value: ByteCountFormatter.string(fromByteCount: size, countStyle: .file)) }
                     }
+                }
+                if let source = selectedMediaSource {
                     let streams = source.MediaStreams ?? []
                     if !streams.filter({ $0.Type == "Audio" }).isEmpty {
                         Section("声音") { ForEach(streams.filter { $0.Type == "Audio" }) { stream in Text(stream.label) } }
@@ -297,11 +337,12 @@ struct PlayerView: View {
                     }
                 }
             }
+            .accessibilityIdentifier("player.info.list")
             .navigationTitle("视频信息")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { videoInfoOpen = false } } }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.large])
         .preferredColorScheme(.dark)
     }
     private func bottomControls(compact: Bool) -> some View {
@@ -521,7 +562,10 @@ private final class BufferedSeekControl: UIView {
     }
     @objc private func startTracking() { onStart?() }
     @objc private func valueChanged() {
-        onChange?(Double(slider.value))
+        let value = Double(slider.value)
+        onChange?(value)
+        // Accessibility/keyboard adjustments need not generate touch-up events.
+        if !slider.isTracking { onEnd?(value) }
         updateAccessibility(); setNeedsDisplay()
     }
     @objc private func endTracking() {

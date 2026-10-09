@@ -22,6 +22,7 @@ struct PlaybackResource {
     var supportsDirectStream: Bool?
     var usesMediaPlaylist = false
     var prefersFirstHDRVariant = false
+    var sourcePath: String?
     var sessionReportMethod: String { delivery == .direct || delivery == .local ? "DirectPlay" : delivery == .remux || delivery == .audioConversion ? "DirectStream" : "Transcode" }
 }
 
@@ -147,7 +148,7 @@ final class MediaClient {
             profile["SubtitleProfiles"] = ["srt", "ass", "ssa", "subrip", "pgssub", "dvdsub", "vtt"].map { ["Format": $0, "Method": "Encode"] }
             body["DeviceProfile"] = profile
         }
-        struct Source: Decodable { var Id: String; var SupportsDirectPlay: Bool?; var SupportsDirectStream: Bool?; var Container: String?; var TranscodingUrl: String?; var MediaStreams: [CatalogItem.Stream]? }
+        struct Source: Decodable { var Id: String; var SupportsDirectPlay: Bool?; var SupportsDirectStream: Bool?; var Container: String?; var TranscodingUrl: String?; var MediaStreams: [CatalogItem.Stream]?; var Path: String? }
         struct Info: Decodable { var MediaSources: [Source]?; var PlaySessionId: String?; var ErrorCode: String? }
         let data = try await request(ServerURL.endpoint(server.address, "Items/\(item)/PlaybackInfo"), method: "POST", headers: ["Authorization": authorization(token), "Content-Type": "application/json"], body: JSONSerialization.data(withJSONObject: body))
         let info = try JSONDecoder().decode(Info.self, from: data)
@@ -156,7 +157,7 @@ final class MediaClient {
         let uncertainDirect = PlaybackDelivery.suspectHEVCMP4(stream?.Codec, tag: stream?.CodecTag, container: source.Container)
         if quality == .original || (quality == .automatic && source.SupportsDirectPlay == true && !tracks.requiresServerSelection && !uncertainDirect) {
             let url = ServerURL.endpoint(server.address, "Videos/\(item)/stream", query: ["static": "true", "MediaSourceId": source.Id, "api_key": token])
-            return PlaybackResource(url: url, sessionID: info.PlaySessionId, mediaSourceID: source.Id, videoStream: stream, supportsDirectStream: source.SupportsDirectStream)
+            return PlaybackResource(url: url, sessionID: info.PlaySessionId, mediaSourceID: source.Id, videoStream: stream, supportsDirectStream: source.SupportsDirectStream, sourcePath: source.Path)
         }
         // Warmup may negotiate capabilities, but must never request an HLS URL
         // or create a competing server conversion for a video not yet selected.
@@ -171,7 +172,7 @@ final class MediaClient {
             throw MediaError.message("服务器没有提供可直接播放的视频流。")
         }
         var resource = PlaybackResource(url: streamURL, sessionID: info.PlaySessionId, mediaSourceID: source.Id, isTranscoding: true,
-                                        delivery: PlaybackDelivery.negotiated(url: streamURL, quality: quality), videoStream: stream)
+                                        delivery: PlaybackDelivery.negotiated(url: streamURL, quality: quality), videoStream: stream, sourcePath: source.Path)
         if streamURL.lastPathComponent.lowercased() == "master.m3u8" {
             do {
                 let master = try await request(streamURL, headers: ["Authorization": authorization(token)])

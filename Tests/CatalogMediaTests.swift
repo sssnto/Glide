@@ -36,6 +36,19 @@ import Testing
     #expect(item.MediaSources?.first?.MediaStreams?.last?.Index == 8)
     #expect(item.MediaSources?.first?.MediaStreams?.first?.label == "eng · aac")
 }
+
+@Test func sourcePathsDecodePerVersionAndDisplayWithoutURLCredentials() throws {
+    let item = try JSONDecoder().decode(CatalogItem.self, from: Data(#"{"Id":"film","Name":"Film","MediaSources":[{"Id":"original","Path":"/media/家庭视频/春节.mp4"},{"Id":"edition","Path":"D:\\Movies\\Film.mkv"}]}"#.utf8))
+    #expect(item.MediaSources?.first?.Path == "/media/家庭视频/春节.mp4")
+    #expect(item.MediaSources?.last?.Path == #"D:\Movies\Film.mkv"#)
+    #expect(MediaFilePath.display(" /media/家庭视频/春节.mp4 ") == "/media/家庭视频/春节.mp4")
+    #expect(MediaFilePath.display("https://user:password@nas.test:8443/videos/%E5%AE%B6%E5%BA%AD.mp4?api_key=secret#token") == "https://nas.test:8443/videos/家庭.mp4")
+    #expect(MediaFilePath.display("file:///var/mobile/OfflineMedia/Film%20A.mp4") == "/var/mobile/OfflineMedia/Film A.mp4")
+    #expect(MediaFilePath.display(nil) == nil)
+    #expect(MediaFilePath.display(" \n ") == nil)
+    #expect(MediaFilePath.display("https:///missing-host") == nil)
+    #expect(MediaFilePath.display(#"D:\Movies\Film.mkv"#) == #"D:\Movies\Film.mkv"#)
+}
 @Test func selectedTracksAreSentWithoutConfusingOffWithDefault() {
     var body = JellyfinPlaybackPolicy.body(userID: "user", quality: .automatic)
     TrackSelection(mediaSourceID: "edition", audioIndex: 3, subtitleIndex: -1).apply(to: &body)

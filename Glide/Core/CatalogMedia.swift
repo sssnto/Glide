@@ -55,6 +55,7 @@ struct CatalogItem: Codable, Identifiable, Equatable {
     struct Progress: Codable, Equatable { var PlaybackPositionTicks: Int64?; var LastPlayedDate: String?; var Played: Bool? }
     struct Source: Codable, Identifiable, Equatable {
         var Id: String; var Name: String?; var Container: String?; var Size: Int64?; var MediaStreams: [Stream]?
+        var Path: String?
         var id: String { Id }
     }
     struct Stream: Codable, Identifiable, Equatable {

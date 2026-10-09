@@ -25,15 +25,20 @@ enum BufferedTimeline {
     static func contains(_ time: Double, in ranges: [BufferedRange]) -> Bool {
         time.isFinite && ranges.contains { time >= $0.start && time <= $0.end - 0.25 }
     }
+    static func ahead(of time: Double, in ranges: [BufferedRange]) -> TimeInterval {
+        guard time.isFinite, let range = ranges.first(where: { $0.start <= time && $0.end > time }) else { return 0 }
+        return max(0, range.end - time)
+    }
 }
 
 enum NativePlaybackPolicy {
-    /// Keep startup light, then buffer enough media for about 15 seconds at the current speed.
-    static func forwardBufferDuration(local: Bool, firstFrame: Bool, rate: Float) -> TimeInterval {
+    /// Keep startup light, then cover 30 seconds of viewing at the current speed.
+    /// After a significant rebuffer, prefer 45 seconds, with a bounded media target.
+    static func forwardBufferDuration(local: Bool, firstFrame: Bool, rate: Float, rebuffered: Bool = false) -> TimeInterval {
         guard !local else { return 0 }
         guard firstFrame else { return 2 }
         let speed = rate.isFinite && rate > 0 ? Double(rate) : 1
-        return min(45, 15 * max(1, speed))
+        return min(90, (rebuffered ? 45 : 30) * max(1, speed))
     }
     static func seekTolerance(local: Bool, buffered: Bool) -> TimeInterval {
         local ? 0.15 : buffered ? 0.25 : 0.5
@@ -255,7 +260,7 @@ struct ProgressSnapshot: Codable, Equatable {
 
 /// Export only structured technical fields. Never serialize Error.localizedDescription, URL, title or stream DisplayTitle.
 struct PlaybackDiagnostic: Codable {
-    var schema = 4
+    var schema = 5
     var version = ""
     var system = ""
     var device = ""
@@ -293,6 +298,8 @@ struct PlaybackDiagnostic: Codable {
     var observedBitrate: Int?
     var bufferingSeconds: Double = 0
     var bufferingCount = 0
+    var forwardBufferTargetSeconds: Double?
+    var bufferedAheadSeconds: Double?
     var recoveryCount = 0
     var errorCode: Int?
     var errorDomain: String?

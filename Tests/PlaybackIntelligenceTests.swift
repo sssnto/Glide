@@ -30,6 +30,29 @@ import Testing
     #expect(NativePlaybackPolicy.seekTolerance(local: false, buffered: true) < NativePlaybackPolicy.seekTolerance(local: false, buffered: false))
 }
 
+@Test func nativeBufferingAdaptsToRebufferingWithoutDelayingStartupOrGrowingWithoutBounds() {
+    #expect(NativePlaybackPolicy.forwardBufferDuration(local: false, firstFrame: true, rate: 1) == 30)
+    #expect(NativePlaybackPolicy.forwardBufferDuration(local: false, firstFrame: true, rate: 2) == 60)
+    #expect(NativePlaybackPolicy.forwardBufferDuration(local: false, firstFrame: true, rate: 1, rebuffered: true) == 45)
+    #expect(NativePlaybackPolicy.forwardBufferDuration(local: false, firstFrame: true, rate: 2, rebuffered: true) == 90)
+    #expect(NativePlaybackPolicy.forwardBufferDuration(local: false, firstFrame: true, rate: 8, rebuffered: true) == 90)
+    #expect(NativePlaybackPolicy.forwardBufferDuration(local: false, firstFrame: false, rate: 2, rebuffered: true) == 2)
+    #expect(NativePlaybackPolicy.forwardBufferDuration(local: true, firstFrame: true, rate: 2, rebuffered: true) == 0)
+    for invalid in [Float.nan, .infinity, -.infinity, 0, -1] {
+        #expect(NativePlaybackPolicy.forwardBufferDuration(local: false, firstFrame: true, rate: invalid) == 30)
+    }
+}
+
+@Test func bufferedAheadDoesNotCountDisjointDownloadedRanges() {
+    let ranges = BufferedTimeline.normalized([BufferedRange(start: 0, end: 12), BufferedRange(start: 30, end: 70)], duration: 80)
+    #expect(BufferedTimeline.ahead(of: 5, in: ranges) == 7)
+    #expect(BufferedTimeline.ahead(of: 12, in: ranges) == 0)
+    #expect(BufferedTimeline.ahead(of: 20, in: ranges) == 0)
+    #expect(BufferedTimeline.ahead(of: 30, in: ranges) == 40)
+    #expect(BufferedTimeline.ahead(of: 70, in: ranges) == 0)
+    #expect(BufferedTimeline.ahead(of: .nan, in: ranges) == 0)
+}
+
 @Test func compatiblePlaybackPreservesVideoWithoutClaimingTranscode() throws {
     let body = JellyfinPlaybackPolicy.body(userID: "u", quality: .compatible)
     #expect(PlaybackDelivery.suspectHEVCMP4("HEVC", tag: "hev1", container: "mp4"))
@@ -70,7 +93,7 @@ import Testing
     for i in 0..<40 { value.event("event_\(i)") }
     #expect(value.events.count == 30)
     #expect(!value.export.contains("api_key"))
-    #expect(value.schema == 4)
+    #expect(value.schema == 5)
 }
 
 @Test func nativeHLSUnwrapsOnlyOneSelfContainedRendition() throws {

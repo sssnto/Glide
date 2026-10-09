@@ -18,6 +18,7 @@ final class PlaybackController {
     private var recoveryStep = 0
     private var stallTracker = PlaybackStallTracker()
     private var bufferingStartedAfterFrame = false
+    private var hasRebuffered = false
     private var attemptStarted = Date()
     private var sessionStarted = Date()
     private var resourceReadyAt: Date?
@@ -138,7 +139,8 @@ final class PlaybackController {
     private func updateBufferTarget() {
         guard let item = player.currentItem else { return }
         item.preferredForwardBufferDuration = NativePlaybackPolicy.forwardBufferDuration(
-            local: resource?.url.isFileURL == true, firstFrame: receivedFrame, rate: rate)
+            local: resource?.url.isFileURL == true, firstFrame: receivedFrame, rate: rate, rebuffered: hasRebuffered)
+        diagnostic.forwardBufferTargetSeconds = item.preferredForwardBufferDuration
     }
     private func markFirstFrameIfReady() {
         guard !receivedFrame, pendingStartPosition == nil, pendingSeekTarget == nil,
@@ -281,6 +283,12 @@ final class PlaybackController {
         bufferingStarted = nil
         let afterFrame = bufferingStartedAfterFrame
         bufferingStartedAfterFrame = false
+        if evaluateStall, afterFrame, wantsPlayback, elapsed >= 1.5,
+           resource?.url.isFileURL == false, !hasRebuffered {
+            hasRebuffered = true
+            updateBufferTarget()
+            diagnostic.event("buffer_target_increased")
+        }
         if evaluateStall, afterFrame, wantsPlayback, stallTracker.record(at: now, duration: elapsed) {
             recoverOrFail("当前网络无法稳定播放这部视频。", stalled: true)
         }
@@ -319,6 +327,8 @@ final class PlaybackController {
         diagnostic.outputColorPrimaries = nil; diagnostic.outputColorMatrix = nil
         diagnostic.outputColorEvidence = nil
         diagnostic.requestedOutputCodec = nil; diagnostic.requestedOutputRange = nil
+        diagnostic.forwardBufferTargetSeconds = nil; diagnostic.bufferedAheadSeconds = nil
+        if !sameVideo { hasRebuffered = false }
         attemptStarted = Date(); resourceReadyAt = nil; receivedFrame = false; bufferingStarted = nil; bufferingStartedAfterFrame = false; stallTracker = PlaybackStallTracker(); state("连接中")
         self.library = library; current = video; loading = true; error = nil; syncError = nil
         // Let AVPlayer wait for playable media before advancing its clock. For
@@ -441,6 +451,7 @@ final class PlaybackController {
                 }
                 if let rule = AVTextStyleRule(textMarkupAttributes: [kCMTextMarkupAttribute_RelativeFontSize as String: PlaybackPreferences.subtitleScale]) { item.textStyleRules = [rule] }
                 item.preferredForwardBufferDuration = NativePlaybackPolicy.forwardBufferDuration(local: resource.url.isFileURL, firstFrame: false, rate: rate)
+                diagnostic.forwardBufferTargetSeconds = item.preferredForwardBufferDuration
                 if requestedQuality == .hd1080 { item.preferredPeakBitRate = 8_000_000 }
                 if requestedQuality == .hd720 { item.preferredPeakBitRate = 3_000_000 }
                 self.itemObservation = item.observe(\.status, options: [.initial, .new]) { [weak self] observed, _ in
@@ -578,6 +589,7 @@ final class PlaybackController {
         }
         let normalized = BufferedTimeline.normalized(ranges, duration: length)
         if bufferedRanges != normalized { bufferedRanges = normalized }
+        diagnostic.bufferedAheadSeconds = BufferedTimeline.ahead(of: item.currentTime().seconds, in: normalized)
     }
     func setRate(_ value: Float) {
         guard value.isFinite, value > 0 else { return }

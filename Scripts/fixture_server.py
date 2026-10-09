@@ -90,7 +90,7 @@ class Handler(BaseHTTPRequestHandler):
                 assert data.get('MaxStreamingBitrate') == 8000000
                 assert data.get('AllowVideoStreamCopy') is False
                 assert data['DeviceProfile'].get('CodecProfiles')
-            source = {'Id': item, 'SupportsDirectPlay': not force_transcode}
+            source = {'Id': item, 'SupportsDirectPlay': not force_transcode, 'Path': f'/fixture/家庭视频/{item}.mp4'}
             if force_transcode: source['TranscodingUrl'] = prefix+f'/streams/{"demo0" if item == "broken" else item}.m3u8?api_key=fixture-token'
             if hls_master_fixture and item == 'broken':
                 profiles = data['DeviceProfile']['CodecProfiles']

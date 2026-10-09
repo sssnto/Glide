@@ -327,6 +327,76 @@ final class GlideUITests: XCTestCase {
         XCTAssertTrue(app.buttons["sources.open"].waitForExistence(timeout: 3))
     }
 
+    @MainActor func testVideoInfoShowsOriginalPathAndNativeBuffering() async throws {
+        guard (try? await URLSession.shared.data(from: URL(string: "http://127.0.0.1:8768/debug/metrics")!)) != nil else {
+            throw XCTSkip("Run Scripts/fixture_server.py to test source file paths")
+        }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments += ["-controlsDelay", "60"]
+        app.launch()
+        if !app.buttons["sources.open"].exists, app.buttons["媒体库"].exists { app.buttons["媒体库"].tap() }
+        XCTAssertTrue(app.buttons["sources.open"].waitForExistence(timeout: 10))
+        app.buttons["sources.open"].tap()
+        let existing = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@ AND (label CONTAINS %@ OR label CONTAINS %@)", "source.", "127.0.0.1:8768", "Glide Recovery Fixture", "Glide Buffer Fixture")).firstMatch
+        if existing.exists {
+            for _ in 0..<8 { if existing.isHittable { break }; app.collectionViews.firstMatch.swipeUp() }
+            XCTAssertTrue(existing.isHittable); existing.tap()
+        } else {
+            app.buttons["sources.add"].tap()
+            let name = app.textFields["名称（可选）"]
+            XCTAssertTrue(name.waitForExistence(timeout: 5))
+            name.tap(); name.typeText("Glide Buffer Fixture")
+            app.textFields["服务器地址"].tap(); app.textFields["服务器地址"].typeText("http://127.0.0.1:8768/mock/jellyfin")
+            app.textFields["用户名"].tap(); app.textFields["用户名"].typeText("demo")
+            app.secureTextFields["密码"].tap(); app.secureTextFields["密码"].typeText("demo\n")
+            app.buttons["sources.connect"].tap()
+            XCTAssertTrue(app.buttons["完成"].waitForExistence(timeout: 15)); app.buttons["完成"].tap()
+        }
+        let movies = app.buttons["folder.fixture-movies"]
+        let ready = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hittable == true"), object: movies)
+        if await XCTWaiter.fulfillment(of: [ready], timeout: 5) != .completed, app.buttons["完成"].isHittable { app.buttons["完成"].tap() }
+        XCTAssertTrue(movies.waitForExistence(timeout: 10)); movies.tap()
+        let movie = app.buttons["catalog.demo0"]
+        XCTAssertTrue(movie.waitForExistence(timeout: 10)); movie.tap()
+        XCTAssertTrue(app.buttons["从头播放"].waitForExistence(timeout: 10)); app.buttons["从头播放"].tap()
+        let canvas = app.otherElements["player.canvas"]
+        let firstFrame = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "已显示画面"), object: canvas)
+        let frameResult = await XCTWaiter.fulfillment(of: [firstFrame], timeout: 20)
+        XCTAssertEqual(frameResult, .completed)
+        if app.buttons["暂停"].isHittable { app.buttons["暂停"].tap() }
+        app.buttons["播放设置"].tap()
+        let info = app.buttons["视频信息"]
+        XCTAssertTrue(info.waitForExistence(timeout: 5))
+        let infoReady = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hittable == true"), object: info)
+        let infoReadyResult = await XCTWaiter.fulfillment(of: [infoReady], timeout: 5)
+        XCTAssertEqual(infoReadyResult, .completed)
+        info.tap()
+        let infoList = app.descendants(matching: .any)["player.info.list"].firstMatch
+        XCTAssertTrue(infoList.waitForExistence(timeout: 10))
+        let bufferedAhead = app.descendants(matching: .any)["player.info.bufferedAhead"].firstMatch
+        for _ in 0..<6 { if bufferedAhead.exists { break }; infoList.swipeUp() }
+        XCTAssertTrue(bufferedAhead.exists)
+        let path = app.staticTexts["player.info.path"]
+        for _ in 0..<6 { if path.exists { break }; infoList.swipeUp() }
+        XCTAssertTrue(path.waitForExistence(timeout: 8))
+        XCTAssertEqual(path.label, "/fixture/家庭视频/demo0.mp4", "Show the chosen source file, never the authenticated streaming URL")
+        let copy = app.buttons["player.info.copyPath"]
+        for _ in 0..<4 { if copy.isHittable { break }; app.swipeUp() }
+        XCTAssertTrue(copy.isHittable); copy.tap()
+        XCTAssertEqual(copy.label, "已复制")
+        app.buttons["完成"].tap()
+        app.buttons["播放设置"].tap(); app.buttons["player.diagnostic"].tap()
+        let json = app.staticTexts["diagnostic.json"]
+        XCTAssertTrue(json.waitForExistence(timeout: 8))
+        let data = try XCTUnwrap(json.label.data(using: .utf8))
+        let diagnostic = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        XCTAssertEqual(diagnostic["schema"] as? Int, 5)
+        XCTAssertEqual(diagnostic["forwardBufferTargetSeconds"] as? Double, 30)
+        XCTAssertNotNil(diagnostic["bufferedAheadSeconds"])
+        XCTAssertFalse(json.label.contains("/fixture/"), "Exported playback diagnostics must omit file paths")
+    }
+
     @MainActor func testCombinedTimelineSeekAndBuffer() throws {
         continueAfterFailure = false
         let app = XCUIApplication()
@@ -353,7 +423,7 @@ final class GlideUITests: XCTestCase {
         let startX = (15 + (seekWidth - 30) * CGFloat(elapsedSeconds) / 12) / seekWidth
         let targetX = (15 + (seekWidth - 30) * CGFloat(target)) / seekWidth
         seekBar.coordinate(withNormalizedOffset: CGVector(dx: startX, dy: 0.5))
-            .press(forDuration: 0.1, thenDragTo: seekBar.coordinate(withNormalizedOffset: CGVector(dx: targetX, dy: 0.5)))
+            .press(forDuration: 0.1, thenDragTo: seekBar.coordinate(withNormalizedOffset: CGVector(dx: targetX, dy: 0.5)), withVelocity: .slow, thenHoldForDuration: 0.3)
         let seekedTime = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label != %@", pausedTime), object: app.staticTexts["player.elapsed"])
         XCTAssertEqual(XCTWaiter.wait(for: [seekedTime], timeout: 5), .completed,
                        "The combined bar must still seek; bar=\(String(describing: seekBar.value)), label=\(seekBar.label), elapsed=\(app.staticTexts["player.elapsed"].label)")
