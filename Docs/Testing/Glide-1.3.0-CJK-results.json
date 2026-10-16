@@ -1,0 +1,98 @@
+{
+  "version": "1.3.0",
+  "build": "2",
+  "date": "2026-10-15",
+  "scope": "Authored local subtitle fixtures, main PlayerView; user source media not available",
+  "simulator": {
+    "model": "iPhone 17 Pro",
+    "iOS": "27.0",
+    "build": "24A434"
+  },
+  "checks": [
+    {
+      "test": "testCompatibilityChineseASS",
+      "result": "Passed",
+      "seconds": 75.77614998817444,
+      "xcresult": "/tmp/GlideCJK/After-ASS.xcresult"
+    },
+    {
+      "test": "testCompatibilityMissingFontTraditionalASS",
+      "result": "Passed",
+      "seconds": 128.3870290517807,
+      "xcresult": "/tmp/GlideCJK/After-Traditional-SRT.xcresult"
+    },
+    {
+      "test": "testCompatibilityChineseSRT",
+      "result": "Passed",
+      "seconds": 97.79984998703003,
+      "xcresult": "/tmp/GlideCJK/After-SRT-Retry.xcresult"
+    },
+    {
+      "test": "testCompatibilityASSAndAudioSelection",
+      "result": "Passed",
+      "seconds": 88.86054408550262,
+      "xcresult": "/tmp/GlideCJK/After-English-Final.xcresult"
+    }
+  ],
+  "font": {
+    "name": "Glide Subtitle Fallback",
+    "upstream": "Noto Sans CJK SC Regular",
+    "version": "2.004",
+    "sourceURL": "https://raw.githubusercontent.com/notofonts/noto-cjk/Sans2.004/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf",
+    "sourceSHA256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
+    "licenseURL": "https://raw.githubusercontent.com/notofonts/noto-cjk/Sans2.004/LICENSE",
+    "licenseSHA256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2",
+    "resource": "Glide/Resources/SubtitleFonts/GlideSubtitleFallback.otf",
+    "resourceSHA256": "785120c69135f725fef742270b6ed988aef2b3e345ab466783c519de3b7d1f8c",
+    "builder": "Scripts/prepare_subtitle_font.py",
+    "buildDependency": "fonttools==4.60.1",
+    "changes": "Renamed typographic family, full name, PostScript and CFF names; legacy family alias Helvetica Neue for libVLC 3 libass default fallback; original glyphs and license metadata retained.",
+    "unicodeMappings": 44810,
+    "glyphs": 65535
+  },
+  "baseline": {
+    "test": "testCompatibilityChineseSubtitles",
+    "result": "Failed",
+    "seconds": 116.93593001365662,
+    "xcresult": "/tmp/GlideCJK/Before-Selected.xcresult"
+  },
+  "earlierAttempts": [
+    {
+      "bundle": "/tmp/GlideCJK/Before.xcresult",
+      "note": "Subtitle not stably selected; not used as proof of missing glyphs"
+    },
+    {
+      "bundle": "/tmp/GlideCJK/After-Traditional-SRT.xcresult",
+      "note": "Traditional ASS passed; SRT stopped before OCR at settings row reveal. MCP timed out after 300s; underlying result was read after completion."
+    },
+    {
+      "bundle": "/tmp/GlideCJK/After-English-Regression.xcresult",
+      "note": "Audio row was partially clipped at bottom; selection check failed before subtitle OCR."
+    },
+    {
+      "bundle": "/tmp/GlideCJK/After-English-Retry.xcresult",
+      "note": "Test viewport cutoff was 6pt stricter than last fully visible row; reveal assertion stopped test before selection."
+    }
+  ],
+  "release": {
+    "archive": "/tmp/GlideCJK/Glide-1.3.0-2.xcarchive",
+    "signed": false,
+    "fontAndLicenseVerified": true,
+    "SDKExecutableUnchanged": true,
+    "uncompressedFilesBytes": 57699655,
+    "fontBytes": 16437648
+  },
+  "physicalQA": {
+    "model": "iPhone 13 Pro Max",
+    "bundle": "com.songpeng.glide.compatibilityqa",
+    "installed": true,
+    "launchedNormally": true,
+    "sameFontAsRelease": true,
+    "glyphScreenshotVerified": false
+  },
+  "limitations": [
+    "User original video still needs retest in QA build 2",
+    "Historical endurance and Core 90 tests not rerun for this font-only change",
+    "No claim for every Unicode glyph, bitmap subtitles or all ASS effects"
+  ]
+}

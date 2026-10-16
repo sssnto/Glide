@@ -11,21 +11,6 @@ final class OriginRedirectDelegate: NSObject, URLSessionTaskDelegate {
     }
 }
 
-struct PlaybackResource {
-    var url: URL
-    var headers: [String: String] = [:]
-    var sessionID: String?
-    var mediaSourceID: String?
-    var isTranscoding = false
-    var delivery: PlaybackDelivery = .direct
-    var videoStream: CatalogItem.Stream?
-    var supportsDirectStream: Bool?
-    var usesMediaPlaylist = false
-    var prefersFirstHDRVariant = false
-    var sourcePath: String?
-    var sessionReportMethod: String { delivery == .direct || delivery == .local ? "DirectPlay" : delivery == .remux || delivery == .audioConversion ? "DirectStream" : "Transcode" }
-}
-
 final class MediaClient {
     static let shared = MediaClient()
     private let redirects = OriginRedirectDelegate()
@@ -136,6 +121,7 @@ final class MediaClient {
             guard let url = video.url else { throw MediaError.message("找不到播放地址。") }
             return PlaybackResource(url: url, delivery: url.isFileURL ? .local : .direct)
         }
+        if server.kind == .local { return try LocalMediaStore.playback(video, server: server) }
         if server.kind == .webDAV {
             guard let url = video.url else { throw MediaError.message("文件地址无效。") }
             return PlaybackResource(url: url, headers: ["Authorization": basic(server: server)])
@@ -148,31 +134,45 @@ final class MediaClient {
             profile["SubtitleProfiles"] = ["srt", "ass", "ssa", "subrip", "pgssub", "dvdsub", "vtt"].map { ["Format": $0, "Method": "Encode"] }
             body["DeviceProfile"] = profile
         }
-        struct Source: Decodable { var Id: String; var SupportsDirectPlay: Bool?; var SupportsDirectStream: Bool?; var Container: String?; var TranscodingUrl: String?; var MediaStreams: [CatalogItem.Stream]?; var Path: String? }
+        struct Source: Decodable { var Id: String; var SupportsDirectPlay: Bool?; var SupportsDirectStream: Bool?; var Container: String?; var TranscodingUrl: String?; var MediaStreams: [CatalogItem.Stream]?; var Path: String?; var Bitrate: Int? }
         struct Info: Decodable { var MediaSources: [Source]?; var PlaySessionId: String?; var ErrorCode: String? }
         let data = try await request(ServerURL.endpoint(server.address, "Items/\(item)/PlaybackInfo"), method: "POST", headers: ["Authorization": authorization(token), "Content-Type": "application/json"], body: JSONSerialization.data(withJSONObject: body))
         let info = try JSONDecoder().decode(Info.self, from: data)
-        guard info.ErrorCode == nil, let source = info.MediaSources?.first(where: { tracks.mediaSourceID == nil || $0.Id == tracks.mediaSourceID }) else { throw MediaError.message("Jellyfin 没有可播放的版本，请检查用户播放权限和转码设置。") }
+        guard info.ErrorCode == nil, let source = info.MediaSources?.first(where: { tracks.mediaSourceID == nil || $0.Id == tracks.mediaSourceID }) else {
+            if quality == .compatible { throw OriginalTransportError.noPlayableSource }
+            throw MediaError.message("Jellyfin 没有可播放的版本，请检查用户播放权限和转码设置。")
+        }
         let stream = source.MediaStreams?.first { $0.Type == "Video" }
+        let sourceBitrate = [source.Bitrate, stream?.BitRate].compactMap { $0 }.first { $0 > 0 }
         let uncertainDirect = PlaybackDelivery.suspectHEVCMP4(stream?.Codec, tag: stream?.CodecTag, container: source.Container)
         if quality == .original || (quality == .automatic && source.SupportsDirectPlay == true && !tracks.requiresServerSelection && !uncertainDirect) {
             let url = ServerURL.endpoint(server.address, "Videos/\(item)/stream", query: ["static": "true", "MediaSourceId": source.Id, "api_key": token])
-            return PlaybackResource(url: url, sessionID: info.PlaySessionId, mediaSourceID: source.Id, videoStream: stream, supportsDirectStream: source.SupportsDirectStream, sourcePath: source.Path)
+            return PlaybackResource(url: url, sessionID: info.PlaySessionId, mediaSourceID: source.Id, videoStream: stream, sourceBitrate: sourceBitrate, supportsDirectStream: source.SupportsDirectStream, sourcePath: source.Path)
         }
         // Warmup may negotiate capabilities, but must never request an HLS URL
         // or create a competing server conversion for a video not yet selected.
         if directOnly { throw MediaError.message("此视频不适合预备原画播放。") }
-        guard let path = source.TranscodingUrl, let url = URL(string: path, relativeTo: server.address.appendingPathComponent(""))?.absoluteURL, ServerURL.sameOrigin(server.address, url) else { throw MediaError.message("此格式需要 Jellyfin 转码；请在服务器上启用转码权限。") }
-        if quality == .compatible, source.SupportsDirectStream != true { throw MediaError.message("服务器没有提供兼容的视频流。") }
+        guard let path = source.TranscodingUrl, let url = URL(string: path, relativeTo: server.address.appendingPathComponent(""))?.absoluteURL, ServerURL.sameOrigin(server.address, url) else {
+            if quality == .compatible { throw OriginalTransportError.noCopyURL }
+            throw MediaError.message("此格式需要 Jellyfin 转码；请在服务器上启用转码权限。")
+        }
+        // Some Jellyfin versions report SupportsDirectStream=false for HLS
+        // video-copy jobs. Validate the actual negotiated URL below instead.
         let sourceIsHDR = NativeColorPolicy.isHDR(range: stream?.VideoRangeType, transfer: stream?.ColorTransfer)
-        let nativeURL = quality == .automatic || quality == .compatible
-            ? NativeColorPolicy.preferHEVCForHDR(url, sourceCodec: stream?.Codec, sourceIsHDR: sourceIsHDR) : url
+        let nativeURL: URL
+        if quality == .compatible {
+            nativeURL = try OriginalTransportPolicy.videoCopyURL(url, sourceCodec: stream?.Codec,
+                burnsSubtitles: tracks.subtitleIndex.map { $0 >= 0 } == true)
+        } else {
+            nativeURL = quality == .automatic
+                ? NativeColorPolicy.preferHEVCForHDR(url, sourceCodec: stream?.Codec, sourceIsHDR: sourceIsHDR) : url
+        }
         let streamURL = NativeColorPolicy.constrainAVC(JellyfinPlaybackPolicy.transcodeURL(nativeURL, quality: quality), sourceIsHDR: sourceIsHDR)
         if quality == .compatible && PlaybackDelivery.negotiated(url: streamURL, quality: quality) != .remux && PlaybackDelivery.negotiated(url: streamURL, quality: quality) != .audioConversion {
-            throw MediaError.message("服务器没有提供可直接播放的视频流。")
+            throw OriginalTransportError.videoCopyNotConfirmed
         }
         var resource = PlaybackResource(url: streamURL, sessionID: info.PlaySessionId, mediaSourceID: source.Id, isTranscoding: true,
-                                        delivery: PlaybackDelivery.negotiated(url: streamURL, quality: quality), videoStream: stream, sourcePath: source.Path)
+                                        delivery: PlaybackDelivery.negotiated(url: streamURL, quality: quality), videoStream: stream, sourceBitrate: sourceBitrate, supportsDirectStream: source.SupportsDirectStream, sourcePath: source.Path)
         if streamURL.lastPathComponent.lowercased() == "master.m3u8" {
             do {
                 let master = try await request(streamURL, headers: ["Authorization": authorization(token)])
@@ -228,7 +228,7 @@ extension MediaClient {
     func catalogPage(server: MediaServer, parentID: String, type: String, start: Int, order: CatalogOrder = CatalogOrder(), search: String = "", refresh: Bool = false) async throws -> PersonMediaPage {
         guard let user = server.userID else { throw MediaError.message("请重新登录 Jellyfin。") }
         var query = order.query
-        query.merge(["UserId": user, "ParentId": parentID, "IncludeItemTypes": type, "Recursive": "true", "Fields": "Overview,Genres", "EnableUserData": "true", "StartIndex": String(start), "Limit": "60"]) { _, value in value }
+        query.merge(["UserId": user, "ParentId": parentID, "IncludeItemTypes": type, "Recursive": "true", "Fields": "Overview,Genres,MediaSources", "EnableUserData": "true", "StartIndex": String(start), "Limit": "60"]) { _, value in value }
         if !search.isEmpty { query["SearchTerm"] = search }
         return try await cached(PersonMediaPage.self, server: server, path: "Items", query: query, refresh: refresh)
     }
@@ -240,7 +240,7 @@ extension MediaClient {
             try Task.checkCancellation()
             let query = ["UserId": user, "ParentId": parentID, "IncludeItemTypes": type,
                          "Recursive": ["Movie", "Series", "Episode"].contains(type) ? "true" : "false",
-                         "Fields": "Overview,Genres", "EnableUserData": "true",
+                         "Fields": "Overview,Genres,MediaSources", "EnableUserData": "true",
                          "SortBy": type == "Season" || type == "Episode" ? "ParentIndexNumber,IndexNumber,SortName" : "SortName",
                          "SortOrder": "Ascending", "StartIndex": String(start), "Limit": "100"]
             let page = try await cached(Page.self, server: server, path: "Items", query: query, refresh: refresh)

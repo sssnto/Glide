@@ -1,0 +1,41 @@
+{
+  "version": "1.3.0 (5)",
+  "released": false,
+  "date": "2026-10-16",
+  "core": {
+    "passed": 96,
+    "swiftTesting": 92,
+    "xctest": 4,
+    "log": "/tmp/Glide4K/core-build5-r2.log"
+  },
+  "transport": {
+    "passed": true,
+    "resultBundle": "/tmp/Glide4K/Transport-Build5-R3.xcresult",
+    "checksPassed": 13,
+    "videoStreamUnchanged": true,
+    "sha256": "fd6b38c1e31057dc7fb147b26b8e3cf9b9d21e85fc59f19192f1234827bc2558",
+    "downloadCompletionRace": "passed: download completed before manual network transport retry"
+  },
+  "nativeRegression": {
+    "recoveredBuffering": "passed",
+    "resultBundle": "/tmp/Glide4K/Native-Build5-Recovered.xcresult",
+    "infoAndTransportEntry": "passed",
+    "infoResultBundle": "/tmp/Glide4K/Native-Build5-Info.xcresult"
+  },
+  "release": {
+    "initialArchive": "passed",
+    "finalArchive": "passed",
+    "archive": "/tmp/Glide4K/Glide-1.3.0-5-final.xcarchive"
+  },
+  "deviceQA": {
+    "bundleID": "com.songpeng.glide.compatibilityqa",
+    "initialInstall": "passed",
+    "finalInstall": "passed",
+    "autoLaunch": "blocked by device lock"
+  },
+  "userOriginalMedia": {
+    "offline": "user reports smooth",
+    "build4Online": "still stalls",
+    "build5Online": "user reports stalls after about 5–6 seconds on direct playback; manual original-compatible transport plays smoothly; no new diagnostic supplied"
+  }
+}

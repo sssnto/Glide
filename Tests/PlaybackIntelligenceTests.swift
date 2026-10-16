@@ -2,6 +2,43 @@ import Foundation
 import Testing
 @testable import GlideCore
 
+@Test func original4KBufferingIncludesPortraitVideoAndExcludesConvertedOrLocalMedia() {
+    #expect(NativeRebufferPolicy.eligible(local: false, preservesVideo: true, width: 2160, height: 3840, bitrate: nil))
+    #expect(NativeRebufferPolicy.eligible(local: false, preservesVideo: true, width: 3840, height: 2160, bitrate: nil))
+    #expect(NativeRebufferPolicy.eligible(local: false, preservesVideo: true, width: 1920, height: 1080, bitrate: 25_000_000))
+    #expect(!NativeRebufferPolicy.eligible(local: true, preservesVideo: true, width: 3840, height: 2160, bitrate: 50_000_000))
+    #expect(!NativeRebufferPolicy.eligible(local: false, preservesVideo: false, width: 3840, height: 2160, bitrate: 50_000_000))
+    #expect(!NativeRebufferPolicy.eligible(local: false, preservesVideo: true, width: 1920, height: 1080, bitrate: nil))
+}
+
+@Test func rebufferingRequiresUsefulContiguousMediaInsteadOfTheNextSmallPacket() {
+    #expect(NativeRebufferPolicy.resumeGoal(rate: 1, remaining: 60) == 6)
+    #expect(!NativeRebufferPolicy.canResume(ahead: 1.057, rate: 1, remaining: 60, bufferFull: false))
+    #expect(!NativeRebufferPolicy.canResume(ahead: 5.99, rate: 1, remaining: 60, bufferFull: false))
+    #expect(NativeRebufferPolicy.canResume(ahead: 6, rate: 1, remaining: 60, bufferFull: false))
+    #expect(NativeRebufferPolicy.resumeGoal(rate: 2, remaining: 60) == 12)
+    #expect(!NativeRebufferPolicy.canResume(ahead: 6, rate: 2, remaining: 60, bufferFull: false))
+    #expect(NativeRebufferPolicy.resumeGoal(rate: 8, remaining: 60) == 12)
+    #expect(!NativeRebufferPolicy.canResume(ahead: .nan, rate: 1, remaining: 60, bufferFull: false))
+}
+
+@Test func rebufferingHasAnEndOfMovieAndPlatformCapacityEscape() {
+    #expect(NativeRebufferPolicy.resumeGoal(rate: 1, remaining: 0.4) == nil)
+    #expect(NativeRebufferPolicy.resumeGoal(rate: 1, remaining: .infinity) == nil)
+    #expect(NativeRebufferPolicy.canResume(ahead: 2.86, rate: 1, remaining: 3, bufferFull: false))
+    #expect(!NativeRebufferPolicy.canResume(ahead: 1, rate: 1, remaining: 60, bufferFull: true))
+    #expect(NativeRebufferPolicy.canResume(ahead: 2, rate: 1, remaining: 60, bufferFull: true))
+    #expect(NativeRebufferPolicy.resumeGoal(rate: .nan, remaining: 60) == 6)
+}
+
+@Test func jellyfinPerformanceMetadataDecodesWithoutRequiringNewFieldsInOlderServers() throws {
+    let source = Data(#"{"Index":0,"Type":"Video","Width":2160,"Height":3840,"BitRate":48000000,"RealFrameRate":59.94,"AverageFrameRate":59.94}"#.utf8)
+    let stream = try JSONDecoder().decode(CatalogItem.Stream.self, from: source)
+    #expect(stream.BitRate == 48_000_000)
+    #expect(stream.AverageFrameRate == 59.94)
+    #expect(try JSONDecoder().decode(CatalogItem.Stream.self, from: Data(#"{"Index":0,"Type":"Video"}"#.utf8)).BitRate == nil)
+}
+
 @Test func bufferedTimelineShowsOnlyLoadedIntervals() {
     let normalized = BufferedTimeline.normalized([
         BufferedRange(start: 40, end: 50),
@@ -93,7 +130,7 @@ import Testing
     for i in 0..<40 { value.event("event_\(i)") }
     #expect(value.events.count == 30)
     #expect(!value.export.contains("api_key"))
-    #expect(value.schema == 5)
+    #expect(value.schema == 9)
 }
 
 @Test func nativeHLSUnwrapsOnlyOneSelfContainedRendition() throws {

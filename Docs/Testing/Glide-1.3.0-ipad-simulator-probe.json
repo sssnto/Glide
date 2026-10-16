@@ -1,0 +1,30 @@
+{
+  "checks": [
+    "frame:03-h264-aac.mkv",
+    "frame:04-mpeg4-mp3.avi",
+    "frame:05-renamed-mkv.mp4",
+    "1080p:seek-pause-audio-subtitle-rate",
+    "switch:paused-position-roundtrip",
+    "retry:native-failure-to-vlc"
+  ],
+  "completed": true,
+  "device": "iPad",
+  "error": "",
+  "measurements": {
+    "paused1080pTime": 30,
+    "resumed1080pTime": 33.434,
+    "switchedNativeTime": 4,
+    "switchedVLCTime": 4
+  },
+  "os": "27.0",
+  "passed": true,
+  "runtime": "MobileVLCKit 3.7.3",
+  "scope": "Main PlaybackController and production VideoSurface on authored local fixtures; no XCTest/settings gestures",
+  "stage": "主应用控制器验证通过",
+  "timestamp": "2026-10-15T10:07:44Z",
+  "version": "1.3.0 (1)",
+  "simulator": "Dedicated iPad mini (A17 Pro), iOS 27.0",
+  "limitations": [
+    "Simulator result only; no physical iPad output or performance claim."
+  ]
+}

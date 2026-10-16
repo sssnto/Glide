@@ -2,8 +2,8 @@ import SwiftUI
 import AVFoundation
 
 struct VideoSurface: UIViewRepresentable {
-    let player: AVPlayer
-    var onLayer: (AVPlayerLayer) -> Void
+    let presentation: PlaybackPresentation
+    var onLayer: (AVPlayerLayer?) -> Void
     let identity: String
     var title: String
     var frameReady: Bool
@@ -16,8 +16,16 @@ struct VideoSurface: UIViewRepresentable {
     var onHUD: (String) -> Void
     func makeUIView(context: Context) -> GestureVideoView { let view = GestureVideoView(); updateUIView(view, context: context); return view }
     func updateUIView(_ view: GestureVideoView, context: Context) {
-        if view.videoLayer.player !== player { view.videoLayer.player = player }
-        onLayer(view.videoLayer)
+        switch presentation {
+        case .native(let player):
+            view.setCustomView(nil)
+            if view.videoLayer.player !== player { view.videoLayer.player = player }
+            onLayer(view.videoLayer)
+        case .custom(let surface):
+            view.videoLayer.player = nil
+            view.setCustomView(surface)
+            onLayer(nil)
+        }
         view.accessibilityLabel = "视频画面，" + title + (frameReady ? "，已显示画面" : "，正在准备画面")
         view.onSwipe = onSwipe; view.onToggle = onToggle; view.onSeek = onSeek
         view.onSpeedPreset = onSpeedPreset; view.onHUD = onHUD
@@ -29,6 +37,7 @@ struct VideoSurface: UIViewRepresentable {
 
 final class GestureVideoView: UIView, UIGestureRecognizerDelegate {
     let videoLayer = AVPlayerLayer()
+    private var customView: UIView?
     var identity = ""
     var locked = false
     var onSwipe: ((Int) -> Void)?
@@ -61,6 +70,13 @@ final class GestureVideoView: UIView, UIGestureRecognizerDelegate {
     }
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     override func layoutSubviews() { super.layoutSubviews(); applyTransform() }
+    func setCustomView(_ view: UIView?) {
+        guard customView !== view else { return }
+        customView?.removeFromSuperview(); customView = view
+        if let view { view.isUserInteractionEnabled = false; insertSubview(view, at: 0) }
+        videoLayer.isHidden = view != nil
+        setNeedsLayout()
+    }
     func resetZoom() { zoom = 1; offset = .zero; panningZoomedContent = false; applyTransform() }
     private func applyTransform() {
         accessibilityValue = String(format: "缩放 %.1f 倍", zoom)
@@ -71,8 +87,17 @@ final class GestureVideoView: UIView, UIGestureRecognizerDelegate {
         let yLimit = bounds.height * (zoom - 1) / 2
         offset.x = max(-xLimit, min(xLimit, offset.x)); offset.y = max(-yLimit, min(yLimit, offset.y))
         CATransaction.begin(); CATransaction.setDisableActions(true)
-        videoLayer.setAffineTransform(.identity); videoLayer.frame = bounds
-        videoLayer.setAffineTransform(CGAffineTransform(translationX: offset.x, y: offset.y).scaledBy(x: zoom, y: zoom))
+        let transform = CGAffineTransform(translationX: offset.x, y: offset.y).scaledBy(x: zoom, y: zoom)
+        if let customView {
+            // UIView's setter lays out the decoder's autoresizing drawable.
+            // Updating only layer.frame leaves that child at its initial zero size.
+            customView.transform = .identity
+            customView.frame = bounds
+            customView.transform = transform
+        } else {
+            videoLayer.setAffineTransform(.identity); videoLayer.frame = bounds
+            videoLayer.setAffineTransform(transform)
+        }
         CATransaction.commit()
     }
     @objc private func twoTapped() { if !locked { onToggle?() } }

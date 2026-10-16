@@ -1,0 +1,22 @@
+MobileVLCKit 3.7.3 / libVLC
+
+Copyright © the VideoLAN and VLCKit authors.
+Distributed under the GNU Lesser General Public License, version 2.1 or later.
+The full LGPL 2.1 text is included as MobileVLCKit-LGPL-2.1.txt.
+
+Official SDK: https://download.videolan.org/pub/cocoapods/prod/MobileVLCKit-3.7.3-319ed2c0-79128878.tar.xz
+VLCKit source: https://code.videolan.org/videolan/VLCKit/-/tree/319ed2c0
+libVLC base source: https://code.videolan.org/videolan/vlc/-/tree/79128878
+Project: https://www.videolan.org/vlc/libvlc.html
+
+Glide keeps the official decoder binary and removes unused architecture slices.
+
+Glide Subtitle Fallback / Noto Sans CJK SC 2.004
+
+Copyright 2014-2021 Adobe (http://www.adobe.com/).
+Noto is a trademark of Google Inc.
+Licensed under the SIL Open Font License 1.1; full text: SubtitleFont-OFL.txt.
+Source: https://github.com/notofonts/noto-cjk/tree/Sans2.004
+Glide renames the font and adds a legacy family alias for libVLC 3's default
+ASS fallback. The original glyphs, copyright and license metadata are retained.
+Reproducible build: Scripts/prepare_subtitle_font.py in the Glide source tree.

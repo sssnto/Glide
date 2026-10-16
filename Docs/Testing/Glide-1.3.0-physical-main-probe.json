@@ -1,0 +1,44 @@
+{
+  "checks": [
+    "frame:03-h264-aac.mkv",
+    "frame:04-mpeg4-mp3.avi",
+    "frame:05-renamed-mkv.mp4",
+    "1080p:seek-pause-audio-subtitle-rate",
+    "switch:paused-position-roundtrip",
+    "retry:native-failure-to-vlc"
+  ],
+  "completed": true,
+  "device": "iPhone",
+  "error": "",
+  "measurements": {
+    "paused1080pTime": 30,
+    "resumed1080pTime": 33.012,
+    "switchedNativeTime": 4,
+    "switchedVLCTime": 4
+  },
+  "os": "27.0",
+  "passed": true,
+  "runtime": "MobileVLCKit 3.7.3",
+  "scope": "Main PlaybackController and production VideoSurface on authored local fixtures; no XCTest/settings gestures",
+  "stage": "主应用控制器验证通过",
+  "timestamp": "2026-10-15T09:41:14Z",
+  "version": "1.3.0 (1)",
+  "sharedSourceSHA256": {
+    "Glide/Services/Compatibility/VLCPlaybackEngine.swift": "d296161a1e8f92cf720ec2cbe94c3c669edddbd0be7ddac598c5f3e7b4aa8566",
+    "Glide/Services/Compatibility/VLCClockPlayer.h": "964a77ee4e44c83f8cba5cea6697f421b93abd6a3bb01c334f2acf1b253094a9",
+    "Glide/Services/Compatibility/VLCClockPlayer.m": "122aad02d172bdaf74678708810ccb5f6ec0c74639f90fc90a8c1669a1c3b914",
+    "Glide/Services/Compatibility/CompatibilityQAProbe.swift": "46e45d0691dbf61d0212cc420b11655b22151dd5646fd76bf8987a51b58059c2",
+    "Glide/Services/PlaybackController.swift": "60d8a26b99d6b5d655f66d1b921de4018a689f45b9cc5e99e70a3dce6b071e4b",
+    "Glide/Views/VideoSurface.swift": "f336af55b5d6055d02dcd2d5990d38b48badd0884d657fc49dcf95f481829b40"
+  },
+  "appExecutableSHA256": "aa281c4b4bd2ccbc69ca57fc90a70aa706d178f7e3488e7a4e6a4afa2933d746",
+  "limitations": [
+    "XCTest failed twice before establishing its IDE connection (exit 74); this probe validates the final production controller and render host, not device settings gestures.",
+    "Track state and resumed clock progress are verified; physical subtitle OCR, human listening and output routing are not."
+  ],
+  "appBinarySHA256": {
+    "Glide": "aa281c4b4bd2ccbc69ca57fc90a70aa706d178f7e3488e7a4e6a4afa2933d746",
+    "Glide.debug.dylib": "f1a0b718bef329725dc55f6f891e4cbb3dcadadc40fa20bb51c92bd3c69c777b",
+    "Frameworks/MobileVLCKit.framework/MobileVLCKit": "d9ad0f464b62ab26a5c774750dcf2b0e2ff37cce3e1f0486910686cfa408995b"
+  }
+}

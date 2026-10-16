@@ -8,50 +8,86 @@
 
 /* Begin PBXBuildFile section */
 		05DA19C739F5E3914AED1BAA /* Glide/Resources/demo0.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = BD7E4CD3C8F5D4559A0CB38A /* Glide/Resources/demo0.mp4 */; };
+		09048DB7158BC02410C5C832 /* Glide/Services/NativePlaybackEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64532CB3A2D61AD50F584514 /* Glide/Services/NativePlaybackEngine.swift */; };
 		0985974D58797C1B6724B772 /* Glide/Services/PictureInPicture.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE933493E88C858BF979BEAC /* Glide/Services/PictureInPicture.swift */; };
+		0CC1C05472A2E3F52F0BF02F /* Glide/Core/PlaybackEngineModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A85A9C49CE440BF41FF3CD /* Glide/Core/PlaybackEngineModels.swift */; };
 		11D607998E44ACAAD1DBF2DA /* Glide/GlideApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B908DAB7041C39316AEE4BD /* Glide/GlideApp.swift */; };
+		11F2457F83D21C8AEF88D0D3 /* CompatibilityQAProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28054353902C7AF13B24B895 /* CompatibilityQAProbe.swift */; };
+		1345F58F5E88756504BC1622 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CF947080DD109DE84B25B83 /* libiconv.dylib */; };
 		146C660A5617434A4A61ECC8 /* Glide/Views/SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55247B9B5D9A4199B79ED0B /* Glide/Views/SettingsView.swift */; };
+		183D0C3352EA5172174EE5AE /* MobileVLCKit.xcframework in Embed Compatibility Framework */ = {isa = PBXBuildFile; fileRef = 56644A1673F13999A040DC55 /* MobileVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1F2AA7A144D87DCA298E6CFA /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BB542CFEFFFC4DE0F6ADC9E /* libxml2.dylib */; };
 		1FEB8F2EE75759F0D9E53BF6 /* Glide/Services/Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83C8CAF5402899506703BAB /* Glide/Services/Credentials.swift */; };
+		2639C185FDA349DCC2C989DB /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 235025B6B2A666E806287784 /* OpenGLES.framework */; };
 		283CAA6E9EE47ED135F24068 /* Glide/Core/CatalogSort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BD3F57752F38D9740EB3D1F /* Glide/Core/CatalogSort.swift */; };
 		288928410B66C925BB65B3CC /* Glide/Views/PinnedDirectoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BC83AB31913AAE638DBED4 /* Glide/Views/PinnedDirectoriesView.swift */; };
 		2FDBB680DAE51FBEC7B2F443 /* Glide/Views/PrivacySupportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EFD46C035C87ED6906105A /* Glide/Views/PrivacySupportView.swift */; };
 		31CF43C57B7B46494C3370AF /* Glide/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D743AFCAC3B97ACF94AE326 /* Glide/Assets.xcassets */; };
+		37D267C8A3A7C38988340174 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 47644EF292D804B9C9E7608D /* libbz2.dylib */; };
 		39E59B2196F47B27D34BE323 /* Glide/Core/Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54269A2C69007C432784A01 /* Glide/Core/Models.swift */; };
+		3DE0F23B37FA3B890D166539 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64314DCA6D6DEE2C7B9BC160 /* CoreText.framework */; };
+		3FD3450FBC863AC25E119A56 /* NetworkBufferQAProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = F630577DCB79FAEB0EEB77EA /* NetworkBufferQAProbe.swift */; };
+		4081484E5164C5072EBF022B /* Glide/Services/PlaybackEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5407149FC6A58D1308139B27 /* Glide/Services/PlaybackEngine.swift */; };
 		42DA54F46A80294808323793 /* Glide/Core/BrowseOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8071E5A04B6688FE96FB4AF /* Glide/Core/BrowseOptions.swift */; };
+		4C8E5FD96CCDBA8F102EE9C6 /* SubtitleFont-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 90F414C1FE145EFB59AF3B64 /* SubtitleFont-OFL.txt */; };
 		4E0CECF35D56C38B8761AA11 /* Glide/Services/ScreenRotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B8CBBCE96DC9A812E7895D /* Glide/Services/ScreenRotation.swift */; };
 		5043FDBD13DC2BAD8AAB40B9 /* Glide/Resources/demo1.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0B9059EDE43C826D2AD77A7A /* Glide/Resources/demo1.mp4 */; };
 		5109F20014B980031D06F9C3 /* Glide/Core/SubtitleCue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58C77C8B99663A70DE1C3B9F /* Glide/Core/SubtitleCue.swift */; };
 		535777C9514170DA42897C74 /* Glide/Core/PersonalVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A46FBF2F727966C1C7F627 /* Glide/Core/PersonalVideo.swift */; };
 		555A2AD739D1A34496C2FF1B /* Glide/Views/AdaptiveLibraryRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C97F708B1EF3AED4A5AE0E1 /* Glide/Views/AdaptiveLibraryRoot.swift */; };
+		5825D39B8CC7F723B1132D26 /* Glide/Services/PlaybackResource.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04FCC3CB6E5601B3CB1A639 /* Glide/Services/PlaybackResource.swift */; };
+		5C6F19DC47DBCFC71CDCB4F1 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C2E7A7FBDFD9946413E19D /* VideoToolbox.framework */; };
 		5E457ADD6E5F01F91F48A2AA /* Glide/Views/TrackChoicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D102E8F72AECB9B626CCD86 /* Glide/Views/TrackChoicesView.swift */; };
+		704FF95E6F189D12B1F986CE /* Glide/Core/MediaSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABA9B5823F0CE81B0C5E27C /* Glide/Core/MediaSource.swift */; };
 		723FE6665816622EB2179E30 /* Glide/Core/OfflineMediaFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC596BA4F074EC994F8F463 /* Glide/Core/OfflineMediaFiles.swift */; };
+		7593F55A05AB3BDE5209FCB6 /* Glide/Services/LocalMediaStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC9C72AE1007282F39FA9F02 /* Glide/Services/LocalMediaStore.swift */; };
 		7C25D5E502CCC338F9F9BEF4 /* Glide/Core/PlaybackIntelligence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D33B6DF4B5238A7D4381196 /* Glide/Core/PlaybackIntelligence.swift */; };
 		7E6F03B313155F4748F1F27A /* Glide/Core/ContinuousWatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B1A500BCE7880D315C366A /* Glide/Core/ContinuousWatching.swift */; };
 		7ECA85A969AF5C0C05BCDCD5 /* Glide/Views/Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D45204B4F2C39A229C8F2C4 /* Glide/Views/Theme.swift */; };
+		8695E11C49950A9072F716C3 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B732AF34D0005A8433337690 /* libc++.dylib */; };
 		88EB11E1C3A3A2E1EBE23B15 /* Glide/Services/PlaybackPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1CD7D3E610F1423AA6DF331 /* Glide/Services/PlaybackPreferences.swift */; };
 		89A001E7E8964E5E80A2B05C /* Glide/Views/CatalogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E64E4554E3A4F3B9BCE64D /* Glide/Views/CatalogView.swift */; };
+		8AD3D208A88B5D1E6AE3CFCC /* MobileVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56644A1673F13999A040DC55 /* MobileVLCKit.xcframework */; };
 		8F69D2603037B23E80BB9FA3 /* UITests/GlideUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDE1B02B46FB05CF1955EC0 /* UITests/GlideUITests.swift */; };
 		90BDB2F179273646ACCB4885 /* Glide/Resources/demo2.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = FFA273B3ABF5DC56145F3E64 /* Glide/Resources/demo2.mp4 */; };
+		91BE4F4A823D6393DD2014C5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF8E6D20FD06A3A72D136772 /* Security.framework */; };
 		92218786482824D018E47683 /* Glide/Services/MediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DC07DC259F668E7E0F8E3B /* Glide/Services/MediaCache.swift */; };
+		9265D4ED14AC7322E66B195B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECE84C0ABAB532857602D5A5 /* QuartzCore.framework */; };
 		9EE1DD75580A8224389174AE /* Glide/Core/PlaybackQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC087321279EC7E3A60B4DE /* Glide/Core/PlaybackQueue.swift */; };
+		A5E685A2AB26968D8022BB16 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D03BEAE5ACD60F6CFADAAA6A /* AudioToolbox.framework */; };
 		A6A9A259AE67C00AA9FE5991 /* Glide/Views/SourcesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D6FB927E870567722BA7C0 /* Glide/Views/SourcesView.swift */; };
 		A7701698EEC2284F721FD918 /* Glide/Views/VideoSurface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C40950ADADA7B2EC22DB02 /* Glide/Views/VideoSurface.swift */; };
+		A7E849131550C412B50FE53A /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8958270854BF87913AA57B8E /* CoreMedia.framework */; };
+		AD876672B6EBE3E49DF76BDF /* Glide/Core/LibrarySnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0637B8D9A96B7038E2000AC2 /* Glide/Core/LibrarySnapshot.swift */; };
+		ADC072E913FFFF10EC069361 /* ThirdPartyNotices.txt in Resources */ = {isa = PBXBuildFile; fileRef = 54462BBD2835B7BE827242CB /* ThirdPartyNotices.txt */; };
 		B935CAA552CE93C03DB41AB4 /* Glide/Services/DownloadStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D56677C14AD04DA50C0819 /* Glide/Services/DownloadStore.swift */; };
+		BC785C9D37473F02CD258FD2 /* Glide/Views/TimelinePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AC315EF2D2E4F80B3E4E25 /* Glide/Views/TimelinePreview.swift */; };
 		BEC22994B25EAE002C91E353 /* Glide/Views/DownloadsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523D1112864C447E05FDE029 /* Glide/Views/DownloadsView.swift */; };
 		BEC9895E7CD59401433424F9 /* Glide/Views/LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1615754FB7D1A905E5BFAA /* Glide/Views/LibraryView.swift */; };
 		C06FA6D1EF7B50D89D4ECC20 /* Glide/Services/AuthenticatedAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2582C0EE99F293CECA7AB18C /* Glide/Services/AuthenticatedAsset.swift */; };
 		CB48D750F431066D531B9088 /* Glide/Services/PlaybackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2AE59A6ADF34DE1845D365 /* Glide/Services/PlaybackController.swift */; };
 		CD63F28388C5702BE490BA12 /* Glide/Views/PersonalLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B02A04C19ABBC7B4524A72 /* Glide/Views/PersonalLibraryView.swift */; };
+		CE34B41682D40809203F0D73 /* SubtitleFonts in Resources */ = {isa = PBXBuildFile; fileRef = B42A0AE3194A9749376D481C /* SubtitleFonts */; };
 		CEF650271C8F4C25A3CD5818 /* Glide/Services/PlaybackAudioSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E63C50C803DDF54551C9780 /* Glide/Services/PlaybackAudioSession.swift */; };
 		D0F03F881DBA0E00A2A6E674 /* Glide/Services/PlaybackWarmup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87BCC9908235A8E6EC280D82 /* Glide/Services/PlaybackWarmup.swift */; };
 		D15E48D90E27B54FBE6564D4 /* Glide/Views/PersonMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0FF3A2D2ECA8A545CF0E78 /* Glide/Views/PersonMediaView.swift */; };
 		D49DE395CA1F94F917F43239 /* Glide/Views/PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030955A1AB8E9CA1DFF2BC87 /* Glide/Views/PlayerView.swift */; };
+		D65087B42A8A095010C34A97 /* Glide/Core/RecoverableStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7990C85CE4E4738632EDEA0 /* Glide/Core/RecoverableStore.swift */; };
+		D67656447D030469E5F731EA /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 30466806FCF4FEAC0A80D9DF /* libz.dylib */; };
+		DC545E4B5165C5856836010C /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2DF8957C42441FF79A730CA /* CFNetwork.framework */; };
+		E4125B5A3698C255F1E41358 /* MobileVLCKit-LGPL-2.1.txt in Resources */ = {isa = PBXBuildFile; fileRef = BC8AC34052D41B5AF07DBFA4 /* MobileVLCKit-LGPL-2.1.txt */; };
 		E7813E9B03A849C6A2E1F004 /* Glide/Views/EpisodePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7813E9B03A849C6A2E1F003 /* Glide/Views/EpisodePickerView.swift */; };
 		EA39442CFC0047DC9AD726B0 /* Glide/Services/MediaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC19A9EB591ABBA8F31195AD /* Glide/Services/MediaClient.swift */; };
+		EA6709B34E3E0EF27E786F47 /* VLCClockPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 77FCD7DAF096E7F3CB0F1155 /* VLCClockPlayer.m */; };
 		EAC86F7B06D235469D144723 /* Glide/Core/PlaybackQuality.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2F874F747C20BE1346622D /* Glide/Core/PlaybackQuality.swift */; };
+		EB844306016153945D7612EC /* Glide/Services/SourceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCE04BBC021C3AF2FFB868E /* Glide/Services/SourceProvider.swift */; };
 		EDF1950F996B027BD249D172 /* Glide/Resources/PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4DFFD94745173472A3ADFAE9 /* Glide/Resources/PrivacyInfo.xcprivacy */; };
 		F659E3682F9B49E68C6FE2A1 /* Glide/Core/CatalogMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66DE99BCFE045DAE13E6681 /* Glide/Core/CatalogMedia.swift */; };
+		F777D2255E8390C11B19DBE0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246C6B4FCE7443E743C616B8 /* CoreGraphics.framework */; };
+		FA095C44269BD2F2609671B9 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C057559DFD19359FDE1825DE /* AVFoundation.framework */; };
+		FAE9473FEB1C87C74777A591 /* CompatibilityPlaybackUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868273FA437CFEE6EB024D46 /* CompatibilityPlaybackUITests.swift */; };
 		FBA1B26D75CE842237C68813 /* Glide/LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6432BC37CF1E1EF0AA928233 /* Glide/LibraryStore.swift */; };
+		FE003E5979B7BCA3D14D73AF /* VLCPlaybackEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EA6C89E33380A6C2855E1D /* VLCPlaybackEngine.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,53 +100,103 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		8BB5A0DA6437C043F49E3A9F /* Embed Compatibility Framework */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				183D0C3352EA5172174EE5AE /* MobileVLCKit.xcframework in Embed Compatibility Framework */,
+			);
+			name = "Embed Compatibility Framework";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		030955A1AB8E9CA1DFF2BC87 /* Glide/Views/PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/PlayerView.swift; sourceTree = SOURCE_ROOT; };
+		0637B8D9A96B7038E2000AC2 /* Glide/Core/LibrarySnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/LibrarySnapshot.swift; sourceTree = SOURCE_ROOT; };
 		0B9059EDE43C826D2AD77A7A /* Glide/Resources/demo1.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Glide/Resources/demo1.mp4; sourceTree = SOURCE_ROOT; };
 		0D33B6DF4B5238A7D4381196 /* Glide/Core/PlaybackIntelligence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/PlaybackIntelligence.swift; sourceTree = SOURCE_ROOT; };
 		0E2F874F747C20BE1346622D /* Glide/Core/PlaybackQuality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/PlaybackQuality.swift; sourceTree = SOURCE_ROOT; };
 		11B8CBBCE96DC9A812E7895D /* Glide/Services/ScreenRotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/ScreenRotation.swift; sourceTree = SOURCE_ROOT; };
+		235025B6B2A666E806287784 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		246C6B4FCE7443E743C616B8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		2582C0EE99F293CECA7AB18C /* Glide/Services/AuthenticatedAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/AuthenticatedAsset.swift; sourceTree = SOURCE_ROOT; };
+		28054353902C7AF13B24B895 /* CompatibilityQAProbe.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CompatibilityQAProbe.swift; path = Glide/Services/Compatibility/CompatibilityQAProbe.swift; sourceTree = "<group>"; };
 		2D102E8F72AECB9B626CCD86 /* Glide/Views/TrackChoicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/TrackChoicesView.swift; sourceTree = SOURCE_ROOT; };
+		30466806FCF4FEAC0A80D9DF /* libz.dylib */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		33D56677C14AD04DA50C0819 /* Glide/Services/DownloadStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/DownloadStore.swift; sourceTree = SOURCE_ROOT; };
 		38A007151ABE87CC01A5B6E9 /* Glide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = Glide.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39B02A04C19ABBC7B4524A72 /* Glide/Views/PersonalLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/PersonalLibraryView.swift; sourceTree = SOURCE_ROOT; };
 		42C40950ADADA7B2EC22DB02 /* Glide/Views/VideoSurface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/VideoSurface.swift; sourceTree = SOURCE_ROOT; };
+		47644EF292D804B9C9E7608D /* libbz2.dylib */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
+		4CF947080DD109DE84B25B83 /* libiconv.dylib */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		4DDE1B02B46FB05CF1955EC0 /* UITests/GlideUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests/GlideUITests.swift; sourceTree = SOURCE_ROOT; };
 		4DFFD94745173472A3ADFAE9 /* Glide/Resources/PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Glide/Resources/PrivacyInfo.xcprivacy; sourceTree = SOURCE_ROOT; };
 		523D1112864C447E05FDE029 /* Glide/Views/DownloadsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/DownloadsView.swift; sourceTree = SOURCE_ROOT; };
+		52C2E7A7FBDFD9946413E19D /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/VideoToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		5407149FC6A58D1308139B27 /* Glide/Services/PlaybackEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/PlaybackEngine.swift; sourceTree = SOURCE_ROOT; };
+		54462BBD2835B7BE827242CB /* ThirdPartyNotices.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ThirdPartyNotices.txt; path = Glide/Resources/ThirdPartyNotices.txt; sourceTree = "<group>"; };
+		56644A1673F13999A040DC55 /* MobileVLCKit.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.xcframework; name = MobileVLCKit.xcframework; path = .build/CompatibilitySDK/MobileVLCKit.xcframework; sourceTree = "<group>"; };
 		58C77C8B99663A70DE1C3B9F /* Glide/Core/SubtitleCue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/SubtitleCue.swift; sourceTree = SOURCE_ROOT; };
 		5B0FF3A2D2ECA8A545CF0E78 /* Glide/Views/PersonMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/PersonMediaView.swift; sourceTree = SOURCE_ROOT; };
 		5D743AFCAC3B97ACF94AE326 /* Glide/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Glide/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		5FC087321279EC7E3A60B4DE /* Glide/Core/PlaybackQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/PlaybackQueue.swift; sourceTree = SOURCE_ROOT; };
+		64314DCA6D6DEE2C7B9BC160 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
 		6432BC37CF1E1EF0AA928233 /* Glide/LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/LibraryStore.swift; sourceTree = SOURCE_ROOT; };
+		64532CB3A2D61AD50F584514 /* Glide/Services/NativePlaybackEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/NativePlaybackEngine.swift; sourceTree = SOURCE_ROOT; };
 		65A46FBF2F727966C1C7F627 /* Glide/Core/PersonalVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/PersonalVideo.swift; sourceTree = SOURCE_ROOT; };
 		6BD3F57752F38D9740EB3D1F /* Glide/Core/CatalogSort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/CatalogSort.swift; sourceTree = SOURCE_ROOT; };
 		6D45204B4F2C39A229C8F2C4 /* Glide/Views/Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/Theme.swift; sourceTree = SOURCE_ROOT; };
+		77FCD7DAF096E7F3CB0F1155 /* VLCClockPlayer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = VLCClockPlayer.m; path = Glide/Services/Compatibility/VLCClockPlayer.m; sourceTree = "<group>"; };
 		7DC596BA4F074EC994F8F463 /* Glide/Core/OfflineMediaFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/OfflineMediaFiles.swift; sourceTree = SOURCE_ROOT; };
 		84BC83AB31913AAE638DBED4 /* Glide/Views/PinnedDirectoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/PinnedDirectoriesView.swift; sourceTree = SOURCE_ROOT; };
 		84E64E4554E3A4F3B9BCE64D /* Glide/Views/CatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/CatalogView.swift; sourceTree = SOURCE_ROOT; };
+		868273FA437CFEE6EB024D46 /* CompatibilityPlaybackUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CompatibilityPlaybackUITests.swift; path = UITests/CompatibilityPlaybackUITests.swift; sourceTree = "<group>"; };
 		87BCC9908235A8E6EC280D82 /* Glide/Services/PlaybackWarmup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/PlaybackWarmup.swift; sourceTree = SOURCE_ROOT; };
+		8958270854BF87913AA57B8E /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/CoreMedia.framework; sourceTree = DEVELOPER_DIR; };
+		8BB542CFEFFFC4DE0F6ADC9E /* libxml2.dylib */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
+		90F414C1FE145EFB59AF3B64 /* SubtitleFont-OFL.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = "SubtitleFont-OFL.txt"; path = "Glide/Resources/SubtitleFont-OFL.txt"; sourceTree = "<group>"; };
+		93A85A9C49CE440BF41FF3CD /* Glide/Core/PlaybackEngineModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/PlaybackEngineModels.swift; sourceTree = SOURCE_ROOT; };
 		9B908DAB7041C39316AEE4BD /* Glide/GlideApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/GlideApp.swift; sourceTree = SOURCE_ROOT; };
 		9C97F708B1EF3AED4A5AE0E1 /* Glide/Views/AdaptiveLibraryRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/AdaptiveLibraryRoot.swift; sourceTree = SOURCE_ROOT; };
 		9D3AD977850B7EAC0E4F6585 /* GlideUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = GlideUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9DCE04BBC021C3AF2FFB868E /* Glide/Services/SourceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/SourceProvider.swift; sourceTree = SOURCE_ROOT; };
 		9E63C50C803DDF54551C9780 /* Glide/Services/PlaybackAudioSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/PlaybackAudioSession.swift; sourceTree = SOURCE_ROOT; };
 		A1B1A500BCE7880D315C366A /* Glide/Core/ContinuousWatching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/ContinuousWatching.swift; sourceTree = SOURCE_ROOT; };
+		A2DF8957C42441FF79A730CA /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		A3D6FB927E870567722BA7C0 /* Glide/Views/SourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/SourcesView.swift; sourceTree = SOURCE_ROOT; };
+		A7990C85CE4E4738632EDEA0 /* Glide/Core/RecoverableStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/RecoverableStore.swift; sourceTree = SOURCE_ROOT; };
 		A83C8CAF5402899506703BAB /* Glide/Services/Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/Credentials.swift; sourceTree = SOURCE_ROOT; };
 		B1CD7D3E610F1423AA6DF331 /* Glide/Services/PlaybackPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/PlaybackPreferences.swift; sourceTree = SOURCE_ROOT; };
+		B42A0AE3194A9749376D481C /* SubtitleFonts */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder; name = SubtitleFonts; path = Glide/Resources/SubtitleFonts; sourceTree = "<group>"; };
+		B4EA6C89E33380A6C2855E1D /* VLCPlaybackEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VLCPlaybackEngine.swift; path = Glide/Services/Compatibility/VLCPlaybackEngine.swift; sourceTree = "<group>"; };
+		B732AF34D0005A8433337690 /* libc++.dylib */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		BB2AE59A6ADF34DE1845D365 /* Glide/Services/PlaybackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/PlaybackController.swift; sourceTree = SOURCE_ROOT; };
+		BC8AC34052D41B5AF07DBFA4 /* MobileVLCKit-LGPL-2.1.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = "MobileVLCKit-LGPL-2.1.txt"; path = "Glide/Resources/MobileVLCKit-LGPL-2.1.txt"; sourceTree = "<group>"; };
 		BD7E4CD3C8F5D4559A0CB38A /* Glide/Resources/demo0.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Glide/Resources/demo0.mp4; sourceTree = SOURCE_ROOT; };
+		C057559DFD19359FDE1825DE /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		C55247B9B5D9A4199B79ED0B /* Glide/Views/SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/SettingsView.swift; sourceTree = SOURCE_ROOT; };
+		CABA9B5823F0CE81B0C5E27C /* Glide/Core/MediaSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/MediaSource.swift; sourceTree = SOURCE_ROOT; };
 		CD1615754FB7D1A905E5BFAA /* Glide/Views/LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/LibraryView.swift; sourceTree = SOURCE_ROOT; };
+		D03BEAE5ACD60F6CFADAAA6A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		DC19A9EB591ABBA8F31195AD /* Glide/Services/MediaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/MediaClient.swift; sourceTree = SOURCE_ROOT; };
+		DC9C72AE1007282F39FA9F02 /* Glide/Services/LocalMediaStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/LocalMediaStore.swift; sourceTree = SOURCE_ROOT; };
 		E2DC07DC259F668E7E0F8E3B /* Glide/Services/MediaCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/MediaCache.swift; sourceTree = SOURCE_ROOT; };
+		E5595343F733A64B2F3D0572 /* VLCClockPlayer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = VLCClockPlayer.h; path = Glide/Services/Compatibility/VLCClockPlayer.h; sourceTree = "<group>"; };
 		E66DE99BCFE045DAE13E6681 /* Glide/Core/CatalogMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/CatalogMedia.swift; sourceTree = SOURCE_ROOT; };
 		E7813E9B03A849C6A2E1F003 /* Glide/Views/EpisodePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/EpisodePickerView.swift; sourceTree = SOURCE_ROOT; };
+		E7AC315EF2D2E4F80B3E4E25 /* Glide/Views/TimelinePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/TimelinePreview.swift; sourceTree = SOURCE_ROOT; };
+		ECE84C0ABAB532857602D5A5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		EE933493E88C858BF979BEAC /* Glide/Services/PictureInPicture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/PictureInPicture.swift; sourceTree = SOURCE_ROOT; };
+		F04FCC3CB6E5601B3CB1A639 /* Glide/Services/PlaybackResource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/PlaybackResource.swift; sourceTree = SOURCE_ROOT; };
 		F54269A2C69007C432784A01 /* Glide/Core/Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/Models.swift; sourceTree = SOURCE_ROOT; };
+		F630577DCB79FAEB0EEB77EA /* NetworkBufferQAProbe.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NetworkBufferQAProbe.swift; path = Glide/Services/NetworkBufferQAProbe.swift; sourceTree = "<group>"; };
 		F8071E5A04B6688FE96FB4AF /* Glide/Core/BrowseOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/BrowseOptions.swift; sourceTree = SOURCE_ROOT; };
 		F8EFD46C035C87ED6906105A /* Glide/Views/PrivacySupportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/PrivacySupportView.swift; sourceTree = SOURCE_ROOT; };
+		FF8E6D20FD06A3A72D136772 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		FFA273B3ABF5DC56145F3E64 /* Glide/Resources/demo2.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Glide/Resources/demo2.mp4; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -119,12 +205,41 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8AD3D208A88B5D1E6AE3CFCC /* MobileVLCKit.xcframework in Frameworks */,
+				9265D4ED14AC7322E66B195B /* QuartzCore.framework in Frameworks */,
+				3DE0F23B37FA3B890D166539 /* CoreText.framework in Frameworks */,
+				FA095C44269BD2F2609671B9 /* AVFoundation.framework in Frameworks */,
+				91BE4F4A823D6393DD2014C5 /* Security.framework in Frameworks */,
+				DC545E4B5165C5856836010C /* CFNetwork.framework in Frameworks */,
+				A5E685A2AB26968D8022BB16 /* AudioToolbox.framework in Frameworks */,
+				2639C185FDA349DCC2C989DB /* OpenGLES.framework in Frameworks */,
+				F777D2255E8390C11B19DBE0 /* CoreGraphics.framework in Frameworks */,
+				5C6F19DC47DBCFC71CDCB4F1 /* VideoToolbox.framework in Frameworks */,
+				A7E849131550C412B50FE53A /* CoreMedia.framework in Frameworks */,
+				8695E11C49950A9072F716C3 /* libc++.dylib in Frameworks */,
+				1F2AA7A144D87DCA298E6CFA /* libxml2.dylib in Frameworks */,
+				D67656447D030469E5F731EA /* libz.dylib in Frameworks */,
+				37D267C8A3A7C38988340174 /* libbz2.dylib in Frameworks */,
+				1345F58F5E88756504BC1622 /* libiconv.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		481DD03F12F7CF4EA7EF18F5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FF505BE6B09097089B597D5A /* iOS */,
+				B732AF34D0005A8433337690 /* libc++.dylib */,
+				8BB542CFEFFFC4DE0F6ADC9E /* libxml2.dylib */,
+				30466806FCF4FEAC0A80D9DF /* libz.dylib */,
+				47644EF292D804B9C9E7608D /* libbz2.dylib */,
+				4CF947080DD109DE84B25B83 /* libiconv.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B28B7AF69320201D1CF206EB = {
 			isa = PBXGroup;
 			children = (
@@ -133,6 +248,16 @@
 				F8071E5A04B6688FE96FB4AF /* Glide/Core/BrowseOptions.swift */,
 				E66DE99BCFE045DAE13E6681 /* Glide/Core/CatalogMedia.swift */,
 				6BD3F57752F38D9740EB3D1F /* Glide/Core/CatalogSort.swift */,
+				CABA9B5823F0CE81B0C5E27C /* Glide/Core/MediaSource.swift */,
+				A7990C85CE4E4738632EDEA0 /* Glide/Core/RecoverableStore.swift */,
+				0637B8D9A96B7038E2000AC2 /* Glide/Core/LibrarySnapshot.swift */,
+				9DCE04BBC021C3AF2FFB868E /* Glide/Services/SourceProvider.swift */,
+				DC9C72AE1007282F39FA9F02 /* Glide/Services/LocalMediaStore.swift */,
+				E7AC315EF2D2E4F80B3E4E25 /* Glide/Views/TimelinePreview.swift */,
+				F04FCC3CB6E5601B3CB1A639 /* Glide/Services/PlaybackResource.swift */,
+				64532CB3A2D61AD50F584514 /* Glide/Services/NativePlaybackEngine.swift */,
+				5407149FC6A58D1308139B27 /* Glide/Services/PlaybackEngine.swift */,
+				93A85A9C49CE440BF41FF3CD /* Glide/Core/PlaybackEngineModels.swift */,
 				F54269A2C69007C432784A01 /* Glide/Core/Models.swift */,
 				65A46FBF2F727966C1C7F627 /* Glide/Core/PersonalVideo.swift */,
 				0D33B6DF4B5238A7D4381196 /* Glide/Core/PlaybackIntelligence.swift */,
@@ -174,6 +299,18 @@
 				5D743AFCAC3B97ACF94AE326 /* Glide/Assets.xcassets */,
 				FBDC4F23F93125BBEEAE800C /* Products */,
 				4DDE1B02B46FB05CF1955EC0 /* UITests/GlideUITests.swift */,
+				B4EA6C89E33380A6C2855E1D /* VLCPlaybackEngine.swift */,
+				77FCD7DAF096E7F3CB0F1155 /* VLCClockPlayer.m */,
+				E5595343F733A64B2F3D0572 /* VLCClockPlayer.h */,
+				56644A1673F13999A040DC55 /* MobileVLCKit.xcframework */,
+				481DD03F12F7CF4EA7EF18F5 /* Frameworks */,
+				54462BBD2835B7BE827242CB /* ThirdPartyNotices.txt */,
+				BC8AC34052D41B5AF07DBFA4 /* MobileVLCKit-LGPL-2.1.txt */,
+				868273FA437CFEE6EB024D46 /* CompatibilityPlaybackUITests.swift */,
+				28054353902C7AF13B24B895 /* CompatibilityQAProbe.swift */,
+				B42A0AE3194A9749376D481C /* SubtitleFonts */,
+				90F414C1FE145EFB59AF3B64 /* SubtitleFont-OFL.txt */,
+				F630577DCB79FAEB0EEB77EA /* NetworkBufferQAProbe.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -186,6 +323,23 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		FF505BE6B09097089B597D5A /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				ECE84C0ABAB532857602D5A5 /* QuartzCore.framework */,
+				64314DCA6D6DEE2C7B9BC160 /* CoreText.framework */,
+				C057559DFD19359FDE1825DE /* AVFoundation.framework */,
+				FF8E6D20FD06A3A72D136772 /* Security.framework */,
+				A2DF8957C42441FF79A730CA /* CFNetwork.framework */,
+				D03BEAE5ACD60F6CFADAAA6A /* AudioToolbox.framework */,
+				235025B6B2A666E806287784 /* OpenGLES.framework */,
+				246C6B4FCE7443E743C616B8 /* CoreGraphics.framework */,
+				52C2E7A7FBDFD9946413E19D /* VideoToolbox.framework */,
+				8958270854BF87913AA57B8E /* CoreMedia.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -196,6 +350,8 @@
 				BCE16DD0260827ECF338C787 /* Sources */,
 				7561BFB015D8F536760CB671 /* Frameworks */,
 				0189424A5A60FED329FA868E /* Resources */,
+				8BB5A0DA6437C043F49E3A9F /* Embed Compatibility Framework */,
+				3BD6878CCC01257E98E319FF /* Validate Compatibility SDK */,
 			);
 			buildRules = (
 			);
@@ -261,10 +417,38 @@
 				5043FDBD13DC2BAD8AAB40B9 /* Glide/Resources/demo1.mp4 in Resources */,
 				90BDB2F179273646ACCB4885 /* Glide/Resources/demo2.mp4 in Resources */,
 				31CF43C57B7B46494C3370AF /* Glide/Assets.xcassets in Resources */,
+				ADC072E913FFFF10EC069361 /* ThirdPartyNotices.txt in Resources */,
+				E4125B5A3698C255F1E41358 /* MobileVLCKit-LGPL-2.1.txt in Resources */,
+				CE34B41682D40809203F0D73 /* SubtitleFonts in Resources */,
+				4C8E5FD96CCDBA8F102EE9C6 /* SubtitleFont-OFL.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3BD6878CCC01257E98E319FF /* Validate Compatibility SDK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(FRAMEWORKS_FOLDER_PATH)/MobileVLCKit.framework/MobileVLCKit",
+				"$(BUILT_PRODUCTS_DIR)/MobileVLCKit.framework.dSYM/Contents/Resources/DWARF/MobileVLCKit",
+			);
+			name = "Validate Compatibility SDK";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -eu\ntest -s \"$SCRIPT_INPUT_FILE_0\" || { echo \"error: Compatibility SDK was not embedded. Run python3 Scripts/prepare_compatibility_sdk.py\"; exit 1; }\nif [ \"$CONFIGURATION\" = \"Release\" ]; then\n    test -s \"$SCRIPT_INPUT_FILE_1\" || { echo \"error: Official MobileVLCKit dSYM is missing. Run python3 Scripts/prepare_compatibility_sdk.py\"; exit 1; }\n    binary_uuids=\"$(/usr/bin/xcrun dwarfdump --uuid \"$SCRIPT_INPUT_FILE_0\" | /usr/bin/awk '{print $2}' | /usr/bin/sort)\"\n    symbol_uuids=\"$(/usr/bin/xcrun dwarfdump --uuid \"$SCRIPT_INPUT_FILE_1\" | /usr/bin/awk '{print $2}' | /usr/bin/sort)\"\n    test -n \"$binary_uuids\" && test \"$binary_uuids\" = \"$symbol_uuids\" || { echo \"error: MobileVLCKit binary and dSYM UUIDs differ.\"; exit 1; }\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		95FC400A54C228DD62344224 /* Sources */ = {
@@ -272,6 +456,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F69D2603037B23E80BB9FA3 /* UITests/GlideUITests.swift in Sources */,
+				FAE9473FEB1C87C74777A591 /* CompatibilityPlaybackUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,6 +476,16 @@
 				9EE1DD75580A8224389174AE /* Glide/Core/PlaybackQueue.swift in Sources */,
 				5109F20014B980031D06F9C3 /* Glide/Core/SubtitleCue.swift in Sources */,
 				11D607998E44ACAAD1DBF2DA /* Glide/GlideApp.swift in Sources */,
+				704FF95E6F189D12B1F986CE /* Glide/Core/MediaSource.swift in Sources */,
+				D65087B42A8A095010C34A97 /* Glide/Core/RecoverableStore.swift in Sources */,
+				AD876672B6EBE3E49DF76BDF /* Glide/Core/LibrarySnapshot.swift in Sources */,
+				EB844306016153945D7612EC /* Glide/Services/SourceProvider.swift in Sources */,
+				7593F55A05AB3BDE5209FCB6 /* Glide/Services/LocalMediaStore.swift in Sources */,
+				BC785C9D37473F02CD258FD2 /* Glide/Views/TimelinePreview.swift in Sources */,
+				5825D39B8CC7F723B1132D26 /* Glide/Services/PlaybackResource.swift in Sources */,
+				09048DB7158BC02410C5C832 /* Glide/Services/NativePlaybackEngine.swift in Sources */,
+				4081484E5164C5072EBF022B /* Glide/Services/PlaybackEngine.swift in Sources */,
+				0CC1C05472A2E3F52F0BF02F /* Glide/Core/PlaybackEngineModels.swift in Sources */,
 				FBA1B26D75CE842237C68813 /* Glide/LibraryStore.swift in Sources */,
 				C06FA6D1EF7B50D89D4ECC20 /* Glide/Services/AuthenticatedAsset.swift in Sources */,
 				1FEB8F2EE75759F0D9E53BF6 /* Glide/Services/Credentials.swift in Sources */,
@@ -318,6 +513,10 @@
 				5E457ADD6E5F01F91F48A2AA /* Glide/Views/TrackChoicesView.swift in Sources */,
 				E7813E9B03A849C6A2E1F004 /* Glide/Views/EpisodePickerView.swift in Sources */,
 				A7701698EEC2284F721FD918 /* Glide/Views/VideoSurface.swift in Sources */,
+				FE003E5979B7BCA3D14D73AF /* VLCPlaybackEngine.swift in Sources */,
+				EA6709B34E3E0EF27E786F47 /* VLCClockPlayer.m in Sources */,
+				11F2457F83D21C8AEF88D0D3 /* CompatibilityQAProbe.swift in Sources */,
+				3FD3450FBC863AC25E119A56 /* NetworkBufferQAProbe.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,6 +545,37 @@
 			};
 			name = Release;
 		};
+		4391BB81FAA03D233E3C8ED4 /* CompatibilityQA */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FR9RTRV9BC;
+				GENERATE_INFOPLIST_FILE = NO;
+				GLIDE_DISPLAY_NAME = "Glide 兼容验证";
+				INFOPLIST_FILE = Glide/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.4.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.songpeng.glide.compatibilityqa;
+				PRODUCT_NAME = Glide;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OBJC_BRIDGING_HEADER = Glide/Services/Compatibility/VLCClockPlayer.h;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = CompatibilityQA;
+		};
 		59CE1A55E3C0DC7EDB1A684D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -364,20 +594,27 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FR9RTRV9BC;
 				GENERATE_INFOPLIST_FILE = NO;
+				GLIDE_DISPLAY_NAME = Glide;
 				INFOPLIST_FILE = Glide/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.4.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.songpeng.glide;
 				PRODUCT_NAME = Glide;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_OBJC_BRIDGING_HEADER = Glide/Services/Compatibility/VLCClockPlayer.h;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -388,25 +625,47 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FR9RTRV9BC;
 				GENERATE_INFOPLIST_FILE = NO;
+				GLIDE_DISPLAY_NAME = Glide;
 				INFOPLIST_FILE = Glide/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.4.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.songpeng.glide;
 				PRODUCT_NAME = Glide;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OBJC_BRIDGING_HEADER = Glide/Services/Compatibility/VLCClockPlayer.h;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
+		};
+		7B885AC1B286E36E570BFC5E /* CompatibilityQA */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = FR9RTRV9BC;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songpeng.glide.compatibilityqa.uitests;
+				PRODUCT_NAME = GlideUITests;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Glide;
+			};
+			name = CompatibilityQA;
 		};
 		89E1FD6268CC0F221A2BE178 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -448,6 +707,47 @@
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
+		};
+		E308AB60FD3628C06147A373 /* CompatibilityQA */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = CompatibilityQA;
 		};
 		E6DE6C99132752C914FEF632 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -497,6 +797,7 @@
 			buildConfigurations = (
 				59CE1A55E3C0DC7EDB1A684D /* Debug */,
 				003254340176A76C2BC8F6D4 /* Release */,
+				7B885AC1B286E36E570BFC5E /* CompatibilityQA */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -506,6 +807,7 @@
 			buildConfigurations = (
 				89E1FD6268CC0F221A2BE178 /* Debug */,
 				E6DE6C99132752C914FEF632 /* Release */,
+				E308AB60FD3628C06147A373 /* CompatibilityQA */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -515,6 +817,7 @@
 			buildConfigurations = (
 				7082CC0B6FC1282FCEABD07A /* Debug */,
 				639A7CA24D39909E713B47F7 /* Release */,
+				4391BB81FAA03D233E3C8ED4 /* CompatibilityQA */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -17,17 +17,25 @@ final class LibraryStore {
     var hasMore: Bool { selectedServer?.kind == .jellyfin && !jellyPath.isEmpty && nextIndex < total }
     var hasParent: Bool { !path.isEmpty || !jellyPath.isEmpty }
     var currentDirectoryName: String { jellyPath.last?.name ?? path.last?.lastPathComponent ?? (selectedServer?.kind == .jellyfin ? "媒体库" : selectedServer?.name ?? "离线演示") }
-    var locationKey: String { (selectedID?.uuidString ?? "demo") + ":" + (jellyPath.last?.id ?? path.last?.absoluteString ?? "root") }
+    var locationKey: String {
+        if let server = selectedServer, server.kind == .local {
+            return server.id.uuidString + ":local:" + ((try? LocalMediaIdentity.relativePath(root: server.address, file: path.last ?? server.address)) ?? "")
+        }
+        return (selectedID?.uuidString ?? "demo") + ":" + (jellyPath.last?.id ?? path.last?.absoluteString ?? "root")
+    }
     var scopeKey: String { locationKey + ":" + browseOptions.key }
     private(set) var browseOptions = BrowseOptions()
     private var directoryPreferences: [String: BrowseOptions] = [:]
     private(set) var folderSort: FolderSort = .nameAscending
     private var folderSortPreferences: [String: FolderSort] = [:]
     var bookmarks: [DirectoryBookmark] = []
-    var canPinDirectory: Bool { selectedServer != nil && (selectedServer?.kind == .webDAV || !jellyPath.isEmpty) }
+    var canPinDirectory: Bool { selectedServer != nil && (selectedServer?.kind.isFileSource == true || !jellyPath.isEmpty) }
     var isDirectoryPinned: Bool { bookmarks.contains { $0.id == locationKey } }
     var loading = false
     var error: String?
+    private(set) var storageMessage: String?
+    private var storageBlocked = false
+    private var storageWriteFailed = false
     var total = 0
     var favorites: Set<String> = []
     var positions: [String: Double] = [:]
@@ -44,9 +52,13 @@ final class LibraryStore {
     @ObservationIgnored private var snapshots: [String: BrowseSnapshot] = [:]
     @ObservationIgnored private var snapshotOrder: [String] = []
     private var contentsKey: String?
-    var browserPositions: [String: String] = [:]
+    @ObservationIgnored var browserPositions: [String: String] = [:]
     private var snapshotKey: String { scopeKey + ":" + folderSort.rawValue + ":" + (selectedServer?.userID ?? "dav") }
     private(set) var episodeCatalog: [String: [Video]] = [:]
+    private var snapshotStore: RecoverableStore<LibrarySnapshot> {
+        let root = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        return RecoverableStore(file: root.appendingPathComponent("LibraryState/library-v1.json"))
+    }
     init() {
         if let data = UserDefaults.standard.data(forKey: "directoryPreferences.v1") { directoryPreferences = (try? JSONDecoder().decode([String: BrowseOptions].self, from: data)) ?? [:] }
         if let data = UserDefaults.standard.data(forKey: "folderSortPreferences.v1") { folderSortPreferences = (try? JSONDecoder().decode([String: FolderSort].self, from: data)) ?? [:] }
@@ -59,6 +71,26 @@ final class LibraryStore {
         if let data = UserDefaults.standard.data(forKey: "progressSnapshots.v1") { progressSnapshots = (try? JSONDecoder().decode([String: ProgressSnapshot].self, from: data)) ?? [:] }
         if let data = UserDefaults.standard.data(forKey: "episodeCatalog.v1") {
             episodeCatalog = (try? JSONDecoder().decode([String: [Video]].self, from: data)) ?? [:]
+        }
+        do {
+            if let saved = try snapshotStore.load() {
+                let value = saved.value
+                servers = value.servers; directoryPreferences = value.directoryPreferences
+                folderSortPreferences = value.folderSortPreferences; bookmarks = value.bookmarks
+                personalVideos = value.personalVideos; favorites = value.favorites; positions = value.positions
+                progressSnapshots = value.progressSnapshots; episodeCatalog = value.episodeCatalog
+                if saved.recovered { storageMessage = "本机数据已从备份恢复。" }
+            } else {
+                // Reject corrupt legacy JSON instead of silently migrating empty collections.
+                let legacy = try LibrarySnapshot.legacy(from: .standard)
+                try snapshotStore.save(legacy)
+                guard let check = try snapshotStore.load(), check.value == legacy else {
+                    throw MediaError.message("本机数据迁移校验未完成。")
+                }
+            }
+        } catch {
+            storageBlocked = true
+            storageMessage = "本机数据无法读取，已保留原文件和旧版记录。请勿卸载应用，可向支持反馈。"
         }
         selectedID = UserDefaults.standard.string(forKey: "selectedServer").flatMap(UUID.init(uuidString:))
         if !servers.contains(where: { $0.id == selectedID }) { selectedID = nil }
@@ -77,10 +109,22 @@ final class LibraryStore {
         total = videos.count
         UserDefaults.standard.removeObject(forKey: "selectedServer")
     }
-    func persist() {
-        if let data = try? JSONEncoder().encode(servers) { UserDefaults.standard.set(data, forKey: "servers") }
+    @discardableResult func persist() -> Bool {
+        guard !storageBlocked else { return false }
+        do {
+            try snapshotStore.save(LibrarySnapshot(servers: servers, directoryPreferences: directoryPreferences,
+                folderSortPreferences: folderSortPreferences, bookmarks: bookmarks, personalVideos: personalVideos,
+                favorites: favorites, positions: positions, progressSnapshots: progressSnapshots, episodeCatalog: episodeCatalog))
+            if storageWriteFailed { storageMessage = nil; storageWriteFailed = false }
+            return true
+        } catch {
+            storageWriteFailed = true
+            storageMessage = "本机数据尚未保存：请检查设备存储空间，避免退出前丢失本轮修改。"
+            return false
+        }
     }
     func add(name: String, kind: SourceKind, address: String, username: String, password: String) async throws {
+        guard kind.requiresCredentials else { throw MediaError.message("请通过文件或目录入口添加本地来源。") }
         let url = try ServerURL.parse(address)
         var server = MediaServer(name: name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? (url.host ?? kind.title) : name, kind: kind, address: url, username: username)
         if kind == .jellyfin {
@@ -93,10 +137,75 @@ final class LibraryStore {
             try Task.checkCancellation()
             try Credentials.save(password, for: server.id)
         }
-        servers.append(server); persist()
+        servers.append(server)
+        guard persist() else { servers.removeAll { $0.id == server.id }; Credentials.delete(server.id); throw MediaError.message(storageMessage ?? "无法保存来源。") }
         await select(server.id)
     }
+    func mountLocalDirectory(_ url: URL, replacing original: MediaServer? = nil) async throws {
+        var server = try LocalMediaStore.mount(url)
+        if let original {
+            let previous = (try? LocalMediaStore.access(original))?.root ?? original.address
+            guard previous.standardizedFileURL.resolvingSymlinksInPath() == url.standardizedFileURL.resolvingSymlinksInPath() else {
+                throw MediaError.message("重新授权请选择原目录。其他目录请添加为新来源，以免混合收藏。")
+            }
+            server.id = original.id; server.name = original.name
+        }
+        let oldServers = servers
+        if let index = servers.firstIndex(where: { $0.id == server.id }) { servers[index] = server }
+        else { servers.append(server) }
+        guard persist() else { servers = oldServers; throw MediaError.message(storageMessage ?? "无法保存目录授权。") }
+        await select(server.id)
+    }
+    func importLocalVideos(_ urls: [URL]) async throws -> Int {
+        guard !urls.isEmpty else { return 0 }
+        guard !storageBlocked else { throw MediaError.message(storageMessage ?? "本机数据无法保存。") }
+        var source = servers.first { $0.kind == .local && $0.localBookmark == nil }
+        let isNew = source == nil
+        if source == nil {
+            let id = UUID()
+            source = MediaServer(id: id, name: "导入的视频", kind: .local, address: LocalMediaStore.managedDirectory(id), username: "")
+        }
+        let server = source!
+        let count = try await LocalMediaStore.importFiles(urls, server: server)
+        if isNew {
+            servers.append(server)
+            guard persist() else {
+                servers.removeAll { $0.id == server.id }
+                try? FileManager.default.removeItem(at: LocalMediaStore.managedDirectory(server.id))
+                throw MediaError.message(storageMessage ?? "无法保存导入记录。")
+            }
+        }
+        await select(server.id)
+        return count
+    }
+    func canDeleteImportedVideo(_ video: Video) -> Bool {
+        servers.contains { $0.id == video.sourceID && $0.kind == .local && $0.localBookmark == nil }
+    }
+    func deleteImportedVideo(_ video: Video) async throws {
+        guard canDeleteImportedVideo(video), let server = servers.first(where: { $0.id == video.sourceID }) else {
+            throw MediaError.message("只能删除 Glide 内导入的视频副本。")
+        }
+        let resource = try LocalMediaStore.playback(video, server: server)
+        let trash = resource.url.deletingLastPathComponent().appendingPathComponent(".deleted-" + UUID().uuidString)
+        let manager = FileManager.default
+        // Rename first; put the file back if saving the matching library change fails.
+        try manager.moveItem(at: resource.url, to: trash)
+        let oldPersonal = personalVideos, oldFavorites = favorites, oldPositions = positions, oldProgress = progressSnapshots
+        personalVideos.removeValue(forKey: video.id); favorites.remove(video.id)
+        positions.removeValue(forKey: video.id); progressSnapshots.removeValue(forKey: video.id)
+        guard persist() else {
+            personalVideos = oldPersonal; favorites = oldFavorites; positions = oldPositions; progressSnapshots = oldProgress
+            try manager.moveItem(at: trash, to: resource.url)
+            throw MediaError.message(storageMessage ?? "无法保存删除结果。")
+        }
+        try manager.removeItem(at: trash)
+        snapshots.removeAll(); snapshotOrder.removeAll(); LocalArtwork.clear()
+        await reload()
+    }
     func remove(_ server: MediaServer, includingDownloads: Bool = false) {
+        guard server.kind != .local || server.localBookmark != nil else {
+            error = "导入的视频保留在本机，可在视频列表中删除不需要的文件。"; return
+        }
         DownloadStore.shared.removeServer(server.id, includingCompleted: includingDownloads)
         snapshots = snapshots.filter { !$0.key.hasPrefix(server.id.uuidString + ":") }
         browserPositions = browserPositions.filter { !$0.key.hasPrefix(server.id.uuidString + ":") }
@@ -110,6 +219,7 @@ final class LibraryStore {
         Credentials.delete(server.id)
         UserDefaults.standard.removeObject(forKey: "jellyPath." + server.id.uuidString)
         UserDefaults.standard.removeObject(forKey: "davPath." + server.id.uuidString)
+        UserDefaults.standard.removeObject(forKey: "localPath." + server.id.uuidString)
         let removedIDs = Set(personalVideos.values.filter { $0.video.sourceID == server.id }.map(\.id))
         personalVideos = personalVideos.filter { !removedIDs.contains($0.key) }
         favorites.subtract(removedIDs)
@@ -175,19 +285,28 @@ final class LibraryStore {
                 folders = page.folders; folderTotal = page.total; folderNextIndex = page.nextIndex
                 videos = preview?.videos ?? []; total = preview?.total ?? 0; nextIndex = preview?.nextIndex ?? 0; directories = []
             } else {
-                let entries = try await MediaClient.shared.webDAV(server: server, directory: directory ?? path.last)
+                var server = server
+                if server.kind == .local {
+                    let access = try LocalMediaStore.access(server)
+                    let relatives = try path.map { try LocalMediaIdentity.relativePath(root: server.address, file: $0) }
+                    if server.address != access.root {
+                        server.address = access.root
+                        path = try relatives.map { try LocalMediaIdentity.fileURL(root: access.root, relativePath: $0) }
+                        if let index = servers.firstIndex(where: { $0.id == server.id }) { servers[index] = server; persist() }
+                    }
+                }
+                let provider = try SourceProviders.directories(for: server.kind)
+                let entries = try await provider.entries(server: server, directory: directory ?? path.last)
                 guard generation == loadID else { return }
                 directories = entries.filter(\.isDirectory)
                 let root = directory ?? path.last ?? server.address
                 let descendants = try await ScopedQueueCollector.webDAV(root: root, recursive: options.includesDescendants, fetch: { url in
                     guard generation == self.loadID else { throw CancellationError() }
                     if url == root { return entries }
-                    return try await MediaClient.shared.webDAV(server: server, directory: url)
+                    return try await provider.entries(server: server, directory: url)
                 }, progress: { _ in })
                 guard generation == loadID else { return }
-                videos = descendants.map {
-                    Video(id: server.id.uuidString + $0.id, title: $0.name, subtitle: server.name, sourceID: server.id, url: $0.url, addedAt: $0.displayDate)
-                }
+                videos = try descendants.map { try fileVideo($0, server: server) }
                 videos = options.sort.sorted(videos)
                 total = videos.count
             }
@@ -211,11 +330,21 @@ final class LibraryStore {
     }
     private func saveLocation() {
         guard let id = selectedID else { return }
+        if let server = selectedServer, server.kind == .local {
+            if let relative = try? LocalMediaIdentity.relativePath(root: server.address, file: path.last ?? server.address) {
+                UserDefaults.standard.set(relative, forKey: "localPath." + id.uuidString)
+            }
+            return
+        }
         if let data = try? JSONEncoder().encode(jellyPath) { UserDefaults.standard.set(data, forKey: "jellyPath." + id.uuidString) }
         if let data = try? JSONEncoder().encode(path) { UserDefaults.standard.set(data, forKey: "davPath." + id.uuidString) }
     }
     private func restoreLocation() {
         guard let id = selectedID else { return }
+        if let server = selectedServer, server.kind == .local {
+            let relative = UserDefaults.standard.string(forKey: "localPath." + id.uuidString) ?? ""
+            path = localAncestors(relative, root: server.address); jellyPath = []; return
+        }
         if let data = UserDefaults.standard.data(forKey: "jellyPath." + id.uuidString) { jellyPath = (try? JSONDecoder().decode([MediaFolder].self, from: data)) ?? [] }
         if let data = UserDefaults.standard.data(forKey: "davPath." + id.uuidString) { path = (try? JSONDecoder().decode([URL].self, from: data)) ?? [] }
     }
@@ -282,10 +411,21 @@ final class LibraryStore {
             }, progress: progress)
         }
         let root = path.last ?? server.address
+        let provider = try SourceProviders.directories(for: server.kind)
         let entries = try await ScopedQueueCollector.webDAV(root: root, recursive: options.includesDescendants, fetch: { directory in
-            try await MediaClient.shared.webDAV(server: server, directory: directory)
+            try await provider.entries(server: server, directory: directory)
         }, progress: progress)
-        return options.sort.sorted(entries.map { Video(id: server.id.uuidString + $0.id, title: $0.name, subtitle: server.name, sourceID: server.id, url: $0.url, addedAt: $0.displayDate) })
+        return options.sort.sorted(try entries.map { try fileVideo($0, server: server) })
+    }
+    private func fileVideo(_ entry: DAVEntry, server: MediaServer) throws -> Video {
+        let relative = server.kind == .local ? try LocalMediaIdentity.relativePath(root: server.address, file: entry.url) : nil
+        return Video(id: relative.map { LocalMediaIdentity.id(sourceID: server.id, relativePath: $0) } ?? server.id.uuidString + entry.id,
+                     title: entry.name, subtitle: server.name, sourceID: server.id, url: entry.url,
+                     addedAt: entry.displayDate, localRelativePath: relative)
+    }
+    private func localAncestors(_ relative: String, root: URL) -> [URL] {
+        let parts = relative.split(separator: "/")
+        return parts.indices.compactMap { index in try? LocalMediaIdentity.fileURL(root: root, relativePath: parts.prefix(index + 1).joined(separator: "/")) }
     }
     func setBrowseOptions(_ options: BrowseOptions) async {
         guard options != browseOptions else { return }
@@ -309,7 +449,8 @@ final class LibraryStore {
     func toggleDirectoryPin() {
         guard canPinDirectory, let sourceID = selectedID else { return }
         if isDirectoryPinned { bookmarks.removeAll { $0.id == locationKey } }
-        else { bookmarks.append(DirectoryBookmark(sourceID: sourceID, name: currentDirectoryName, jellyPath: jellyPath, davPath: path, options: browseOptions, mode: PlaybackMode(rawValue: UserDefaults.standard.string(forKey: "playbackMode") ?? "") ?? .sequential, accountID: selectedServer?.userID)) }
+        else { bookmarks.append(DirectoryBookmark(sourceID: sourceID, name: currentDirectoryName, jellyPath: jellyPath, davPath: path, options: browseOptions, mode: PlaybackMode(rawValue: UserDefaults.standard.string(forKey: "playbackMode") ?? "") ?? .sequential, accountID: selectedServer?.userID,
+            localPath: selectedServer?.kind == .local ? (try? LocalMediaIdentity.relativePath(root: selectedServer!.address, file: path.last ?? selectedServer!.address)) : nil)) }
         persistDirectorySettings()
     }
     func removeBookmark(_ bookmark: DirectoryBookmark) {
@@ -336,6 +477,7 @@ final class LibraryStore {
         selectedID = server.id
         jellyPath = server.kind == .jellyfin ? bookmark.jellyPath : []
         path = server.kind == .webDAV ? bookmark.davPath : []
+        if server.kind == .local { path = localAncestors(bookmark.localPath ?? "", root: server.address) }
         UserDefaults.standard.set(server.id.uuidString, forKey: "selectedServer")
         saveLocation(); restoreBrowseOptions()
         if let options = bookmark.options { browseOptions = options; directoryPreferences[locationKey] = options }
@@ -344,25 +486,21 @@ final class LibraryStore {
         return error == nil
     }
     private func persistDirectorySettings() {
-        if let data = try? JSONEncoder().encode(directoryPreferences) { UserDefaults.standard.set(data, forKey: "directoryPreferences.v1") }
-        if let data = try? JSONEncoder().encode(folderSortPreferences) { UserDefaults.standard.set(data, forKey: "folderSortPreferences.v1") }
-        if let data = try? JSONEncoder().encode(bookmarks) { UserDefaults.standard.set(data, forKey: "directoryBookmarks.v1") }
+        persist()
     }
     func toggleFavorite(_ video: Video) {
         if favorites.contains(video.id) { favorites.remove(video.id) } else { favorites.insert(video.id) }
         remember([video])
-        UserDefaults.standard.set(Array(favorites), forKey: "favorites")
+        persist()
     }
     func savePosition(_ video: Video, time: Double) {
         guard time.isFinite else { return }
         positions[video.id] = max(0, time)
         progressSnapshots[video.id] = ProgressSnapshot(position: max(0, time), updatedAt: Date(), pending: video.remoteID != nil)
-        persistProgress()
         var saved = PersonalVideo(video: video, lastPlayedAt: time > 1 ? Date() : personalVideos[video.id]?.lastPlayedAt)
         saved.video.resume = max(0, time)
         personalVideos[video.id] = saved
         persistPersonalVideos()
-        UserDefaults.standard.set(positions, forKey: "positions")
     }
     func resumePosition(_ video: Video) -> Double { positions[video.id] ?? video.resume }
     func rememberEpisodes(_ videos: [Video]) {
@@ -378,7 +516,7 @@ final class LibraryStore {
         persistEpisodes()
     }
     private func persistEpisodes() {
-        if let data = try? JSONEncoder().encode(episodeCatalog) { UserDefaults.standard.set(data, forKey: "episodeCatalog.v1") }
+        persist()
     }
     var continueWatching: [ContinueWatchingItem] {
         ContinuousWatching.items(records: personalVideos.values.filter { isAvailable($0.video) }, positions: positions, episodes: episodeCatalog)
@@ -433,14 +571,14 @@ final class LibraryStore {
         let recentIDs = Set(personalVideos.values.filter { $0.lastPlayedAt != nil }
             .sorted { ($0.lastPlayedAt ?? .distantPast) > ($1.lastPlayedAt ?? .distantPast) }.prefix(200).map(\.id))
         personalVideos = personalVideos.filter { favorites.contains($0.key) || recentIDs.contains($0.key) }
-        if let data = try? JSONEncoder().encode(personalVideos) { UserDefaults.standard.set(data, forKey: "personalVideos.v1") }
+        persist()
     }
 }
 
 
 extension LibraryStore {
     func persistProgress() {
-        if let data = try? JSONEncoder().encode(progressSnapshots) { UserDefaults.standard.set(data, forKey: "progressSnapshots.v1") }
+        persist()
     }
     func acknowledgeProgress(_ id: String, position: Double, capturedAt: Date) {
         guard var snapshot = progressSnapshots[id], snapshot.updatedAt <= capturedAt, abs(snapshot.position - position) < 1 else { return }
@@ -457,7 +595,7 @@ extension LibraryStore {
             let position = remote.Played == true ? 0 : Double(remote.PlaybackPositionTicks ?? 0) / 10_000_000
             let merged = progressSnapshots[video.id]?.resolved(serverPosition: position, serverLastPlayed: date) ?? position
             positions[video.id] = merged
-            UserDefaults.standard.set(positions, forKey: "positions")
+            persist()
             return merged
         } catch { return resumePosition(video) }
     }

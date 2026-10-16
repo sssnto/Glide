@@ -1,5 +1,13 @@
 # Glide architecture
 
+## 2026-10-15 本地来源与快照
+
+`SourceKind.local` 区分导入集合（应用内副本）与授权目录（系统 bookmark）。`DirectorySourceProvider` 隔离文件来源枚举；`LocalSourceProvider` 在线程任务中受限遍历，Jellyfin 继续采用媒体库 API。本地来源 UUID + 相对路径作为视频与目录身份，系统文件路径别名经规范化处理，不跟随目录中的链接。
+
+`LocalFileAccess` 由播放资源、预加载及缩略图任务持有，保证读取期间 security scope 的生命周期。`LocalMediaStore` 以 NSFileCoordinator 协调复制导入，整批暂存后发布；只允许删除托管副本。`LocalArtwork` 限制生成并发与内存，`TimelinePreview` 对本地资产按定位生成单张预览并取消过期任务。
+
+`LibrarySnapshot` 汇总来源、偏好、固定目录、个人条目和进度。`RecoverableStore` 使用 schema、原子写与上一份有效备份，验证旧数据迁移，阻止未来 schema 被降级覆盖。后续新增不兼容的来源枚举或模型结构时必须升级 schema 并提供迁移。此处为本机数据仓储首批，尚未形成可替换播放内核或跨设备 Repository。
+
 - `Core/Models.swift`：数据类型、URL 校验、非递归目录查询、WebDAV XML 解析。Swift Package 测试可在 macOS 单独运行。
 - `LibraryStore`：服务器选择、媒体库／目录路径、分页、收藏、本地观看进度。请求使用 generation 标识隔离过期结果；返回上级、切换来源不接受旧目录响应。
 - `MediaClient`：Jellyfin 认证、UserViews、Items、PlaybackInfo、会话进度；WebDAV PROPFIND。凭据从 Keychain 读取。
@@ -26,7 +34,9 @@ AVPlayer 的结束通知只接受当前 item，递增完成事件；`PlayerView`
 
 ## 编码与认证边界
 
-家庭视频刷看、电影、剧集详情、WebDAV 与本地视频统一使用 AVPlayer；不链接第三方解码库。`JellyfinPlaybackPolicy` 在 AVPlayer 链路内按原画、原画兼容、1080p H.264/AAC、720p H.264/AAC 自动恢复，用户不需要选择画质。转码 URL 和设备 CodecProfile 同时限制最大宽高、码率，并禁用视频流复制。恢复时保留播放时间与意图；持续缓冲可跳过不能降低码率的重封装。详见 [Player-Engine-Decision.md](Player-Engine-Decision.md)。
+Jellyfin 在线流、WebDAV 与认证 URL 使用 AVPlayer。本地文件可选择系统或 MobileVLCKit 3.7.3；`PlaybackEngineSelection` 只允许无请求头的 file URL 进入 VLC，`PlaybackController` 负责切换、保留位置／意图和轨道偏好。两者共用播放队列与资源租约；渲染层按内核提供 AVPlayerLayer 或独立 UIView。兼容内核不声明 PiP／AirPlay／预览／HDR 输出能力，控件据此展示。详见 [1.3.0 规格](Glide-1.3.0-Functional-Spec.md)。`JellyfinPlaybackPolicy` 在 AVPlayer 链路内按原画、原画兼容、1080p H.264/AAC、720p H.264/AAC 自动恢复，用户不需要选择画质。转码 URL 和设备 CodecProfile 同时限制最大宽高、码率，并禁用视频流复制。恢复时保留播放时间与意图；持续缓冲可跳过不能降低码率的重封装。详见 [Player-Engine-Decision.md](Player-Engine-Decision.md)。
+
+`PlaybackStallTracker` 观察首帧后的当前卡顿，不累计已恢复的等待时长。在播放时钟实际停滞且连续可用缓存无增长时，至少等待 45 秒／缓存无进展 20 秒才恢复；有缓存进展的等待最多延长至 90 秒。`.playing` 恢复状态清除观察，缓冲结束回调只更新计时与预取目标，不重建播放资源。首次出画面、真实黑屏、播放失败及输出色彩验证使用独立恢复分支。
 
 `ScreenRotation` 使用 iOS 16+ 的 UIWindowScene.requestGeometryUpdate 公开 API，更新当前及呈现控制器的方向支持，播放器退出时恢复进入前的方向。WebDAV 不具备服务器转码能力，因此系统不支持的容器／编码会显示错误并建议通过 Jellyfin 播放。未承诺 Infuse 的全格式解码能力。
 
@@ -87,3 +97,9 @@ CatalogFacet 区分 Genres 与 Tags，清理空字符串并按种类去重；筛
 ## 2026-09-30 原生播放流程
 
 起播采用 2 秒远程缓冲偏好，首帧可显示后增加至约 15 秒实际观看时间对应的媒体时长，2× 为 30 秒。通过 AVPlayerLayer.isReadyForDisplay 的 KVO 立即识别首帧，0.5 秒周期观察只作补充。等待状态需持续 350 ms 才计为缓冲；定位和倍速的短暂状态切换不触发自动降级。续播等待 item 就绪并完成精确定位后再播放；手动连续定位取消旧 seek，回调需匹配 session 与 seek ID，时钟观察在定位中保留目标值。Jellyfin 不兼容的离线文件可联网协商兼容流；WebDAV 和离线状态仍受系统格式能力限制。
+
+## 2026-10-15 播放内核接口（1.2.1）
+
+`PlaybackController` 通过 `PlaybackEngine` 控制内核并订阅类型化事件，继续持有服务器恢复、用户暂停意图、进度上报和音频会话所有权。`NativePlaybackEngine` 拥有 AVPlayer、媒体项、鉴权 loader、KVO、时钟、轨道、seek 取消与输出证据采集；`PlaybackEngineLifetime` 拒绝旧装载与定位回调。轨道视图使用 `PlaybackTrack`，不再依赖 AVMediaSelectionOption；时间轴由内核异步提供本地预览。画面通过 `PlaybackPresentation` 在 VideoSurface 边界连接，PiP 保留明确的原生层桥接。
+
+本地格式检查读取有限文件头与异步系统元数据，不按扩展名拒播，也不把 isPlayable 当作实际首帧。播放诊断 schema 6 新增脱敏 `localMedia`。第三方内核尚未接入；候选依赖与后续验收见 [评估记录](Playback-Engine-Selection-2026-10-15.md)。

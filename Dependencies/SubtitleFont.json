@@ -1,0 +1,16 @@
+{
+  "name": "Glide Subtitle Fallback",
+  "upstream": "Noto Sans CJK SC Regular",
+  "version": "2.004",
+  "sourceURL": "https://raw.githubusercontent.com/notofonts/noto-cjk/Sans2.004/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf",
+  "sourceSHA256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
+  "licenseURL": "https://raw.githubusercontent.com/notofonts/noto-cjk/Sans2.004/LICENSE",
+  "licenseSHA256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2",
+  "resource": "Glide/Resources/SubtitleFonts/GlideSubtitleFallback.otf",
+  "resourceSHA256": "785120c69135f725fef742270b6ed988aef2b3e345ab466783c519de3b7d1f8c",
+  "builder": "Scripts/prepare_subtitle_font.py",
+  "buildDependency": "fonttools==4.60.1",
+  "changes": "Renamed typographic family, full name, PostScript and CFF names; legacy family alias Helvetica Neue for libVLC 3 libass default fallback; original glyphs and license metadata retained.",
+  "unicodeMappings": 44810,
+  "glyphs": 65535
+}

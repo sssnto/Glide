@@ -4,6 +4,7 @@ struct PlaySelection: Identifiable {
     var id = UUID()
     var queue: PlaybackQueue
     var scopeName: String
+    var initialResumeAt: Double? = nil
     var loadFullQueue: (() async throws -> [Video])? = nil
 }
 
@@ -18,17 +19,21 @@ private enum HomeBrowseView: String {
 
 struct LibraryView: View {
     var library: LibraryStore
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var sheet: LibrarySheet?
     @State private var selection: PlaySelection?
     @State private var search = ""
+    @FocusState private var searchFocused: Bool
     @State private var favoritesOnly = false
     @AppStorage("playbackMode") private var playbackMode: PlaybackMode = .sequential
-    @AppStorage("homeBrowseView") private var homeBrowseView: HomeBrowseView = .videos
+    @State private var homeBrowseView: HomeBrowseView = .videos
     @State private var preparing = false
     @State private var preparedCount = 0
     @State private var preparationID: UUID?
     @State private var preparationTask: Task<Void, Never>?
     @State private var queueError: String?
+    @State private var deletingImportedVideo: Video?
+    @State private var deletionError: String?
     @State private var resultVideos: [Video] = []
     @State private var resultKey: String?
     @State private var resultOwner: String?
@@ -39,6 +44,12 @@ struct LibraryView: View {
     @State private var pendingPersonalVideo: Video?
     @State private var pendingBookmark: DirectoryBookmark?
     @State private var visibleID: String?
+    @State private var orderedFolders: [MediaFolder] = []
+    @State private var orderedDirectories: [DAVEntry] = []
+    @State private var orderedFolderKey = ""
+    private var folderPresentationKey: String {
+        library.scopeKey + ":" + library.contentRevision.uuidString + ":" + library.folderSort.rawValue + ":\(library.folders.count):\(library.directories.count)"
+    }
     private var positionKey: String { library.scopeKey + ":" + homeBrowseView.rawValue + ":" + term + ":" + String(favoritesOnly) }
     private func restorePosition() { visibleID = library.browserPositions[positionKey] }
 
@@ -64,34 +75,38 @@ struct LibraryView: View {
                 CatalogView(library: library, server: server, folder: folder)
             } else { homeBody }
         }
+        .onChange(of: library.locationKey) { _, _ in
+            homeBrowseView = .videos
+            search = ""; favoritesOnly = false; restorePosition()
+        }
     }
     private var homeBody: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                header.padding(.horizontal, geometry.size.width > 600 ? 40 : 24)
+                header.padding(.horizontal, geometry.size.width > 600 ? 32 : 20)
                     .padding(.vertical, 8)
                 if library.selectedID != nil && !isLibraryRoot {
-                    directoryNavigation.padding(.horizontal, geometry.size.width > 600 ? 40 : 24)
-                        .padding(.vertical, 12)
+                    directoryNavigation.padding(.horizontal, geometry.size.width > 600 ? 32 : 20)
+                        .padding(.vertical, 2)
+                    Picker("浏览方式", selection: $homeBrowseView) {
+                        Text("媒体").tag(HomeBrowseView.videos)
+                        Text("目录").tag(HomeBrowseView.directories)
+                    }.pickerStyle(.segmented).accessibilityIdentifier("library.contentView")
+                        .padding(.horizontal, geometry.size.width > 600 ? 32 : 20)
+                        .padding(.vertical, 8)
                 }
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 22) {
+                    LazyVStack(alignment: .leading, spacing: 16) {
                         if library.selectedID == nil { demoHero }
                         else if !isLibraryRoot { serverHero }
                         pinnedSection
-                        if library.selectedID != nil && !isLibraryRoot {
-                            Picker("浏览方式", selection: $homeBrowseView) {
-                                Text("目录").tag(HomeBrowseView.directories)
-                                Text("视频").tag(HomeBrowseView.videos)
-                            }.pickerStyle(.segmented).accessibilityIdentifier("library.contentView")
-                        }
-                        if showsDirectories { folderSection }
+                        if showsDirectories { folderSection(width: geometry.size.width) }
                         if showsVideos && library.selectedID != nil {
                             HStack {
                                 Image(systemName: "magnifyingglass").foregroundStyle(GlideTheme.muted)
-                                TextField(library.browseOptions.includesDescendants ? "搜索当前目录及子目录" : "搜索当前层的视频", text: $search).textInputAutocapitalization(.never).autocorrectionDisabled().submitLabel(.search).accessibilityIdentifier("library.search")
+                                TextField(library.browseOptions.includesDescendants ? "搜索当前目录及子目录" : "搜索当前层的视频", text: $search).textInputAutocapitalization(.never).autocorrectionDisabled().submitLabel(.search).focused($searchFocused).onSubmit { searchFocused = false }.accessibilityIdentifier("library.search")
                                 if !search.isEmpty { Button { search = "" } label: { Image(systemName: "xmark.circle.fill") }.accessibilityLabel("清除搜索") }
-                            }.padding(14).background(GlideTheme.panel, in: RoundedRectangle(cornerRadius: 16))
+                            }.font(GlideTheme.Typography.body).padding(.horizontal, 12).frame(minHeight: 44).background(GlideTheme.panel, in: RoundedRectangle(cornerRadius: 10))
                         }
                         if let error = library.error {
                             VStack(alignment: .leading, spacing: 12) {
@@ -104,7 +119,6 @@ struct LibraryView: View {
                         }
                         if showsVideos {
                             videoHeading
-                            if library.selectedID != nil { browseOptionsBar }
                             playbackToolbar
                         }
                         if showsVideos {
@@ -120,7 +134,7 @@ struct LibraryView: View {
                             else if filtered.isEmpty && library.error == nil {
                                 ContentUnavailableView(favoritesOnly ? "此范围还没有收藏" : search.isEmpty ? "这里还没有视频" : "没有匹配的视频", systemImage: favoritesOnly ? "heart" : "film", description: Text(favoritesOnly ? "播放时点亮爱心，把喜欢的留住。" : "检查媒体库权限，或换一个文件夹。"))
                             } else {
-                                LazyVGrid(columns: [GridItem(.adaptive(minimum: geometry.size.width > 600 ? 210 : 145), spacing: 14, alignment: .top)], spacing: 22) {
+                                LazyVGrid(columns: dynamicTypeSize.isAccessibilitySize ? [GridItem(.flexible())] : [GridItem(.adaptive(minimum: geometry.size.width > 600 ? 160 : 100), spacing: 12, alignment: .top)], spacing: 18) {
                                     ForEach(filtered) { video in
                                         videoCard(video).id("video:" + video.id)
                                             .task { if !usesFilters && video.id == library.videos.last?.id { await library.more() } }
@@ -135,10 +149,7 @@ struct LibraryView: View {
                             if library.hasMore && !usesFilters {
                                 Button("加载更多视频（\(library.nextIndex) / \(library.total)）") { Task { await library.more() } }.frame(maxWidth: .infinity)
                             }
-                            HStack(spacing: 7) {
-                                Image(systemName: "hand.draw")
-                                Text("上下切片 / 左右倍速 / 双指缩放后拖动")
-                            }.font(.caption2).tracking(1).foregroundStyle(GlideTheme.muted).frame(maxWidth: .infinity).padding(.top, 7)
+
                         } else if library.loading {
                             ProgressView(isLibraryRoot ? "正在读取媒体库…" : "正在读取目录…").frame(maxWidth: .infinity).padding(30)
                         } else if library.folders.isEmpty && library.directories.isEmpty && library.error == nil {
@@ -146,18 +157,19 @@ struct LibraryView: View {
                                 ContentUnavailableView("没有可用的媒体库", systemImage: "square.stack.3d.up", description: Text("检查服务器中的媒体库配置和当前账号的访问权限。"))
                             } else {
                                 VStack(spacing: 12) {
-                                    ContentUnavailableView("没有子目录", systemImage: "folder", description: Text("切换到视频，查看当前范围内的内容。"))
-                                    Button("查看视频") { homeBrowseView = .videos }.buttonStyle(.bordered)
+                                    ContentUnavailableView("没有子目录", systemImage: "folder", description: Text("切换到媒体，查看当前范围内的内容。"))
+                                    Button("查看媒体") { homeBrowseView = .videos }.buttonStyle(.bordered)
                                 }
                             }
                         }
-                    }.padding(.horizontal, geometry.size.width > 600 ? 40 : 24).padding(.top, 16).padding(.bottom, 96)
+                    }.padding(.horizontal, geometry.size.width > 600 ? 32 : 20).padding(.top, 12).padding(.bottom, 24)
                         .frame(maxWidth: 1100)
                         .frame(maxWidth: .infinity)
                 }
+                .scrollDismissesKeyboard(.interactively)
                 .scrollPosition(id: $visibleID, anchor: .top)
                 .onChange(of: visibleID) { _, id in
-                    if let id, filtered.contains(where: { "video:" + $0.id == id }) || library.folders.contains(where: { "folder:" + $0.id == id }) || library.directories.contains(where: { "folder:" + $0.id == id }) {
+                    if let id, id.hasPrefix("video:") || id.hasPrefix("folder:"), library.browserPositions[positionKey] != id {
                         library.browserPositions[positionKey] = id
                     }
                 }
@@ -175,14 +187,31 @@ struct LibraryView: View {
         }
         .task { if library.selectedID != nil && library.videos.isEmpty && library.folders.isEmpty && library.directories.isEmpty && !library.loading { await library.reload() }; restorePosition() }
         .task(id: filterTaskKey) { await searchCurrentScope() }
+        .task(id: folderPresentationKey) {
+            // Sort when contents change, not for every visible scroll anchor.
+            orderedFolders = library.folderSort.sorted(library.folders)
+            orderedDirectories = library.folderSort.sorted(library.directories)
+            orderedFolderKey = folderPresentationKey
+        }
         .onChange(of: library.scopeKey) { _, _ in cancelPreparation(); queueError = nil }
-        .onChange(of: library.locationKey) { _, _ in search = ""; favoritesOnly = false; restorePosition() }
         .onChange(of: library.browseOptions) { _, _ in visibleID = nil }
         .onChange(of: search) { _, _ in visibleID = nil }
         .onChange(of: favoritesOnly) { _, _ in visibleID = nil }
         .onDisappear { cancelPreparation() }
         .overlay { preparationOverlay }
         .alert("无法准备播放队列", isPresented: Binding(get: { queueError != nil }, set: { if !$0 { queueError = nil } })) { Button("知道了") { queueError = nil } } message: { Text(queueError ?? "") }
+        .confirmationDialog("删除导入的视频？", isPresented: Binding(get: { deletingImportedVideo != nil }, set: { if !$0 { deletingImportedVideo = nil } }), titleVisibility: .visible) {
+            if let video = deletingImportedVideo {
+                Button("删除 Glide 内的副本", role: .destructive) {
+                    deletingImportedVideo = nil
+                    Task { do { try await library.deleteImportedVideo(video) } catch { deletionError = error.localizedDescription } }
+                }
+            }
+            Button("取消", role: .cancel) { deletingImportedVideo = nil }
+        } message: { Text("同时移除此视频的本机收藏与记录。原始文件保留在导入前的位置。") }
+        .alert("无法删除视频", isPresented: Binding(get: { deletionError != nil }, set: { if !$0 { deletionError = nil } })) {
+            Button("知道了") { deletionError = nil }
+        } message: { Text(deletionError ?? "") }
         .sheet(item: $sheet, onDismiss: {
             if let bookmark = pendingBookmark {
                 pendingBookmark = nil
@@ -285,17 +314,17 @@ struct LibraryView: View {
         }
     }
     private var directoryNavigation: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack {
                 if library.hasParent {
-                    Button { Task { await library.back() } } label: { Label("上一级", systemImage: "arrow.turn.up.left").font(.subheadline) }.accessibilityIdentifier("directory.back")
+                    Button { Task { await library.back() } } label: { Label("上一级", systemImage: "arrow.turn.up.left").font(.subheadline) }.frame(minHeight: 44).accessibilityIdentifier("directory.back")
                 } else {
-                    Label("选择媒体库", systemImage: "square.stack.3d.up").font(.subheadline).foregroundStyle(GlideTheme.muted)
+                    Label(library.selectedServer?.kind == .local ? "本地目录" : "选择媒体库", systemImage: "square.stack.3d.up").font(.subheadline).foregroundStyle(GlideTheme.muted)
                 }
                 Spacer()
                 Button { Task { await library.reload() } } label: {
                     Label(library.selectedServer?.kind == .jellyfin && library.jellyPath.isEmpty ? "刷新媒体库" : "刷新本目录", systemImage: "arrow.clockwise").font(.subheadline)
-                }.disabled(library.loading).accessibilityIdentifier("directory.refresh")
+                }.frame(minHeight: 44).disabled(library.loading).accessibilityIdentifier("directory.refresh")
             }
             if library.selectedServer?.kind == .jellyfin && !library.jellyPath.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -305,7 +334,7 @@ struct LibraryView: View {
                             Image(systemName: "chevron.right").font(.system(size: 8))
                             Button(folder.name) { Task { await library.jump(to: depth + 1) } }.lineLimit(1)
                         }
-                    }.font(.caption).foregroundStyle(GlideTheme.muted)
+                    }.font(.caption).foregroundStyle(GlideTheme.muted).frame(minHeight: 36)
                 }
             } else if !library.path.isEmpty {
                 Text(library.path.map(\.lastPathComponent).joined(separator: " / ")).font(.caption).foregroundStyle(GlideTheme.muted).lineLimit(2)
@@ -314,7 +343,12 @@ struct LibraryView: View {
     }
     private var header: some View {
         HStack {
-            Text("glide").font(.system(size: 28, weight: .semibold, design: .rounded)).tracking(-1.4)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Glide").font(GlideTheme.Typography.pageTitle)
+                if !dynamicTypeSize.isAccessibilitySize {
+                    Text(library.selectedID == nil ? "视频播放器" : "媒体资料库").font(GlideTheme.Typography.caption).foregroundStyle(GlideTheme.muted)
+                }
+            }
             Spacer()
             Button { sheet = .pins } label: { Image(systemName: "pin").frame(width: 44, height: 44) }
                 .accessibilityLabel("固定目录").accessibilityIdentifier("pins.open")
@@ -322,16 +356,16 @@ struct LibraryView: View {
                 Label(library.selectedServer?.name ?? "连接片库", systemImage: library.selectedServer?.kind.symbol ?? "plus")
                     .font(.caption.weight(.medium)).lineLimit(1).padding(.horizontal, 14).frame(minHeight: 44)
                     .frame(maxWidth: 180)
-                    .background(GlideTheme.panel, in: Capsule())
+                    .background(GlideTheme.panel, in: RoundedRectangle(cornerRadius: 10))
             }.buttonStyle(.plain).accessibilityIdentifier("sources.open")
         }
     }
-    @ViewBuilder private var folderSection: some View {
+    @ViewBuilder private func folderSection(width: CGFloat) -> some View {
         if let server = library.selectedServer, isLibraryRoot || !library.folders.isEmpty || !library.directories.isEmpty {
-            let orderedFolders = library.folderSort.sorted(library.folders)
+            let orderedFolders = orderedFolderKey == folderPresentationKey ? self.orderedFolders : []
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .firstTextBaseline) {
-                    Text(isLibraryRoot ? "媒体库" : "目录").font(.title3.weight(.semibold))
+                    Text(isLibraryRoot ? "媒体库" : "目录").font(GlideTheme.Typography.sectionTitle)
                     Spacer()
                     Text("\(library.folders.count + library.directories.count) 个")
                         .font(.caption).foregroundStyle(GlideTheme.muted)
@@ -350,7 +384,7 @@ struct LibraryView: View {
                     .accessibilityLabel("目录排序：" + library.folderSort.title)
                     .accessibilityIdentifier("folders.sort")
                 }
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 155, maximum: 260), spacing: 14, alignment: .top)], spacing: 14) {
+                LazyVGrid(columns: dynamicTypeSize.isAccessibilitySize ? [GridItem(.flexible())] : [GridItem(.adaptive(minimum: width > 600 ? 160 : 100), spacing: 12, alignment: .top)], spacing: 16) {
                     ForEach(orderedFolders) { folder in
                         LibraryFolderTile(title: folder.name, server: server, folder: folder, isLibrary: isLibraryRoot) {
                             Task { await library.enter(folder) }
@@ -358,7 +392,7 @@ struct LibraryView: View {
                             .accessibilityIdentifier("folder." + folder.id).id("folder:" + folder.id)
                             .task { if folder.id == orderedFolders.last?.id && library.hasMoreFolders { await library.moreFolders() } }
                     }
-                    ForEach(library.folderSort.sorted(library.directories)) { entry in
+                    ForEach(orderedFolderKey == folderPresentationKey ? orderedDirectories : []) { entry in
                         LibraryFolderTile(title: entry.name, server: server, directory: entry) {
                             Task { await library.enter(entry.url) }
                         }
@@ -371,12 +405,13 @@ struct LibraryView: View {
     }
     private var videoHeading: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(favoritesOnly ? "本目录收藏" : term.isEmpty ? "全部视频" : "搜索结果").font(.title3.weight(.semibold))
+            VStack(alignment: .leading, spacing: 3) {
+                Text(favoritesOnly ? "本目录收藏" : term.isEmpty ? "全部视频" : "搜索结果").font(GlideTheme.Typography.sectionTitle)
                 Text(usesFilters ? "\(library.browseOptions.scopeTitle) · \(filtered.count) 个匹配结果" : library.selectedID == nil ? "3 段离线动态风景" : "\(library.browseOptions.scopeTitle) · 共 \(library.total) 个视频")
                     .font(.caption).foregroundStyle(GlideTheme.muted)
             }.accessibilityIdentifier("videos.heading")
-            Spacer()
+            Spacer(minLength: 4)
+            if library.selectedID != nil { browseOptionsBar }
             Button { favoritesOnly.toggle() } label: {
                 Image(systemName: favoritesOnly ? "heart.fill" : "heart").frame(width: 44, height: 44)
                     .foregroundStyle(favoritesOnly ? GlideTheme.accent : GlideTheme.muted)
@@ -391,30 +426,31 @@ struct LibraryView: View {
     }
     private var playDirectoryButton: some View {
         Button { startPlayback(useFilters: usesFilters) } label: {
-            Label(usesFilters ? "播放结果" : library.selectedID == nil ? "体验刷片" : "刷本目录", systemImage: "play.fill")
+            Label(usesFilters ? "播放结果" : library.selectedID == nil ? "播放演示" : "播放全部", systemImage: "play.fill")
                 .font(.subheadline.weight(.semibold)).fixedSize().padding(.horizontal, 18).frame(minHeight: 44)
                 .background(GlideTheme.accent, in: RoundedRectangle(cornerRadius: 12)).foregroundStyle(.black)
         }.disabled(library.loading || filtering || (usesFilters && filtered.isEmpty)).accessibilityIdentifier(library.selectedID == nil ? "demo.play" : "directory.play")
     }
     private var demoHero: some View {
-        ZStack(alignment: .bottomLeading) {
-            LandscapeArt().overlay { LinearGradient(colors: [.clear, .black.opacity(0.8)], startPoint: .center, endPoint: .bottom) }
-            VStack(alignment: .leading, spacing: 14) {
-                HStack(spacing: 6) {
-                    Circle().fill(GlideTheme.accent).frame(width: 5, height: 5)
-                    Text("YOUR MEDIA, IN MOTION").font(.system(size: 9, weight: .semibold)).tracking(2.2)
-                }.foregroundStyle(GlideTheme.accent)
-                Text("你的片库，随手一刷。").font(.system(size: 27, weight: .semibold)).lineSpacing(4)
-                Text("从私人收藏，到下一段心动。")
-                    .font(.system(size: 12)).foregroundStyle(.white.opacity(0.68))
-            }.padding(24)
-            Text("离线演示").font(.system(size: 9, weight: .medium)).foregroundStyle(.white.opacity(0.7)).padding(9).background(.black.opacity(0.16), in: Capsule()).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing).padding(16)
-        }.frame(height: 220).clipShape(RoundedRectangle(cornerRadius: 28))
+        HStack(alignment: .center, spacing: 16) {
+            Image(systemName: "play.rectangle.fill").font(.system(size: 28, weight: .light))
+                .foregroundStyle(GlideTheme.accent).frame(width: 48, height: 64)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("从你的媒体开始").font(GlideTheme.Typography.sectionTitle)
+                Text("连接 Jellyfin、导入本地视频，或先播放下方演示。")
+                    .font(GlideTheme.Typography.secondary).foregroundStyle(GlideTheme.muted)
+                Button("添加媒体来源", systemImage: "plus") { sheet = .sources }
+                    .font(GlideTheme.Typography.body.weight(.semibold)).frame(minHeight: 44)
+                    .accessibilityIdentifier("library.connect")
+            }
+            Spacer(minLength: 0)
+        }.padding(16).frame(maxWidth: .infinity, alignment: .leading)
+            .background(GlideTheme.panel, in: RoundedRectangle(cornerRadius: 12))
     }
     private var serverHero: some View {
         HStack(alignment: .top, spacing: 12) {
             VStack(alignment: .leading, spacing: 8) {
-                Text(isLibraryRoot ? "你的片库" : library.currentDirectoryName).font(.largeTitle.weight(.semibold))
+                Text(isLibraryRoot ? "你的片库" : library.currentDirectoryName).font(GlideTheme.Typography.pageTitle)
                 Text(isLibraryRoot ? "选择一个片库，开始随心观看。" : "\(library.folders.count + library.directories.count) 个目录 · \(library.videos.count) 个视频")
                     .font(.subheadline).foregroundStyle(GlideTheme.muted)
             }.frame(maxWidth: .infinity, alignment: .leading)
@@ -428,7 +464,7 @@ struct LibraryView: View {
         }
     }
     private var browseOptionsBar: some View {
-        HStack {
+        HStack(spacing: 0) {
             Menu {
                 ForEach([true, false], id: \.self) { recursive in
                     Button {
@@ -438,9 +474,8 @@ struct LibraryView: View {
                         Label((recursive ? "包含子目录" : "仅当前层"), systemImage: library.browseOptions.includesDescendants == recursive ? "checkmark" : "folder")
                     }
                 }
-            } label: { Label(library.browseOptions.scopeTitle, systemImage: "square.stack.3d.up").font(.caption).frame(minHeight: 44) }
-                .accessibilityIdentifier("library.scope")
-            Spacer()
+            } label: { Image(systemName: library.browseOptions.includesDescendants ? "square.stack.3d.up" : "square").frame(width: 44, height: 44) }
+                .accessibilityLabel("浏览范围：" + library.browseOptions.scopeTitle).accessibilityIdentifier("library.scope")
             Menu {
                 ForEach(VideoSort.allCases) { sort in
                     Button {
@@ -448,21 +483,21 @@ struct LibraryView: View {
                         Task { await library.setBrowseOptions(options) }
                     } label: { Label(sort.title, systemImage: library.browseOptions.sort == sort ? "checkmark" : sort.symbol) }
                 }
-            } label: { Label(library.browseOptions.sort.title, systemImage: "arrow.up.arrow.down").font(.caption).frame(minHeight: 44) }
-                .accessibilityIdentifier("library.sort")
+            } label: { Image(systemName: "arrow.up.arrow.down").frame(width: 44, height: 44) }
+                .accessibilityLabel("视频排序：" + library.browseOptions.sort.title).accessibilityIdentifier("library.sort")
         }.foregroundStyle(GlideTheme.muted)
     }
     @ViewBuilder private var pinnedSection: some View {
         let eligible = library.bookmarks.filter { $0.sourceID == library.selectedID && LibraryExperience(collectionType: $0.jellyPath.first?.collectionType) == .home }
-        if (isLibraryRoot || library.selectedServer?.kind == .webDAV && library.path.isEmpty) && !eligible.isEmpty {
+        if (isLibraryRoot || library.selectedServer?.kind.isFileSource == true && library.path.isEmpty) && !eligible.isEmpty {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    Text("常用刷看").font(.headline)
+                    Text("固定目录").font(GlideTheme.Typography.sectionTitle)
                     Spacer()
                     Button("管理") { sheet = .pins }.font(.caption).frame(minHeight: 44)
                 }
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
+                    LazyHStack(spacing: 10) {
                         ForEach(eligible) { bookmark in
                             HStack(spacing: 8) {
                             Button { Task { await library.openBookmark(bookmark) } } label: {
@@ -485,22 +520,25 @@ struct LibraryView: View {
     }
     private func videoCard(_ video: Video) -> some View {
         Button { startPlayback(selected: video, useFilters: true) } label: {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 6) {
                 VideoPreviewArtwork(video: video, server: library.servers.first { $0.id == video.sourceID })
-                    .overlay(alignment: .bottomTrailing) { Text(video.duration.mediaTime).font(.system(size: 9, weight: .semibold, design: .monospaced)).padding(6).background(.black.opacity(0.4), in: Capsule()).padding(9) }
+                    .overlay(alignment: .bottomTrailing) { Text(video.duration > 0 ? video.duration.mediaTime : "视频").font(.system(.caption2, design: .monospaced, weight: .semibold)).padding(6).background(.black.opacity(0.4), in: Capsule()).padding(9) }
                     .overlay(alignment: .topLeading) { if library.favorites.contains(video.id) { Image(systemName: "heart.fill").font(.caption).foregroundStyle(GlideTheme.accent).padding(10) } }
-                    .clipShape(RoundedRectangle(cornerRadius: 18))
-                Text(video.title).font(.subheadline.weight(.medium)).lineLimit(2)
-                Text(video.demoIndex == nil ? video.subtitle : "GLIDE ORIGINAL · 演示").font(.caption).foregroundStyle(GlideTheme.muted).lineLimit(1)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                Text(video.title).font(GlideTheme.Typography.itemTitle).lineLimit(2)
+                Text(video.demoIndex == nil ? video.subtitle : "本地演示 · 无需网络").font(.caption).foregroundStyle(GlideTheme.muted).lineLimit(1)
                 if library.browseOptions.sort == .addedNewest || library.browseOptions.sort == .addedOldest {
                     Text(video.addedAt?.formatted(date: .numeric, time: .omitted) ?? "无时间信息")
                         .font(.caption2).foregroundStyle(GlideTheme.muted)
                 }
                 if library.resumePosition(video) > 0 && video.duration > 0 { ProgressView(value: min(library.resumePosition(video), video.duration), total: video.duration).tint(GlideTheme.accent) }
-            }.foregroundStyle(GlideTheme.text)
+            }.foregroundStyle(GlideTheme.text).contentShape(Rectangle())
         }.buttonStyle(.plain).accessibilityIdentifier("video." + (video.remoteID ?? video.id))
             .contextMenu {
                 Button(library.favorites.contains(video.id) ? "取消收藏" : "收藏视频", systemImage: library.favorites.contains(video.id) ? "heart.slash" : "heart") { library.toggleFavorite(video) }
+                if library.canDeleteImportedVideo(video) {
+                    Button("删除导入的视频", systemImage: "trash", role: .destructive) { deletingImportedVideo = video }
+                }
             }
     }
 }

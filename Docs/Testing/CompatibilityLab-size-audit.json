@@ -1,0 +1,7 @@
+{
+  "labAppUncompressedBytes": 108754961,
+  "embeddedSDKBytes": 97898633,
+  "fixtureBytes": 10234411,
+  "sdkArchitectures": "armv7 armv7s arm64",
+  "scope": "Unsigned device Release app, not an IPA or App Store download size; contains synthetic fixtures"
+}

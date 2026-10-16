@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct SourcesView: View {
     var library: LibraryStore
@@ -6,6 +7,12 @@ struct SourcesView: View {
     @State private var adding = false
     @State private var editing: MediaServer?
     @State private var removing: MediaServer?
+    @State private var importingVideos = false
+    @State private var mountingDirectory = false
+    @State private var reauthorizing: MediaServer?
+    @State private var importing = false
+    @State private var importMessage: String?
+    @State private var importError: String?
     var body: some View {
         NavigationStack {
             ScrollViewReader { proxy in
@@ -14,8 +21,18 @@ struct SourcesView: View {
                     Button { library.showDemo(); dismiss() } label: {
                         Label("离线演示片库", systemImage: "sparkles").foregroundStyle(.primary)
                     }
-                }
-                Section("我的服务器") {
+                }.disabled(importing)
+                Section("本地视频") {
+                    Button { importingVideos = true } label: { Label("导入视频文件", systemImage: "square.and.arrow.down") }
+                        .accessibilityIdentifier("sources.importVideos")
+                    Button { reauthorizing = nil; mountingDirectory = true } label: { Label("添加本地目录", systemImage: "folder.badge.plus") }
+                        .accessibilityIdentifier("sources.mountDirectory")
+                    if importing { ProgressView("正在导入，请保持应用打开…") }
+                    if let importMessage { Text(importMessage).font(.footnote).foregroundStyle(.secondary) }
+                    Text("导入会复制视频到 Glide；添加目录只保存授权，文件仍留在原位置。播放格式取决于设备与所选播放器。")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }.disabled(importing)
+                Section("我的来源") {
                     ForEach(library.servers) { server in
                         Button {
                             Task { await library.select(server.id) }
@@ -25,38 +42,71 @@ struct SourcesView: View {
                                 Image(systemName: server.kind.symbol).foregroundStyle(GlideTheme.accent)
                                 VStack(alignment: .leading, spacing: 5) {
                                     Text(server.name).foregroundStyle(.primary)
-                                    Text(server.address.absoluteString).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                                    Text(server.kind == .local ? (server.localBookmark == nil ? "设备内导入的视频" : "已授权本地目录") : server.address.absoluteString).font(.caption).foregroundStyle(.secondary).lineLimit(1)
                                 }
                                 Spacer()
                                 if library.selectedID == server.id { Image(systemName: "checkmark.circle.fill").foregroundStyle(GlideTheme.accent) }
                             }.padding(.vertical, 6)
                         }
                         .accessibilityIdentifier("source." + server.id.uuidString).id(server.id)
-                        .swipeActions { Button("移除", role: .destructive) { removing = server }; Button("重新登录") { editing = server }.tint(.blue) }
-                        .contextMenu { Button("编辑与重新登录") { editing = server } }
+                        .swipeActions {
+                            if server.kind != .local || server.localBookmark != nil { Button("移除", role: .destructive) { removing = server } }
+                            if server.kind.requiresCredentials { Button("重新登录") { editing = server }.tint(.blue) }
+                            else if server.localBookmark != nil { Button("重新授权") { reauthorizing = server; mountingDirectory = true }.tint(.blue) }
+                        }
+                        .contextMenu {
+                            if server.kind.requiresCredentials { Button("编辑与重新登录") { editing = server } }
+                            else if server.localBookmark != nil { Button("重新授权目录") { reauthorizing = server; mountingDirectory = true } }
+                        }
                     }
 
-                }
+                }.disabled(importing)
                 Section { NavigationLink("设置") { SettingsView(library: library) } }
                 Section {
                     Text("Jellyfin 支持媒体库、播放进度和服务器转码。NAS 可通过 WebDAV 直接浏览并播放系统支持的视频格式。")
                     Text("账号凭据仅保存在此设备的系统钥匙串中。")
                 }.font(.footnote).foregroundStyle(.secondary)
             }.scrollContentBackground(.hidden).background(GlideTheme.background)
-                .navigationTitle("媒体来源")
+                .font(GlideTheme.Typography.body).navigationTitle("媒体来源").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) { Button { adding = true } label: { Label("添加媒体源", systemImage: "plus") }.accessibilityIdentifier("sources.add") }
-                    ToolbarItem(placement: .confirmationAction) { Button("完成") { dismiss() } }
+                    ToolbarItem(placement: .topBarLeading) { Button { adding = true } label: { Label("添加媒体源", systemImage: "plus") }.accessibilityIdentifier("sources.add").disabled(importing) }
+                    ToolbarItem(placement: .confirmationAction) { Button("完成") { dismiss() }.disabled(importing) }
                 }
                 .confirmationDialog("移除媒体来源", isPresented: Binding(get: { removing != nil }, set: { if !$0 { removing = nil } }), titleVisibility: .visible) {
                     if let server = removing {
                         Button("移除来源，保留已下载影片", role: .destructive) { library.remove(server); removing = nil }
-                        Button("同时删除此来源的离线影片", role: .destructive) { library.remove(server, includingDownloads: true); removing = nil }
+                        if server.kind != .local { Button("同时删除此来源的离线影片", role: .destructive) { library.remove(server, includingDownloads: true); removing = nil } }
                     }
                     Button("取消", role: .cancel) { removing = nil }
-                } message: { Text("未完成的下载会停止；本机收藏与历史会移除。服务器文件不受影响。") }
+                } message: { Text(removing?.kind == .local ? "仅移除来源和对应的本机收藏，原目录与已导入的视频文件保留。再次导入或授权可重新观看。" : "未完成的下载会停止；本机收藏与历史会移除。服务器文件不受影响。") }
                 .sheet(isPresented: $adding) { AddSourceView(library: library) }
                 .sheet(item: $editing) { ReconnectSourceView(library: library, server: $0) }
+                .fileImporter(isPresented: $importingVideos, allowedContentTypes: [.movie, .video], allowsMultipleSelection: true) { result in
+                    do {
+                        let urls = try result.get()
+                        guard !urls.isEmpty else { return }
+                        importing = true; importMessage = nil
+                        Task {
+                            defer { importing = false }
+                            do { let count = try await library.importLocalVideos(urls); importMessage = "已导入 \(count) 个视频。" }
+                            catch { importError = error.localizedDescription }
+                        }
+                    } catch { importError = error.localizedDescription }
+                }
+                .fileImporter(isPresented: $mountingDirectory, allowedContentTypes: [.folder]) { result in
+                    do {
+                        let url = try result.get(), original = reauthorizing
+                        reauthorizing = nil
+                        Task {
+                            do { try await library.mountLocalDirectory(url, replacing: original); importMessage = "目录已添加，可返回片库开始观看。" }
+                            catch { importError = error.localizedDescription }
+                        }
+                    } catch { importError = error.localizedDescription }
+                }
+                .alert("本地来源", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
+                    Button("知道了") { importError = nil }
+                } message: { Text(importError ?? "") }
+                .interactiveDismissDisabled(importing)
                 .onAppear { if let id = library.selectedID { proxy.scrollTo(id, anchor: .center) } }
                 .onChange(of: library.selectedID) { _, id in if let id { proxy.scrollTo(id, anchor: .center) } }
                 .onChange(of: adding) { _, open in if !open, let id = library.selectedID { proxy.scrollTo(id, anchor: .center) } }
@@ -80,14 +130,16 @@ struct AddSourceView: View {
         NavigationStack {
             Form {
                 Section {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Image(systemName: "externaldrive.badge.wifi").font(.largeTitle).foregroundStyle(GlideTheme.accent)
-                        Text("连接你的私人影院").font(.title2.weight(.semibold))
-                        Text("视频留在你的服务器，精彩随身。").font(.subheadline).foregroundStyle(GlideTheme.muted)
-                    }.padding(.vertical, 12)
+                    HStack(spacing: 14) {
+                        Image(systemName: "externaldrive.badge.wifi").font(.title2).foregroundStyle(GlideTheme.accent)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("连接媒体服务器").font(GlideTheme.Typography.sectionTitle)
+                            Text("填写地址与账号，直接浏览现有媒体库。").font(GlideTheme.Typography.secondary).foregroundStyle(GlideTheme.muted)
+                        }
+                    }.padding(.vertical, 4)
                 }.listRowBackground(Color.clear)
                 Section {
-                    Picker("连接方式", selection: $kind) { ForEach(SourceKind.allCases) { Text($0.title).tag($0) } }.pickerStyle(.segmented)
+                    Picker("连接方式", selection: $kind) { ForEach(SourceKind.allCases.filter(\.requiresCredentials)) { Text($0.title).tag($0) } }.pickerStyle(.segmented)
                 }
                 Section("服务器") {
                     TextField("名称（可选）", text: $name)
@@ -110,9 +162,9 @@ struct AddSourceView: View {
                             if connecting { ProgressView().tint(.black) }
                             Text(connecting ? "正在连接…" : "连接并打开片库").fontWeight(.semibold)
                         }
-                        .frame(maxWidth: .infinity, minHeight: 54)
+                        .frame(maxWidth: .infinity, minHeight: 48)
                         .foregroundStyle(.black)
-                        .background(GlideTheme.accent, in: RoundedRectangle(cornerRadius: 15))
+                        .background(GlideTheme.accent, in: RoundedRectangle(cornerRadius: 12))
                     }
                     .disabled(connecting || address.isEmpty || (kind == .jellyfin && username.isEmpty))
                     .opacity(connecting || address.isEmpty || (kind == .jellyfin && username.isEmpty) ? 0.5 : 1)
@@ -120,7 +172,7 @@ struct AddSourceView: View {
                     .padding(.horizontal, 20).padding(.top, 10).padding(.bottom, 8)
                     .background(GlideTheme.background)
                 }
-                .navigationTitle("添加媒体源").navigationBarTitleDisplayMode(.inline)
+                .font(GlideTheme.Typography.body).navigationTitle("添加媒体源").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("取消") { task?.cancel(); dismiss() } } }
                 .interactiveDismissDisabled(connecting)
                 .onDisappear { task?.cancel() }
@@ -151,16 +203,15 @@ struct GestureHelpView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 26) {
-                    Text("少一点操作，\n多一点沉浸。").font(.largeTitle.bold()).padding(.bottom, 8)
+                LazyVStack(alignment: .leading, spacing: 22) {
                     ForEach(gestures, id: \.0) { gesture in
                         HStack(spacing: 18) {
                             Image(systemName: gesture.0).font(.title2).foregroundStyle(GlideTheme.accent).frame(width: 38)
-                            VStack(alignment: .leading, spacing: 6) { Text(gesture.1).font(.headline); Text(gesture.2).font(.subheadline).foregroundStyle(GlideTheme.muted) }
+                            VStack(alignment: .leading, spacing: 6) { Text(gesture.1).font(GlideTheme.Typography.itemTitle); Text(gesture.2).font(GlideTheme.Typography.secondary).foregroundStyle(GlideTheme.muted) }
                         }
                     }
                     Text("也可以通过播放按钮、上一部／下一部按钮和进度条操作。支持 iPhone 与 iPad 横竖屏。") .font(.footnote).foregroundStyle(GlideTheme.muted).padding(.top, 8)
-                }.padding(26)
+                }.padding(20).frame(maxWidth: 720)
             }.background(GlideTheme.background).navigationTitle("手势指南").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button("知道了") { dismiss() } } }
         }.tint(GlideTheme.accent)
@@ -197,7 +248,7 @@ struct ReconnectSourceView: View {
                         busy = false
                     }
                 }.disabled(busy).accessibilityIdentifier("source.reconnect")
-            }.navigationTitle("编辑与重新登录").interactiveDismissDisabled(busy)
+            }.font(GlideTheme.Typography.body).scrollContentBackground(.hidden).background(GlideTheme.background).navigationTitle("编辑与重新登录").navigationBarTitleDisplayMode(.inline).interactiveDismissDisabled(busy)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("取消") { task?.cancel(); dismiss() } } }
                 .onAppear { name = server.name; address = server.address.absoluteString }
                 .onDisappear { task?.cancel() }

@@ -1,0 +1,375 @@
+{
+  "schema": 1,
+  "date": "2026-10-15",
+  "status": "independent-lab-regression-passed-production-integration-pending",
+  "mainApplication": {
+    "version": "1.2.1",
+    "build": "1",
+    "released": false,
+    "engine": "AVPlayer",
+    "linksMobileVLCKit": false
+  },
+  "environment": {
+    "architecture": "arm64",
+    "deviceId": "216E5B3A-E986-44EF-889C-8AB2D3A13085",
+    "deviceName": "Glide 1.2 QA",
+    "modelName": "iPhone 17 Pro",
+    "osBuildNumber": "24A434",
+    "osVersion": "27.0",
+    "platform": "iOS Simulator"
+  },
+  "sdk": {
+    "name": "MobileVLCKit",
+    "version": "3.7.3",
+    "specification": "https://cdn.cocoapods.org/Specs/b/f/7/MobileVLCKit/3.7.3/MobileVLCKit.podspec.json",
+    "url": "https://download.videolan.org/pub/cocoapods/prod/MobileVLCKit-3.7.3-319ed2c0-79128878.tar.xz",
+    "sha256": "0d04059906962ddc9a7bd1ebaa12e1f9ae85eb2466116a97a2f46886dd27a0a9",
+    "licenseDeclaration": "LGPL v2.1; inspect archive notices and transitive components before distribution",
+    "scope": "Independent development validation only; not linked by the Glide app"
+  },
+  "finalRun": {
+    "sourceBundle": "/tmp/GlideCompatibility/ASS-Audit-Final-R28.xcresult",
+    "uniqueUITestsPassed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "engine": "MobileVLCKit",
+        "passed": true,
+        "results": [
+          {
+            "audioChoices": [
+              "Track 1 - [English]",
+              "Track 2 - [Chinese]"
+            ],
+            "obsoleteSeekCompletion": false,
+            "passed": true,
+            "rate2xAdvanceIn1_2Seconds": 2.42,
+            "sample": "controls",
+            "seekActual": 5,
+            "seekTarget": 5,
+            "subtitleChoices": [
+              "Track 1 - [English]"
+            ]
+          }
+        ],
+        "runtime": "3.0.23 Vetinari (3.0.23-2-47-g3f8bd11fd0)",
+        "suite": "controls",
+        "version": "3.7.3"
+      },
+      {
+        "engine": "MobileVLCKit",
+        "passed": true,
+        "results": [
+          {
+            "audioTracks": 1,
+            "clock": 0.78,
+            "decodedVideo": 53,
+            "displayedFrame": true,
+            "displayedPictures": 5,
+            "duration": 20.021,
+            "frameSeconds": 1.0866880416870117,
+            "image": {
+              "distinctColorBins": 88,
+              "height": 180,
+              "width": 320
+            },
+            "passed": true,
+            "ready": true,
+            "sample": "05-renamed-mkv.mp4",
+            "subtitleChoices": 0
+          },
+          {
+            "audioTracks": 0,
+            "clock": 0,
+            "decodedVideo": 0,
+            "displayedFrame": false,
+            "displayedPictures": 0,
+            "duration": 0,
+            "passed": true,
+            "ready": true,
+            "sample": "06-truncated.mp4",
+            "subtitleChoices": 0
+          },
+          {
+            "audioTracks": 1,
+            "clock": 1.658,
+            "decodedVideo": 0,
+            "displayedFrame": false,
+            "displayedPictures": 0,
+            "duration": 20,
+            "passed": true,
+            "ready": true,
+            "sample": "07-audio-only.mp4",
+            "subtitleChoices": 0
+          },
+          {
+            "audioTracks": 2,
+            "clock": 0.152,
+            "decodedVideo": 35,
+            "displayedFrame": true,
+            "displayedPictures": 2,
+            "duration": 20,
+            "frameSeconds": 0.3156780004501343,
+            "image": {
+              "distinctColorBins": 84,
+              "height": 180,
+              "width": 320
+            },
+            "passed": true,
+            "ready": true,
+            "sample": "08-multi-track.mp4",
+            "subtitleChoices": 1
+          }
+        ],
+        "runtime": "3.0.23 Vetinari (3.0.23-2-47-g3f8bd11fd0)",
+        "suite": "edges",
+        "version": "3.7.3"
+      },
+      {
+        "engine": "MobileVLCKit",
+        "passed": true,
+        "results": [
+          {
+            "passed": true,
+            "reopenedDisplayedPictures": 2,
+            "sample": "lifecycle",
+            "staleSeekCompletion": false,
+            "stopSeconds": [
+              0.012946009635925293,
+              0.00012195110321044922,
+              0.005460977554321289
+            ]
+          }
+        ],
+        "runtime": "3.0.23 Vetinari (3.0.23-2-47-g3f8bd11fd0)",
+        "suite": "lifecycle",
+        "version": "3.7.3"
+      },
+      {
+        "engine": "MobileVLCKit",
+        "passed": true,
+        "results": [
+          {
+            "audioTracks": 1,
+            "clock": 1.91,
+            "decodedVideo": 70,
+            "displayedFrame": true,
+            "displayedPictures": 7,
+            "duration": 20,
+            "frameSeconds": 2.3811700344085693,
+            "image": {
+              "distinctColorBins": 112,
+              "height": 180,
+              "width": 320
+            },
+            "passed": true,
+            "ready": true,
+            "sample": "01-h264-aac.mp4",
+            "subtitleChoices": 0
+          },
+          {
+            "audioTracks": 1,
+            "clock": 0.16,
+            "decodedVideo": 34,
+            "displayedFrame": true,
+            "displayedPictures": 3,
+            "duration": 20,
+            "frameSeconds": 0.547664999961853,
+            "image": {
+              "distinctColorBins": 84,
+              "height": 180,
+              "width": 320
+            },
+            "passed": true,
+            "ready": true,
+            "sample": "02-hevc-aac.mp4",
+            "subtitleChoices": 0
+          },
+          {
+            "audioTracks": 1,
+            "clock": 0.254,
+            "decodedVideo": 37,
+            "displayedFrame": true,
+            "displayedPictures": 3,
+            "duration": 20.021,
+            "frameSeconds": 0.5201829671859741,
+            "image": {
+              "distinctColorBins": 80,
+              "height": 180,
+              "width": 320
+            },
+            "passed": true,
+            "ready": true,
+            "sample": "03-h264-aac.mkv",
+            "subtitleChoices": 0
+          },
+          {
+            "audioTracks": 1,
+            "clock": 0.282,
+            "decodedVideo": 38,
+            "displayedFrame": true,
+            "displayedPictures": 4,
+            "duration": 20,
+            "frameSeconds": 0.5240100622177124,
+            "image": {
+              "distinctColorBins": 84,
+              "height": 180,
+              "width": 320
+            },
+            "passed": true,
+            "ready": true,
+            "sample": "04-mpeg4-mp3.avi",
+            "subtitleChoices": 0
+          }
+        ],
+        "runtime": "3.0.23 Vetinari (3.0.23-2-47-g3f8bd11fd0)",
+        "suite": "matrix",
+        "version": "3.7.3"
+      },
+      {
+        "engine": "MobileVLCKit",
+        "passed": true,
+        "results": [
+          {
+            "cachedSDKTimeAtSeekCompletion": 8.8,
+            "firstInputSubtitleRefreshes": 6,
+            "initialClock": 4.002,
+            "measuredRate": 1.7189624281321092,
+            "obsoleteSeekCompletion": false,
+            "passed": true,
+            "pausedClockAfterEnable": 4.002,
+            "rate2xAdvance": 2.1400000000000006,
+            "rateMeasurementElapsed": 1.2449370416579768,
+            "reopenedSubtitleRefreshes": 1,
+            "sample": "subtitle-controls",
+            "userSeekActual": 5
+          }
+        ],
+        "runtime": "3.0.23 Vetinari (3.0.23-2-47-g3f8bd11fd0)",
+        "suite": "subtitle-controls",
+        "version": "3.7.3"
+      },
+      {
+        "engine": "MobileVLCKit",
+        "passed": true,
+        "results": [
+          {
+            "audioTracks": 1,
+            "clock": 1.063,
+            "decodedVideo": 58,
+            "displayedFrame": true,
+            "displayedPictures": 5,
+            "duration": 20.021,
+            "frameSeconds": 1.4124860763549805,
+            "image": {
+              "distinctColorBins": 103,
+              "height": 180,
+              "width": 320
+            },
+            "passed": true,
+            "ready": true,
+            "sample": "09-ass.mkv",
+            "subtitleChoices": 1,
+            "subtitleRefreshes": 1
+          },
+          {
+            "audioTracks": 2,
+            "clock": 0.249,
+            "decodedVideo": 37,
+            "displayedFrame": true,
+            "displayedPictures": 3,
+            "duration": 20.021,
+            "frameSeconds": 0.42200207710266113,
+            "image": {
+              "distinctColorBins": 80,
+              "height": 180,
+              "width": 320
+            },
+            "passed": true,
+            "ready": true,
+            "sample": "10-dual-audio-ass.mkv",
+            "subtitleChoices": 1,
+            "subtitleRefreshes": 1
+          }
+        ],
+        "runtime": "3.0.23 Vetinari (3.0.23-2-47-g3f8bd11fd0)",
+        "suite": "subtitles",
+        "version": "3.7.3"
+      }
+    ]
+  },
+  "additionalLifecycleVerification": {
+    "sourceBundle": "/tmp/GlideCompatibility/ASS-Audit-R26.xcresult",
+    "result": {
+      "engine": "MobileVLCKit",
+      "passed": true,
+      "results": [
+        {
+          "cachedSDKTimeAtSeekCompletion": 6.839,
+          "firstInputSubtitleRefreshes": 6,
+          "initialClock": 0.848,
+          "measuredRate": 1.7596112516584699,
+          "obsoleteSeekCompletion": false,
+          "passed": true,
+          "pausedClockAfterEnable": 0.848,
+          "rate2xAdvance": 2.1180000000000003,
+          "rateMeasurementElapsed": 1.2036749583203346,
+          "reopenedSubtitleRefreshes": 1,
+          "sample": "subtitle-controls",
+          "userSeekActual": 5
+        }
+      ],
+      "runtime": "3.0.23 Vetinari (3.0.23-2-47-g3f8bd11fd0)",
+      "suite": "subtitle-controls",
+      "version": "3.7.3"
+    }
+  },
+  "releaseBuild": {
+    "platform": "iphoneos",
+    "signed": false,
+    "executedOnDevice": false,
+    "result": "passed",
+    "log": "/tmp/GlideCompatibility/lab-audit-release-final.log"
+  },
+  "priorEvidence": [
+    {
+      "run": "R23",
+      "status": "one failed, one passed",
+      "issue": "rate advancement assertion"
+    },
+    {
+      "run": "R24",
+      "status": "test runner launch timeout; no functional conclusion"
+    },
+    {
+      "run": "R25",
+      "status": "one failed, one passed",
+      "issue": "paused seek drift after completion"
+    },
+    {
+      "run": "R27",
+      "status": "5 passed, 1 failed",
+      "issue": "decoded snapshot requested while paused; on-screen OCR not reached for direct subtitle startup"
+    }
+  ],
+  "sourceSHA256": {
+    "Experiments/CompatibilityPlayer/VLCPlaybackEngine.swift": "7f1e788a75ec9f62e4d0bb376b3397b7abb9cffed9099ffbe3f262d97e693a1b",
+    "Experiments/CompatibilityPlayer/VLCClockPlayer.h": "edb26f03e79cefe337abf3cf50b76be2deb98a93d8561480fb4b5516acdc5caa",
+    "Experiments/CompatibilityPlayer/VLCClockPlayer.m": "494decd16252bd92a5f2408fdefed644ab10f1a000a0e613ed2a18ba1da212a1",
+    "Experiments/CompatibilityPlayer/LabApp.swift": "5e4b7830cafb3231532c618538d7e69382f425263a4689f8ae2041fd493f4da7",
+    "Experiments/CompatibilityPlayer/UITests/CompatibilityLabUITests.swift": "a3122491abd2dbcc14ae6c51e315e48b213694f415f2cdb77a485de09f3cd7ab",
+    "Experiments/CompatibilityPlayer/generate_project.rb": "98939b4efe19004d8d385efc5add3e143113c5bbf4d35503f0308f2cd8ccdd36",
+    "Glide/Services/PlaybackEngine.swift": "097507adff0139aaa1aa6dd0e28a7d877c0d0b06ab76a9365db4051c306c50b1",
+    "Glide/Services/PlaybackResource.swift": "65aeee24314d3c0d79f207748761c6e214670098f301f6b87773637b89cc2517",
+    "Glide/Services/PlaybackAudioSession.swift": "825202db6edd50b0f40ed5fa42e7f8dceb1b018d157ffe99888810d2e5ecd887"
+  },
+  "remaining": [
+    "production integration",
+    "device playback/output/power/memory",
+    "full distribution build materials",
+    "complex ASS/fonts/PGS/external subtitles",
+    "network random access, PiP, AirPlay, HDR",
+    "audio output listening verification"
+  ]
+}

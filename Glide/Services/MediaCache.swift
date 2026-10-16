@@ -77,7 +77,19 @@ actor ArtworkCache {
             if server.kind == .webDAV && data.count > 16 * 1024 * 1024 { throw MediaError.message("预览图片过大。") }
             return data
         }
-        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+        try Task.checkCancellation()
+        if let value = decoded.object(forKey: key as NSString) { return value }
+        guard let source = CGImageSourceCreateWithData(data as CFData, [kCGImageSourceShouldCache: false] as CFDictionary),
+              let cg = CGImageSourceCreateThumbnailAtIndex(source, 0, [kCGImageSourceCreateThumbnailFromImageAlways: true, kCGImageSourceThumbnailMaxPixelSize: pixels, kCGImageSourceCreateThumbnailWithTransform: true, kCGImageSourceShouldCacheImmediately: true] as CFDictionary) else { throw MediaError.message("图片不可用。") }
+        let image = UIImage(cgImage: cg)
+        decoded.setObject(image, forKey: key as NSString, cost: cg.bytesPerRow * cg.height)
+        return image
+    }
+    func image(data: Data, pixels: Int) throws -> UIImage {
+        try Task.checkCancellation()
+        let key = "offline-art:" + String(data.hashValue) + ":" + String(pixels)
+        if let value = decoded.object(forKey: key as NSString) { return value }
+        guard let source = CGImageSourceCreateWithData(data as CFData, [kCGImageSourceShouldCache: false] as CFDictionary),
               let cg = CGImageSourceCreateThumbnailAtIndex(source, 0, [kCGImageSourceCreateThumbnailFromImageAlways: true, kCGImageSourceThumbnailMaxPixelSize: pixels, kCGImageSourceCreateThumbnailWithTransform: true, kCGImageSourceShouldCacheImmediately: true] as CFDictionary) else { throw MediaError.message("图片不可用。") }
         let image = UIImage(cgImage: cg)
         decoded.setObject(image, forKey: key as NSString, cost: cg.bytesPerRow * cg.height)

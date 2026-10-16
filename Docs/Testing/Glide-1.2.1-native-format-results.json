@@ -1,0 +1,487 @@
+{
+  "date": "2026-10-15",
+  "version": "1.2.1 (1)",
+  "environment": "iPhone 17 Pro Simulator / iOS 27.0; actual display-layer evidence, no real-device claim",
+  "ffmpeg": "ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers",
+  "results": [
+    {
+      "diagnostic": {
+        "attemptSeconds": [
+          0.8344630002975464
+        ],
+        "bufferedAheadSeconds": 19.114265416,
+        "bufferingCount": 0,
+        "bufferingSeconds": 0,
+        "delivery": "本地播放",
+        "device": "arm64",
+        "events": [
+          "engine_avplayer",
+          "attempt_automatic",
+          "resource_ready_local",
+          "first_frame",
+          "output_color_unavailable"
+        ],
+        "firstFrameSeconds": 0.8344630002975464,
+        "forwardBufferTargetSeconds": 0,
+        "localMedia": {
+          "audioCodecs": [
+            "aac "
+          ],
+          "audioTracks": 1,
+          "container": "mp4",
+          "playable": true,
+          "subtitleTracks": 0,
+          "videoCodec": "avc1",
+          "videoTracks": 1
+        },
+        "outputHeight": 180,
+        "outputVideoCodec": "avc1",
+        "outputWidth": 320,
+        "playerReadySeconds": 0.8319989442825317,
+        "recoveryCount": 0,
+        "requestedQuality": "automatic",
+        "resourceReadySeconds": 0.37081193923950195,
+        "schema": 6,
+        "session": "A65D9065-0D2D-473F-9E43-F9A67B9C7190",
+        "state": "已暂停",
+        "system": "27.0",
+        "totalFirstFrameSeconds": 0.8344950675964355,
+        "version": "1.2.1 (1)"
+      },
+      "displayedFrame": true,
+      "error": "",
+      "inspection": {
+        "audioCodecs": [
+          "aac "
+        ],
+        "audioTracks": 1,
+        "container": "mp4",
+        "playable": true,
+        "subtitleTracks": 0,
+        "videoCodec": "avc1",
+        "videoTracks": 1
+      },
+      "sample": "01-h264-aac.mp4",
+      "fixture": {
+        "file": "01-h264-aac.mp4",
+        "bytes": 1271315,
+        "sha256": "32a74d64c5134fdeef22908f97b31d7669575714c25b5bbdfd8ce981c6909317"
+      }
+    },
+    {
+      "diagnostic": {
+        "attemptSeconds": [
+          2.473415970802307
+        ],
+        "bufferedAheadSeconds": 18.905660083,
+        "bufferingCount": 0,
+        "bufferingSeconds": 0,
+        "delivery": "本地播放",
+        "device": "arm64",
+        "events": [
+          "engine_avplayer",
+          "attempt_automatic",
+          "resource_ready_local",
+          "first_frame",
+          "output_color_unavailable"
+        ],
+        "firstFrameSeconds": 2.473415970802307,
+        "forwardBufferTargetSeconds": 0,
+        "localMedia": {
+          "audioCodecs": [
+            "aac "
+          ],
+          "audioTracks": 1,
+          "container": "mp4",
+          "playable": true,
+          "subtitleTracks": 0,
+          "videoCodec": "hvc1",
+          "videoTracks": 1
+        },
+        "outputHeight": 180,
+        "outputVideoCodec": "hvc1",
+        "outputWidth": 320,
+        "playerReadySeconds": 2.473415970802307,
+        "recoveryCount": 0,
+        "requestedQuality": "automatic",
+        "resourceReadySeconds": 0.6188549995422363,
+        "schema": 6,
+        "session": "1E3A50BC-9969-4D07-9788-30D48FAF872A",
+        "state": "已暂停",
+        "system": "27.0",
+        "totalFirstFrameSeconds": 2.4734580516815186,
+        "version": "1.2.1 (1)"
+      },
+      "displayedFrame": true,
+      "error": "",
+      "inspection": {
+        "audioCodecs": [
+          "aac "
+        ],
+        "audioTracks": 1,
+        "container": "mp4",
+        "playable": true,
+        "subtitleTracks": 0,
+        "videoCodec": "hvc1",
+        "videoTracks": 1
+      },
+      "sample": "02-hevc-aac.mp4",
+      "fixture": {
+        "file": "02-hevc-aac.mp4",
+        "bytes": 641923,
+        "sha256": "6fb2164e7b3e24113e938deb1ff0270722d041dc65f1fb622ec9871869055c51"
+      }
+    },
+    {
+      "diagnostic": {
+        "attemptSeconds": [
+          0.37280702590942383
+        ],
+        "bufferedAheadSeconds": 0,
+        "bufferingCount": 0,
+        "bufferingSeconds": 0,
+        "delivery": "本地播放",
+        "device": "arm64",
+        "errorChain": [
+          {
+            "code": -11828,
+            "domain": "AVFoundationErrorDomain"
+          },
+          {
+            "code": -12847,
+            "domain": "NSOSStatusErrorDomain"
+          }
+        ],
+        "errorCode": -11828,
+        "errorDomain": "AVFoundationErrorDomain",
+        "events": [
+          "engine_avplayer",
+          "attempt_automatic",
+          "resource_ready_local",
+          "failed",
+          "item_failed",
+          "error_avfoundation_-11828"
+        ],
+        "forwardBufferTargetSeconds": 0,
+        "localMedia": {
+          "audioCodecs": [],
+          "container": "matroska",
+          "playable": false
+        },
+        "recoveryCount": 0,
+        "requestedQuality": "automatic",
+        "resourceReadySeconds": 0.26893293857574463,
+        "schema": 6,
+        "session": "D1D1D136-40EA-48FB-83C7-C14B8377CBB4",
+        "state": "播放失败",
+        "system": "27.0",
+        "version": "1.2.1 (1)"
+      },
+      "displayedFrame": false,
+      "error": "当前播放器无法播放此文件。文件可能损坏，或封装、编码不受系统支持。可尝试兼容的 MP4／MOV 文件，或通过 Jellyfin 转码观看。",
+      "inspection": {
+        "audioCodecs": [],
+        "container": "matroska",
+        "playable": false
+      },
+      "sample": "03-h264-aac.mkv",
+      "fixture": {
+        "file": "03-h264-aac.mkv",
+        "bytes": 1271356,
+        "sha256": "2491f6b601257f254e47abe60e457d6ebf3537de20efa2da04afbd281f963f6c"
+      }
+    },
+    {
+      "diagnostic": {
+        "attemptSeconds": [
+          0.7284519672393799
+        ],
+        "bufferedAheadSeconds": 20.066466,
+        "bufferingCount": 0,
+        "bufferingSeconds": 0,
+        "delivery": "本地播放",
+        "device": "arm64",
+        "events": [
+          "engine_avplayer",
+          "attempt_automatic",
+          "resource_ready_local",
+          "failed"
+        ],
+        "forwardBufferTargetSeconds": 0,
+        "localMedia": {
+          "audioCodecs": [],
+          "audioTracks": 0,
+          "container": "avi",
+          "playable": false,
+          "subtitleTracks": 0,
+          "videoCodec": "FMP4",
+          "videoTracks": 1
+        },
+        "playerReadySeconds": 0.9736590385437012,
+        "recoveryCount": 0,
+        "requestedQuality": "automatic",
+        "resourceReadySeconds": 0.5691590309143066,
+        "schema": 6,
+        "session": "1B4B6B81-4357-494C-B65B-F271A87E3168",
+        "state": "播放失败",
+        "system": "27.0",
+        "version": "1.2.1 (1)"
+      },
+      "displayedFrame": false,
+      "error": "当前播放器无法播放此文件。文件可能损坏，或封装、编码不受系统支持。可尝试兼容的 MP4／MOV 文件，或通过 Jellyfin 转码观看。",
+      "inspection": {
+        "audioCodecs": [],
+        "audioTracks": 0,
+        "container": "avi",
+        "playable": false,
+        "subtitleTracks": 0,
+        "videoCodec": "FMP4",
+        "videoTracks": 1
+      },
+      "sample": "04-mpeg4-mp3.avi",
+      "fixture": {
+        "file": "04-mpeg4-mp3.avi",
+        "bytes": 1415976,
+        "sha256": "260460234c853fd0edb8f72e25f486fe7501f989999296bfcce558f942bcc50a"
+      }
+    },
+    {
+      "diagnostic": {
+        "attemptSeconds": [
+          0.9383360147476196
+        ],
+        "bufferedAheadSeconds": 0,
+        "bufferingCount": 0,
+        "bufferingSeconds": 0,
+        "delivery": "本地播放",
+        "device": "arm64",
+        "errorChain": [
+          {
+            "code": -11829,
+            "domain": "AVFoundationErrorDomain"
+          },
+          {
+            "code": -12848,
+            "domain": "NSOSStatusErrorDomain"
+          }
+        ],
+        "errorCode": -11829,
+        "errorDomain": "AVFoundationErrorDomain",
+        "events": [
+          "engine_avplayer",
+          "attempt_automatic",
+          "resource_ready_local",
+          "failed",
+          "item_failed",
+          "error_avfoundation_-11829"
+        ],
+        "forwardBufferTargetSeconds": 0,
+        "localMedia": {
+          "audioCodecs": [],
+          "container": "matroska",
+          "playable": false
+        },
+        "recoveryCount": 0,
+        "requestedQuality": "automatic",
+        "resourceReadySeconds": 0.7601450681686401,
+        "schema": 6,
+        "session": "035B3CA9-AED7-4A4D-83AE-20100618BCBF",
+        "state": "播放失败",
+        "system": "27.0",
+        "version": "1.2.1 (1)"
+      },
+      "displayedFrame": false,
+      "error": "当前播放器无法播放此文件。文件可能损坏，或封装、编码不受系统支持。可尝试兼容的 MP4／MOV 文件，或通过 Jellyfin 转码观看。",
+      "inspection": {
+        "audioCodecs": [],
+        "container": "matroska",
+        "playable": false
+      },
+      "sample": "05-renamed-mkv.mp4",
+      "fixture": {
+        "file": "05-renamed-mkv.mp4",
+        "bytes": 1271356,
+        "sha256": "2491f6b601257f254e47abe60e457d6ebf3537de20efa2da04afbd281f963f6c"
+      }
+    },
+    {
+      "diagnostic": {
+        "attemptSeconds": [
+          0.8490489721298218
+        ],
+        "bufferedAheadSeconds": 0,
+        "bufferingCount": 0,
+        "bufferingSeconds": 0,
+        "delivery": "本地播放",
+        "device": "arm64",
+        "errorChain": [
+          {
+            "code": -11829,
+            "domain": "AVFoundationErrorDomain"
+          },
+          {
+            "code": -12848,
+            "domain": "NSOSStatusErrorDomain"
+          }
+        ],
+        "errorCode": -11829,
+        "errorDomain": "AVFoundationErrorDomain",
+        "events": [
+          "engine_avplayer",
+          "attempt_automatic",
+          "resource_ready_local",
+          "failed",
+          "item_failed",
+          "error_avfoundation_-11829"
+        ],
+        "forwardBufferTargetSeconds": 0,
+        "localMedia": {
+          "audioCodecs": [],
+          "container": "mp4",
+          "playable": false
+        },
+        "recoveryCount": 0,
+        "requestedQuality": "automatic",
+        "resourceReadySeconds": 0.7103549242019653,
+        "schema": 6,
+        "session": "15D99120-9772-40C9-9E6D-AB916FDBB535",
+        "state": "播放失败",
+        "system": "27.0",
+        "version": "1.2.1 (1)"
+      },
+      "displayedFrame": false,
+      "error": "当前播放器无法播放此文件。文件可能损坏，或封装、编码不受系统支持。可尝试兼容的 MP4／MOV 文件，或通过 Jellyfin 转码观看。",
+      "inspection": {
+        "audioCodecs": [],
+        "container": "mp4",
+        "playable": false
+      },
+      "sample": "06-truncated.mp4",
+      "fixture": {
+        "file": "06-truncated.mp4",
+        "bytes": 128,
+        "sha256": "a70b7d218085618771a86e5f17e049a71946c6f7b01055991b3e1eff0a36774b"
+      }
+    },
+    {
+      "diagnostic": {
+        "attemptSeconds": [
+          0.5556409358978271
+        ],
+        "bufferedAheadSeconds": 19.977333333333334,
+        "bufferingCount": 0,
+        "bufferingSeconds": 0,
+        "delivery": "本地播放",
+        "device": "arm64",
+        "events": [
+          "engine_avplayer",
+          "attempt_automatic",
+          "resource_ready_local",
+          "failed"
+        ],
+        "forwardBufferTargetSeconds": 0,
+        "localMedia": {
+          "audioCodecs": [
+            "aac "
+          ],
+          "audioTracks": 1,
+          "container": "mp4",
+          "playable": true,
+          "subtitleTracks": 0,
+          "videoTracks": 0
+        },
+        "playerReadySeconds": 0.8710839748382568,
+        "recoveryCount": 0,
+        "requestedQuality": "automatic",
+        "resourceReadySeconds": 0.3988460302352905,
+        "schema": 6,
+        "session": "A856BF78-B260-4927-A487-97CC1156A7B7",
+        "state": "播放失败",
+        "system": "27.0",
+        "version": "1.2.1 (1)"
+      },
+      "displayedFrame": false,
+      "error": "此文件没有视频轨道。当前版本用于视频观看，请选择含画面的视频文件。",
+      "inspection": {
+        "audioCodecs": [
+          "aac "
+        ],
+        "audioTracks": 1,
+        "container": "mp4",
+        "playable": true,
+        "subtitleTracks": 0,
+        "videoTracks": 0
+      },
+      "sample": "07-audio-only.mp4",
+      "fixture": {
+        "file": "07-audio-only.mp4",
+        "bytes": 178157,
+        "sha256": "f351e66402320528d62d2758c8ae88ca247d5553d731bf55861792bb501df99c"
+      }
+    },
+    {
+      "diagnostic": {
+        "attemptSeconds": [
+          1.4289720058441162
+        ],
+        "bufferedAheadSeconds": 19.625222139,
+        "bufferingCount": 0,
+        "bufferingSeconds": 0,
+        "delivery": "本地播放",
+        "device": "arm64",
+        "events": [
+          "engine_avplayer",
+          "attempt_automatic",
+          "resource_ready_local",
+          "first_frame",
+          "output_color_unavailable"
+        ],
+        "firstFrameSeconds": 1.4289720058441162,
+        "forwardBufferTargetSeconds": 0,
+        "localMedia": {
+          "audioCodecs": [
+            "aac "
+          ],
+          "audioTracks": 2,
+          "container": "mp4",
+          "playable": true,
+          "subtitleTracks": 2,
+          "videoCodec": "avc1",
+          "videoTracks": 1
+        },
+        "outputHeight": 180,
+        "outputVideoCodec": "avc1",
+        "outputWidth": 320,
+        "playerReadySeconds": 1.4289720058441162,
+        "recoveryCount": 0,
+        "requestedQuality": "automatic",
+        "resourceReadySeconds": 0.37860000133514404,
+        "schema": 6,
+        "session": "B18E4599-3D2F-45F1-9AAC-0DFFFD611777",
+        "state": "已暂停",
+        "system": "27.0",
+        "totalFirstFrameSeconds": 1.4290000200271606,
+        "version": "1.2.1 (1)"
+      },
+      "displayedFrame": true,
+      "error": "",
+      "inspection": {
+        "audioCodecs": [
+          "aac "
+        ],
+        "audioTracks": 2,
+        "container": "mp4",
+        "playable": true,
+        "subtitleTracks": 2,
+        "videoCodec": "avc1",
+        "videoTracks": 1
+      },
+      "sample": "08-multi-track.mp4",
+      "fixture": {
+        "file": "08-multi-track.mp4",
+        "bytes": 1454515,
+        "sha256": "2360efee31db3f0ac6828e7a39c14a011eabcbdaab49d6a3a35337bb1ab238ec"
+      }
+    }
+  ]
+}

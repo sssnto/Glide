@@ -15,7 +15,7 @@ struct AdaptiveLibraryRoot: View {
                     Label("离线下载", systemImage: "arrow.down.circle").tag("downloads")
                     Label("媒体来源", systemImage: "externaldrive").tag("sources")
                     Label("设置", systemImage: "gearshape").tag("settings")
-                }.navigationTitle("Glide").navigationSplitViewColumnWidth(min: 220, ideal: 240, max: 300)
+                }.scrollContentBackground(.hidden).background(GlideTheme.background).navigationTitle("Glide").navigationBarTitleDisplayMode(.inline).navigationSplitViewColumnWidth(min: 220, ideal: 240, max: 300)
             } detail: {
                 switch destination {
                 case "settings": NavigationStack { SettingsView(library: library) }
@@ -42,6 +42,8 @@ struct AdaptiveLibraryRoot: View {
                     .tabItem { Label("设置", systemImage: "gearshape") }
                     .tag(PhoneTab.settings)
             }
+            .toolbarBackground(GlideTheme.background, for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
             .tint(GlideTheme.accent)
             .fullScreenCover(item: $personalPlayback) { video in
                 PlayerView(library: library, queue: PlaybackQueue(videos: [video], mode: .sequential), scopeName: "个人片库", cinematic: ["Movie", "Episode"].contains(video.mediaType ?? ""))

@@ -19,6 +19,10 @@ final class PictureInPicture: NSObject, @preconcurrency AVPictureInPictureContro
             Task { @MainActor in self?.possible = possible }
         }
     }
+    func detach() {
+        controller?.stopPictureInPicture(); observation = nil; controller?.delegate = nil
+        controller = nil; layer = nil; possible = false; active = false
+    }
     func toggle() {
         message = nil
         if active { controller?.stopPictureInPicture() }

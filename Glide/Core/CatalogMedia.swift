@@ -62,6 +62,7 @@ struct CatalogItem: Codable, Identifiable, Equatable {
         var Index: Int; var `Type`: String; var DisplayTitle: String?; var Language: String?; var Codec: String?; var IsDefault: Bool?; var IsForced: Bool?; var Width: Int?; var Height: Int?; var BitDepth: Int?; var Profile: String?; var Level: Double?; var CodecTag: String?
         var VideoRangeType: String?; var DvProfile: Int?
         var ColorTransfer: String?; var ColorPrimaries: String?; var ColorSpace: String?
+        var BitRate: Int?; var RealFrameRate: Double?; var AverageFrameRate: Double?
         var id: Int { Index }
         var label: String { DisplayTitle ?? [Language, Codec].compactMap { $0 }.joined(separator: " · ").nonempty ?? "轨道 \(Index)" }
     }

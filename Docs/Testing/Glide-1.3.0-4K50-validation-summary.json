@@ -1,0 +1,48 @@
+{
+  "version": "1.3.0 (4)",
+  "date": "2026-10-16",
+  "released": false,
+  "core": {
+    "passed": 94,
+    "swiftTesting": 90,
+    "xctest": 4,
+    "log": "/tmp/Glide4K/core-build4.log"
+  },
+  "network4K50": {
+    "passed": true,
+    "checksPassed": 10,
+    "resultBundle": "/tmp/Glide4K/Network50-Build4-R1.xcresult",
+    "measurements": {
+      "finalTime": 22.000133337,
+      "lastRebufferSeconds": 6.915289333323017,
+      "resumeBufferedAhead": 6.2044285,
+      "sourceFrameRate": 49.92895990007546
+    },
+    "droppedFramesInSimulator": 351,
+    "scope": "buffering, original route and user intent; not smoothness acceptance"
+  },
+  "nativeRegression": {
+    "videoInfoAndDiagnostic": "passed",
+    "initialRecoveredBuffering": "failed before playback: stale fixture catalog",
+    "recoveredBufferingRetry": "passed",
+    "initialResultBundle": "/tmp/Glide4K/Native-Build4-Regression.xcresult",
+    "retryResultBundle": "/tmp/Glide4K/Native-Build4-Recovered-R2.xcresult",
+    "fixtureRefresh": "GLIDE_JELLYFIN_FIXTURE=1 and refresh catalog on any missing fixture item"
+  },
+  "release": {
+    "version": "1.3.0 (4)",
+    "debugNetworkProbeAbsent": true,
+    "subtitleFontSHA256": "785120c69135f725fef742270b6ed988aef2b3e345ab466783c519de3b7d1f8c",
+    "sourceSubtitleFontSHA256": "785120c69135f725fef742270b6ed988aef2b3e345ab466783c519de3b7d1f8c",
+    "archive": "/tmp/Glide4K/Glide-1.3.0-4.xcarchive"
+  },
+  "deviceQA": {
+    "bundleID": "com.songpeng.glide.compatibilityqa",
+    "device": "iPhone 13 Pro Max",
+    "installed": true,
+    "autoLaunch": "blocked by device lock",
+    "originalUserMediaRetest": "failed: repeated buffering remains in build 4",
+    "followup": "Glide-1.3.0-4K-build4-user-followup-2026-10-16.md",
+    "sameEngineOfflineComparison": "user reports offline playback smooth; no offline diagnostic attached"
+  }
+}

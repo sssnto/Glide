@@ -1,0 +1,35 @@
+{
+  "anchor" : "catalog.design-22",
+  "anchorAfter" : {
+    "height" : 251.66666666666674,
+    "width" : 115.33333333333331,
+    "x" : 16,
+    "y" : 182.33333333333326
+  },
+  "anchorBefore" : {
+    "height" : 251.66666666666674,
+    "width" : 115.33333333333331,
+    "x" : 16,
+    "y" : 181.33333333333326
+  },
+  "catalogTotal" : 38,
+  "detailRequestsAfterFirstVisit" : 2,
+  "detailRequestsAfterRepeatedVisit" : 2,
+  "distinctVisibleCards" : 38,
+  "firstCard" : "catalog.demo0",
+  "firstFrame" : {
+    "height" : 251.66666666666669,
+    "width" : 115.33333333333331,
+    "x" : 16,
+    "y" : 235
+  },
+  "loadedFrame" : {
+    "height" : 251.66666666666669,
+    "width" : 115.33333333333331,
+    "x" : 16,
+    "y" : 235
+  },
+  "posterPendingPhaseObserved" : false,
+  "posterRequestsAfterFirstVisit" : 4,
+  "posterRequestsAfterRepeatedVisit" : 4
+}

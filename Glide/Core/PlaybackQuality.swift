@@ -27,8 +27,8 @@ enum AutomaticPlaybackPolicy {
     }
     static func nextStep(after step: Int, stalled: Bool, preservingVideo: Bool, videoFailed: Bool = false, canDirectStream: Bool = true) -> Int? {
         guard step < 3 else { return nil }
-        // Remuxing preserves video bits, so it cannot repair video decoding or buffering.
-        // It also costs another PlaybackInfo request when the server disallows direct stream.
+        // Generic startup/decode failures skip remux. A bounded trial for an
+        // unproductive progressive-file refill is handled by the controller.
         if stalled || videoFailed || !preservingVideo || !canDirectStream { return step < 2 ? 2 : 3 }
         return step + 1
     }
@@ -66,12 +66,93 @@ struct PlaybackRouteMemory {
 }
 
 struct PlaybackStallTracker {
-    private var stalls: [(date: Date, duration: TimeInterval)] = []
-    mutating func record(at date: Date, duration: TimeInterval) -> Bool {
-        guard duration.isFinite, duration >= 2.5 else { return false }
-        stalls.removeAll { date.timeIntervalSince($0.date) > 90 }
-        stalls.append((date, duration))
-        return duration >= 8 || (stalls.count >= 2 && stalls.reduce(0) { $0 + $1.duration } >= 5)
+    static let minimumWait: TimeInterval = 45
+    static let bufferProgressTimeout: TimeInterval = 20
+    static let maximumWait: TimeInterval = 90
+    private var waitingSince: Date?
+    private var bufferProgressAt: Date?
+    private var lastBufferedEnd: Double?
+
+    /// Observe an ongoing stall after the first displayed frame. A resumed
+    /// clock, pause or seek clears the wait; completed stalls never downgrade.
+    mutating func shouldRecover(at date: Date, stalled: Bool, bufferedEnd: Double?) -> Bool {
+        guard stalled, date.timeIntervalSince1970.isFinite else { self = Self(); return false }
+        if waitingSince == nil || date < waitingSince! {
+            waitingSince = date; bufferProgressAt = date; lastBufferedEnd = nil
+        }
+        if let end = bufferedEnd, end.isFinite,
+           lastBufferedEnd == nil || end > lastBufferedEnd! + 0.25 {
+            lastBufferedEnd = end; bufferProgressAt = date
+        }
+        let waited = date.timeIntervalSince(waitingSince!)
+        let noProgress = date.timeIntervalSince(bufferProgressAt ?? date)
+        // Growing usable cache gives large files extra time, but a truly stuck
+        // native item must still have a bounded recovery path.
+        return waited >= Self.maximumWait || (waited >= Self.minimumWait && noProgress >= Self.bufferProgressTimeout)
+    }
+}
+
+/// A Direct Stream flag describes one negotiation, not whether a later HLS
+/// request can copy video. Probe large direct sources and validate the copy URL.
+enum OriginalTransportPolicy {
+    static func prefersSegments(local: Bool, delivery: PlaybackDelivery,
+                                width: Int?, height: Int?, bitrate: Int?) -> Bool {
+        delivery == .direct &&
+            NativeRebufferPolicy.eligible(local: local, preservesVideo: true, width: width, height: height, bitrate: bitrate)
+    }
+    /// PlaybackInfo lists codec candidates, not the encoder actually used.
+    /// Explicitly request copy on that negotiated URL; never infer copy merely
+    /// from AllowVideoStreamCopy. Preserve server/session/audio selections.
+    static func videoCopyURL(_ url: URL, sourceCodec: String?, burnsSubtitles: Bool = false) throws -> URL {
+        guard var parts = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              url.pathExtension.lowercased() == "m3u8" else { throw OriginalTransportError.videoCopyNotConfirmed }
+        let query = Dictionary((parts.queryItems ?? []).map { ($0.name.lowercased(), ($0.value ?? "").lowercased()) }, uniquingKeysWith: { _, value in value })
+        guard !burnsSubtitles, query["subtitlemethod"] != "encode", query["allowvideostreamcopy"] != "false" else {
+            throw OriginalTransportError.videoCopyNotConfirmed
+        }
+        let candidates = (query["videocodec"] ?? "").split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+        let source = sourceCodec?.lowercased() ?? ""
+        guard candidates == ["copy"] || (["h264", "hevc"].contains(source) && candidates.contains(source)) else {
+            throw OriginalTransportError.videoCopyNotConfirmed
+        }
+        let overrides = ["VideoCodec": "copy", "AllowVideoStreamCopy": "true"]
+        let keys = Set(overrides.keys.map { $0.lowercased() })
+        parts.queryItems = (parts.queryItems ?? []).filter { !keys.contains($0.name.lowercased()) }
+            + overrides.sorted { $0.key < $1.key }.map { URLQueryItem(name: $0.key, value: $0.value) }
+        guard let result = parts.url else { throw OriginalTransportError.videoCopyNotConfirmed }
+        return result
+    }
+}
+
+enum OriginalTransportError: Int, Error, CustomNSError, LocalizedError {
+    case noPlayableSource = 1, noCopyURL = 2, videoCopyNotConfirmed = 3
+    static var errorDomain: String { "GlideTransportError" }
+    var errorCode: Int { rawValue }
+    var errorDescription: String? {
+        switch self {
+        case .noPlayableSource: return "服务器没有提供原画兼容版本，当前继续原画直放。"
+        case .noCopyURL: return "服务器没有提供原画兼容地址，当前继续原画直放。"
+        case .videoCopyNotConfirmed: return "服务器未确认保留原视频，当前继续原画直放。"
+        }
+    }
+}
+
+/// A transport trial must not become a retry loop or an implicit quality drop
+/// when the server cannot provide a video-copy stream.
+struct OriginalTransportRecovery {
+    private(set) var attempted = false
+    private(set) var pending = false
+    var unproductiveRefill = false
+    mutating func begin(manual: Bool = false) -> Bool {
+        guard !pending, manual || !attempted else { return false }
+        attempted = true; pending = true; unproductiveRefill = false
+        return true
+    }
+    mutating func displayedFrame() { pending = false }
+    mutating func returnToDirectIfPending() -> Bool {
+        guard pending else { return false }
+        pending = false; unproductiveRefill = false
+        return true
     }
 }
 

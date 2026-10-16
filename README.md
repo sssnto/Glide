@@ -1,21 +1,35 @@
 # Glide · 随手一刷
 
-独立的 iPhone / iPad 原生视频播放器，面向 Jellyfin 私人片库与 NAS WebDAV。SwiftUI + AVFoundation / AVKit，iOS 17+。
+独立的 iPhone / iPad 原生视频播放器，支持本地视频、授权目录、Jellyfin 私人片库与 NAS WebDAV。SwiftUI + AVFoundation / AVKit，新增本地 MobileVLCKit 兼容播放，iOS 17+。
 
 源码仓库：[sssnto/Glide](https://github.com/sssnto/Glide)。隐私政策与支持：[glide.sssnto.cn](https://glide.sssnto.cn)。
 
 仓库包含原生应用、Xcode 工程、核心与界面测试、演示素材、设计原型、产品规划、架构说明、测试计划和支持网站源码。`Docs/` 与 `Design/` 保留各阶段记录，历史版本的描述不代表当前功能；当前行为以本页与最新测试计划为准。编译缓存、签名文件和发布安装包不纳入版本控制。
 
-当前开发版本 **1.1.0 (3) · 连续观看**。设计与实现范围：[产品规划](Docs/Next-Version-Product-Plan-2026-10-09.md)、[详细功能规格](Docs/Glide-1.1.0-Functional-Spec.md)。[用户验收计划](Docs/Testing/Glide-1.1.0-用户验收计划.md)与[开发验证报告](Docs/Testing/Glide-1.1.0-验证报告.md)。HDR 色彩修订与复测步骤见[色彩回归记录](Docs/Testing/Glide-1.1.0-HDR-色彩回归.md)，路径与缓冲增量见[验证步骤](Docs/Testing/Glide-1.1.0-文件路径与缓冲验证.md)。
+当前开发版本 **1.4.0 (1) · 界面与交互重设计**，未发布。紧凑片库、结构化媒体信息、底部播放快捷操作和竖版家庭视频预览；进入媒体库或文件夹默认展示媒体。沿用 1.3.0 本地 VLC 与远程原生播放能力。[设计规则](Docs/Glide-1.4.0-Design.md)、[验证与边界](Docs/Testing/Glide-1.4.0-UI-Validation.md)、[文案草稿](Docs/Glide-1.4.0-Release-Notes.md)。
+此前 1.2.0 已加入批量文件导入、授权目录、本地封面与时间轴预览、导入副本删除和可恢复快照。[1.2.0 规格](Docs/Glide-1.2.0-Functional-Spec.md)、[开发验证](Docs/Testing/Glide-1.2.0-本地来源验证-2026-10-15.md)。按用户决定，WebDAV 暂不扩展。完整长期目标见 [SenPlayer 对齐路线](Docs/SenPlayer-Capability-Parity-Roadmap-2026-10-15.md)，当前全部 53 项状态与版本拆分见 [实施后差距复核](Docs/SenPlayer-Gap-Review-2026-10-15.md)；M0／M1／M2 尚未整体完成。
 
-本版新增保存刷看范围／排序／播放顺序的常用目录、节目级续播、首帧后补齐剧集队列、Wi-Fi／本地下一条直放资产准备、目录分页与滚动恢复、单任务下载队列和持久离线海报。移除媒体来源可保留已完成下载。现有手势、原生播放器和免费功能边界保持；真实起播性能与后台下载仍需实机验收。
+[兼容内核独立验证程序](Experiments/CompatibilityPlayer/README.md)与主应用共用固定的 MobileVLCKit 3.7.3 和适配器。独立实验的历史结果保留在 Docs/Testing，当前主应用与真机证据见 1.3.0 验证报告。
+
+1.1.0 历史范围：[详细功能规格](Docs/Glide-1.1.0-Functional-Spec.md)与[开发验证报告](Docs/Testing/Glide-1.1.0-验证报告.md)。HDR 色彩修订与复测步骤见[色彩回归记录](Docs/Testing/Glide-1.1.0-HDR-色彩回归.md)，路径与缓冲增量见[验证步骤](Docs/Testing/Glide-1.1.0-文件路径与缓冲验证.md)，构建 4 的缓冲误降级修订见[恢复回归](Docs/Testing/Glide-1.1.0-缓冲恢复验证-2026-10-10.md)。
+
+此前 1.1.0 已新增保存刷看范围／排序／播放顺序的常用目录、节目级续播、首帧后补齐剧集队列、Wi-Fi／本地下一条直放资产准备、目录分页与滚动恢复、单任务下载队列和持久离线海报。移除媒体来源可保留已完成下载。现有手势、原生播放器和免费功能边界保持；真实起播性能与后台下载仍需实机验收。
 
 ## 打开运行
 
-1. 用 Xcode 打开 `Glide.xcodeproj` 或 `Glide.xcworkspace`，选择 `Glide` scheme。播放器仅使用系统框架，无需安装 CocoaPods 或第三方解码库。
+1. 运行 `python3 Scripts/prepare_compatibility_sdk.py` 准备固定 SDK；用 Xcode 打开现有 `Glide.xcodeproj`，选择 `Glide` scheme。无需执行 `pod install`。独立真机验证可选 `GlideCompatibilityQA`，与正式应用并存。
+
 2. 选择 iPhone 或 iPad 模拟器并运行。内置 3 段原创、无网络依赖的动态风景演示视频。
 3. 真机运行时，在 Signing & Capabilities 中选择自己的开发团队。
-4. 点击「连接你的媒体库」→「添加媒体源」，选择 Jellyfin 或 NAS · WebDAV。
+4. 点击片库右上角的来源按钮，选择导入视频、添加本地目录，或通过「添加媒体源」连接服务器。
+
+SDK 准备保留官方 dSYM，并核对各 CPU 架构的 UUID；旧的无符号缓存再次执行准备脚本会自动升级。分发前运行 `python3 Scripts/release_preflight.py --archive "/绝对路径/Glide.xcarchive"`，检查实际归档中应用与内嵌 framework 的符号是否齐全。
+
+### 本地视频
+
+打开「媒体来源」→「导入视频文件」，批量复制到 Glide；重名文件自动编号。也可选择「添加本地目录」，保留文件原位置并保存授权。目录内支持搜索、收藏、固定目录和顺序／随机刷看；重启恢复原位置。拖动本地视频时间轴可查看定位画面。长按导入视频可删除 Glide 内副本，授权目录中的原文件保持只读。
+
+在播放设置的视频信息中可查看本机格式检查，实际出画面才表示成功播放。「本地播放器」可切换系统／兼容播放；兼容路线已验证 MKV／AVI 和内嵌 ASS 原创样例，仍不承诺全格式。系统文件提供方的长期授权与云端下载仍需真机验收；尚无相册导入。
 
 ### Jellyfin
 
@@ -47,6 +61,8 @@ NAS 直连受 AVFoundation 格式支持限制，优先使用 MP4 / M4V / MOV。M
 
 Jellyfin 播放会先尝试原画；遇到解码失败或持续缓冲时自动恢复，并在必要时使用最高 1080p 或 720p 的 H.264/AAC 转码。恢复保留当前播放时间和播放／暂停意图。服务器必须允许转码并配置可用的 FFmpeg；WebDAV 没有服务器转码兜底；Jellyfin 下载文件若无法由系统播放，会尝试联网获取兼容流，离线时需要系统兼容的文件。底座选型见 [原生播放器方案](Docs/Player-Engine-Decision.md)。
 
+首帧后的普通缓冲恢复会保留当前流，不因已结束的长缓冲或多次短缓冲立即转码。持续停止播放至少 45 秒且当前位置的连续可用缓存至少 20 秒未增长时才触发缓冲恢复；缓存仍增长时延长等待，最长连续停止 90 秒后恢复。播放重新开始、暂停及定位期间清除本次卡顿观察；真正的解码失败、黑屏和色彩不兼容仍保留自动恢复。
+
 ## 交互
 
 | 操作 | 行为 |
@@ -69,7 +85,7 @@ Jellyfin 播放会先尝试原画；遇到解码失败或持续缓冲时自动�
 ## 安全与数据
 
 - Jellyfin token、WebDAV 密码保存在系统钥匙串；不把密码存入偏好设置。
-- 服务器名称、地址、用户名、用户 ID、收藏与播放位置保存在本机 UserDefaults。
+- 来源、目录设置、收藏和播放进度保存在带备份的本机快照；旧版 UserDefaults 记录迁移后保留，轻量设置继续使用 UserDefaults。本地目录授权保存在设备内，视频身份使用相对路径。
 - 无分析 SDK、广告和第三方同步。
 - 前台 API / WebDAV 请求拒绝跨来源重定向；后台下载使用系统 URLSession 的重定向策略。
 - 为兼容用户自建局域网 HTTP 服务配置了 ATS 例外；公网推荐 HTTPS。

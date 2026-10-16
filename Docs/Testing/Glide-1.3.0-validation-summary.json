@@ -1,0 +1,33 @@
+{
+  "version": "1.3.0 (1)",
+  "published": false,
+  "date": "2026-10-15",
+  "core": {
+    "passed": 90,
+    "log": "/tmp/Glide130-core-retry.log"
+  },
+  "physicalEndurance": "Glide-1.3.0-physical-endurance.json",
+  "physicalMain": "Glide-1.3.0-physical-main-probe.json",
+  "iPadSimulator": "Glide-1.3.0-ipad-simulator-probe.json",
+  "passedUIFlows": {
+    "compatibilityFormats": "Integration-R5.xcresult",
+    "pausedEngineRoundtripAndQueue": "Integration-R4.xcresult",
+    "nativeFailureRetry": "Integration-R3.xcresult",
+    "compatibilityASSAndAudioOCR": "Integration-R18.xcresult",
+    "compatibility1080pDragPauseResume": "Integration-R16.xcresult",
+    "nativeTrackSelection": "Integration-R8.xcresult",
+    "nativeTimelineDrag": "Integration-R14.xcresult",
+    "nativeFormatMatrix": "Integration-R16.xcresult",
+    "nativeEdgeCases": "Integration-R17.xcresult",
+    "jellyfinRecoveryWithVLCLocalPreference": "Integration-R20.xcresult",
+    "iPadNativeFailureRetrySettings": "IPad-Integration-R1.xcresult"
+  },
+  "resultBundleRoot": "/tmp/Glide130",
+  "releaseArchive": "/tmp/Glide130/Glide-1.3.0-verified.xcarchive",
+  "limitations": [
+    "UI flows were verified in the listed rounds, not one monolithic final test run.",
+    "Physical XCTest failed to bootstrap; physical main-controller checks are a separate debug probe.",
+    "Real user media, human listening, iPad hardware and advanced output remain unverified.",
+    "Full transitive distribution materials and public release are pending."
+  ]
+}

@@ -1,0 +1,468 @@
+{
+  "date": "2026-10-15",
+  "scope": "Independent CompatibilityLab on physical iPhone; original synthetic sample only",
+  "glideDevelopmentVersion": "1.3.0 (1)",
+  "hardware": "iPhone 13 Pro Max",
+  "os": "iOS 27.0 (24A437)",
+  "sdk": "MobileVLCKit 3.7.3",
+  "runtime": "3.0.23 Vetinari (3.0.23-2-47-g3f8bd11fd0)",
+  "passed": true,
+  "activeSeconds": 1800.58727204171,
+  "openStopCycles": 50,
+  "firstFrameSeconds": {
+    "min": 0.41961245832499117,
+    "median": 0.52777416666504,
+    "max": 0.5353730417555198
+  },
+  "stopReturnSecondsMax": 0.0007835415890440345,
+  "residentBytesAfterStop": {
+    "first": 57655296,
+    "last": 58294272,
+    "delta": 638976
+  },
+  "longPlaybackResidentBytes": {
+    "min": 51429376,
+    "max": 76873728,
+    "last": 61489152
+  },
+  "displayedPictures": 43295,
+  "thermalStates": [
+    0
+  ],
+  "audioMuted": true,
+  "humanAudioListeningVerified": false,
+  "limitations": [
+    "Lab build predates final main-app paused-start and inspection changes; main-app integration is verified separately.",
+    "No real user media, hardware/software decoder attribution, iPad hardware, HDR or external audio output verification."
+  ],
+  "rawResultSHA256": "dceba8a0d5fd82055b30ed985dabd722dad83139f8d7b917ae366ec2b8542da9",
+  "samples": [
+    {
+      "activeSeconds": 0.5161071249749511,
+      "clock": 0.553,
+      "displayedPictures": 12,
+      "residentBytes": 65028096,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 30.09568383335136,
+      "clock": 30.112,
+      "displayedPictures": 723,
+      "residentBytes": 70254592,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 60.008307875017636,
+      "clock": 5.567,
+      "displayedPictures": 1446,
+      "residentBytes": 75218944,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 90.15541650005616,
+      "clock": 35.755,
+      "displayedPictures": 2164,
+      "residentBytes": 72269824,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 120.0780527916504,
+      "clock": 11.509,
+      "displayedPictures": 2889,
+      "residentBytes": 76824576,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 150.31672908330802,
+      "clock": 41.695,
+      "displayedPictures": 3614,
+      "residentBytes": 76480512,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 180.2670454166364,
+      "clock": 17.175,
+      "displayedPictures": 4332,
+      "residentBytes": 76873728,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 210.3352650416782,
+      "clock": 47.272,
+      "displayedPictures": 5054,
+      "residentBytes": 76873728,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 240.3460206250893,
+      "clock": 22.332,
+      "displayedPictures": 5797,
+      "residentBytes": 53788672,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 270.47233683336526,
+      "clock": 52.426,
+      "displayedPictures": 6519,
+      "residentBytes": 56688640,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 300.3132567499997,
+      "clock": 27.997,
+      "displayedPictures": 7240,
+      "residentBytes": 61505536,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 330.20195879170205,
+      "clock": 3.224,
+      "displayedPictures": 7958,
+      "residentBytes": 61767680,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 360.30922729172744,
+      "clock": 33.363,
+      "displayedPictures": 8682,
+      "residentBytes": 61800448,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 390.2004833749961,
+      "clock": 8.677,
+      "displayedPictures": 9395,
+      "residentBytes": 61767680,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 420.30788550002035,
+      "clock": 38.843,
+      "displayedPictures": 10120,
+      "residentBytes": 61800448,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 450.3001993750222,
+      "clock": 14.622,
+      "displayedPictures": 10842,
+      "residentBytes": 61980672,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 480.33707270841114,
+      "clock": 44.764,
+      "displayedPictures": 11566,
+      "residentBytes": 61456384,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 510.45239450002555,
+      "clock": 20.218,
+      "displayedPictures": 12283,
+      "residentBytes": 61685760,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 540.5265068750596,
+      "clock": 50.337,
+      "displayedPictures": 13007,
+      "residentBytes": 62029824,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 570.5135994167067,
+      "clock": 25.956,
+      "displayedPictures": 13731,
+      "residentBytes": 62013440,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 600.0286198750837,
+      "clock": 55.492,
+      "displayedPictures": 14451,
+      "residentBytes": 61997056,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 630.0586731666699,
+      "clock": 30.802,
+      "displayedPictures": 15162,
+      "residentBytes": 62013440,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 660.5196854167152,
+      "clock": 6.846,
+      "displayedPictures": 15893,
+      "residentBytes": 61980672,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 690.0529518750263,
+      "clock": 36.26,
+      "displayedPictures": 16599,
+      "residentBytes": 62029824,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 720.3940034999978,
+      "clock": 11.72,
+      "displayedPictures": 17326,
+      "residentBytes": 61997056,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 750.5046316666994,
+      "clock": 41.885,
+      "displayedPictures": 18050,
+      "residentBytes": 61652992,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 780.3593892500503,
+      "clock": 17.179,
+      "displayedPictures": 18772,
+      "residentBytes": 62013440,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 810.4007050000364,
+      "clock": 47.062,
+      "displayedPictures": 19489,
+      "residentBytes": 62013440,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 840.2541157500818,
+      "clock": 22.283,
+      "displayedPictures": 20209,
+      "residentBytes": 61685760,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 870.3840137083316,
+      "clock": 52.38,
+      "displayedPictures": 20930,
+      "residentBytes": 62029824,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 900.4597423333907,
+      "clock": 27.695,
+      "displayedPictures": 21655,
+      "residentBytes": 62062592,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 930.4921245833393,
+      "clock": 3.27,
+      "displayedPictures": 22374,
+      "residentBytes": 62029824,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 960.1473765000701,
+      "clock": 32.922,
+      "displayedPictures": 23086,
+      "residentBytes": 62062592,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 990.4184193334077,
+      "clock": 8.677,
+      "displayedPictures": 23811,
+      "residentBytes": 62029824,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1020.0631707083667,
+      "clock": 38.327,
+      "displayedPictures": 24524,
+      "residentBytes": 62062592,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1050.1421762499958,
+      "clock": 14.067,
+      "displayedPictures": 25249,
+      "residentBytes": 62029824,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1080.3017078334233,
+      "clock": 44.204,
+      "displayedPictures": 25972,
+      "residentBytes": 61685760,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1110.3086102083325,
+      "clock": 19.753,
+      "displayedPictures": 26695,
+      "residentBytes": 62029824,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1140.319319875096,
+      "clock": 49.919,
+      "displayedPictures": 27433,
+      "residentBytes": 51429376,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1170.2481053334195,
+      "clock": 25.442,
+      "displayedPictures": 28154,
+      "residentBytes": 56639488,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1200.2276895834366,
+      "clock": 55.492,
+      "displayedPictures": 28878,
+      "residentBytes": 59785216,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1230.21836645843,
+      "clock": 30.621,
+      "displayedPictures": 29592,
+      "residentBytes": 62619648,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1260.2341663334519,
+      "clock": 6.335,
+      "displayedPictures": 30317,
+      "residentBytes": 62439424,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1290.3076055001002,
+      "clock": 36.285,
+      "displayedPictures": 31035,
+      "residentBytes": 62439424,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1320.3007913751062,
+      "clock": 12.047,
+      "displayedPictures": 31760,
+      "residentBytes": 62472192,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1350.3950672084466,
+      "clock": 42.16,
+      "displayedPictures": 32483,
+      "residentBytes": 61685760,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1380.498460333445,
+      "clock": 17.69,
+      "displayedPictures": 33203,
+      "residentBytes": 60932096,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1410.1247127500828,
+      "clock": 47.316,
+      "displayedPictures": 33914,
+      "residentBytes": 60948480,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1440.0927868750878,
+      "clock": 22.84,
+      "displayedPictures": 34636,
+      "residentBytes": 60604416,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1470.2041211667238,
+      "clock": 52.958,
+      "displayedPictures": 35359,
+      "residentBytes": 60948480,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1500.2017221667338,
+      "clock": 27.953,
+      "displayedPictures": 36075,
+      "residentBytes": 60981248,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1530.2189890000736,
+      "clock": 3.522,
+      "displayedPictures": 36797,
+      "residentBytes": 61587456,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1560.2687099584145,
+      "clock": 33.688,
+      "displayedPictures": 37522,
+      "residentBytes": 61620224,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1590.2475402083946,
+      "clock": 9.187,
+      "displayedPictures": 38238,
+      "residentBytes": 61358080,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1620.1533971667523,
+      "clock": 39.099,
+      "displayedPictures": 38956,
+      "residentBytes": 61358080,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1650.1052923334064,
+      "clock": 14.364,
+      "displayedPictures": 39677,
+      "residentBytes": 61456384,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1680.3631741250865,
+      "clock": 44.764,
+      "displayedPictures": 40407,
+      "residentBytes": 61128704,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1710.321683083428,
+      "clock": 20.29,
+      "displayedPictures": 41127,
+      "residentBytes": 61145088,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1740.0411554167513,
+      "clock": 50.082,
+      "displayedPictures": 41842,
+      "residentBytes": 61489152,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1770.0939274167176,
+      "clock": 25.399,
+      "displayedPictures": 42561,
+      "residentBytes": 61521920,
+      "thermalState": 0
+    },
+    {
+      "activeSeconds": 1800.58727204171,
+      "clock": 1.459,
+      "displayedPictures": 43295,
+      "residentBytes": 61489152,
+      "thermalState": 0
+    }
+  ]
+}

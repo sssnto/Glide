@@ -3,7 +3,8 @@ import Network
 
 /// One short-lived asset, never a second running player or a speculative transcode.
 @MainActor final class PlaybackWarmup {
-    struct Prepared {
+    struct Prepared: PlaybackPreload {
+        var engineID: PlaybackEngineID { .avPlayer }
         let key: String
         let resource: PlaybackResource
         let asset: AVURLAsset
@@ -37,7 +38,7 @@ import Network
     }
     func prepare(_ video: Video, server: MediaServer?) async {
         let local = DownloadStore.shared.localURL(videoID: video.id) ?? (video.url?.isFileURL == true ? video.url : nil)
-        guard (wifi || local != nil), !ProcessInfo.processInfo.isLowPowerModeEnabled,
+        guard (wifi || local != nil || server?.kind == .local), !ProcessInfo.processInfo.isLowPowerModeEnabled,
               !PlaybackRouteMemory().prefersVideoConversion(for: video.id),
               PlaybackPreferences.audioLanguage.isEmpty, PlaybackPreferences.subtitleLanguage.isEmpty,
               !PlaybackPreferences.subtitlesOff, !PlaybackPreferences.forcedOnly else { cancel(); return }
@@ -49,10 +50,11 @@ import Network
             guard let self else { return }
             do {
                 let resource: PlaybackResource
-                if let local { resource = PlaybackResource(url: local, delivery: .local) }
+                if let server, server.kind == .local { resource = try LocalMediaStore.playback(video, server: server) }
+                else if let local { resource = PlaybackResource(url: local, delivery: .local) }
                 else { resource = try await MediaClient.shared.playback(video: video, server: server, directOnly: true) }
                 try Task.checkCancellation()
-                guard token == request, !resource.isTranscoding else { return }
+                guard token == request, !resource.isTranscoding, !resource.prefersSegmentedTransport else { return }
                 let loader = resource.headers.isEmpty ? nil : AuthenticatedAsset(url: resource.url, headers: resource.headers, allowsCellular: false)
                 let candidate = loader?.asset ?? AVURLAsset(url: resource.url, options: [AVURLAssetAllowsCellularAccessKey: false])
                 asset = candidate

@@ -1,0 +1,27 @@
+{
+  "version": "1.3.0 (8)",
+  "archive": "/tmp/Glide4K/Glide-1.3.0-8-final.xcarchive",
+  "debugProbeAbsent": true,
+  "explicitCopyPolicyPresent": true,
+  "originalTransportResultDiagnosticPresent": true,
+  "fontMatches": true,
+  "symbols": {
+    "archive": "/private/tmp/Glide4K/Glide-1.3.0-8-final.xcarchive",
+    "passed": true,
+    "coverage": [
+      {
+        "binary": "Products/Applications/Glide.app/Glide",
+        "architecture": "arm64",
+        "uuid": "01C0A56C-AB33-30E5-AD34-7F0343392117",
+        "dSYM": "dSYMs/Glide.app.dSYM"
+      },
+      {
+        "binary": "Products/Applications/Glide.app/Frameworks/MobileVLCKit.framework/MobileVLCKit",
+        "architecture": "arm64",
+        "uuid": "99DC0B74-A3D1-3ED3-AC1F-2B8FC6A452A3",
+        "dSYM": "dSYMs/MobileVLCKit.framework.dSYM"
+      }
+    ],
+    "repairedMobileVLCKit": false
+  }
+}

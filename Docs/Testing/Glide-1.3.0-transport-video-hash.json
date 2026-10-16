@@ -1,0 +1,8 @@
+{
+  "originalSyntheticMedia": true,
+  "inputVideo": "2160x3840 H264 Main 5.2 SDR 50 fps",
+  "method": "ffmpeg -map 0:v:0 -c copy -f hash -hash sha256",
+  "original": "SHA256=fd6b38c1e31057dc7fb147b26b8e3cf9b9d21e85fc59f19192f1234827bc2558",
+  "fMP4HLS": "SHA256=fd6b38c1e31057dc7fb147b26b8e3cf9b9d21e85fc59f19192f1234827bc2558",
+  "identical": true
+}

@@ -85,5 +85,9 @@ struct DirectoryBookmark: Codable, Identifiable, Equatable {
     var options: BrowseOptions? = nil
     var mode: PlaybackMode? = nil
     var accountID: String? = nil
-    var id: String { sourceID.uuidString + ":" + (jellyPath.last?.id ?? davPath.last?.absoluteString ?? "root") }
+    var localPath: String? = nil
+    var id: String {
+        if let localPath { return sourceID.uuidString + ":local:" + localPath }
+        return sourceID.uuidString + ":" + (jellyPath.last?.id ?? davPath.last?.absoluteString ?? "root")
+    }
 }

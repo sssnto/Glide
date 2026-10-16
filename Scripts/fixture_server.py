@@ -3,7 +3,7 @@
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlsplit, parse_qs
 from pathlib import Path
-import json, re, base64, subprocess, tempfile, os, time, shutil
+import json, re, base64, subprocess, tempfile, os, time, shutil, threading
 
 resources = Path(__file__).resolve().parents[1] / 'Glide/Resources'
 hls = Path(tempfile.mkdtemp(prefix='glide-hls-'))
@@ -12,6 +12,19 @@ for i in range(3):
 subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(resources/'demo0.mp4'), '-frames:v', '1', str(hls/'poster.jpg')], check=True)
 black_frame_fixture = os.environ.get('GLIDE_BLACK_FRAME_FIXTURE') == '1'
 slow_direct_fixture = os.environ.get('GLIDE_SLOW_DIRECT_FIXTURE') == '1'
+buffering_fixture = os.environ.get('GLIDE_BUFFERING_FIXTURE') == '1'
+four_k_file = Path(os.environ['GLIDE_4K_FIXTURE']) if os.environ.get('GLIDE_4K_FIXTURE') else None
+four_k_info = json.loads(subprocess.check_output(['ffprobe', '-v', 'error', '-show_streams', '-show_format', '-of', 'json', str(four_k_file)])) if four_k_file else None
+four_k_delays = {}
+four_k_lock = threading.Lock()
+four_k_transport = os.environ.get('GLIDE_4K_TRANSPORT_FIXTURE') == '1'
+transport_menu_fixture = os.environ.get('GLIDE_TRANSPORT_MENU_FIXTURE') == '1'
+design_fixture = os.environ.get('GLIDE_DESIGN_FIXTURE') == '1'
+if four_k_transport:
+    assert four_k_file, 'Transport fixture requires the authored 4K MP4'
+    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(four_k_file), '-c', 'copy',
+                    '-hls_time', '2', '-hls_list_size', '0', '-hls_segment_type', 'fmp4',
+                    '-hls_fmp4_init_filename', 'fourk-init.mp4', str(hls/'fourk.m3u8')], check=True)
 hls_master_fixture = os.environ.get('GLIDE_HLS_MASTER_FIXTURE') == '1'
 if hls_master_fixture:
     sdr = hls/'sdr'
@@ -29,6 +42,15 @@ if black_frame_fixture:
     # A valid audio clock without a decodable video frame.
     subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-f', 'lavfi', '-i', 'anullsrc=r=48000:cl=stereo', '-t', '60', '-c:a', 'aac', str(hls/'broken.mp4')], check=True)
     subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-stream_loop', '-1', '-i', str(resources/'demo0.mp4'), '-t', '60', '-c', 'copy', '-hls_time', '4', '-hls_list_size', '0', str(hls/'demo0.m3u8')], check=True)
+if buffering_fixture:
+    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-stream_loop', '-1', '-i', str(resources/'demo0.mp4'), '-t', '90',
+                    '-c:v', 'libx264', '-preset', 'ultrafast', '-pix_fmt', 'yuv420p', '-r', '24', '-g', '96',
+                    '-force_key_frames', 'expr:gte(t,n_forced*4)', '-c:a', 'aac',
+                    '-hls_time', '4', '-hls_list_size', '0', str(hls/'buffered.m3u8')], check=True)
+    # Stream-copying the original GOP produced alternating 10.4 / 1.6 second
+    # segments, masking most of the intended post-frame stall.
+    durations = [float(line.split(':')[1].rstrip(',')) for line in (hls/'buffered.m3u8').read_text().splitlines() if line.startswith('#EXTINF:')]
+    assert len(durations) > 4 and all(abs(duration - 4) < 0.05 for duration in durations[:-1]), 'Buffer fixture needs actual four-second segments'
 prefix = '/mock/jellyfin'
 def catalog_item(id, name, kind, **extra):
     return dict(Id=id, Name=name, Type=kind, Overview='A local fixture story for testing media details.', ProductionYear=2026, Genres=['Adventure'], Tags=['精彩 & 推荐'], CommunityRating=8.4, **extra)
@@ -40,6 +62,12 @@ if download_fixture_id:
 broken = catalog_item('broken', 'Fixture Recovery', 'Movie', CommunityRatingOverride=9.5, RunTimeTicks=120000000, MediaSources=[dict(Id='broken',Container='mp4',Name='Original')])
 broken['CommunityRating'] = 9.5
 if black_frame_fixture or hls_master_fixture: broken['RunTimeTicks'] = 600000000
+if buffering_fixture:
+    # A fresh identity avoids learned decoder-recovery routes from other fixtures.
+    broken.update(Id='buffered', Name='Fixture Buffering', RunTimeTicks=900000000)
+if four_k_file:
+    broken.update(Id='buffer4k', Name='Fixture 4K Buffering', RunTimeTicks=int(float(four_k_info['format']['duration']) * 10_000_000))
+    broken['MediaSources'][0].update(Id='buffer4k', Size=four_k_file.stat().st_size)
 series = catalog_item('series', 'Fixture Show', 'Series')
 episode_fixture = os.environ.get('GLIDE_EPISODE_FIXTURE') == '1'
 seasons = [catalog_item('season2', 'Season 2', 'Season', IndexNumber=2), catalog_item('season1', 'Season 1', 'Season', IndexNumber=1)]
@@ -50,9 +78,18 @@ if episode_fixture:
         episode.update(SeriesId='series', SeriesName='Fixture Show')
 film['People'] = [dict(Id='person-a', Name='Fixture Person', Type='Actor', Role='Lead', PrimaryImageTag='portrait'), dict(Id='person-b', Name='Fixture Person', Type='Director'), dict(Name='Legacy Person', Type='Writer')]
 series['People'] = film['People']
-catalog = {x['Id']:x for x in [film, broken, series]+seasons+episodes}
+design_films = []
+if design_fixture:
+    # Authored demo video metadata, measured with ffprobe; no fabricated 4K/HDR badges.
+    film['MediaSources'][0]['MediaStreams'].insert(0, dict(Index=0, Type='Video', Codec='h264', Profile='High', BitDepth=8, Width=480, Height=854, AverageFrameRate=24, BitRate=36150))
+    names = ['山海之间', '雨后的城市', '穿过峡谷的风', '森林深处的一天', '海岸线上的日出', '漫长的夏日午后', '雪山与远方', '旅途中的光影', '无声的夜空', '重返故乡', '沿着河流', '城市的另一面']
+    for index in range(36):
+        sample = json.loads(json.dumps(film))
+        sample.update(Id=f'design-{index:02d}', Name=f'{names[index % len(names)]} · {index + 1:02d}', Overview='Glide 原创合成样例，用于验证片库密度、长片名、元数据分层与海报加载稳定性。')
+        design_films.append(sample)
+catalog = {x['Id']:x for x in [film, broken, series]+seasons+episodes+design_films}
 
-metrics = {}
+metrics = {'buffering_fixture': int(buffering_fixture), 'four_k_fixture': int(four_k_file is not None), 'design_fixture': int(design_fixture)}
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         # Never log query strings, authorization headers, or passwords.
@@ -91,7 +128,49 @@ class Handler(BaseHTTPRequestHandler):
                 assert data.get('AllowVideoStreamCopy') is False
                 assert data['DeviceProfile'].get('CodecProfiles')
             source = {'Id': item, 'SupportsDirectPlay': not force_transcode, 'Path': f'/fixture/家庭视频/{item}.mp4'}
+            if design_fixture and item.startswith('design-'): source['DirectStreamUrl'] = prefix+'/Videos/demo0/stream'
             if force_transcode: source['TranscodingUrl'] = prefix+f'/streams/{"demo0" if item == "broken" else item}.m3u8?api_key=fixture-token'
+            if transport_menu_fixture and item == 'demo0':
+                source['SupportsDirectStream'] = False
+                if force_transcode:
+                    assert data.get('EnableTranscoding') is False
+                    assert data.get('AllowVideoStreamCopy') is True
+                    key = 'menu_copy_negotiations'
+                    metrics[key] = metrics.get(key, 0) + 1
+                    if metrics[key] == 1: source.pop('TranscodingUrl', None)
+                    else: source['TranscodingUrl'] = prefix+'/streams/demo0.m3u8?api_key=fixture-token&VideoCodec=copy&AudioCodec=copy'
+            if buffering_fixture and item == 'buffered':
+                source.update(Id=broken['MediaSources'][0]['Id'], SupportsDirectPlay=False, SupportsDirectStream=True,
+                              TranscodingUrl=prefix+'/streams/buffered.m3u8?api_key=fixture-token&VideoCodec=copy&AudioCodec=copy')
+            if four_k_file and item == 'buffer4k':
+                video = next(s for s in four_k_info['streams'] if s['codec_type'] == 'video')
+                numerator, denominator = map(int, video['avg_frame_rate'].split('/'))
+                source.update(Id=data.get('MediaSourceId') or 'buffer4k-' + str(metrics[path]), Container='mp4', SupportsDirectStream=four_k_transport, Bitrate=int(four_k_info['format']['bit_rate']),
+                    MediaStreams=[dict(Index=0, Type='Video', Codec='h264', Profile='Main', CodecTag='avc1', BitDepth=8,
+                        Width=video['width'], Height=video['height'], Level=52, VideoRangeType='SDR',
+                        ColorTransfer='bt709', ColorPrimaries='bt709', ColorSpace='bt709', BitRate=int(video['bit_rate']), AverageFrameRate=numerator/denominator)])
+                if four_k_transport and force_transcode:
+                    assert data.get('EnableTranscoding') is False, 'Transport recovery must not request video encoding'
+                    assert data.get('AllowVideoStreamCopy') is True
+                    assert data.get('MaxStreamingBitrate') == 200000000
+                    metrics['four_k_copy_negotiations'] = metrics.get('four_k_copy_negotiations', 0) + 1
+                    trial_key = 'copy_' + source['Id']
+                    metrics[trial_key] = metrics.get(trial_key, 0) + 1
+                    source.update(TranscodingUrl=prefix+'/streams/fourk.m3u8?api_key=fixture-token&VideoCodec=copy&AudioCodec=copy')
+                    if source['Id'] == 'buffer4k-preferred': source['TranscodingUrl'] = prefix+'/streams/fourk.m3u8?api_key=fixture-token&VideoCodec=h264,hevc&AudioCodec=copy&AllowVideoStreamCopy=true'
+                    if source['Id'] == 'buffer4k-reject' and metrics[trial_key] == 1: source.pop('TranscodingUrl')
+                    if source['Id'] == 'buffer4k-bad-hls': source.update(TranscodingUrl=prefix+'/streams/missing.m3u8?api_key=fixture-token&VideoCodec=copy&AudioCodec=copy')
+                    if source['Id'] == 'buffer4k-encode': source.update(TranscodingUrl=prefix+'/streams/encoded.m3u8?api_key=fixture-token&VideoCodec=h264&AudioCodec=aac&AllowVideoStreamCopy=false')
+                if four_k_transport and source['Id'] in ('buffer4k-preferred', 'buffer4k-reject', 'buffer4k-encode'):
+                    source['SupportsDirectStream'] = False
+                if four_k_transport and not force_transcode:
+                    if source['Id'] in ('buffer4k-manual', 'buffer4k-unknown'): source.pop('SupportsDirectStream')
+                    # Missing load metadata leaves the manual trial available.
+                    if source['Id'] == 'buffer4k-manual':
+                        source.pop('MediaStreams'); source.pop('Bitrate')
+                if source['Id'] == 'buffer4k-no-remux' or (not four_k_transport and force_transcode):
+                    source['SupportsDirectStream'] = False
+                    source.pop('TranscodingUrl', None)
             if hls_master_fixture and item == 'broken':
                 profiles = data['DeviceProfile']['CodecProfiles']
                 avc = next(profile for profile in profiles if profile['Codec'] == 'h264')
@@ -112,6 +191,16 @@ class Handler(BaseHTTPRequestHandler):
         path = urlsplit(self.path).path
         if path == '/debug/metrics': return self.send(200, json.dumps(metrics).encode())
         metrics[path] = metrics.get(path,0)+1
+        if four_k_transport and path == prefix+'/streams/fourk.m3u8':
+            query = parse_qs(urlsplit(self.path).query)
+            assert query.get('VideoCodec') == ['copy'], 'Native HLS must explicitly request video copy'
+            assert query.get('AllowVideoStreamCopy') == ['true']
+        if buffering_fixture and path == prefix+'/streams/buffered3.ts':
+            # Pause one segment after enough media for a first frame. The
+            # native stream should buffer, resume, then retain its quality.
+            metrics['buffer_delay_started'] = metrics.get('buffer_delay_started', 0) + 1
+            time.sleep(24)
+            metrics['buffer_delay_finished'] = metrics.get('buffer_delay_finished', 0) + 1
         if hls_master_fixture and path == prefix+'/streams/broken/master.m3u8':
             q = parse_qs(urlsplit(self.path).query)
             assert q.get('h264-rangetype') == ['SDR']
@@ -129,13 +218,18 @@ class Handler(BaseHTTPRequestHandler):
         if path.startswith(prefix) and not '/streams/' in path and not self.jelly_auth(): return self.send(401)
         if path == prefix+'/Items/person-b/Images/Primary': return self.send(404)
         if path.endswith('/Images/Primary'):
-            return self.send(200, (hls/'poster.jpg').read_bytes(), 'image/jpeg')
+            delayed = design_fixture and path == prefix+'/Items/demo0/Images/Primary' and parse_qs(urlsplit(self.path).query).get('maxWidth') == ['420'] and not metrics.get('design_first_poster_delivered')
+            if delayed: time.sleep(1)
+            result = self.send(200, (hls/'poster.jpg').read_bytes(), 'image/jpeg')
+            if delayed: metrics['design_first_poster_delivered'] = 1
+            return result
         if path == prefix+'/UserViews':
             return self.send(200, json.dumps({'Items':[{'Id':'fixture-library','Name':'Fixture Library','IsFolder':True,'Type':'CollectionFolder','CollectionType':'homevideos'}, {'Id':'fixture-movies','Name':'Fixture Movies','IsFolder':True,'Type':'CollectionFolder','CollectionType':'movies'}, {'Id':'fixture-shows','Name':'Fixture Shows','IsFolder':True,'Type':'CollectionFolder','CollectionType':'tvshows'}], 'TotalRecordCount':3}).encode())
         if path.endswith('/Similar'):
             q = parse_qs(urlsplit(self.path).query)
             assert q.get('UserId') == ['fixture-user']
             return self.send(200, json.dumps({'Items':[film, series], 'TotalRecordCount':2}).encode())
+        if four_k_file and path == prefix+'/Items/buffer4k/Download': return self.four_k_media(throttled=False)
         if path == prefix+f'/Items/{film["Id"]}/Download':
             if download_fixture_id and metrics[path] == 1:
                 # A successful HTTP response carrying an incomplete file must fail
@@ -169,7 +263,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send(200,json.dumps({'Items':items[start:start+1], 'TotalRecordCount':len(items)}).encode())
             parent = q.get('ParentId', [''])[0]
             if parent in ['fixture-movies','fixture-shows','series','season1','season2']:
-                items = {'fixture-movies':[film,broken], 'fixture-shows':[series], 'series':seasons, 'season1':episodes, 'season2':[]}[parent]
+                items = {'fixture-movies':[film,broken]+design_films, 'fixture-shows':[series], 'series':seasons, 'season1':episodes, 'season2':[]}[parent]
                 if episode_fixture:
                     if parent == 'series' and q.get('IncludeItemTypes') == ['Episode']: items = episodes
                     elif parent == 'season1': items = [e for e in episodes if e['ParentIndexNumber'] == 1]
@@ -181,7 +275,7 @@ class Handler(BaseHTTPRequestHandler):
                 items = sorted(items, key=lambda x: x.get('Name','') if sort == 'SortName' else x.get(sort,0), reverse=q.get('SortOrder') == ['Descending'])
                 term = q.get('SearchTerm',[''])[0].casefold(); items = [x for x in items if term in x['Name'].casefold()]
                 start = int(q.get('StartIndex',['0'])[0])
-                return self.send(200,json.dumps({'Items':items[start:start+1], 'TotalRecordCount':len(items)}).encode())
+                return self.send(200,json.dumps({'Items':items[start:start+(12 if design_fixture else 1)], 'TotalRecordCount':len(items)}).encode())
             if parent not in ['fixture-library','fixture-parent','fixture-leaf']:
                 return self.send(400)  # A global or out-of-scope query must fail this fixture.
             if q.get('MediaTypes') == ['Video'] or parent == 'fixture-leaf':
@@ -195,7 +289,10 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send(200,json.dumps({'Items':items[start:start+2],'TotalRecordCount':len(items)}).encode())
             child = 'fixture-parent' if parent == 'fixture-library' else 'fixture-leaf'
             return self.send(200,json.dumps({'Items':[{'Id':child,'Name':'Nested directory','Type':'Folder','IsFolder':True}], 'TotalRecordCount':1}).encode())
+        if design_fixture and '/Items/design-' in path and path.endswith('/Download'): return self.media(resources/'demo0.mp4')
         if '/Videos/' in path and path.endswith('/stream'):
+            if design_fixture and '/design-' in path: return self.media(resources/'demo0.mp4')
+            if four_k_file and '/buffer4k/' in path: return self.four_k_media()
             if download_fixture_id and f'/{download_fixture_id}/' in path: return self.media(resources/'demo0.mp4')
             if black_frame_fixture and '/broken/' in path: return self.media(hls/'broken.mp4')
             if slow_direct_fixture and '/broken/' in path:
@@ -222,13 +319,52 @@ class Handler(BaseHTTPRequestHandler):
     def media(self,path):
         if not path.is_file(): return self.send(404)
         data=path.read_bytes(); size=len(data)
-        mime={'.mp4':'video/mp4','.m3u8':'application/vnd.apple.mpegurl','.ts':'video/mp2t'}.get(path.suffix,'application/octet-stream')
+        mime={'.mp4':'video/mp4','.m3u8':'application/vnd.apple.mpegurl','.ts':'video/mp2t','.m4s':'video/iso.segment'}.get(path.suffix,'application/octet-stream')
         match=re.fullmatch(r'bytes=(\d+)-(\d*)',self.headers.get('Range',''))
         if match:
             start=int(match[1]); end=min(size-1, int(match[2]) if match[2] else size-1)
             if start >= size: return self.send(416)
             return self.send(206,data[start:end+1],mime,{'Content-Range':f'bytes {start}-{end}/{size}','Accept-Ranges':'bytes'})
         return self.send(200,data,mime,{'Accept-Ranges':'bytes'})
+    def four_k_media(self, throttled=True):
+        if throttled: metrics['four_k_direct_requests'] = metrics.get('four_k_direct_requests', 0) + 1
+        # A real progressive MP4 with byte ranges. Tiny recurrent delivery gaps
+        # reproduce a low usable cache; no HLS/transcode stands in for direct play.
+        size = four_k_file.stat().st_size
+        match = re.fullmatch(r'bytes=(\d+)-(\d*)', self.headers.get('Range', ''))
+        start, end = (int(match[1]), min(size-1, int(match[2]) if match[2] else size-1)) if match else (0, size-1)
+        if start >= size or end < start: return self.send(416)
+        self.send_response(206 if match else 200)
+        self.send_header('Content-Type', 'video/mp4')
+        self.send_header('Content-Length', str(end-start+1))
+        self.send_header('Accept-Ranges', 'bytes')
+        self.send_header('Cache-Control', 'no-store')
+        if match: self.send_header('Content-Range', f'bytes {start}-{end}/{size}')
+        self.end_headers()
+        if self.command == 'HEAD': return
+        source = parse_qs(urlsplit(self.path).query).get('MediaSourceId', ['default'])[0]
+        try:
+            with four_k_file.open('rb') as media:
+                offset = start
+                while offset <= end:
+                    block = offset // (2 * 1024 * 1024)
+                    with four_k_lock:
+                        key = (source, block)
+                        if throttled and block > 0 and key not in four_k_delays:
+                            gap = (24 if block == 4 or (source == 'buffer4k-no-remux' and block == 32) else 0.4) if four_k_transport else (8 if block == 8 else 3 if block == 1 else float(os.environ.get('GLIDE_4K_BLOCK_DELAY', '0.9')))
+                            four_k_delays[key] = time.monotonic() + gap
+                            metrics['four_k_gap_count'] = metrics.get('four_k_gap_count', 0) + 1
+                        deadline = four_k_delays.get(key, 0) if throttled else 0
+                    # Retried/overlapping ranges wait for the same release time;
+                    # cancellation must not bypass the artificial network gap.
+                    delay = deadline - time.monotonic()
+                    if delay > 0: time.sleep(delay)
+                    media.seek(offset)
+                    data = media.read(min(end-offset+1, (block+1)*2*1024*1024-offset))
+                    if not data: break
+                    self.wfile.write(data); self.wfile.flush()
+                    offset += len(data)
+        except (BrokenPipeError, ConnectionResetError): pass
 print('Fixture running on http://127.0.0.1:8768',flush=True)
 try: ThreadingHTTPServer(('127.0.0.1',8768),Handler).serve_forever()
 finally:

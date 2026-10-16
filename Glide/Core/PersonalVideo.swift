@@ -16,7 +16,7 @@ struct PersonalVideo: Codable, Identifiable, Equatable {
         self.video = video
         self.lastPlayedAt = lastPlayedAt
         self.video.artwork = nil // Rebuild from the current server address when displaying.
-        if video.remoteID != nil || video.demoIndex != nil { self.video.url = nil }
+        if video.remoteID != nil || video.demoIndex != nil || video.localRelativePath != nil { self.video.url = nil }
         else if let url = video.url, var components = URLComponents(url: url, resolvingAgainstBaseURL: false) {
             components.user = nil; components.password = nil; components.query = nil; components.fragment = nil
             self.video.url = components.url

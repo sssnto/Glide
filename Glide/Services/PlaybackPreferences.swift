@@ -1,6 +1,10 @@
 import Foundation
 
 @MainActor enum PlaybackPreferences {
+    static var localEngine: PlaybackEngineID {
+        get { PlaybackEngineID(rawValue: UserDefaults.standard.string(forKey: "localPlaybackEngine") ?? "") ?? .avPlayer }
+        set { UserDefaults.standard.set(newValue.rawValue, forKey: "localPlaybackEngine") }
+    }
     static var audioLanguage: String { UserDefaults.standard.string(forKey: "preferredAudioLanguage") ?? "" }
     static var subtitleLanguage: String { UserDefaults.standard.string(forKey: "preferredSubtitleLanguage") ?? "" }
     static var subtitlesOff: Bool { subtitleLanguage == "off" }

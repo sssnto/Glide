@@ -1,0 +1,11 @@
+{
+  "name": "MobileVLCKit",
+  "version": "3.7.3",
+  "specification": "https://cdn.cocoapods.org/Specs/b/f/7/MobileVLCKit/3.7.3/MobileVLCKit.podspec.json",
+  "url": "https://download.videolan.org/pub/cocoapods/prod/MobileVLCKit-3.7.3-319ed2c0-79128878.tar.xz",
+  "sha256": "0d04059906962ddc9a7bd1ebaa12e1f9ae85eb2466116a97a2f46886dd27a0a9",
+  "licenseDeclaration": "LGPL v2.1; inspect archive notices and transitive components before distribution",
+  "scope": "Local compatibility playback in Glide and the independent QA app",
+  "sourceReferences": {"vlckit": "319ed2c0", "libvlcBase": "79128878"},
+  "sourceMaterialManifest": "Docs/Dependencies/MobileVLCKit-3.7.3-sources.json"
+}

@@ -1,12 +1,68 @@
 import SwiftUI
 
 enum GlideTheme {
-    static let text = Color(red: 0.941, green: 0.941, blue: 0.914)
-    static let separator = Color(red: 0.173, green: 0.200, blue: 0.180)
-    static let background = Color(red: 0.047, green: 0.063, blue: 0.059)
-    static let panel = Color(red: 0.098, green: 0.122, blue: 0.110)
-    static let accent = Color(red: 0.773, green: 0.871, blue: 0.773)
-    static let muted = Color(red: 0.631, green: 0.667, blue: 0.643)
+    // Neutral surfaces keep artwork and the primary playback action in focus.
+    static let text = Color(red: 0.93, green: 0.94, blue: 0.95)
+    static let background = Color(red: 0.043, green: 0.051, blue: 0.063)
+    static let panel = Color(red: 0.082, green: 0.094, blue: 0.110)
+    static let surface = panel
+    static let raised = Color(red: 0.122, green: 0.137, blue: 0.157)
+    static let subtle = Color(red: 0.55, green: 0.59, blue: 0.63)
+    static let muted = Color(red: 0.65, green: 0.69, blue: 0.73)
+    static let separator = Color(red: 0.18, green: 0.20, blue: 0.23)
+    static let outline = Color.white.opacity(0.08)
+    static let accent = Color(red: 0.70, green: 0.86, blue: 0.78)
+
+    enum Typography {
+        static let pageTitle: Font = .system(.title2, design: .default, weight: .bold)
+        static let sectionTitle: Font = .system(.headline, design: .default, weight: .semibold)
+        static let itemTitle: Font = .system(.subheadline, design: .default, weight: .semibold)
+        static let body: Font = .system(.subheadline)
+        static let secondary: Font = .system(.footnote)
+        static let caption: Font = .system(.caption)
+        static let eyebrow: Font = .system(.caption2, design: .default, weight: .semibold)
+        static let technical: Font = .system(.caption, design: .monospaced)
+    }
+
+    enum Layout {
+        static let pagePadding: CGFloat = 20
+        static let sectionSpacing: CGFloat = 24
+        static let itemSpacing: CGFloat = 12
+        static let cardRadius: CGFloat = 12
+        static let smallRadius: CGFloat = 8
+        static let touchTarget: CGFloat = 44
+    }
+}
+
+enum MediaInfoFormatting {
+    static func bitrate(_ bitsPerSecond: Double) -> String {
+        guard bitsPerSecond.isFinite, bitsPerSecond >= 0 else { return "未知" }
+        let unit = bitsPerSecond >= 1_000_000 ? "Mb/s" : bitsPerSecond >= 1_000 ? "kb/s" : "b/s"
+        let divisor = bitsPerSecond >= 1_000_000 ? 1_000_000.0 : bitsPerSecond >= 1_000 ? 1_000.0 : 1.0
+        return (bitsPerSecond / divisor).formatted(.number.precision(.fractionLength(0...1))) + " " + unit
+    }
+}
+
+struct MediaInfoChip: View {
+    var title: String
+    var symbol: String?
+    var emphasized: Bool
+
+    init(_ title: String, symbol: String? = nil, emphasized: Bool = false) {
+        self.title = title; self.symbol = symbol; self.emphasized = emphasized
+    }
+
+    var body: some View {
+        HStack(spacing: 4) {
+            if let symbol { Image(systemName: symbol) }
+            Text(title)
+        }
+        .font(GlideTheme.Typography.caption)
+        .foregroundStyle(emphasized ? GlideTheme.accent : GlideTheme.muted)
+        .padding(.horizontal, 7).padding(.vertical, 4)
+        .background(emphasized ? GlideTheme.accent.opacity(0.10) : GlideTheme.raised, in: RoundedRectangle(cornerRadius: 5))
+        .accessibilityElement(children: .combine)
+    }
 }
 
 struct LandscapeArt: View {
@@ -48,57 +104,86 @@ struct VideoArtwork: View {
     var video: Video
     var contentMode: ContentMode = .fill
     var server: MediaServer? = nil
-    @State private var cachedImage: UIImage?
     var body: some View {
-        ZStack {
-            if let index = video.demoIndex { LandscapeArt(index: index) }
-            else {
-                GlideTheme.panel
-                Image(systemName: "film.stack").font(.system(size: 40, weight: .ultraLight)).foregroundStyle(GlideTheme.muted)
-                if let url = video.artwork {
-                    GeometryReader { geometry in
-                        if server != nil {
-                            if let cachedImage { Image(uiImage: cachedImage).resizable().aspectRatio(contentMode: contentMode).frame(width: geometry.size.width, height: geometry.size.height) }
-                        } else {
-                            AsyncImage(url: url) { phase in
-                                if let image = phase.image { image.resizable().aspectRatio(contentMode: contentMode).frame(width: geometry.size.width, height: geometry.size.height) }
-                            }
-                        }
-                    }.allowsHitTesting(false)
-                }
-            }
-        }.clipped().task(id: video.id + (video.artwork?.absoluteString ?? "") + (server?.userID ?? "")) {
-            guard let server, let url = video.artwork else { return }
-            let image = try? await ArtworkCache.shared.image(server: server, url: url, pixels: 640)
-            if !Task.isCancelled { cachedImage = image }
-        }
+        VideoImageCanvas(video: video, server: server, contentMode: contentMode)
     }
 }
 
-/// Family clips keep their own image proportions, including portrait recordings.
+/// Family recordings use the same portrait canvas before and after image loading.
+/// Fit preserves the entire recording without cropping either orientation.
 struct VideoPreviewArtwork: View {
     var video: Video
     var server: MediaServer? = nil
-    @State private var image: UIImage?
     var body: some View {
-        Group {
-            if let index = video.demoIndex { LandscapeArt(index: index).aspectRatio(16.0 / 9.0, contentMode: .fit) }
-            else if let image { Image(uiImage: image).resizable().scaledToFit().frame(maxWidth: .infinity) }
-            else if server == nil {
-                AsyncImage(url: video.artwork) { phase in
-                    if let loaded = phase.image { loaded.resizable().scaledToFit().frame(maxWidth: .infinity) }
-                    else { placeholder }
+        VideoImageCanvas(video: video, server: server, contentMode: .fit)
+            .aspectRatio(2.0 / 3.0, contentMode: .fit)
+    }
+}
+
+private struct ArtworkLoadKey: Hashable {
+    var identity: String
+    var pixels: Int
+}
+
+private enum ArtworkSize {
+    static func pixels(_ size: CGSize, scale: CGFloat) -> Int {
+        // Buckets avoid restarting image tasks for fractional layout changes.
+        let dimension = max(size.width, size.height) * scale
+        guard dimension.isFinite, dimension > 0 else { return 256 }
+        return min(1600, max(256, Int(ceil(min(dimension, 1600) / 128)) * 128))
+    }
+}
+
+private struct VideoImageCanvas: View {
+    var video: Video
+    var server: MediaServer?
+    var contentMode: ContentMode
+    @Environment(\.displayScale) private var displayScale
+    @State private var image: UIImage?
+    @State private var loadedIdentity = ""
+
+    private var identity: String {
+        [video.id, video.artwork?.absoluteString ?? "", video.localRelativePath ?? "",
+         server?.id.uuidString ?? "", server?.address.absoluteString ?? "", server?.userID ?? ""].joined(separator: "|")
+    }
+
+    var body: some View {
+        GeometryReader { geometry in
+            let request = ArtworkLoadKey(identity: identity, pixels: ArtworkSize.pixels(geometry.size, scale: displayScale))
+            ZStack {
+                GlideTheme.panel
+                if let index = video.demoIndex { LandscapeArt(index: index) }
+                else if let image {
+                    Image(uiImage: image).resizable().aspectRatio(contentMode: contentMode)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                } else {
+                    Image(systemName: "film.stack")
+                        .font(.system(size: 26, weight: .light)).foregroundStyle(GlideTheme.subtle)
+                    if server == nil, let url = video.artwork {
+                        AsyncImage(url: url) { phase in
+                            if let loaded = phase.image {
+                                loaded.resizable().aspectRatio(contentMode: contentMode)
+                                    .frame(width: geometry.size.width, height: geometry.size.height)
+                            }
+                        }
+                    }
                 }
-            } else { placeholder }
-        }.task(id: video.id + (server?.userID ?? "")) {
-            guard let server, let url = video.artwork else { return }
-            let loaded = try? await ArtworkCache.shared.image(server: server, url: url, pixels: 640)
-            if !Task.isCancelled { image = loaded }
+            }
+            .clipped().allowsHitTesting(false)
+            .task(id: request) { await load(request) }
         }
     }
-    private var placeholder: some View {
-        GlideTheme.panel.overlay { Image(systemName: "film.stack").font(.system(size: 40, weight: .ultraLight)).foregroundStyle(GlideTheme.muted) }
-            .aspectRatio(16.0 / 9.0, contentMode: .fit)
+
+    private func load(_ request: ArtworkLoadKey) async {
+        guard !Task.isCancelled else { return }
+        if loadedIdentity != request.identity { image = nil; loadedIdentity = request.identity }
+        guard video.demoIndex == nil, let server else { return }
+        let loaded: UIImage?
+        if server.kind == .local { loaded = await LocalArtwork.image(video: video, server: server) }
+        else if let url = video.artwork { loaded = try? await ArtworkCache.shared.image(server: server, url: url, pixels: request.pixels) }
+        else { loaded = nil }
+        guard !Task.isCancelled, loadedIdentity == request.identity else { return }
+        image = loaded
     }
 }
 
@@ -110,15 +195,19 @@ struct RoundControl: View {
     var action: () -> Void
     var body: some View {
         Button(action: action) {
-            Image(systemName: symbol).font(.system(size: prominent && !compact ? 23 : 18, weight: .medium))
-                .frame(width: prominent && !compact ? 64 : 44, height: prominent && !compact ? 64 : 44)
-                .foregroundStyle(prominent ? Color.black : Color.white)
-                .background(prominent ? GlideTheme.accent : Color.white.opacity(0.09), in: Circle())
+            Image(systemName: symbol).font(.system(size: prominent && !compact ? 22 : 18, weight: .medium))
+                .frame(width: prominent && !compact ? 60 : GlideTheme.Layout.touchTarget,
+                       height: prominent && !compact ? 60 : GlideTheme.Layout.touchTarget)
+                .foregroundStyle(prominent ? GlideTheme.background : GlideTheme.text)
+                .background(prominent ? GlideTheme.accent : GlideTheme.raised, in: Circle())
+                .contentShape(Circle())
         }.accessibilityLabel(label).buttonStyle(.plain)
     }
 }
 
 struct LibraryFolderTile: View {
+    @ScaledMetric(relativeTo: .subheadline) private var titleHeight = 36
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     var title: String
     var server: MediaServer
     var folder: MediaFolder? = nil
@@ -127,20 +216,40 @@ struct LibraryFolderTile: View {
     var action: () -> Void
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 10) {
-                FolderPreviewArtwork(server: server, folder: folder, directory: directory,
-                                     preservesImageAspectRatio: !isLibrary || LibraryExperience(collectionType: folder?.collectionType) == .home)
-                    .clipShape(RoundedRectangle(cornerRadius: 18))
-                HStack(alignment: .firstTextBaseline, spacing: 7) {
-                    Image(systemName: isLibrary ? "square.stack.3d.up" : "folder")
-                        .font(.caption).foregroundStyle(GlideTheme.accent)
-                    Text(title).font(.subheadline.weight(.semibold)).foregroundStyle(GlideTheme.text)
-                        .lineLimit(2).multilineTextAlignment(.leading)
+            Group {
+                if dynamicTypeSize.isAccessibilitySize {
+                    HStack(alignment: .center, spacing: 14) {
+                        artwork.frame(width: 72, height: 108)
+                        metadata
+                        Image(systemName: "chevron.right").font(.caption2).foregroundStyle(GlideTheme.muted)
+                    }.frame(minHeight: 80)
+                } else {
+                    VStack(alignment: .leading, spacing: 8) { artwork; metadata }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .contentShape(Rectangle())
+            }.contentShape(Rectangle())
         }.buttonStyle(.plain).accessibilityLabel((isLibrary ? "媒体库，" : "目录，") + title)
+    }
+    private var artwork: some View {
+        FolderPreviewArtwork(server: server, folder: folder, directory: directory,
+                             preservesImageAspectRatio: !isLibrary || LibraryExperience(collectionType: folder?.collectionType) == .home)
+            .clipShape(RoundedRectangle(cornerRadius: GlideTheme.Layout.cardRadius))
+    }
+    private var metadata: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title).font(GlideTheme.Typography.itemTitle).foregroundStyle(GlideTheme.text)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2).multilineTextAlignment(.leading)
+                .frame(minHeight: dynamicTypeSize.isAccessibilitySize ? nil : titleHeight, alignment: .topLeading)
+            Label(kindTitle, systemImage: isLibrary ? "square.stack.3d.up" : "folder")
+                .font(GlideTheme.Typography.caption).foregroundStyle(GlideTheme.muted)
+        }.frame(maxWidth: .infinity, alignment: .leading)
+    }
+    private var kindTitle: String {
+        guard isLibrary else { return "文件夹" }
+        switch LibraryExperience(collectionType: folder?.collectionType) {
+        case .movies: return "电影"
+        case .shows: return "剧集"
+        case .home: return "家庭视频"
+        }
     }
 }
 
@@ -149,45 +258,61 @@ private struct FolderPreviewArtwork: View {
     var folder: MediaFolder?
     var directory: DAVEntry?
     var preservesImageAspectRatio: Bool
+    @Environment(\.displayScale) private var displayScale
     @State private var image: UIImage?
-    private var identity: String { server.id.uuidString + (folder?.id ?? directory?.id ?? "") + (folder?.primaryImageTag ?? "") }
-    var body: some View {
-        Group {
-            if preservesImageAspectRatio, let image {
-                Image(uiImage: image).resizable().scaledToFit()
-                    .frame(maxWidth: .infinity)
-            } else {
-                ZStack {
-                    LinearGradient(colors: [GlideTheme.panel, Color(red: 0.12, green: 0.24, blue: 0.22)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                    if let image {
-                        GeometryReader { proxy in
-                            Image(uiImage: image).resizable().scaledToFill()
-                                .frame(width: proxy.size.width, height: proxy.size.height).clipped()
-                        }.allowsHitTesting(false)
-                    } else {
-                        Image(systemName: "folder.fill").font(.system(size: 42, weight: .ultraLight))
-                            .foregroundStyle(GlideTheme.accent.opacity(0.34))
-                    }
-                }.aspectRatio(1.3, contentMode: .fit)
-            }
-        }.clipped().task(id: identity) { await load() }
+    @State private var loadedIdentity = ""
+    private var identity: String {
+        [server.id.uuidString, server.address.absoluteString, server.userID ?? "",
+         folder?.id ?? directory?.id ?? "", folder?.primaryImageTag ?? "",
+         directory?.modifiedAt.map { String($0.timeIntervalSince1970) } ?? ""].joined(separator: "|")
     }
-    private func load() async {
-        image = nil
+    var body: some View {
+        GeometryReader { geometry in
+            let request = ArtworkLoadKey(identity: identity, pixels: ArtworkSize.pixels(geometry.size, scale: displayScale))
+            ZStack {
+                LinearGradient(colors: [GlideTheme.panel, GlideTheme.raised], startPoint: .topLeading, endPoint: .bottomTrailing)
+                if let image {
+                    Image(uiImage: image).resizable()
+                        .aspectRatio(contentMode: preservesImageAspectRatio ? .fit : .fill)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                } else {
+                    Image(systemName: "folder.fill").font(.system(size: 30, weight: .light))
+                        .foregroundStyle(GlideTheme.subtle.opacity(0.55))
+                }
+            }
+            .clipped().allowsHitTesting(false)
+            .task(id: request) { await load(request) }
+        }.aspectRatio(2.0 / 3.0, contentMode: .fit)
+    }
+    private func load(_ request: ArtworkLoadKey) async {
+        guard !Task.isCancelled else { return }
+        if loadedIdentity != request.identity { image = nil; loadedIdentity = request.identity }
         if let folder {
             if let tag = folder.primaryImageTag {
-                let url = ServerURL.endpoint(server.address, "Items/\(folder.id)/Images/Primary", query: ["maxWidth": "540", "tag": tag])
-                if let loaded = try? await ArtworkCache.shared.image(server: server, url: url, pixels: 640), !Task.isCancelled {
+                let url = ServerURL.endpoint(server.address, "Items/\(folder.id)/Images/Primary", query: ["maxWidth": String(request.pixels), "tag": tag])
+                if let loaded = try? await ArtworkCache.shared.image(server: server, url: url, pixels: request.pixels), !Task.isCancelled {
                     image = loaded; return
                 }
             }
+            guard !Task.isCancelled else { return }
             if let preview = try? await MediaClient.shared.folderPreview(server: server, folderID: folder.id), !Task.isCancelled {
-                var query = ["maxWidth": "540"]
+                var query = ["maxWidth": String(request.pixels)]
                 if let tag = preview.tag { query["tag"] = tag }
                 let url = ServerURL.endpoint(server.address, "Items/\(preview.id)/Images/Primary", query: query)
-                if let loaded = try? await ArtworkCache.shared.image(server: server, url: url, pixels: 640), !Task.isCancelled { image = loaded }
+                if let loaded = try? await ArtworkCache.shared.image(server: server, url: url, pixels: request.pixels), !Task.isCancelled { image = loaded }
             }
         } else if let directory {
+            if server.kind == .local {
+                if let entries = try? await SourceProviders.directories(for: .local).entries(server: server, directory: directory.url),
+                   !Task.isCancelled,
+                   let entry = entries.first(where: { !$0.isDirectory && DirectoryScope.isVideo($0.url) }),
+                   let relative = try? LocalMediaIdentity.relativePath(root: server.address, file: entry.url) {
+                    let video = Video(id: LocalMediaIdentity.id(sourceID: server.id, relativePath: relative), title: entry.name, subtitle: "", sourceID: server.id, url: entry.url, localRelativePath: relative)
+                    let loaded = await LocalArtwork.image(video: video, server: server)
+                    if !Task.isCancelled { image = loaded }
+                }
+                return
+            }
             guard let entries = try? await MediaClient.shared.webDAV(server: server, directory: directory.url), !Task.isCancelled else { return }
             let pictures = entries.filter {
                 !$0.isDirectory && DirectoryScope.contains(root: directory.url, child: $0.url)
@@ -196,7 +321,7 @@ private struct FolderPreviewArtwork: View {
             }
             let preferred = ["folder", "cover", "poster", "thumb"]
             let cover = pictures.first { preferred.contains($0.url.deletingPathExtension().lastPathComponent.lowercased()) } ?? pictures.first
-            if let cover, let loaded = try? await ArtworkCache.shared.image(server: server, url: cover.url, pixels: 640, version: cover.modifiedAt.map { String($0.timeIntervalSince1970) } ?? ""), !Task.isCancelled {
+            if let cover, let loaded = try? await ArtworkCache.shared.image(server: server, url: cover.url, pixels: request.pixels, version: cover.modifiedAt.map { String($0.timeIntervalSince1970) } ?? ""), !Task.isCancelled {
                 image = loaded
             }
         }

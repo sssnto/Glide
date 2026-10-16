@@ -1,0 +1,51 @@
+{
+  "version": "1.3.0 (8)",
+  "date": "2026-10-16",
+  "released": false,
+  "userBuild7": {
+    "delivery": "原画直放",
+    "nativeStalls": 51,
+    "bufferedAheadSeconds": 0,
+    "recoveryCount": 0,
+    "priorNegotiationUnknown": true
+  },
+  "core": {
+    "passed": 100,
+    "swiftTesting": 96,
+    "xctest": 4,
+    "log": "/tmp/Glide4K/core-build8-r2.log"
+  },
+  "transport": {
+    "passed": true,
+    "checksPassed": 25,
+    "resultBundle": "/tmp/Glide4K/Transport-Build8-R1.xcresult",
+    "testDurationSeconds": 152.076
+  },
+  "settingsMenu": {
+    "passed": true,
+    "resultBundle": "/tmp/Glide4K/Menu-Build8-R1.xcresult",
+    "testDurationSeconds": 85.836,
+    "covers": [
+      "DirectStream false keeps entry",
+      "first failure retains enabled manual retry",
+      "second click plays original copy",
+      "active transport status",
+      "schema 9 diagnostics",
+      "video info and source path privacy"
+    ]
+  },
+  "release": {
+    "passed": true,
+    "archive": "/tmp/Glide4K/Glide-1.3.0-8-final.xcarchive",
+    "archiveSymbolsVerified": true,
+    "signed": false
+  },
+  "deviceQA": {
+    "bundleID": "com.songpeng.glide.compatibilityqa",
+    "build": "passed",
+    "install": "passed",
+    "launch": "passed"
+  },
+  "originalMediaRetest": "pending user validation on build 8",
+  "appStoreConnectUploaded": false
+}

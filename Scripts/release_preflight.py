@@ -1,15 +1,32 @@
 #!/usr/bin/env python3
 """Fail fast before a public Glide release; never reads credentials."""
+import argparse
 from pathlib import Path
 import plistlib
 import re
 import sys
+from prepare_compatibility_sdk import validate_symbols
+from verify_archive_symbols import verify as verify_archive_symbols
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--archive', type=Path, help='Also verify the app/framework UUID coverage in this actual archive')
+args = parser.parse_args()
 
 root = Path(__file__).resolve().parents[1]
 info = plistlib.loads((root / "Glide/Info.plist").read_bytes())
 project = (root / "Glide.xcodeproj/project.pbxproj").read_text()
 site = root / "Website"
 problems = []
+
+try:
+    validate_symbols(root / '.build/CompatibilitySDK/MobileVLCKit.xcframework')
+except (SystemExit, OSError, ValueError, KeyError) as error:
+    problems.append('兼容 SDK 符号不完整；运行 python3 Scripts/prepare_compatibility_sdk.py：' + str(error))
+if args.archive:
+    try:
+        verify_archive_symbols(args.archive.resolve())
+    except (SystemExit, OSError, ValueError, KeyError) as error:
+        problems.append('实际归档符号校验失败：' + str(error))
 
 def resolved(key: str, setting: str) -> str:
     value = str(info.get(key, ""))
@@ -46,4 +63,4 @@ if problems:
     for problem in problems:
         print("待处理：" + problem)
     sys.exit(1)
-print("本地静态检查通过；仍须人工核对隐私问卷、公开页面和真机回归。")
+print("本地静态检查通过" + ("，实际归档的应用及 framework dSYM UUID 匹配" if args.archive else "；分发前另用 --archive 检查实际归档符号") + "；仍须人工核对隐私问卷、公开页面和真机回归。")

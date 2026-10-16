@@ -87,12 +87,17 @@ extension DirectoryQuery {
 
 enum DirectoryScope {
     static func contains(root: URL, child: URL) -> Bool {
+        if root.isFileURL || child.isFileURL {
+            return (try? LocalMediaIdentity.relativePath(root: root, file: child)) != nil
+        }
         guard ServerURL.sameOrigin(root, child) else { return false }
         let base = root.standardized.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         let path = child.standardized.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         return base.isEmpty || path == base || path.hasPrefix(base + "/")
     }
-    static func key(_ url: URL) -> String { url.standardized.path.trimmingCharacters(in: CharacterSet(charactersIn: "/")) }
+    static func key(_ url: URL) -> String {
+        (url.isFileURL ? url.standardizedFileURL.resolvingSymlinksInPath() : url.standardized).path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+    }
     static func isVideo(_ url: URL) -> Bool { ["mp4", "mov", "m4v", "mkv", "avi", "ts", "webm"].contains(url.pathExtension.lowercased()) }
 }
 

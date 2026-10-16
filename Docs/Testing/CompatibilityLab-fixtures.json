@@ -1,0 +1,243 @@
+{
+  "schema": 1,
+  "source": "Original FFmpeg testsrc2 and sine sources; no third-party media",
+  "ffmpeg": "ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers",
+  "samples": [
+    {
+      "file": "01-h264-aac.mp4",
+      "bytes": 1271315,
+      "sha256": "32a74d64c5134fdeef22908f97b31d7669575714c25b5bbdfd8ce981c6909317"
+    },
+    {
+      "file": "02-hevc-aac.mp4",
+      "bytes": 641923,
+      "sha256": "6fb2164e7b3e24113e938deb1ff0270722d041dc65f1fb622ec9871869055c51"
+    },
+    {
+      "file": "03-h264-aac.mkv",
+      "bytes": 1271356,
+      "sha256": "2491f6b601257f254e47abe60e457d6ebf3537de20efa2da04afbd281f963f6c"
+    },
+    {
+      "file": "04-mpeg4-mp3.avi",
+      "bytes": 1415976,
+      "sha256": "260460234c853fd0edb8f72e25f486fe7501f989999296bfcce558f942bcc50a"
+    },
+    {
+      "file": "05-renamed-mkv.mp4",
+      "bytes": 1271356,
+      "sha256": "2491f6b601257f254e47abe60e457d6ebf3537de20efa2da04afbd281f963f6c"
+    },
+    {
+      "file": "06-truncated.mp4",
+      "bytes": 128,
+      "sha256": "a70b7d218085618771a86e5f17e049a71946c6f7b01055991b3e1eff0a36774b"
+    },
+    {
+      "file": "07-audio-only.mp4",
+      "bytes": 178157,
+      "sha256": "f351e66402320528d62d2758c8ae88ca247d5553d731bf55861792bb501df99c"
+    },
+    {
+      "file": "08-multi-track.mp4",
+      "bytes": 1454515,
+      "sha256": "2360efee31db3f0ac6828e7a39c14a011eabcbdaab49d6a3a35337bb1ab238ec"
+    },
+    {
+      "file": "09-ass.mkv",
+      "bytes": 1272045,
+      "sha256": "17bb45cc245a553551bfe2e358da56631fa73b65b49331eee36ee5800f0c543d"
+    },
+    {
+      "file": "10-dual-audio-ass.mkv",
+      "bytes": 1451767,
+      "sha256": "0d4aa50a4c809e80aa511a5644dc4ab2b9146c4c6d31fea295a09bfc3e27f42f"
+    }
+  ],
+  "commands": [
+    {
+      "file": "01-h264-aac.mp4",
+      "args": [
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=320x180:rate=15",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=440:sample_rate=48000",
+        "-t",
+        "20",
+        "-c:v",
+        "libx264",
+        "-pix_fmt",
+        "yuv420p",
+        "-preset",
+        "ultrafast",
+        "-c:a",
+        "aac",
+        "-movflags",
+        "+faststart"
+      ]
+    },
+    {
+      "file": "02-hevc-aac.mp4",
+      "args": [
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=320x180:rate=15",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=440:sample_rate=48000",
+        "-t",
+        "20",
+        "-c:v",
+        "libx265",
+        "-pix_fmt",
+        "yuv420p",
+        "-preset",
+        "ultrafast",
+        "-x265-params",
+        "log-level=error:pools=1",
+        "-tag:v",
+        "hvc1",
+        "-c:a",
+        "aac",
+        "-movflags",
+        "+faststart"
+      ]
+    },
+    {
+      "file": "03-h264-aac.mkv",
+      "args": [
+        "-i",
+        "/tmp/Glide121/FormatFixtures/01-h264-aac.mp4",
+        "-c",
+        "copy"
+      ]
+    },
+    {
+      "file": "04-mpeg4-mp3.avi",
+      "args": [
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=320x180:rate=15",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=440:sample_rate=48000",
+        "-t",
+        "20",
+        "-c:v",
+        "mpeg4",
+        "-q:v",
+        "5",
+        "-c:a",
+        "libmp3lame"
+      ]
+    },
+    {
+      "file": "07-audio-only.mp4",
+      "args": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=440:sample_rate=48000",
+        "-t",
+        "20",
+        "-c:a",
+        "aac"
+      ]
+    },
+    {
+      "file": "08-multi-track.mp4",
+      "args": [
+        "-i",
+        "/tmp/Glide121/FormatFixtures/01-h264-aac.mp4",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=880:sample_rate=48000",
+        "-i",
+        "/tmp/Glide121/FormatFixtures/captions.srt",
+        "-t",
+        "20",
+        "-map",
+        "0:v",
+        "-map",
+        "0:a",
+        "-map",
+        "1:a",
+        "-map",
+        "2:0",
+        "-c:v",
+        "copy",
+        "-c:a",
+        "aac",
+        "-c:s",
+        "mov_text",
+        "-metadata:s:a:0",
+        "language=eng",
+        "-metadata:s:a:1",
+        "language=zho",
+        "-metadata:s:s:0",
+        "language=eng",
+        "-movflags",
+        "+faststart"
+      ]
+    }
+  ],
+  "compatibilityCommands": [
+    {
+      "file": "09-ass.mkv",
+      "args": [
+        "-i",
+        "/tmp/GlideCompatibility/Fixtures/01-h264-aac.mp4",
+        "-i",
+        "/tmp/GlideCompatibility/Fixtures/original.ass",
+        "-map",
+        "0:v",
+        "-map",
+        "0:a",
+        "-map",
+        "1:0",
+        "-c:v",
+        "copy",
+        "-c:a",
+        "copy",
+        "-c:s",
+        "ass",
+        "-metadata:s:s:0",
+        "language=eng"
+      ]
+    },
+    {
+      "file": "10-dual-audio-ass.mkv",
+      "args": [
+        "-i",
+        "/tmp/GlideCompatibility/Fixtures/08-multi-track.mp4",
+        "-i",
+        "/tmp/GlideCompatibility/Fixtures/original.ass",
+        "-map",
+        "0:v",
+        "-map",
+        "0:a:0",
+        "-map",
+        "0:a:1",
+        "-map",
+        "1:0",
+        "-c:v",
+        "copy",
+        "-c:a",
+        "copy",
+        "-c:s",
+        "ass",
+        "-metadata:s:s:0",
+        "language=eng"
+      ]
+    }
+  ]
+}

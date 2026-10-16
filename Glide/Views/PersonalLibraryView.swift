@@ -26,22 +26,23 @@ struct PersonalLibraryView: View {
                         .listRowBackground(Color.clear)
                 }
                 ForEach(entries) { entry in
+                    let position = library.resumePosition(entry.video)
                     Button { onPlay(entry.video); if presentedAsSheet { dismiss() } } label: {
                         HStack(spacing: 14) {
-                            VideoArtwork(video: cover(entry), server: library.servers.first { $0.id == entry.video.sourceID }).frame(width: 76, height: 102).clipShape(RoundedRectangle(cornerRadius: 12))
+                            VideoArtwork(video: cover(entry), server: library.servers.first { $0.id == entry.video.sourceID }).frame(width: 60, height: 84).clipShape(RoundedRectangle(cornerRadius: 8))
                             VStack(alignment: .leading, spacing: 7) {
-                                Text(favorites ? entry.video.title : entry.title).font(.headline).lineLimit(2)
+                                Text(favorites ? entry.video.title : entry.title).font(GlideTheme.Typography.itemTitle).lineLimit(2)
                                 Text(sourceName(entry.video)).font(.caption).foregroundStyle(GlideTheme.muted)
                                 if !favorites {
                                     if !entry.episodeLabel.isEmpty { Text(entry.episodeLabel).font(.caption).foregroundStyle(GlideTheme.accent) }
-                                    Text(entry.finished ? "已看完 · 从头观看" : library.resumePosition(entry.video) > 1 ? "已观看 " + library.resumePosition(entry.video).mediaTime : "下一集")
+                                    Text(entry.finished ? "已看完 · 从头观看" : position > 1 ? "已观看 " + position.mediaTime : "下一集")
                                         .font(.caption).foregroundStyle(GlideTheme.muted)
-                                    if !entry.finished, entry.video.duration > 0 { ProgressView(value: min(library.resumePosition(entry.video), entry.video.duration), total: entry.video.duration).tint(GlideTheme.accent) }
+                                    if !entry.finished, entry.video.duration > 0 { ProgressView(value: min(position, entry.video.duration), total: entry.video.duration).tint(GlideTheme.accent) }
                                 }
                             }
                             Spacer(minLength: 0)
-                            Image(systemName: "play.fill").foregroundStyle(GlideTheme.accent)
-                        }.padding(.vertical, 5)
+                            Image(systemName: "play.fill").font(.subheadline).foregroundStyle(GlideTheme.accent).frame(width: 44, height: 44)
+                        }.padding(.vertical, 5).contentShape(Rectangle())
                     }.buttonStyle(.plain).accessibilityIdentifier("personal.video." + (entry.video.remoteID ?? entry.video.id))
                         .listRowBackground(GlideTheme.panel)
                         .contextMenu {
@@ -52,12 +53,9 @@ struct PersonalLibraryView: View {
                         }
                         .swipeActions { Button(favorites ? "取消收藏" : "移除记录", role: .destructive) { remove(entry) } }
                 }.onDelete { indices in indices.map { entries[$0] }.forEach(remove) }
-                Section {
-                    Text("剧集按节目整理。移除历史只影响本机，不重置服务器进度或删除文件；收藏独立保留。")
-                        .font(.footnote).foregroundStyle(GlideTheme.muted)
-                }.listRowBackground(Color.clear)
+
             }.scrollContentBackground(.hidden).background(GlideTheme.background)
-                .navigationTitle("继续与收藏")
+                .font(GlideTheme.Typography.body).navigationTitle("继续与收藏").navigationBarTitleDisplayMode(.inline)
                 .task { await library.refreshContinueWatching() }
                 .refreshable { await library.refreshContinueWatching(refresh: true) }
                 .toolbar {

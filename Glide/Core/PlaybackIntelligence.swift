@@ -45,6 +45,28 @@ enum NativePlaybackPolicy {
     }
 }
 
+/// Hysteresis for original 4K / high-bitrate network video: avoid resuming on
+/// each tiny packet while the same native item is starving. Goals use media
+/// time, not observed download throughput (which is not the media bitrate).
+enum NativeRebufferPolicy {
+    static let maximumHold: TimeInterval = 15
+    static let cooldown: TimeInterval = 5
+    static func eligible(local: Bool, preservesVideo: Bool, width: Int?, height: Int?, bitrate: Int?) -> Bool {
+        !local && preservesVideo && (max(width ?? 0, height ?? 0) >= 3840 || (bitrate ?? 0) >= 20_000_000)
+    }
+    static func resumeGoal(rate: Float, remaining: Double) -> Double? {
+        guard remaining.isFinite, remaining > 0.5 else { return nil }
+        let speed = rate.isFinite && rate > 0 ? Double(rate) : 1
+        return min(12, 6 * max(1, speed), remaining - 0.15)
+    }
+    static func canResume(ahead: Double, rate: Float, remaining: Double, bufferFull: Bool) -> Bool {
+        guard ahead.isFinite, ahead >= 0 else { return false }
+        guard let goal = resumeGoal(rate: rate, remaining: remaining) else { return true }
+        let speed = rate.isFinite && rate > 0 ? Double(rate) : 1
+        return ahead >= goal || (bufferFull && ahead >= min(goal, 2 * max(1, speed)))
+    }
+}
+
 /// A Jellyfin master can describe SDR/baseline while its encoded segment is
 /// HDR/high. AVPlayer may reject that master with CoreMedia -12927, even though
 /// the media playlist decodes. Only unwrap one self-contained AVC rendition;
@@ -194,7 +216,7 @@ struct PlaybackFailure: Codable, Equatable {
     var domain: String
     var code: Int
     init(domain: String, code: Int) {
-        self.domain = [NSURLErrorDomain, NSOSStatusErrorDomain, "AVFoundationErrorDomain", "CoreMediaErrorDomain", "VideoToolboxErrorDomain"].contains(domain) ? domain : "ApplicationError"
+        self.domain = [NSURLErrorDomain, NSOSStatusErrorDomain, "AVFoundationErrorDomain", "CoreMediaErrorDomain", "VideoToolboxErrorDomain", "GlideTransportError"].contains(domain) ? domain : "ApplicationError"
         self.code = code
     }
     static func chain(_ error: Error) -> [Self] {
@@ -260,7 +282,7 @@ struct ProgressSnapshot: Codable, Equatable {
 
 /// Export only structured technical fields. Never serialize Error.localizedDescription, URL, title or stream DisplayTitle.
 struct PlaybackDiagnostic: Codable {
-    var schema = 5
+    var schema = 9
     var version = ""
     var system = ""
     var device = ""
@@ -277,6 +299,7 @@ struct PlaybackDiagnostic: Codable {
     var level: Double?
     var videoRangeType: String?
     var dolbyVisionProfile: Int?
+    var localMedia: LocalMediaInspection?
     var outputVideoCodec: String?
     var outputColorTransfer: String?
     var sourceColorTransfer: String?
@@ -296,16 +319,41 @@ struct PlaybackDiagnostic: Codable {
     var outputWidth: Int?
     var outputHeight: Int?
     var observedBitrate: Int?
+    var sourceBitrate: Int?
+    var sourceFrameRate: Double?
+    var indicatedBitrate: Int?
+    var droppedVideoFrames: Int?
+    var nativeStalls: Int?
+    var waitingReason: String?
+    var bufferEmpty: Bool?
+    var rebufferCount: Int?
+    var lastResumeBufferedAheadSeconds: Double?
+    var rebufferElapsedSeconds: Double?
+    var lastRebufferSeconds: Double?
+    var bufferFull: Bool?
+    var likelyToKeepUp: Bool?
+    var nativeTimeControlStatus: String?
+    var accessLogBytesTransferred: Int64?
+    var accessLogTransferSeconds: Double?
+    var activeBufferingSeconds: Double?
     var bufferingSeconds: Double = 0
     var bufferingCount = 0
     var forwardBufferTargetSeconds: Double?
     var bufferedAheadSeconds: Double?
     var recoveryCount = 0
+    var directStreamFlag: Bool?
+    var originalTransportAttempts = 0
+    var originalTransportOutcome: String?
+    var originalTransportFailure: [PlaybackFailure]?
     var errorCode: Int?
     var errorDomain: String?
     var errorChain: [PlaybackFailure]?
     var events: [String] = []
-    mutating func event(_ code: String) { events.append(code); if events.count > 30 { events.removeFirst(events.count - 30) } }
+    mutating func event(_ code: String) {
+        // Preserve earlier context when native notifications repeat every tick.
+        guard events.last != code else { return }
+        events.append(code); if events.count > 30 { events.removeFirst(events.count - 30) }
+    }
     static func token(_ value: String?) -> String? {
         guard let value, value.count <= 48,
               value.unicodeScalars.allSatisfy({ CharacterSet.alphanumerics.contains($0) || " ._-".unicodeScalars.contains($0) }) else { return nil }

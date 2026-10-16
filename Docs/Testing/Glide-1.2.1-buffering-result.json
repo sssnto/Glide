@@ -1,0 +1,37 @@
+{
+  "attemptSeconds": [
+    0.9131890535354614
+  ],
+  "bufferedAheadSeconds": 47.38839579066667,
+  "bufferingCount": 1,
+  "bufferingSeconds": 11.986143946647644,
+  "delivery": "原画重封装",
+  "device": "arm64",
+  "events": [
+    "engine_avplayer",
+    "attempt_automatic",
+    "resource_ready_remux",
+    "first_frame",
+    "output_color_unavailable",
+    "buffer_target_increased",
+    "buffering_recovered"
+  ],
+  "firstFrameSeconds": 0.9131890535354614,
+  "forwardBufferTargetSeconds": 45,
+  "observedBitrate": 1518522,
+  "outputHeight": 854,
+  "outputVideoCodec": "avc1",
+  "outputWidth": 480,
+  "playerReadySeconds": 0.9120199680328369,
+  "playlistMode": "master",
+  "recoveryCount": 0,
+  "requestedOutputCodec": "copy",
+  "requestedQuality": "automatic",
+  "resourceReadySeconds": 0.48466503620147705,
+  "schema": 6,
+  "session": "D67B0FBB-121E-4D8F-BA67-863BA276F67D",
+  "state": "已暂停",
+  "system": "27.0",
+  "totalFirstFrameSeconds": 0.9132241010665894,
+  "version": "1.2.1 (1)"
+}

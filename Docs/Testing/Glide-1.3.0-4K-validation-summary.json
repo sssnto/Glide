@@ -1,0 +1,51 @@
+{
+  "version": "1.3.0",
+  "build": "3",
+  "date": "2026-10-16",
+  "coreTests": {
+    "swiftTesting": 90,
+    "xctest": 4,
+    "passed": 94,
+    "log": "/tmp/Glide4K/core-tests.log"
+  },
+  "playbackTests": [
+    {
+      "bundle": "/tmp/Glide4K/Network-R2.xcresult",
+      "passed": 1,
+      "productionChecks": 7,
+      "resumeBufferedAheadSeconds": 6.451480243000001
+    },
+    {
+      "bundle": "/tmp/Glide4K/Native-Regression.xcresult",
+      "passed": 2,
+      "tests": [
+        "testRecoveredBufferingRetainsTheWorkingVideoStream",
+        "testVideoInfoShowsOriginalPathAndNativeBuffering"
+      ]
+    }
+  ],
+  "earlierAttempt": {
+    "bundle": "/tmp/Glide4K/Network-R1.xcresult",
+    "passed": false,
+    "note": "First refill/actual 4K/original-route checks completed, second play did not reliably exhaust cache; deterministic supply gaps fixed in fixture before R2."
+  },
+  "release": {
+    "archive": "/tmp/Glide4K/Glide-1.3.0-3.xcarchive",
+    "passed": true,
+    "signed": false,
+    "debugNetworkEntryExcluded": true
+  },
+  "physicalQA": {
+    "bundle": "com.songpeng.glide.compatibilityqa",
+    "installed": true,
+    "normalLaunchPassed": true,
+    "device": "iPhone 13 Pro Max",
+    "originalJellyfinSourceRetestPending": true
+  },
+  "limits": [
+    "Simulator transport/control verification uses authored 4K at about 24 fps",
+    "No before/after stutter-time A/B on user media",
+    "15 seconds bounds only the app refill hold, not AVPlayer automatic waiting",
+    "Sustained throughput below media bitrate still needs network/server remediation"
+  ]
+}

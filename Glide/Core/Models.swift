@@ -3,23 +3,31 @@ import Foundation
 import FoundationXML
 #endif
 
-enum SourceKind: String, Codable, CaseIterable, Identifiable {
-    case jellyfin, webDAV
+enum SourceKind: String, Codable, CaseIterable, Identifiable, Sendable {
+    case jellyfin, webDAV, local
     var id: String { rawValue }
-    var title: String { self == .jellyfin ? "Jellyfin" : "NAS · WebDAV" }
-    var symbol: String { self == .jellyfin ? "play.rectangle.on.rectangle" : "externaldrive.connected.to.line.below" }
+    var title: String {
+        switch self { case .jellyfin: "Jellyfin"; case .webDAV: "NAS · WebDAV"; case .local: "本地视频" }
+    }
+    var symbol: String {
+        switch self { case .jellyfin: "play.rectangle.on.rectangle"; case .webDAV: "externaldrive.connected.to.line.below"; case .local: "folder" }
+    }
+    var isFileSource: Bool { self != .jellyfin }
+    var requiresCredentials: Bool { self != .local }
 }
 
-struct MediaServer: Codable, Identifiable, Equatable {
+struct MediaServer: Codable, Identifiable, Equatable, Sendable {
     var id = UUID()
     var name: String
     var kind: SourceKind
     var address: URL
     var username: String
     var userID: String?
+    /// Nil for the app's imported collection; otherwise an explicitly authorized folder.
+    var localBookmark: Data? = nil
 }
 
-struct Video: Identifiable, Equatable, Codable {
+struct Video: Identifiable, Equatable, Codable, Sendable {
     var id: String
     var title: String
     var subtitle: String
@@ -37,9 +45,11 @@ struct Video: Identifiable, Equatable, Codable {
     var seasonNumber: Int? = nil
     var episodeNumber: Int? = nil
     var isWatched: Bool? = nil
+    /// Relative to the authorized source, independent of a changing sandbox/root URL.
+    var localRelativePath: String? = nil
 }
 
-struct DAVEntry: Identifiable, Equatable {
+struct DAVEntry: Identifiable, Equatable, Sendable {
     var url: URL
     var name: String
     var isDirectory: Bool

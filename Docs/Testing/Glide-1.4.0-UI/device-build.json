@@ -1,0 +1,11 @@
+{
+  "CFBundleIdentifier": "com.songpeng.glide.compatibilityqa",
+  "CFBundleShortVersionString": "1.4.0",
+  "CFBundleVersion": "1",
+  "CFBundleDisplayName": "Glide 兼容验证",
+  "executableSHA256": "ca4148ce947bac6301957d422e7eb88d4bb5a4960af4a1df2d285c5f9d1d6bd4",
+  "dylibSHA256": {
+    "Glide.debug.dylib": "e8b407081630dc6e5027e60ed7242429aecf400622bfb92908a783e308df2420",
+    "__preview.dylib": "4d3bf4e6df6ee3f31f6374b86b429b19c9e76e0e96213698121a247acd5fbe7f"
+  }
+}

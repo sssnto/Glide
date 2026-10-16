@@ -1,0 +1,50 @@
+{
+  "sdkVersion": "3.7.3",
+  "sha256": "0d04059906962ddc9a7bd1ebaa12e1f9ae85eb2466116a97a2f46886dd27a0a9",
+  "archiveBytes": 263874748,
+  "slices": [
+    {
+      "DebugSymbolsPath": "dSYMs",
+      "LibraryIdentifier": "ios-arm64_i386_x86_64-simulator",
+      "LibraryPath": "MobileVLCKit.framework",
+      "SupportedArchitectures": [
+        "arm64",
+        "i386",
+        "x86_64"
+      ],
+      "SupportedPlatform": "ios",
+      "SupportedPlatformVariant": "simulator"
+    },
+    {
+      "DebugSymbolsPath": "dSYMs",
+      "LibraryIdentifier": "ios-arm64_armv7_armv7s",
+      "LibraryPath": "MobileVLCKit.framework",
+      "SupportedArchitectures": [
+        "arm64",
+        "armv7",
+        "armv7s"
+      ],
+      "SupportedPlatform": "ios"
+    }
+  ],
+  "notices": [
+    {
+      "file": "COPYING.txt",
+      "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551"
+    },
+    {
+      "file": "Sample Code/GLEssentials/LICENSE.txt",
+      "sha256": "1d2ce8bc7bd33b5817307de0d5e9a1bfa530d0ee5630c3e2228d1ca562a849d9"
+    }
+  ],
+  "frameworks": [
+    {
+      "file": "MobileVLCKit.xcframework/ios-arm64_i386_x86_64-simulator/MobileVLCKit.framework/MobileVLCKit",
+      "bytes": 126015168
+    },
+    {
+      "file": "MobileVLCKit.xcframework/ios-arm64_armv7_armv7s/MobileVLCKit.framework/MobileVLCKit",
+      "bytes": 97897888
+    }
+  ]
+}

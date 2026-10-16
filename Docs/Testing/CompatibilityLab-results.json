@@ -1,0 +1,285 @@
+{
+  "schema": 1,
+  "evidenceStage": "Historical initial R4-R7 verification; see CompatibilityLab-ASS-2026-10-15.md for the follow-up audit",
+  "date": "2026-10-15",
+  "environment": "Apple Silicon / iOS 27.0 Simulator / Debug",
+  "uniqueUITestsPassed": 5,
+  "sdk": "MobileVLCKit 3.7.3",
+  "sourceBundles": {
+    "lifecycle": "/tmp/GlideCompatibility/Lifecycle-Visual-R4.xcresult",
+    "matrix+edges+controls": "/tmp/GlideCompatibility/Matrix-Controls-R5.xcresult",
+    "subtitles": "/tmp/GlideCompatibility/ASS-Seek-R7.xcresult"
+  },
+  "suites": [
+    {
+      "engine": "MobileVLCKit",
+      "passed": true,
+      "results": [
+        {
+          "audioChoices": [
+            "Track 1 - [English]",
+            "Track 2 - [Chinese]"
+          ],
+          "obsoleteSeekCompletion": false,
+          "passed": true,
+          "rate2xAdvanceIn1_2Seconds": 2.41,
+          "sample": "controls",
+          "seekActual": 5,
+          "seekTarget": 5,
+          "subtitleChoices": [
+            "Track 1 - [English]"
+          ]
+        }
+      ],
+      "runtime": "3.0.23 Vetinari (3.0.23-2-47-g3f8bd11fd0)",
+      "suite": "controls",
+      "version": "3.7.3"
+    },
+    {
+      "engine": "MobileVLCKit",
+      "passed": true,
+      "results": [
+        {
+          "audioTracks": 1,
+          "clock": 1.31,
+          "decodedVideo": 60,
+          "displayedFrame": true,
+          "displayedPictures": 1,
+          "duration": 20.021,
+          "frameSeconds": 1.9917830228805542,
+          "image": {
+            "distinctColorBins": 96,
+            "height": 180,
+            "width": 320
+          },
+          "passed": true,
+          "ready": true,
+          "sample": "05-renamed-mkv.mp4",
+          "subtitleChoices": 0
+        },
+        {
+          "audioTracks": 0,
+          "clock": 0,
+          "decodedVideo": 0,
+          "displayedFrame": false,
+          "displayedPictures": 0,
+          "duration": 0,
+          "passed": true,
+          "ready": true,
+          "sample": "06-truncated.mp4",
+          "subtitleChoices": 0
+        },
+        {
+          "audioTracks": 1,
+          "clock": 1.655,
+          "decodedVideo": 0,
+          "displayedFrame": false,
+          "displayedPictures": 0,
+          "duration": 20,
+          "passed": true,
+          "ready": true,
+          "sample": "07-audio-only.mp4",
+          "subtitleChoices": 0
+        },
+        {
+          "audioTracks": 2,
+          "clock": 1.408,
+          "decodedVideo": 68,
+          "displayedFrame": true,
+          "displayedPictures": 12,
+          "duration": 20,
+          "frameSeconds": 1.5639480352401733,
+          "image": {
+            "distinctColorBins": 88,
+            "height": 180,
+            "width": 320
+          },
+          "passed": true,
+          "ready": true,
+          "sample": "08-multi-track.mp4",
+          "subtitleChoices": 1
+        }
+      ],
+      "runtime": "3.0.23 Vetinari (3.0.23-2-47-g3f8bd11fd0)",
+      "suite": "edges",
+      "version": "3.7.3"
+    },
+    {
+      "engine": "MobileVLCKit",
+      "passed": true,
+      "results": [
+        {
+          "passed": true,
+          "reopenedDisplayedPictures": 6,
+          "sample": "lifecycle",
+          "staleSeekCompletion": false,
+          "stopSeconds": [
+            0.005660057067871094,
+            0.00949406623840332,
+            0.00011205673217773438
+          ]
+        }
+      ],
+      "runtime": "3.0.23 Vetinari (3.0.23-2-47-g3f8bd11fd0)",
+      "suite": "lifecycle",
+      "version": "3.7.3"
+    },
+    {
+      "engine": "MobileVLCKit",
+      "passed": true,
+      "results": [
+        {
+          "audioTracks": 1,
+          "clock": 1.904,
+          "decodedVideo": 72,
+          "displayedFrame": true,
+          "displayedPictures": 7,
+          "duration": 20,
+          "frameSeconds": 2.4013460874557495,
+          "image": {
+            "distinctColorBins": 116,
+            "height": 180,
+            "width": 320
+          },
+          "passed": true,
+          "ready": true,
+          "sample": "01-h264-aac.mp4",
+          "subtitleChoices": 0
+        },
+        {
+          "audioTracks": 1,
+          "clock": 1.405,
+          "decodedVideo": 51,
+          "displayedFrame": true,
+          "displayedPictures": 1,
+          "duration": 20,
+          "frameSeconds": 3.9470889568328857,
+          "image": {
+            "distinctColorBins": 85,
+            "height": 180,
+            "width": 320
+          },
+          "passed": true,
+          "ready": true,
+          "sample": "02-hevc-aac.mp4",
+          "subtitleChoices": 0
+        },
+        {
+          "audioTracks": 1,
+          "clock": 0.249,
+          "decodedVideo": 37,
+          "displayedFrame": true,
+          "displayedPictures": 3,
+          "duration": 20.021,
+          "frameSeconds": 0.5304340124130249,
+          "image": {
+            "distinctColorBins": 80,
+            "height": 180,
+            "width": 320
+          },
+          "passed": true,
+          "ready": true,
+          "sample": "03-h264-aac.mkv",
+          "subtitleChoices": 0
+        },
+        {
+          "audioTracks": 1,
+          "clock": 0.28,
+          "decodedVideo": 38,
+          "displayedFrame": true,
+          "displayedPictures": 3,
+          "duration": 20,
+          "frameSeconds": 0.6757639646530151,
+          "image": {
+            "distinctColorBins": 84,
+            "height": 180,
+            "width": 320
+          },
+          "passed": true,
+          "ready": true,
+          "sample": "04-mpeg4-mp3.avi",
+          "subtitleChoices": 0
+        }
+      ],
+      "runtime": "3.0.23 Vetinari (3.0.23-2-47-g3f8bd11fd0)",
+      "suite": "matrix",
+      "version": "3.7.3"
+    },
+    {
+      "engine": "MobileVLCKit",
+      "passed": true,
+      "results": [
+        {
+          "audioTracks": 1,
+          "clock": 1.314,
+          "decodedVideo": 62,
+          "displayedFrame": true,
+          "displayedPictures": 5,
+          "duration": 20.021,
+          "frameSeconds": 3.088124990463257,
+          "image": {
+            "distinctColorBins": 118,
+            "height": 180,
+            "width": 320
+          },
+          "passed": true,
+          "ready": true,
+          "sample": "09-ass.mkv",
+          "subtitleChoices": 1,
+          "subtitleSeekActual": 2
+        },
+        {
+          "audioTracks": 2,
+          "clock": 1.033,
+          "decodedVideo": 55,
+          "displayedFrame": true,
+          "displayedPictures": 4,
+          "duration": 20.021,
+          "frameSeconds": 2.2792240381240845,
+          "image": {
+            "distinctColorBins": 110,
+            "height": 180,
+            "width": 320
+          },
+          "passed": true,
+          "ready": true,
+          "sample": "10-dual-audio-ass.mkv",
+          "subtitleChoices": 1,
+          "subtitleSeekActual": 2
+        }
+      ],
+      "runtime": "3.0.23 Vetinari (3.0.23-2-47-g3f8bd11fd0)",
+      "suite": "subtitles",
+      "version": "3.7.3"
+    }
+  ],
+  "subtitleVisualCheck": {
+    "method": "System screenshot, Vision OCR, then manual inspection",
+    "requiredText": "Glide ASS subtitle",
+    "scenario": "Select subtitle, explicitly seek to 2 seconds, resume at 1x",
+    "initialSelectionWithoutSeek": "Not accepted: dual-audio sample did not display its initial long cue in R6",
+    "complexASSFontsPGS": "Not verified"
+  },
+  "priorFailures": [
+    {
+      "iteration": "startup",
+      "result": "DYLD missing embedded framework; fixed Embed Frameworks"
+    },
+    {
+      "iteration": "scene",
+      "result": "UIKit scene lifecycle trap; fixed UIScene delegate"
+    },
+    {
+      "iteration": "Controls-R1",
+      "result": "Early destruction blocked main thread; fixed deferred retention"
+    },
+    {
+      "iteration": "Final-R3",
+      "result": "Immediate stop still blocked main thread; fixed background final disposal"
+    },
+    {
+      "iteration": "ASS-Visual-R6",
+      "result": "Dual-audio initial ASS cue not visible; still an integration limitation, not fixed by broad claims"
+    }
+  ]
+}
