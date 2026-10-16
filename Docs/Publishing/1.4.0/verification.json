@@ -1,0 +1,72 @@
+{
+  "checkedOn": "2026-10-16",
+  "timezone": "Asia/Shanghai",
+  "sourceCommit": "7c0a1f3f9af50e4003c87ddfb2b8f572b3b54e1d",
+  "releaseVersion": "1.4.0",
+  "publicStoreVersionObserved": "1.1.0",
+  "fields": {
+    "name": {
+      "characters": 11,
+      "utf8Bytes": 21,
+      "limit": 30,
+      "limitUnit": "characters"
+    },
+    "subtitle": {
+      "characters": 20,
+      "utf8Bytes": 40,
+      "limit": 30,
+      "limitUnit": "characters"
+    },
+    "keywords": {
+      "characters": 45,
+      "utf8Bytes": 99,
+      "limit": 100,
+      "limitUnit": "UTF-8 bytes (conservative)"
+    },
+    "promotional-text": {
+      "characters": 93,
+      "utf8Bytes": 243,
+      "limit": 170,
+      "limitUnit": "characters"
+    },
+    "release-notes": {
+      "characters": 329,
+      "utf8Bytes": 925,
+      "limit": 4000,
+      "limitUnit": "characters"
+    },
+    "description": {
+      "characters": 792,
+      "utf8Bytes": 2038,
+      "limit": 4000,
+      "limitUnit": "characters"
+    }
+  },
+  "officialReferences": [
+    "https://developer.apple.com/help/app-store-connect/reference/app-information/app-information/",
+    "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information/",
+    "https://developer.apple.com/app-store/product-page/",
+    "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/"
+  ],
+  "liveSiteChecks": {
+    "https://glide.sssnto.cn/support.html": {
+      "httpStatus": 200,
+      "contactEmailPresent": true,
+      "localMediaMentionPresent": false
+    },
+    "https://glide.sssnto.cn/privacy.html": {
+      "httpStatus": 200,
+      "contactEmailPresent": true,
+      "localMediaMentionPresent": false
+    }
+  },
+  "publishingStatus": "Materials prepared locally. No App Store Connect changes or website deployment performed.",
+  "publicStoreAppURL": "https://apps.apple.com/app/id6814679647",
+  "preparedAssets": {
+    "copyFields": "ready",
+    "reviewNotes": "ready",
+    "testFlightNotes": "ready",
+    "websiteDraft": "ready_to_deploy",
+    "screenshots": "copy_brief_and_reference_only"
+  }
+}

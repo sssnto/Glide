@@ -1,0 +1,16 @@
+Glide is a video player for the user's own local files and user-configured media servers. It does not provide a streaming catalog or host movies or TV shows.
+
+No Glide account or purchase is required to try the bundled offline demos or import local files.
+
+How to review without a media server:
+1. Launch the app. A fresh installation displays the bundled offline demo library.
+2. Tap a video or “播放演示” to start playback. Swipe vertically to switch videos. Tap the video to show the controls, then try speed, subtitles, seeking and orientation.
+3. Open the media source button at the top of the library. “离线演示片库” returns to the demo library.
+4. In the same source screen, “导入视频文件” imports user-selected files and “添加本地目录” opens the system directory picker. Imported copies are stored in the app; authorized directories remain read-only.
+5. For a local file, open “播放设置” and the “本地播放器” section to switch between system and compatibility playback. Compatibility playback applies only to local files, including completed offline downloads; it does not apply to online Jellyfin or WebDAV streams. Picture in Picture and AirPlay use system playback.
+
+Jellyfin and WebDAV are optional user-configured sources. Connecting to a server requires its address and the user's credentials. Local network permission is used to access user-selected servers on the local network. Jellyfin playback progress may be synchronized to that server.
+
+Version 1.4.0 adds local file and directory access, local compatibility playback, improved Chinese subtitles, portrait media and folder previews, clearer metadata and bottom playback shortcuts. Existing users update from the public 1.1.0 release.
+
+There is no advertising or in-app purchase interface in this build. Support: 133317737@qq.com.
