@@ -1,0 +1,54 @@
+{
+  "site": "https://glide.sssnto.cn/",
+  "releasedVersion": "1.11.0",
+  "releaseStatusSource": "Direct user confirmation on 2026-10-23 Asia/Shanghai",
+  "hosting": {
+    "repository": "sssnto/glide-privacy",
+    "branch": "main",
+    "path": "/",
+    "previousCommit": "eae589887a8ee3ed16fb68f2451058f574a52887",
+    "commit": "f48f40d0ecaebceca11585e44e69e2a0402af8d8",
+    "tree": "70e55d5e5d4437c651e5a33fa207b04f2ae49322",
+    "updateMode": "Fast-forward; expected branch head checked; no force"
+  },
+  "pagesBuild": {
+    "commit": "f48f40d0ecaebceca11585e44e69e2a0402af8d8",
+    "created_at": "2026-10-23T06:35:15Z",
+    "duration": 24585,
+    "error": {
+      "message": null
+    },
+    "status": "built",
+    "updated_at": "2026-10-23T06:35:39Z"
+  },
+  "verification": {
+    "passed": true,
+    "publicFiles": 19,
+    "matchingFiles": 19,
+    "liveFileReport": "Live-Verification.json",
+    "rootHomepageReport": "Homepage-Verification.json",
+    "staticReport": "Static-Checks.json",
+    "scope": "Public unversioned URLs verified byte-for-byte; no new browser visual or interaction QA performed for this copy-only update"
+  },
+  "source": {
+    "repository": "sssnto/Glide",
+    "directory": "Website/",
+    "branch": "main",
+    "baseCommit": "c35bee1505c21be877b90bf3462b6f6ae2316cdb"
+  },
+  "changedPublicFiles": [
+    "index.html",
+    "updates.html",
+    "support.html",
+    "privacy.html"
+  ],
+  "preserved": [
+    "Custom domain and HTTPS configuration",
+    "App Store destination",
+    "Styles, scripts and images",
+    "Application runtime code",
+    "Previous testing records",
+    "Pre-existing untracked publishing materials"
+  ],
+  "appleLookup": "Store-Lookup.json records the prior version still returned by Apple's public lookup; no claim of independent 1.11.0 verification from that API"
+}

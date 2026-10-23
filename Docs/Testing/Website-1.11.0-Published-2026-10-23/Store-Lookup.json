@@ -1,0 +1,13 @@
+{
+  "publishedVersion": "1.11.0",
+  "releaseStatusSource": "Direct user confirmation on 2026-10-23 Asia/Shanghai",
+  "observedLookupVersion": "1.4.0",
+  "lookupURL": "https://itunes.apple.com/lookup?id=6814679647&country=cn",
+  "observedFields": {
+    "trackName": "Glide",
+    "version": "1.4.0",
+    "trackViewUrl": "https://apps.apple.com/cn/app/glide/id6814679647?uo=4",
+    "currentVersionReleaseDate": "2026-10-17T14:11:26Z"
+  },
+  "note": "Lookup still returned the previous version; not recorded as independent verification of 1.11.0 availability."
+}

@@ -1,0 +1,11 @@
+{
+  "url": "https://glide.sssnto.cn/",
+  "status": 200,
+  "timestamp": "2026-10-23T06:36:40.573852+00:00",
+  "bytes": 16365,
+  "sha256": "fe936ce20ba24b4670d80e8a108777673d31e86017f84b99d1c572dfcae28dd9",
+  "matchesSource": true,
+  "releaseLabelPresent": true,
+  "staleLabelsPresent": false,
+  "passed": true
+}
