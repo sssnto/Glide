@@ -7,9 +7,11 @@
 ## 已完成检查
 
 - [静态完整性](Static-Checks.json)：5 个 HTML 页面、123 处本地文件／锚点／ARIA 关联，全部有效；包含规范 URL、标题、描述、图片替代文本及固有尺寸、CNAME、站点地图与 `.nojekyll`。公开网站约 2.9 MB，无前端依赖或远程字体。
-- `node --check Website/site.js` 与 `git diff --check` 通过。功能标签支持点击、左右方向键、Home／End，FAQ 使用原生 details。此处的键盘行为是源码检查，不是浏览器实际交互通过记录。
+- `node --check Website/site.js` 与网站文件的 Git 空白检查通过。功能标签支持点击、左右方向键、Home／End，FAQ 使用原生 details。此处的键盘行为是源码检查，不是浏览器实际交互通过记录。
 - 本机 HTTP 首页、隐私和版本页返回成功；应用发布预检通过。应用 140 个构建输入与刚完成的 1.11.0（4）最终验收快照一致，未修改播放器代码，也未重复运行无关应用测试。
 - 推送范围排除了归档、IPA、dSYM、SDK 缓存和本机临时文件。扫描命中的 URL 用户名／密码仅为测试中用于验证拒绝凭据地址的合成输入，不是真实登录。
+
+应用历史构建／测试日志、第三方原始头文件和已有 SMB 源码文件末尾空行按原样保留，未为消除空白提示改写冻结证据或播放器源码；不声称全部累计验收日志通过空白规范检查。
 
 ## 视觉验收限制
 
@@ -20,3 +22,9 @@ CUA 浏览器连续返回 `Local browser use is disabled in Work settings`。用
 现有线上站点来自 `sssnto/glide-privacy` 的 `main` 根目录，旧提交为 `dbf7d4f`。`sssnto/Glide` 原先没有启用 Pages，直接推应用仓库无法更新域名。保留既有 CNAME 和域名分发配置，通过独立 Pages 仓库发布；未修改 DNS、证书或访问权限。
 
 最终部署提交、Pages 构建与线上文件校验见 [Deployment.json](Deployment.json)。发布流程与素材来源见[部署说明](../../Website-Deployment.md)。
+
+发布完成：Pages 最终提交为 [`eae5898`](https://github.com/sssnto/glide-privacy/commit/eae589887a8ee3ed16fb68f2451058f574a52887)，[构建](Pages-Build-Final.json)于 2026-10-23 10:12:56（Asia/Shanghai）完成。19 个无查询参数的公开文件均 HTTP 200，字节与 SHA-256 全部匹配本地 Website，见[最终校验](Live-Assets-Final.json)。裸域名首页也已确认返回新版，不只核对缓存穿透链接。最终样式使隐藏标签面板不再给当前面板增加间距。
+
+应用主体代码与此前未推送的 1.5—1.11 累积功能已在 [`b5a4b48`](https://github.com/sssnto/Glide/commit/b5a4b4869192997422cb16a031daa491123759e0) 推送至 `main`，对应 1.11.0（4）。本次网站修订与最终发布记录随后另行提交。没有向 App Store 上传应用，没有新增标签或修改 DNS。
+
+最后样式的普通 Git 推送先后遇到 HTTP/2 与连接超时，使用已连接的 GitHub 接口按原文件 SHA 更新成功；它和本地最终样式的 Git blob 均为 `8fc965bbb199d50fbbaddde2ec9635291f7cace8`。接口更新保持现有分支与文件内容，没有强制覆盖。此前的[18／19 校验](Before-Final-Style-Live-Check.json)保留为发布尚未完成时的证据，不混作最终通过结果。视觉验收限制仍如上所述。

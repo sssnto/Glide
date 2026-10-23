@@ -1,0 +1,10 @@
+{
+  "sourceCommit": "b5a4b4869192997422cb16a031daa491123759e0",
+  "sourceVersion": "1.11.0 (4)",
+  "sourceInputsMatchedFinalDeviceValidation": 140,
+  "websiteRemote": "sssnto/glide-privacy",
+  "initialWebsiteCommit": "622ceb91bf93643ba8f650ca7a8e4458cd20626d",
+  "finalWebsiteCommit": "eae589887a8ee3ed16fb68f2451058f574a52887",
+  "browserVisualQA": "not_completed_work_browser_setting_remained_disabled",
+  "finalStyleBlob": "8fc965bbb199d50fbbaddde2ec9635291f7cace8"
+}

@@ -1,0 +1,71 @@
+{
+  "passed": true,
+  "files": [
+    {
+      "file": "index.html",
+      "status": 200,
+      "matchesSource": true,
+      "sha256": "5243d7ceb4fce27970d669b925218763e0675143bfab95fa6a5132124a6f43e5",
+      "headers": {
+        "ETag": "\"6adac031-3fa3\"",
+        "Last-Modified": "Fri, 23 Oct 2026 02:02:25 GMT",
+        "Cache-Control": "max-age=0"
+      }
+    },
+    {
+      "file": "style.css",
+      "status": 200,
+      "matchesSource": true,
+      "sha256": "e9571ef711023ca7013db14a8843918c5dce968636d7346a1982baec61ed88f4",
+      "headers": {
+        "ETag": "\"6adac031-5e02\"",
+        "Last-Modified": "Fri, 23 Oct 2026 02:02:25 GMT",
+        "Cache-Control": "max-age=0"
+      }
+    },
+    {
+      "file": "site.js",
+      "status": 200,
+      "matchesSource": true,
+      "sha256": "63fc8defbf4d9e8737e33c8efda0c1cb76e51b14d10c8b9114d716dc1f7dae92",
+      "headers": {
+        "ETag": "\"6adac031-3ca\"",
+        "Last-Modified": "Fri, 23 Oct 2026 02:02:25 GMT",
+        "Cache-Control": "max-age=0"
+      }
+    },
+    {
+      "file": "privacy.html",
+      "status": 200,
+      "matchesSource": true,
+      "sha256": "473f9d0f6903837f7f33eb646974870a735b56fa5ed1c8d2803132b8483492ab",
+      "headers": {
+        "ETag": "\"6adac031-195a\"",
+        "Last-Modified": "Fri, 23 Oct 2026 02:02:25 GMT",
+        "Cache-Control": "max-age=0"
+      }
+    },
+    {
+      "file": "support.html",
+      "status": 200,
+      "matchesSource": true,
+      "sha256": "35aea76ebfdffa3a2f46ac2a0fc99b9279a56f75842d3be91357a8811b53854c",
+      "headers": {
+        "ETag": "\"6adac031-20af\"",
+        "Last-Modified": "Fri, 23 Oct 2026 02:02:25 GMT",
+        "Cache-Control": "max-age=0"
+      }
+    },
+    {
+      "file": "updates.html",
+      "status": 200,
+      "matchesSource": true,
+      "sha256": "3cd1ddaa72236f3df9e0bd8d1c2a63b8832c64f5b8bcd87e60203e609f0fb552",
+      "headers": {
+        "ETag": "\"6adac031-20d1\"",
+        "Last-Modified": "Fri, 23 Oct 2026 02:02:25 GMT",
+        "Cache-Control": "max-age=0"
+      }
+    }
+  ]
+}

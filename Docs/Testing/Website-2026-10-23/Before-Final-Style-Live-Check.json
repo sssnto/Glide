@@ -1,0 +1,141 @@
+{
+  "site": "https://glide.sssnto.cn/",
+  "timestamp": "2026-10-23T02:08:31.600240+00:00",
+  "passed": false,
+  "files": [
+    {
+      "file": ".nojekyll",
+      "status": 200,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matchesSource": true
+    },
+    {
+      "file": "404.html",
+      "status": 200,
+      "bytes": 763,
+      "sha256": "27f9de427e5f0454399796305fab6fba3af819f369c67450cb2f9daba55241aa",
+      "matchesSource": true
+    },
+    {
+      "file": "CNAME",
+      "status": 200,
+      "bytes": 16,
+      "sha256": "5156e1ebce2915fad74d50454806de83533d883ee2f29bb1acf3f2a52304d14f",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/alpine.jpg",
+      "status": 200,
+      "bytes": 385062,
+      "sha256": "817a6db7684772791195f14756fde06cd9af4818120a8b27625f66f49055414a",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/app-icon.png",
+      "status": 200,
+      "bytes": 60630,
+      "sha256": "1c890c2966278c979ef1dd8ed3fccfba14becd602374f0f0f11caafe8c8cce0b",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/channel.png",
+      "status": 200,
+      "bytes": 290019,
+      "sha256": "f22294bea7ba1a948d6c82017f0170fbcebd55900e63fc28466ad7dd310bba81",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/coast.jpg",
+      "status": 200,
+      "bytes": 548480,
+      "sha256": "a27cfe8099c5fafa242fa2fceb96368584c57d24ee8891e28dd47350e7f330f4",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/content-map.png",
+      "status": 200,
+      "bytes": 495943,
+      "sha256": "38bbb16cc41387ceaef85e352788e110030d5e5e9bd32b3122e1411fbf91fd4b",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/player.png",
+      "status": 200,
+      "bytes": 554665,
+      "sha256": "c70fea15b6f3042da18fb0dc9139c3e5c6bf0265e2ed2f7aa59d0d9baa6443e6",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/time-picks.png",
+      "status": 200,
+      "bytes": 502924,
+      "sha256": "82abd4465f9c3cfc70af0fdcca44be12ce6fc48410d205724b709c76b4bbfb0e",
+      "matchesSource": true
+    },
+    {
+      "file": "icons.svg",
+      "status": 200,
+      "bytes": 2119,
+      "sha256": "3d62192a2deb607eeaa65e985f6f6329e5bb3233a766c92ca7b331b10cbcca0e",
+      "matchesSource": true
+    },
+    {
+      "file": "index.html",
+      "status": 200,
+      "bytes": 16291,
+      "sha256": "5243d7ceb4fce27970d669b925218763e0675143bfab95fa6a5132124a6f43e5",
+      "matchesSource": true
+    },
+    {
+      "file": "privacy.html",
+      "status": 200,
+      "bytes": 6490,
+      "sha256": "473f9d0f6903837f7f33eb646974870a735b56fa5ed1c8d2803132b8483492ab",
+      "matchesSource": true
+    },
+    {
+      "file": "robots.txt",
+      "status": 200,
+      "bytes": 68,
+      "sha256": "add2147a66a985d8e3cbd097fd29bf6e1efe96791fda014f065558842c2eaefd",
+      "matchesSource": true
+    },
+    {
+      "file": "site.js",
+      "status": 200,
+      "bytes": 970,
+      "sha256": "63fc8defbf4d9e8737e33c8efda0c1cb76e51b14d10c8b9114d716dc1f7dae92",
+      "matchesSource": true
+    },
+    {
+      "file": "sitemap.xml",
+      "status": 200,
+      "bytes": 458,
+      "sha256": "635c7fe30d4ecfadbb533853489c61b36b00159722313e57e1654e6f55a3dd5d",
+      "matchesSource": true
+    },
+    {
+      "file": "style.css",
+      "status": 200,
+      "bytes": 24066,
+      "sha256": "e9571ef711023ca7013db14a8843918c5dce968636d7346a1982baec61ed88f4",
+      "matchesSource": false
+    },
+    {
+      "file": "support.html",
+      "status": 200,
+      "bytes": 8367,
+      "sha256": "35aea76ebfdffa3a2f46ac2a0fc99b9279a56f75842d3be91357a8811b53854c",
+      "matchesSource": true
+    },
+    {
+      "file": "updates.html",
+      "status": 200,
+      "bytes": 8401,
+      "sha256": "3cd1ddaa72236f3df9e0bd8d1c2a63b8832c64f5b8bcd87e60203e609f0fb552",
+      "matchesSource": true
+    }
+  ],
+  "scope": "Unversioned public URLs, bytes and SHA-256; does not render or interact with the site"
+}

@@ -2,7 +2,7 @@
   "passed": true,
   "pages": 5,
   "localReferences": 123,
-  "publicBytes": 2905732,
+  "publicBytes": 2905760,
   "errors": [],
   "scope": "Static integrity checks; does not replace browser visual or interaction QA"
 }

@@ -9,7 +9,7 @@
 1. 修改 `Website/` 中的静态页面与资源，无需前端依赖或构建。保持首页、更新记录、支持与隐私说明的版本一致。
 2. 运行 `python3 Scripts/check_website.py`、`node --check Website/site.js`。用本地 HTTP 服务检查桌面、手机布局、功能标签切换、键盘操作与 FAQ。
 3. 克隆或更新独立 Pages 仓库，保持工作区干净。运行 `python3 Scripts/sync_website.py --checkout /绝对路径/glide-privacy`。脚本核对远端、CNAME 和本地状态，只复制公开网站文件，不提交或推送。
-4. 审阅 Pages 仓库 diff，提交并推送 `main`。检查 Pages 最新构建状态，再核对自定义域名的 HTML、CSS、脚本和图片；缓存未更新时不要把“推送成功”当作“线上已更新”。
+4. 审阅 Pages 仓库 diff，提交并推送 `main`。检查 Pages 最新构建状态，再运行 `python3 Scripts/verify_website_deployment.py --output /tmp/website-live.json`，核对自定义域名的 HTML、CSS、脚本和图片；缓存未更新时不要把“推送成功”当作“线上已更新”。
 5. 同时提交应用仓库里的 Website 修改与验收记录。发布应用到 App Store 是另一项操作；官网更新不等于应用上架。
 
 ## 2026-10-23 内容与素材
