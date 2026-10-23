@@ -1,5 +1,12 @@
 import Foundation
 
+/// In-memory only. Never Codable, URL userinfo, or diagnostics.
+struct SMBPlaybackAccess {
+    let username: String
+    let password: String
+    let options: SMBOptions
+}
+
 struct PlaybackResource {
     var url: URL
     var headers: [String: String] = [:]
@@ -14,6 +21,19 @@ struct PlaybackResource {
     var prefersFirstHDRVariant = false
     var sourcePath: String?
     var localAccess: LocalFileAccess?
+    var smb: SMBPlaybackAccess?
+    var sourceContainer: String?
+    var resolvedTracks: TrackSelection?
+    var preferredTextSubtitle = false
+    var serverSubtitleCues: [SubtitleCue] = []
+    var serverSubtitleName: String?
+    var serverSubtitleLanguage: String?
+    var serverSubtitleTrack: SubtitleServerTrack?
+    var serverSubtitleStreams: [CatalogItem.Stream] = []
+    var serverAudioStreams: [CatalogItem.Stream] = []
+    var serverAudioIndex: Int?
+    var serverBitmapSubtitle: PGSSubtitle?
+    var serverASSSubtitle: ASSSubtitle?
     var prefersSegmentedTransport: Bool {
         OriginalTransportPolicy.prefersSegments(local: url.isFileURL, delivery: delivery,
             width: videoStream?.Width, height: videoStream?.Height, bitrate: sourceBitrate ?? videoStream?.BitRate)

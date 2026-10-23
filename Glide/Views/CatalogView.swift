@@ -9,7 +9,6 @@ struct CatalogView: View {
     @State private var loading = false
     @State private var error: String?
     @State private var query = ""
-    @State private var settingsOpen = false
     @State private var order = CatalogOrder()
     @State private var nextIndex = 0
     @State private var total = 0
@@ -26,7 +25,7 @@ struct CatalogView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: 14) {
                     HStack(spacing: 12) {
                         Text("\(total) 部" + (shows ? "节目" : "电影"))
                             .font(.subheadline.weight(.medium)).foregroundStyle(GlideTheme.muted)
@@ -78,11 +77,8 @@ struct CatalogView: View {
                 .background(GlideTheme.background).navigationTitle(folder.name).navigationBarTitleDisplayMode(.inline)
                 .searchable(text: $query, prompt: shows ? "搜索节目" : "搜索电影")
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) { Button { Task { await library.jump(to: 0) } } label: { Label("媒体库", systemImage: "chevron.left") } }
-                    ToolbarItem(placement: .topBarTrailing) { Button { settingsOpen = true } label: { Image(systemName: "gearshape") }.accessibilityLabel("设置").accessibilityIdentifier("settings.open") }
-                    ToolbarItem(placement: .topBarTrailing) { NavigationLink { DownloadsView(library: library) } label: { Image(systemName: "arrow.down.circle") }.accessibilityLabel("离线下载") }
+                    ToolbarItem(placement: .topBarLeading) { Button { Task { await library.jump(to: 0) } } label: { Label("媒体库", systemImage: "chevron.left") }.accessibilityIdentifier("catalog.back") }
                 }
-                .sheet(isPresented: $settingsOpen) { NavigationStack { SettingsView(library: library).toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { settingsOpen = false } } } } }
                 .refreshable { await load(reset: true, refresh: true) }
                 .task(id: requestKey) {
                     if !restored {
@@ -159,6 +155,7 @@ struct CatalogPosterCard: View {
                 if let rating = item.CommunityRating {
                     Text("★ " + rating.formatted(.number.precision(.fractionLength(1))))
                         .font(.caption2.weight(.semibold)).monospacedDigit().padding(.horizontal, 6).padding(.vertical, 4)
+                        .foregroundStyle(.white)
                         .background(.black.opacity(0.78), in: RoundedRectangle(cornerRadius: 5)).padding(6)
                 }
             }.clipShape(RoundedRectangle(cornerRadius: 10)).contentShape(Rectangle())
@@ -210,7 +207,7 @@ struct CatalogDetailView: View {
     }
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 20) {
                 detailHero
                 if loading { ProgressView("读取媒体信息…").font(.subheadline) }
                 if let error {
@@ -318,7 +315,7 @@ struct CatalogDetailView: View {
     private func primaryPlayLabel(_ title: String) -> some View {
         Label(title, systemImage: "play.fill").font(.subheadline.weight(.semibold))
             .frame(maxWidth: .infinity, minHeight: 48).padding(.horizontal, 12)
-            .foregroundStyle(Color.black).background(GlideTheme.accent, in: RoundedRectangle(cornerRadius: 12))
+            .foregroundStyle(GlideTheme.onAccent).background(GlideTheme.accent, in: RoundedRectangle(cornerRadius: 12))
     }
     private var detailActions: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -645,7 +642,7 @@ struct FacetMediaView: View {
     @State private var generation = UUID()
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 20) {
                 Text("同" + (facet.kind == .tag ? "标签" : "类型") + "作品 · 共 \(total) 部").font(.subheadline).foregroundStyle(GlideTheme.muted)
                 LazyVGrid(columns: dynamicTypeSize.isAccessibilitySize ? [GridItem(.flexible())] : [GridItem(.adaptive(minimum: horizontalSizeClass == .compact ? 104 : 140), spacing: 12)], spacing: 18) {
                     ForEach(items) { item in
@@ -698,7 +695,7 @@ struct SimilarMediaSection: View {
             if let error {
                 Text(error).font(.caption).foregroundStyle(GlideTheme.muted)
                 Button("重新获取推荐") { Task { await load(refresh: true) } }
-            } else if loaded && items.isEmpty { Text("Jellyfin 暂无相似作品推荐。 ").font(.subheadline).foregroundStyle(GlideTheme.muted) }
+            } else if loaded && items.isEmpty { Text("服务器暂无相似作品推荐。 ").font(.subheadline).foregroundStyle(GlideTheme.muted) }
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(alignment: .top, spacing: 16) {
                     ForEach(items) { related in

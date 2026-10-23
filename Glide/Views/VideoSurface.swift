@@ -14,6 +14,11 @@ struct VideoSurface: UIViewRepresentable {
     var onSeek: (Double) -> Void
     var onSpeedPreset: (Float) -> Void
     var onHUD: (String) -> Void
+    var subtitleSession: SubtitleSession? = nil
+    var secondarySubtitleSession: SubtitleSession? = nil
+    var subtitleClock: (() -> Double?)? = nil
+    var subtitleVideoMatrix = ""
+    var subtitleSourceSize = CGSize(width: 1920, height: 1080)
     func makeUIView(context: Context) -> GestureVideoView { let view = GestureVideoView(); updateUIView(view, context: context); return view }
     func updateUIView(_ view: GestureVideoView, context: Context) {
         switch presentation {
@@ -32,11 +37,21 @@ struct VideoSurface: UIViewRepresentable {
         view.locked = locked
         if view.identity != identity { view.identity = identity; view.resetZoom() }
         view.videoLayer.videoGravity = filled ? .resizeAspectFill : .resizeAspect
+        view.filled = view.videoLayer.player != nil && filled; view.subtitleSourceSize = subtitleSourceSize
+        for (canvas, session) in [(view.assCanvas, subtitleSession), (view.secondaryASSCanvas, secondarySubtitleSession)] {
+            canvas.videoMatrix = subtitleVideoMatrix; canvas.clock = subtitleClock; canvas.sourceSize = subtitleSourceSize; canvas.delay = session?.delay ?? 0
+            canvas.onStatus = { [weak session] warning in session?.message = warning }
+            canvas.configure(session?.ass)
+        }
     }
 }
 
 final class GestureVideoView: UIView, UIGestureRecognizerDelegate {
     let videoLayer = AVPlayerLayer()
+    let assCanvas = ASSCanvasView()
+    let secondaryASSCanvas = ASSCanvasView()
+    var filled = false
+    var subtitleSourceSize = CGSize(width: 1920, height: 1080)
     private var customView: UIView?
     var identity = ""
     var locked = false
@@ -55,6 +70,11 @@ final class GestureVideoView: UIView, UIGestureRecognizerDelegate {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .black; clipsToBounds = true; layer.addSublayer(videoLayer)
+        for canvas in [assCanvas, secondaryASSCanvas] {
+            addSubview(canvas)
+            canvas.videoRect = { [weak self] in self?.subtitleRect ?? .zero }
+            canvas.onRender = { [weak self] in self?.updateAccessibilityValue() }
+        }
         let twoTap = UITapGestureRecognizer(target: self, action: #selector(twoTapped)); twoTap.numberOfTouchesRequired = 2
         let pan = UIPanGestureRecognizer(target: self, action: #selector(panned(_:))); pan.maximumNumberOfTouches = 1
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(_:)))
@@ -77,9 +97,16 @@ final class GestureVideoView: UIView, UIGestureRecognizerDelegate {
         videoLayer.isHidden = view != nil
         setNeedsLayout()
     }
+    private var subtitleRect: CGRect {
+        if customView == nil, !videoLayer.videoRect.isEmpty { return videoLayer.videoRect }
+        let size = subtitleSourceSize
+        guard size.width > 0, size.height > 0 else { return .zero }
+        let scale = filled ? max(bounds.width / size.width, bounds.height / size.height) : min(bounds.width / size.width, bounds.height / size.height)
+        return CGRect(x: (bounds.width - size.width * scale) / 2, y: (bounds.height - size.height * scale) / 2, width: size.width * scale, height: size.height * scale)
+    }
     func resetZoom() { zoom = 1; offset = .zero; panningZoomedContent = false; applyTransform() }
     private func applyTransform() {
-        accessibilityValue = String(format: "缩放 %.1f 倍", zoom)
+        updateAccessibilityValue()
         accessibilityHint = zoom > 1.001
             ? "拖动画面查看放大区域，双指捏合恢复原大小。"
             : "轻点显示播放控制，上下滑动切换视频，左右滑动切换倍速，长按左侧快退、右侧快进。"
@@ -98,7 +125,14 @@ final class GestureVideoView: UIView, UIGestureRecognizerDelegate {
             videoLayer.setAffineTransform(.identity); videoLayer.frame = bounds
             videoLayer.setAffineTransform(transform)
         }
+        for canvas in [assCanvas, secondaryASSCanvas] {
+            canvas.transform = .identity; canvas.frame = bounds; canvas.transform = transform
+        }
         CATransaction.commit()
+    }
+    private func updateAccessibilityValue() {
+        let rendered = assCanvas.presentedLayerCount + secondaryASSCanvas.presentedLayerCount
+        accessibilityValue = String(format: "缩放 %.1f 倍", zoom) + (rendered > 0 ? "，ASS已渲染 \(rendered) 层" : "")
     }
     @objc private func twoTapped() { if !locked { onToggle?() } }
     @objc private func pinched(_ gesture: UIPinchGestureRecognizer) {

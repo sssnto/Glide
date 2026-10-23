@@ -1,0 +1,24 @@
+{
+  "checks" : [
+    "auth:wrong-password-no-source-valid-login-keychain-snapshot",
+    "auth:failed-reconnect-preserves-working-credential",
+    "catalog:official-views-movie-detail-search-authenticated-poster",
+    "catalog:official-pagination-60-plus-remainder-no-duplicates",
+    "catalog:series-season-ordered-episodes-chinese-home-recursion",
+    "native:direct-first-frame-paused-seek-and-play",
+    "native:official-video-copy-hls-first-frame-paused-seek-stop",
+    "tracks:official-alternate-audio-subtitles-off-and-burned-subtitle-frame",
+    "progress:official-start-pause-stop-resume-watched-and-local-favorite",
+    "reuse:manual-series-skip-preserves-pause-imported-subtitle-memory-isolated",
+    "offline:authenticated-original-download-validation-frame-paused-seek",
+    "remove:keychain-source-favorite-progress-and-offline-cleanup"
+  ],
+  "device" : "iPad",
+  "error" : "",
+  "os" : "26.3.1",
+  "passed" : true,
+  "scope" : "Official Emby fixture; production authentication\/catalog\/native playback\/progress\/download\/subtitle\/skip",
+  "stage" : "Emby 验证通过",
+  "timestamp" : "2026-10-20T05:28:10Z",
+  "version" : "1.7.0 (1)"
+}

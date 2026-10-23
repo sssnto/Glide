@@ -1,0 +1,63 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "A517192E-7F4D-4ED6-9ADF-8E7E513C6913",
+        "deviceName" : "Glide App Store iPad",
+        "modelName" : "iPad Pro (12.9-inch) (6th generation)",
+        "osBuildNumber" : "23D8133",
+        "osVersion" : "26.3.1",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 2,
+      "passedTests" : 0,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "GlideCompatibilityQA · Built with macOS 27.0.1",
+  "expectedFailures" : 0,
+  "failedTests" : 2,
+  "finishTime" : 1792480226.809,
+  "passedTests" : 0,
+  "result" : "Failed",
+  "runtimeWarnings" : [
+    {
+      "issueType" : "Runtime Warning",
+      "message" : "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+    }
+  ],
+  "skippedTests" : 0,
+  "startTime" : 1792480138.848,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "Failed to tap \"subtitles.primary.sidecar.paired.zh-Hans.srt\" Button: No matches found for Elements matching predicate '\"subtitles.primary.sidecar.paired.zh-Hans.srt\" IN identifiers' from input {(\n    Button, label: 'Sheet Grabber', value: Half screen,\n    Button, identifier: 'chevron.down', label: '返回片库',\n    Button, identifier: 'lock.open', label: '锁定触控',\n    Button, identifier: 'ellipsis', label: '播放设置',\n    Button, identifier: 'backward.end.fill', label: '上一个视频',\n    Button, identifier: 'gobackward.10', label: '快退 10 秒',\n    Button, identifier: 'play.fill', label: '播放',\n    Button, identifier: 'goforward.10', label: '快进 10 秒',\n    Button, identifier: 'forward.end.fill', label: '下一个视频', Disabled,\n    Button, identifier: 'player.mode', label: '顺序播放',\n    Button, identifier: 'player.quick.speed', label: '播放速度',\n    Button, identifier: 'player.quick.audio', label: '音轨', value: 无可切换音轨, Disabled,\n    Button, identifier: 'player.quick.subtitle', label: '字幕', value: 关闭,\n    Button, identifier: 'player.rotate', label: '切换横屏',\n    Button,\n    Button, Disabled,\n    Button,\n    Button, label: 'Hide Sidebar',\n    Button, identifier: 'subtitles.done', label: '完成',\n    Button, identifier: 'links.open', label: '链接与 STRM',\n    Button, identifier: 'pins.open', label: '固定目录',\n    Button, identifier: 'sources.open', label: '双字幕原创验证',\n    Button, identifier: 'directory.refresh', label: '刷新本目录',\n    Button, label: '媒体', Selected,\n    Button, label: '目录',\n    Button, identifier: 'directory.pin', label: '固定此目录',\n    Button, identifier: 'library.scope', label: '浏览范围：包含子目录',\n    Button, identifier: 'library.sort', label: '视频排序：名称升序',\n    Button, identifier: 'heart', label: '只看收藏',\n    Button, identifier: 'directory.play', label: '播放全部',\n    Button,\n    Button,\n    Button, identifier: 'list.number', label: '顺序播放', Selected,\n    Button, identifier: 'shuffle', label: '随机播放',\n    Button, identifier: 'video.BE42D4C6-AD9C-4993-9691-B11E27860ED4:local:manual.mp4', label: '视频, manual.mp4, DualSubtitleFixture',\n    Button, identifier: 'video.BE42D4C6-AD9C-4993-9691-B11E27860ED4:local:other/paired.mp4', label: '视频, paired.mp4, DualSubtitleFixture',\n    Button, identifier: 'video.BE42D4C6-AD9C-4993-9691-B11E27860ED4:local:paired.mp4', label: '视频, paired.mp4, DualSubtitleFixture',\n    Button, identifier: 'subtitles.primary.import', label: '导入主字幕…',\n    Button, identifier: 'subtitles.primary.candidates', label: '选择同目录字幕',\n    Button, identifier: 'subtitles.secondary.import', label: '导入第二字幕…', Disabled,\n    Button, identifier: 'subtitles.secondary.candidates', label: '选择同目录字幕', Disabled,\n    Button,\n    Button, Disabled,\n    Button, identifier: 'Decrement', label: '底部距离：12%, Decrement', value: 12,\n    Button, identifier: 'Increment', label: '底部距离：12%, Increment', value: 12,\n    Button, identifier: 'subtitles.secondary.scale-Decrement', label: '第二字幕字号：85%, Decrement', value: 85,\n    Button, identifier: 'subtitles.secondary.scale-Increment', label: '第二字幕字号：85%, Increment', value: 85\n)}\nPossibly caused by runtime issues:\nAutomation type mismatch: computed Button from legacy attributes vs PopUpButton from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 14;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 1108101562369;\n}\nAutomation type mismatch: computed Button from legacy attributes vs PopUpButton from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 14;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 1108101562625;\n}\nSee test report attachments for more detail.",
+      "targetName" : "GlideUITests",
+      "testIdentifier" : 1,
+      "testIdentifierString" : "GlideUITests/testDualSubtitleControlsOffsetsAndRestart()",
+      "testIdentifierURL" : "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleControlsOffsetsAndRestart",
+      "testName" : "testDualSubtitleControlsOffsetsAndRestart()"
+    },
+    {
+      "failureText" : "XCTAssertEqual failed: (\"双字幕验证未完成\") is not equal to (\"双字幕验证通过\")",
+      "targetName" : "GlideUITests",
+      "testIdentifier" : 2,
+      "testIdentifierString" : "GlideUITests/testDualSubtitleProductionProbe()",
+      "testIdentifierURL" : "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleProductionProbe",
+      "testName" : "testDualSubtitleProductionProbe()"
+    }
+  ],
+  "title" : "Test - GlideCompatibilityQA",
+  "topInsights" : [
+
+  ],
+  "totalTestCount" : 2
+}

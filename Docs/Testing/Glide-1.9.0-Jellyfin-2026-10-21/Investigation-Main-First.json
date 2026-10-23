@@ -1,0 +1,75 @@
+{
+  "context" : {
+    "explicitEpisodeMatched" : true,
+    "jellyfinSourceCount" : 2,
+    "matchedDiagnosticFormat" : true,
+    "recentCandidateCount" : 28,
+    "recentFormats" : [
+      {
+        "codec" : "hevc",
+        "dvProfile" : 8,
+        "height" : 2160,
+        "range" : "DOVIWithHDR10",
+        "width" : 3840
+      }
+    ],
+    "sourceBitrate" : 12515901,
+    "sourceCodec" : "hevc",
+    "sourceDvProfile" : 8,
+    "sourceRange" : "DOVIWithHDR10",
+    "sourceTransfer" : "smpte2084"
+  },
+  "results" : [
+    {
+      "actualTime" : 0,
+      "delivery" : "videoConversion",
+      "elapsedSeconds" : 8.1630399166606367,
+      "errors" : [
+        {
+          "code" : -12927,
+          "domain" : "CoreMediaErrorDomain"
+        }
+      ],
+      "firstHDRVariantRequested" : false,
+      "frameReady" : false,
+      "output" : {
+
+      },
+      "requestedCodec" : "hevc",
+      "route" : "automatic"
+    },
+    {
+      "negotiationErrors" : [
+        {
+          "code" : 3,
+          "domain" : "GlideTransportError"
+        }
+      ],
+      "route" : "compatible"
+    },
+    {
+      "actualTime" : 0,
+      "delivery" : "videoConversion",
+      "elapsedSeconds" : 5.0949674999574199,
+      "errors" : [
+        {
+          "code" : -12927,
+          "domain" : "CoreMediaErrorDomain"
+        }
+      ],
+      "firstHDRVariantRequested" : false,
+      "frameReady" : false,
+      "output" : {
+
+      },
+      "requestedCodec" : "h264",
+      "requestedRange" : "SDR",
+      "route" : "hd1080"
+    }
+  ],
+  "scope" : "Authorized in-app recent-item metadata and short real AVPlayer trials; no credentials, host, URL, title, item identifier or media bytes exported",
+  "stage" : "Jellyfin 原片诊断完成",
+  "system" : "27.0",
+  "timestamp" : "2026-10-21T00:55:10Z",
+  "version" : "1.9.0 (2)"
+}

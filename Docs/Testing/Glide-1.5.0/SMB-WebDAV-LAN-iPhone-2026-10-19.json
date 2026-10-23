@@ -1,0 +1,79 @@
+{
+  "checks": [
+    "lan:webdav-save-browse-native-play-seek",
+    "lan:source-save-browse-keychain",
+    "lan:1000-entries-three-levels",
+    "lan:range-read",
+    "lan:play-seek-pause:1080p.mp4",
+    "lan:play-seek-pause:11-hd-dual-ass.mkv",
+    "lan:play-seek-pause:4k-hevc.mp4",
+    "lan:play-seek-pause:特殊 @+ &%#.mp4"
+  ],
+  "device": "iPhone",
+  "diagnostic": {
+    "accessLogBytesTransferred": 58319,
+    "attemptSeconds": [
+      0.7203389406204224
+    ],
+    "bufferedAheadSeconds": 0,
+    "bufferingCount": 0,
+    "bufferingSeconds": 0,
+    "delivery": "原画直放",
+    "device": "iPhone14,3",
+    "events": [
+      "attempt_automatic",
+      "engine_vlc",
+      "resource_ready_direct",
+      "first_frame",
+      "vlc_output_color_not_verified"
+    ],
+    "firstFrameSeconds": 0.7203389406204224,
+    "localMedia": {
+      "audioCodecs": [],
+      "audioTracks": 0,
+      "container": "unknown",
+      "subtitleTracks": 0,
+      "videoCodec": "h264",
+      "videoTracks": 1
+    },
+    "originalTransportAttempts": 0,
+    "outputHeight": 854,
+    "outputWidth": 480,
+    "playerReadySeconds": 0.18973398208618164,
+    "recoveryCount": 0,
+    "requestedQuality": "automatic",
+    "resourceReadySeconds": 0.08354496955871582,
+    "schema": 9,
+    "session": "4D2A79B8-B20C-40F6-8FAF-2ED3FB9552B1",
+    "state": "已暂停",
+    "system": "27.0",
+    "totalFirstFrameSeconds": 0.7203580141067505,
+    "version": "1.5.0 (2)"
+  },
+  "error": "",
+  "measurements": {
+    "fileBytes:4k-hevc.mp4": 91357974,
+    "fileBytes:11-hd-dual-ass.mkv": 27916261,
+    "fileBytes:1080p.mp4": 27198085,
+    "fileBytes:特殊 @+ &%#.mp4": 58319,
+    "firstFrame:4k-hevc.mp4": 0.7410531250061467,
+    "firstFrame:11-hd-dual-ass.mkv": 1.1543293750146404,
+    "firstFrame:1080p.mp4": 1.1600581665989012,
+    "firstFrame:WebDAV": 0.2093350833747536,
+    "firstFrame:特殊 @+ &%#.mp4": 0.7362632083240896,
+    "readBytesAtFirstFrame:4k-hevc.mp4": 6029312,
+    "readBytesAtFirstFrame:11-hd-dual-ass.mkv": 14156486,
+    "readBytesAtFirstFrame:1080p.mp4": 11796480,
+    "readBytesAtFirstFrame:特殊 @+ &%#.mp4": 58319,
+    "seekTime:4k-hevc.mp4": 42.049,
+    "seekTime:11-hd-dual-ass.mkv": 42.0161,
+    "seekTime:1080p.mp4": 42.016799999999996,
+    "seekTime:特殊 @+ &%#.mp4": 8.399999999999999
+  },
+  "os": "27.0",
+  "passed": true,
+  "scope": "Authored Samba over LAN; production provider, controller and rendered VideoSurface",
+  "stage": "SMB 局域网真机验证通过",
+  "timestamp": "2026-10-19T05:38:33Z",
+  "version": "1.5.0 (2)"
+}

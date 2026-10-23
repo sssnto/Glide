@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-22",
+  "version": "1.9.0 (6)",
+  "device": "iPhone 13 Pro Max",
+  "system": "27.0",
+  "builds": {
+    "Device-Final-Build.log": "passed",
+    "Device-Visual-Build.log": "passed",
+    "Release-Build.log": "passed"
+  },
+  "coreTests": {
+    "xctest": 7,
+    "swiftTesting": 164,
+    "total": 171,
+    "failures": 0,
+    "addedSubtitlePolicyTests": 5
+  },
+  "deviceChecks": [
+    "automatic-default-client-caption-loaded",
+    "pause-freezes-clock",
+    "paused-seek-keeps-clock-and-pause",
+    "caption-active-at-real-clock",
+    "off-clears-overlay-without-reopening-video",
+    "reenable-restores-caption-with-session-clock-and-pause",
+    "resume-advances-original-video-session",
+    "subtitle-restores-after-player-reopen"
+  ],
+  "physicalVisual": {
+    "passed": true,
+    "actualTime": 16.185,
+    "captionLanguageObserved": "English",
+    "sharedProductionOverlay": true,
+    "privateScreenshotInRepository": false,
+    "privateScreenshotSHA256": "91566f543e5d79f8c23ec402a374794495f27b76f3454d27ca006c543aa0e85a"
+  },
+  "sourceSubtitleCount": 1,
+  "clientSubtitleCueCount": 870,
+  "globalSubtitleOff": false,
+  "originalSubtitleMemoryRestored": true,
+  "recordsProgress": false,
+  "normalLaunchRestored": true,
+  "limitations": [
+    "No full physical touch automation acceptance; prior code 74 remains outside this subtitle check.",
+    "No Chinese subtitle returned for this episode during the inspection.",
+    "No new archive, store upload, tag, commit or push performed."
+  ],
+  "attempts": [
+    {
+      "report": "Baseline.json",
+      "outcome": "Reproduced: one default SubRip; zero loaded cues."
+    },
+    {
+      "report": "Initial-Fix-20261022.json",
+      "outcome": "Loaded 870 cues; diagnostic expected Chinese content and stopped. Actual track was untagged English; corrected only the diagnostic expectation."
+    },
+    {
+      "report": "First-Completed-Run.json",
+      "outcome": "8/8 checks passed; initial screen preview not yet conclusive."
+    },
+    {
+      "outcome": "Intermediate visual trial backgrounded while user operated NAS app; not counted as acceptance."
+    },
+    {
+      "report": "Final-Verified.json",
+      "outcome": "8/8 passed; default captions visible in physical screen preview; original memory restored."
+    }
+  ]
+}

@@ -16,6 +16,12 @@ struct PersonalLibraryView: View {
         NavigationStack {
             List {
                 Section {
+                    NavigationLink { MomentLibraryView(library: library) } label: {
+                        Label("时刻收藏", systemImage: "bookmark")
+                            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
+                    }.accessibilityIdentifier("personal.moments")
+                }
+                Section {
                     Picker("个人片库", selection: $favorites) {
                         Text("继续观看").tag(false)
                         Text("我的收藏").tag(true)
@@ -55,7 +61,7 @@ struct PersonalLibraryView: View {
                 }.onDelete { indices in indices.map { entries[$0] }.forEach(remove) }
 
             }.scrollContentBackground(.hidden).background(GlideTheme.background)
-                .font(GlideTheme.Typography.body).navigationTitle("继续与收藏").navigationBarTitleDisplayMode(.inline)
+                .font(GlideTheme.Typography.body).navigationTitle("我的片库").navigationBarTitleDisplayMode(.inline)
                 .task { await library.refreshContinueWatching() }
                 .refreshable { await library.refreshContinueWatching(refresh: true) }
                 .toolbar {
@@ -74,5 +80,5 @@ struct PersonalLibraryView: View {
         }
         return video
     }
-    private func sourceName(_ video: Video) -> String { library.servers.first { $0.id == video.sourceID }?.name ?? "离线演示" }
+    private func sourceName(_ video: Video) -> String { video.streamLinkID != nil ? "链接播放" : library.servers.first { $0.id == video.sourceID }?.name ?? "离线演示" }
 }

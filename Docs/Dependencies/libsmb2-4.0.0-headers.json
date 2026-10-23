@@ -1,0 +1,16 @@
+{
+  "component": "libsmb2",
+  "version": "4.0.0",
+  "source": "https://github.com/sahlberg/libsmb2/tree/v4.0.0",
+  "archiveURL": "https://codeload.github.com/sahlberg/libsmb2/tar.gz/refs/tags/v4.0.0",
+  "archiveSHA256": "b4d1b13bc07adc68379a72f723b9032a950afd62fed7f2aa3e57f3421406da11",
+  "license": "LGPL-2.1-or-later",
+  "binary": "Reuses exported symbols in pinned official MobileVLCKit 3.7.3; no second SMB binary linked",
+  "versionEvidence": "https://github.com/videolan/vlc/blob/79128878/contrib/src/smb2/rules.mak",
+  "headers": {
+    "smb2/libsmb2-dcerpc-srvsvc.h": "cfb99b38adbf98ad75a385853d9352e663c6e340f918432ccf0377e4cf1a26df",
+    "smb2/libsmb2.h": "abfe115a23a1448dd78d0bc89652be64d925e17a6e3c15a824316963fd3c5943",
+    "smb2/smb2-errors.h": "fd107270a4358f1decb8ac57ee784ad846b5a57d9e9f9063bf278af264f99fb1",
+    "smb2/smb2.h": "5389471ea3224b9d5774458665edde20e67bb4acc62678d921a5d0b03c3bb71d"
+  }
+}

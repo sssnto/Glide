@@ -56,7 +56,15 @@ struct CatalogItem: Codable, Identifiable, Equatable {
     struct Source: Codable, Identifiable, Equatable {
         var Id: String; var Name: String?; var Container: String?; var Size: Int64?; var MediaStreams: [Stream]?
         var Path: String?
+        var MediaAttachments: [Attachment]?
         var id: String { Id }
+    }
+    struct Attachment: Codable, Equatable {
+        var Index: Int; var FileName: String?; var MimeType: String?; var Codec: String?
+        var isFont: Bool {
+            let ext = ((FileName ?? "") as NSString).pathExtension.lowercased()
+            return ["ttf", "otf", "ttc", "woff", "woff2"].contains(ext) || ["ttf", "otf"].contains(Codec?.lowercased() ?? "") || (MimeType?.lowercased().contains("font") == true)
+        }
     }
     struct Stream: Codable, Identifiable, Equatable {
         var Index: Int; var `Type`: String; var DisplayTitle: String?; var Language: String?; var Codec: String?; var IsDefault: Bool?; var IsForced: Bool?; var Width: Int?; var Height: Int?; var BitDepth: Int?; var Profile: String?; var Level: Double?; var CodecTag: String?
@@ -100,6 +108,7 @@ struct TrackSelection: Equatable {
     var audioIndex: Int?
     /// nil: server default; -1: explicitly off.
     var subtitleIndex: Int?
+    var needsSourceBinding: Bool { mediaSourceID == nil && (audioIndex != nil || subtitleIndex != nil) }
     var requiresServerSelection: Bool { audioIndex != nil || (subtitleIndex != nil && subtitleIndex != -1) }
     func apply(to body: inout [String: Any]) {
         body["MediaSourceId"] = mediaSourceID

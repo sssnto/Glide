@@ -14,7 +14,7 @@ actor MediaCache {
         root = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("GlideMediaCache-v1")
         memory.totalCostLimit = 32 * 1024 * 1024
     }
-    static func scope(_ server: MediaServer) -> String { server.id.uuidString + "-" + (server.userID ?? "dav") }
+    static func scope(_ server: MediaServer) -> String { server.id.uuidString + "-" + server.kind.rawValue + "-" + (server.userID ?? "dav") }
     private func file(scope: String, key: String) -> URL {
         let hash = SHA256.hash(data: Data(key.utf8)).map { String(format: "%02x", $0) }.joined()
         return root.appendingPathComponent(scope).appendingPathComponent(hash)
@@ -72,7 +72,8 @@ actor ArtworkCache {
         if let value = decoded.object(forKey: key as NSString) { return value }
         guard let credential = Credentials.read(server.id) else { throw MediaError.message("请重新登录。") }
         let data = try await MediaCache.shared.data(scope: MediaCache.scope(server), key: "art:" + url.absoluteString + version, ttl: 7 * 86400) {
-            let header = server.kind == .jellyfin ? MediaClient.shared.authorization(credential) : MediaClient.shared.basic(server: server, password: credential)
+            if server.kind == .smb { return try await SMBSourceProvider.image(server: server, url: url) }
+            let header = server.kind.isCatalogSource ? MediaClient.shared.authorization(credential, server: server) : MediaClient.shared.basic(server: server, password: credential)
             let data = try await MediaClient.shared.request(url, headers: ["Authorization": header])
             if server.kind == .webDAV && data.count > 16 * 1024 * 1024 { throw MediaError.message("预览图片过大。") }
             return data
@@ -100,10 +101,10 @@ actor ArtworkCache {
 
 extension MediaClient {
     func cached<T: Codable>(_ type: T.Type, server: MediaServer, path: String, query: [String: String] = [:], refresh: Bool = false) async throws -> T {
-        guard let token = Credentials.read(server.id) else { throw MediaError.message("请重新登录 Jellyfin。") }
+        guard let token = Credentials.read(server.id) else { throw MediaError.message("请重新登录 \(server.kind.title)。") }
         let url = ServerURL.endpoint(server.address, path, query: query)
         let data = try await MediaCache.shared.data(scope: MediaCache.scope(server), key: "metadata:" + url.absoluteString, ttl: 900, refresh: refresh) {
-            let raw = try await self.request(url, headers: ["Authorization": self.authorization(token)])
+            let raw = try await self.request(url, headers: ["Authorization": self.authorization(token, server: server)])
             // Decode/re-encode known display fields, excluding server paths and stream credentials.
             return try JSONEncoder().encode(JSONDecoder().decode(T.self, from: raw))
         }

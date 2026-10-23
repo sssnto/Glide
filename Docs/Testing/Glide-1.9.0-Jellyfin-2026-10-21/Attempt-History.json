@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-21",
+  "scope": "Only authorized redacted main-app Jellyfin episode reports. No private account library state exported.",
+  "attempts": [
+    {
+      "report": "Production-Captions-Controls-First.json",
+      "accepted": false,
+      "reason": "Selected HLS text subtitle preparation timed out before first frame."
+    },
+    {
+      "report": "Production-Client-Captions-First.json",
+      "accepted": false,
+      "reason": "823 client Chinese cues and 4K PQ frame; controls only 3/4, resume did not advance within check."
+    },
+    {
+      "report": "Production-Final-Candidate.json",
+      "accepted": true,
+      "scope": "Jellyfin candidate route, 5/5 controls; before per-attempt diagnostic cleanup and Emby guard."
+    },
+    {
+      "report": "Production-Diagnostic-Reset-Pass.json",
+      "accepted": true,
+      "scope": "Jellyfin route after diagnostic cleanup, 5/5 controls; before Emby-only Drop guard."
+    },
+    {
+      "report": "Production-iPhone-Final.json",
+      "accepted": true,
+      "scope": "Frozen final source including Emby-only Drop guard; main app updated after user reconnect; 4K PQ, 823 Chinese cues and 5/5 controls.",
+      "firstFrameSeconds": 5.959033966064453,
+      "timestamp": "2026-10-21T04:13:23Z"
+    }
+  ],
+  "finalSourceDeviceInstall": {
+    "installed": true,
+    "verified": true,
+    "logs": [
+      "Logs/Device-Install-Final.log",
+      "Logs/Device-Launch-Final.log",
+      "Logs/Device-Normal-Launch-Final.log"
+    ],
+    "waitingForUserConnection": false,
+    "previousConnectivityFailure": {
+      "reason": "CoreDevice 4016, paired device tunnel unavailable",
+      "logs": [
+        "Logs/Device-Install-Connectivity-Failure.log",
+        "Logs/Device-Install-Retry-Failure.log"
+      ]
+    },
+    "normalLaunchSucceeded": true,
+    "snapshot": "Source-Snapshot.json"
+  },
+  "validationExclusions": [
+    "Early raw engine probes repeatedly invoked play; some disabled cellular access or lacked normal audio setup. They are diagnostic comparisons, not production startup acceptance.",
+    "Not a full-episode, manual audio, full Dolby Vision display, PiP/AirPlay subtitle or all-format matrix."
+  ]
+}

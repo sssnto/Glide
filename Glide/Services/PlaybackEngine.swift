@@ -39,6 +39,7 @@ enum PlaybackEngineEvent {
     var descriptor: PlaybackEngineDescriptor { get }
     var presentation: PlaybackPresentation { get }
     var snapshot: PlaybackEngineSnapshot { get }
+    var subtitleClock: Double? { get }
     var tracks: [PlaybackTrack] { get }
     var selectedAudioID: String? { get }
     var selectedSubtitleID: String? { get }
@@ -55,3 +56,5 @@ enum PlaybackEngineEvent {
     func preview(at: Double) async -> UIImage?
     func stop()
 }
+
+@MainActor extension PlaybackEngine { var subtitleClock: Double? { snapshot.time } }

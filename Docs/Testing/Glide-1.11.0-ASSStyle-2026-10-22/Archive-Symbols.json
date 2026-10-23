@@ -1,0 +1,19 @@
+{
+  "archive": "/private/tmp/Glide1110-ASSStyle/Glide-1.11.0-3-ASS.xcarchive",
+  "passed": true,
+  "coverage": [
+    {
+      "binary": "Products/Applications/Glide.app/Glide",
+      "architecture": "arm64",
+      "uuid": "7F71DCA7-632A-3805-921F-366A05686321",
+      "dSYM": "dSYMs/Glide.app.dSYM"
+    },
+    {
+      "binary": "Products/Applications/Glide.app/Frameworks/MobileVLCKit.framework/MobileVLCKit",
+      "architecture": "arm64",
+      "uuid": "99DC0B74-A3D1-3ED3-AC1F-2B8FC6A452A3",
+      "dSYM": "dSYMs/MobileVLCKit.framework.dSYM"
+    }
+  ],
+  "repairedMobileVLCKit": false
+}

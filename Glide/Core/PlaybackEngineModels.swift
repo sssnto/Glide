@@ -2,11 +2,12 @@ import Foundation
 
 enum PlaybackEngineID: String, Codable, Sendable { case avPlayer, vlc }
 
-/// A saved local preference must never send a remote or authenticated resource
-/// to an adapter that only implements local file access.
+/// A local preference never selects compatibility for a generic network URL.
+/// SMB must arrive through the separately verified source contract.
 enum PlaybackEngineSelection {
-    static func resolve(preferred: PlaybackEngineID, localFile: Bool, hasHeaders: Bool) -> PlaybackEngineID {
-        localFile && !hasHeaders ? preferred : .avPlayer
+    static func resolve(preferred: PlaybackEngineID, localFile: Bool, hasHeaders: Bool, smb: Bool = false) -> PlaybackEngineID {
+        if smb && !hasHeaders { return .vlc }
+        return localFile && !hasHeaders ? preferred : .avPlayer
     }
 }
 

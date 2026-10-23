@@ -7,8 +7,8 @@ enum SourceCapability: String, Codable, Hashable, Sendable {
 extension SourceKind {
     var capabilities: Set<SourceCapability> {
         switch self {
-        case .jellyfin: [.catalog, .directories, .recursiveQueue, .credentials, .download, .progressReporting]
-        case .webDAV: [.directories, .recursiveQueue, .credentials]
+        case .jellyfin, .emby: [.catalog, .directories, .recursiveQueue, .credentials, .download, .progressReporting]
+        case .webDAV, .smb: [.directories, .recursiveQueue, .credentials]
         case .local: [.directories, .recursiveQueue]
         }
     }

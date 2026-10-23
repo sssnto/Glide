@@ -2,6 +2,26 @@ import Foundation
 import Testing
 @testable import GlideCore
 
+@Test func hdrCopyPreferenceRequiresTransportOnlyReasons() {
+    let url = URL(string: "https://fixture.invalid/master.m3u8?VideoCodec=h264,hevc&AudioCodec=aac&SubtitleMethod=Drop&SubtitleStreamIndex=-1&TranscodeReasons=ContainerNotSupported,AudioCodecNotSupported&PlaySessionId=session")!
+    let copy = OriginalTransportPolicy.preferredHDRCopyURL(url, sourceCodec: "hevc", hdr: true, bitrate: 14_000_000)
+    #expect(copy.map { NativeColorPolicy.outputOptions($0).codec } == "copy")
+    #expect(copy?.absoluteString.contains("PlaySessionId=session") == true)
+    #expect(OriginalTransportPolicy.preferredHDRCopyURL(url, sourceCodec: "hevc", hdr: false, bitrate: 14_000_000) == nil)
+    #expect(OriginalTransportPolicy.preferredHDRCopyURL(url, sourceCodec: "hevc", hdr: true, bitrate: 210_000_000) == nil)
+    #expect(OriginalTransportPolicy.preferredHDRCopyURL(url, sourceCodec: "hevc", hdr: true, bitrate: nil) == nil)
+}
+@Test func hdrCopyPreferenceDoesNotBypassEncodingOrBurnRequirements() {
+    for reason in ["VideoCodecNotSupported", "VideoRangeTypeNotSupported", "ContainerBitrateExceedsLimit", "SubtitleCodecNotSupported", "UnknownReason"] {
+        let url = URL(string: "https://fixture.invalid/master.m3u8?VideoCodec=hevc&TranscodeReasons=ContainerNotSupported," + reason)!
+        #expect(OriginalTransportPolicy.preferredHDRCopyURL(url, sourceCodec: "hevc", hdr: true, bitrate: 14_000_000) == nil)
+    }
+    let burn = URL(string: "https://fixture.invalid/master.m3u8?VideoCodec=hevc&SubtitleMethod=Encode&SubtitleStreamIndex=3&TranscodeReasons=ContainerNotSupported")!
+    #expect(OriginalTransportPolicy.preferredHDRCopyURL(burn, sourceCodec: "hevc", hdr: true, bitrate: 14_000_000) == nil)
+    let deny = URL(string: "https://fixture.invalid/master.m3u8?VideoCodec=hevc&AllowVideoStreamCopy=false&TranscodeReasons=ContainerNotSupported")!
+    #expect(OriginalTransportPolicy.preferredHDRCopyURL(deny, sourceCodec: "hevc", hdr: true, bitrate: 14_000_000) == nil)
+}
+
 @Test func jellyfinCodecCandidateURLIsExplicitlyConstrainedToVideoCopy() throws {
     let url = URL(string: "https://fixture.invalid/jellyfin/Videos/id/master.m3u8?api_key=secret&VideoCodec=h264,hevc&AudioCodec=aac&MediaSourceId=version&PlaySessionId=session&AllowVideoStreamCopy=true")!
     let copy = try OriginalTransportPolicy.videoCopyURL(url, sourceCodec: "h264")
@@ -85,11 +105,11 @@ import Testing
     #expect(!recovery.pending && !returnedAfterFrame)
 }
 
-@Test func originalTransportNegotiationForbidsVideoEncoding() {
+@Test func originalTransportNegotiationAllowsHLSTransportWithCopyValidation() {
     let body = JellyfinPlaybackPolicy.body(userID: "fixture-user", quality: .compatible)
     #expect(body["EnableDirectPlay"] as? Bool == false)
     #expect(body["EnableDirectStream"] as? Bool == true)
-    #expect(body["EnableTranscoding"] as? Bool == false)
+    #expect(body["EnableTranscoding"] as? Bool == true)
     #expect(body["AllowVideoStreamCopy"] as? Bool == true)
     #expect(body["MaxStreamingBitrate"] as? Int == 200_000_000)
 }

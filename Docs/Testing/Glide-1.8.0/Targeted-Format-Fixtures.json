@@ -1,0 +1,15 @@
+{
+  "installedDirectory": "Library/Application Support/FormatFixtures",
+  "files": [
+    {
+      "name": "11-hd-dual-ass.mkv",
+      "bytes": 27916261,
+      "sha256": "c47dfb471957e228bfc4cc1cbf29351b3c07665e91f5903f5461d57c1bb351be"
+    },
+    {
+      "name": "08-multi-track.mp4",
+      "bytes": 1454515,
+      "sha256": "2360efee31db3f0ac6828e7a39c14a011eabcbdaab49d6a3a35337bb1ab238ec"
+    }
+  ]
+}

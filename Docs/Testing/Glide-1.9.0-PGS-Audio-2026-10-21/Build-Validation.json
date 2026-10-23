@@ -1,0 +1,115 @@
+{
+  "finalizedUTC": "2026-10-21T09:14:17.415183+00:00",
+  "appVersion": "1.9.0",
+  "build": "4",
+  "repositoryHEAD": "fb8877408059b8e4a5690cbd77f4d89ca94b6817",
+  "workingTreeHasUncommittedChanges": true,
+  "acceptanceStatus": "passed for Jellyfin PGS client rendering and in-play server audio switching; scoped real episode, UI, shared regressions, core and Release",
+  "publicReleaseAcceptance": false,
+  "sourceSnapshot": "Source-Snapshot.json",
+  "sourceFileCount": 114,
+  "coreTests": {
+    "passed": 166,
+    "failed": 0,
+    "swiftTesting": 159,
+    "xctest": 7,
+    "pgsTests": 6,
+    "log": "Logs/Core-Final.log"
+  },
+  "simulator": {
+    "system": "26.3.1",
+    "finalBatch": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "summary": "UI-Final-Summary.json",
+      "cases": [
+        "PGS and audio switch during playback",
+        "server subtitle switch/off/reenable",
+        "official Emby production probe"
+      ]
+    },
+    "dualSubtitleProduction": "passed individually in UI-Attempt2-Summary.json; same production source, later changes only UI synchronization",
+    "originalFixtureMetrics": "Original-Fixture-Metrics.json",
+    "screenshot": "Screenshots/PGS-With-Alternate-Audio.png"
+  },
+  "physical": {
+    "report": "Production-iPhone-Final.json",
+    "timestamp": "2026-10-21T08:57:54Z",
+    "app": "main Glide",
+    "model": "iPhone 13 Pro Max",
+    "system": "27.0",
+    "server": "Jellyfin 12.2.0",
+    "explicitAuthorizedEpisodeMatched": true,
+    "checksPassed": 20,
+    "textSwitchChecks": 9,
+    "pgsAudioChecks": 11,
+    "pgsCompressedBytes": 21253852,
+    "pgsCueCount": 955,
+    "originalAudioCount": 2,
+    "sourceAudioFormats": [
+      {
+        "codec": "eac3",
+        "index": 1,
+        "language": "eng"
+      },
+      {
+        "codec": "eac3",
+        "index": 2,
+        "language": "zho"
+      }
+    ],
+    "subtitleMemoryRestored": true,
+    "progressRecorded": false,
+    "normalLaunchSucceeded": true,
+    "hostCredentialsOrMediaExported": false
+  },
+  "release": {
+    "archive": "/tmp/Glide190/Glide-1.9.0-4.xcarchive",
+    "archiveSucceeded": true,
+    "preflightPassed": true,
+    "strictSignaturePassed": true,
+    "symbolsPassed": true,
+    "qaFlagsAbsent": true,
+    "uploaded": false,
+    "appBinarySHA256": "61b57102a9ab777fde71539756f4a5a2bf67957c1194738a4cb6c4d9363b0ca6",
+    "mobileVLCBinarySHA256": "ea038f019b0c9fe2cad49cf37015d06d738e64a2329d7274078b074965bc74e6"
+  },
+  "boundaries": [
+    "PGS extraction verified on Jellyfin 12.2.0; server must provide original track",
+    "PGS binary <=64 MiB, canvas <=4096x2160, lazy image decoding in client",
+    "No bitmap OCR/transcript/text styles; Emby bitmap subtitles still server processed",
+    "Client overlays are app-local; no claim of PiP/AirPlay subtitles",
+    "No full-episode, seamless audio switching or universal DV display claim; PGS reopen first frame 18.48 sec in final probe"
+  ],
+  "history": "Attempt-History.json",
+  "oldEvidenceVerifiedUnchanged": [
+    "Glide-1.9.0",
+    "Glide-1.9.0-Jellyfin-2026-10-21",
+    "Glide-1.9.0-Subtitle-Switch-2026-10-21"
+  ],
+  "gitPushed": false,
+  "gitTagCreated": false,
+  "evidenceSHA256": {
+    "Archive-Symbols.json": "a0a0647f3eb2bcb44c03eeae4d8d15c5c919b6b3444cda0b1873a52b332f4bc6",
+    "Attempt-History.json": "fb2d94c8c2fe18050d65367700ea38654932ac2a5ae77915f914ab80fc6ac1e7",
+    "Logs/Core-Final.log": "6d90289ae9ee310e9507c3fe62d15f1b24e650e221b093f2fd7b14001c9011d1",
+    "Logs/Device-Build-Final.log": "6b646d2e39d39245cd6c2c7f598c77ac09c230660c25a8a20803ee173f04e4b5",
+    "Logs/Normal-Launch.log": "c50d8e63c32bf9c83239f525b7635740b0745d18ce3c71a5447d2ea0b15ec13c",
+    "Logs/Release-Archive.log": "e213fd39f8fce48444fe9d75bddd77b9b7148ccb48eb1019a153adb8bda9718b",
+    "Logs/Release-Preflight.log": "23f99a146f23ed16606533fd165fe9315146ca383552cdb6f59833d9736d13d0",
+    "Logs/Strict-Signature.log": "b533a4b747ba60d7182333169883cbd969b1877423cb0931b1c84a9421480b3b",
+    "Logs/UI-Attempt1.log": "d952bc82e77209c9edc240304b167f7c3077fe2d072da61b7efdb631dbf5724f",
+    "Logs/UI-Attempt2.log": "8fd0a818f89721e776d4bf0ebc20579de844b35c122087215f04f107d37a696f",
+    "Logs/UI-Final.log": "616d5747257c657585edf7a2328090b0d4cf7e35f66af4f607bbee49168c7afa",
+    "Original-Fixture-Metrics.json": "34494ce19633001adfe9418eea99162e28a81ce3a279f43c0fda50b60dc9dc6b",
+    "Production-iPhone-Attempt1.json": "dbc79c6b2ab3b3b52bfc2ba7e8cb974b56a4f3e50ecc7760456326ab3a3846cf",
+    "Production-iPhone-Final.json": "fac367a5c6aed3f3c588fdb3c89a0c92f7fef07532050ae9f86743e904676811",
+    "README.md": "c62118a8a2b10ebedda6401f2bdeb9cf411080f95c699a2f2a59cf8ce033a62f",
+    "Screenshots/PGS-With-Alternate-Audio.png": "e938edd52257f15fbe029cd01a76c9aa6b40764b51b12b162ecc00e7c0ad186c",
+    "Source-Snapshot.json": "ca1d3fe266edf3b210ec58d7e7db3411bf2869bb032752926810aac3a1d021dc",
+    "UI-Attempt1-Summary.json": "ef8da8b1a4005f699d3237f7c647bbd9ef429050a4f4d0beabbff1f128352c6c",
+    "UI-Attempt2-Summary.json": "ddd39f2c0607a1100fa14c8c53386736fd14ed4481bfaeda93e4480539997089",
+    "UI-Final-Summary.json": "84df1a1315be4e9a8ca47a906106043e50ea186893b45cf951ce33ef87525f3b"
+  }
+}

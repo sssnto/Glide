@@ -1,0 +1,24 @@
+{
+  "checks" : [
+    "strm:managed-link-keychain-reload-no-plaintext-secret",
+    "links:expired-url-refresh-and-replacement-identity",
+    "http:authenticated-range-frame-and-paused-seek",
+    "skip:manual-intro-outro-preserve-pause",
+    "skip:restore-auto-only-playing-once-and-backseek",
+    "hls:frame-paused-seek-and-link-rule-isolation",
+    "http:auth-failure-and-cross-origin-redirect-rejected",
+    "jellyfin:authenticated-segment-endpoint-and-native-playback",
+    "skip:series-rule-and-account-isolation",
+    "jellyfin:missing-endpoint-nonblocking-fallback",
+    "cancel:old-segments-cannot-overwrite-new-video",
+    "links:delete-removes-keychain-and-associated-state"
+  ],
+  "device" : "iPad",
+  "error" : "",
+  "os" : "26.3.1",
+  "passed" : true,
+  "scope" : "Production HTTP\/STRM\/Keychain\/native playback\/skip sessions and authored Jellyfin API",
+  "stage" : "链接与跳过验证通过",
+  "timestamp" : "2026-10-20T06:10:15Z",
+  "version" : "1.7.0 (1)"
+}

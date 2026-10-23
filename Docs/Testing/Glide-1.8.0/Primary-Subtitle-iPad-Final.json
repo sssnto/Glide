@@ -1,0 +1,24 @@
+{
+  "checks" : [
+    "clock:avPlayer-paused-seek-delay",
+    "memory:avPlayer-delay-off-clear",
+    "clock:vlc-paused-seek-delay",
+    "memory:vlc-delay-off-clear",
+    "memory:multi-language-selection-new-session",
+    "identity:same-name-different-directory",
+    "import:managed-copy-after-source-deleted",
+    "import:off-restart-reenable-managed-copy",
+    "invalidated:sidecar-content-change-and-reselect",
+    "invalidated:sidecar-deleted",
+    "invalidated:media-revision-change",
+    "cancel:discovery-import-switch-does-not-cross-video"
+  ],
+  "device" : "iPad",
+  "error" : "",
+  "os" : "26.3.1",
+  "passed" : true,
+  "scope" : "Production local\/native\/VLC subtitle flows",
+  "stage" : "字幕验证通过",
+  "timestamp" : "2026-10-20T08:36:32Z",
+  "version" : "1.8.0 (1)"
+}

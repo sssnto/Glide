@@ -1,0 +1,12 @@
+{
+  "family": "WenQuanYi Micro Hei",
+  "chineseFamily": "文泉驿微米黑",
+  "version": "0.2.0-beta",
+  "source": "https://sourceforge.net/projects/wqy/files/wqy-microhei/0.2.0-beta/wqy-microhei-0.2.0-beta.tar.gz/download",
+  "archiveSHA256": "2802ac8023aa36a66ea6e7445854e3a078d377ffff42169341bd237871f7213e",
+  "fontSHA256": "e4bca8df123ce01b104780f576ea1a58b9a5ff1662a91124b6d3180cb6c88212",
+  "bytes": 5177387,
+  "licenseChoice": "Apache-2.0, unmodified original font; upstream alternatively offers GPLv3 with font embedding exception",
+  "installation": "Managed imported-font copy in Glide only; no system font registration and no app binary changes",
+  "validation": "CoreText recognizes the original two-face font collection"
+}

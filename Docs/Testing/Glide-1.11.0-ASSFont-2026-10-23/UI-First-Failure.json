@@ -1,0 +1,55 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "C35967C8-D815-4F3C-8D7C-9019AB98AF2B",
+        "deviceName" : "Glide App Store iPhone",
+        "modelName" : "iPhone 13 Pro Max",
+        "osBuildNumber" : "23D8133",
+        "osVersion" : "26.3.1",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 1,
+      "passedTests" : 0,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "Glide · Built with macOS 27.0.1",
+  "expectedFailures" : 0,
+  "failedTests" : 1,
+  "finishTime" : 1792717154.928,
+  "passedTests" : 0,
+  "result" : "Failed",
+  "runtimeWarnings" : [
+    {
+      "issueType" : "Runtime Warning",
+      "message" : "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+    }
+  ],
+  "skippedTests" : 0,
+  "startTime" : 1792717016.176,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "XCTAssertFalse failed",
+      "targetName" : "GlideUITests",
+      "testIdentifier" : 1,
+      "testIdentifierString" : "GlideUITests/testOriginalASSStylesNativeAndCompatibility()",
+      "testIdentifierURL" : "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testOriginalASSStylesNativeAndCompatibility",
+      "testName" : "testOriginalASSStylesNativeAndCompatibility()"
+    }
+  ],
+  "title" : "Test - Glide",
+  "topInsights" : [
+
+  ],
+  "totalTestCount" : 1
+}

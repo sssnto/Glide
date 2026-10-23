@@ -1,0 +1,67 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "C35967C8-D815-4F3C-8D7C-9019AB98AF2B",
+        "deviceName" : "Glide App Store iPhone",
+        "modelName" : "iPhone 13 Pro Max",
+        "osBuildNumber" : "23D8133",
+        "osVersion" : "26.3.1",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 2,
+      "passedTests" : 2,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "Glide · Built with macOS 27.0.1",
+  "expectedFailures" : 0,
+  "failedTests" : 2,
+  "finishTime" : 1792661035.205,
+  "passedTests" : 2,
+  "result" : "Failed",
+  "runtimeWarnings" : [
+    {
+      "issueType" : "Runtime Warning",
+      "message" : "Adding 'UIKitToolbar' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+    },
+    {
+      "issueType" : "Runtime Warning",
+      "message" : "Adding 'UIKitToolbar' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+    }
+  ],
+  "skippedTests" : 0,
+  "startTime" : 1792660871.191,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "XCTAssertTrue failed",
+      "targetName" : "GlideUITests",
+      "testIdentifier" : 1,
+      "testIdentifierString" : "GlideUITests/testContentMapRefinementCacheAndActualSeek()",
+      "testIdentifierURL" : "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testContentMapRefinementCacheAndActualSeek",
+      "testName" : "testContentMapRefinementCacheAndActualSeek()"
+    },
+    {
+      "failureText" : "XCTAssertTrue failed",
+      "targetName" : "GlideUITests",
+      "testIdentifier" : 2,
+      "testIdentifierString" : "GlideUITests/testJellyfinTrickplayAndChapterNavigation()",
+      "testIdentifierURL" : "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testJellyfinTrickplayAndChapterNavigation",
+      "testName" : "testJellyfinTrickplayAndChapterNavigation()"
+    }
+  ],
+  "title" : "Test - Glide",
+  "topInsights" : [
+
+  ],
+  "totalTestCount" : 4
+}

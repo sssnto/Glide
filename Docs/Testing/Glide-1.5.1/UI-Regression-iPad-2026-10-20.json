@@ -1,0 +1,77 @@
+{
+  "devices": [
+    {
+      "architecture": "arm64",
+      "deviceId": "A517192E-7F4D-4ED6-9ADF-8E7E513C6913",
+      "deviceName": "Glide App Store iPad",
+      "modelName": "iPad Pro (12.9-inch) (6th generation)",
+      "osBuildNumber": "23D8133",
+      "osVersion": "26.3.1",
+      "platform": "iOS Simulator"
+    }
+  ],
+  "tests": [
+    {
+      "test": "testSidecarRenderedClockOnNativeVLCAndSMB()",
+      "result": "Passed",
+      "seconds": 126.55932807922363,
+      "resultBundle": "test_sim_2026-10-20T00-55-36-161Z_pid32259_7814d470.xcresult"
+    },
+    {
+      "test": "testSidecarSelectionDelayOffAndRestart()",
+      "result": "Passed",
+      "seconds": 150.13752901554108,
+      "resultBundle": "test_sim_2026-10-20T00-55-36-161Z_pid32259_7814d470.xcresult"
+    },
+    {
+      "test": "testManagedSubtitleOffRestartAndReenable()",
+      "result": "Passed",
+      "seconds": 70.75,
+      "resultBundle": "test_sim_2026-10-20T01-10-40-351Z_pid32259_16b42159.xcresult"
+    },
+    {
+      "test": "testNativeTrackSelection()",
+      "result": "Passed",
+      "seconds": 66.1158879995346,
+      "resultBundle": "test_sim_2026-10-20T01-16-47-964Z_pid32259_ff5bcc2a.xcresult"
+    },
+    {
+      "test": "testSMBChineseSubtitles()",
+      "result": "Passed",
+      "seconds": 109.20474100112915,
+      "resultBundle": "test_sim_2026-10-20T01-25-42-697Z_pid32259_3ae58d53.xcresult"
+    }
+  ],
+  "scope": "Selected test cases across this development iteration; simulator only. The first two passed before the managed-copy reenable addition; final-build in-app probes cover their clock/state logic again. Final UI passes for managed-copy restore, native tracks and CJK are recorded separately. Earlier failed attempts are not included as passes.",
+  "earlierFailedAttemptBundles": [
+    {
+      "bundle": "test_sim_2026-10-20T00-49-47-406Z_pid32259_1d2b128a.xcresult",
+      "reason": "Initial seek and settings-sheet automation timing"
+    },
+    {
+      "bundle": "test_sim_2026-10-20T01-01-37-274Z_pid32259_8fedc169.xcresult",
+      "reason": "Missing FormatFixtures and moving SMB grid tap"
+    },
+    {
+      "bundle": "test_sim_2026-10-20T01-05-21-579Z_pid32259_1148e85a.xcresult",
+      "reason": "Native menu dismissal and short-clip autoplay timing"
+    },
+    {
+      "bundle": "test_sim_2026-10-20T01-14-39-084Z_pid32259_6be45176.xcresult",
+      "reason": "Native pop-up backdrop obscured settings header"
+    },
+    {
+      "bundle": "test_sim_2026-10-20T01-18-27-635Z_pid32259_55c4cc8a.xcresult",
+      "reason": "Paused subtitle selection screenshot before frame redraw"
+    },
+    {
+      "bundle": "test_sim_2026-10-20T01-20-04-703Z_pid32259_897fdb62.xcresult",
+      "reason": "Subtitle pop-up did not present on first tap"
+    },
+    {
+      "bundle": "test_sim_2026-10-20T01-22-02-327Z_pid32259_02a63944.xcresult",
+      "reason": "Full-screen OCR confused 幕 with 墓; actual screenshot readable"
+    }
+  ],
+  "runtimeWarning": "Xcode reports a SwiftUI native-pop-up _UIReparentingView warning during menu tests; retained in original result bundles. No claim of zero runtime warnings."
+}

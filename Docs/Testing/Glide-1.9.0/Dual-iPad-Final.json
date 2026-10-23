@@ -1,0 +1,126 @@
+{
+  "checks" : [
+    "default:secondary-off-preserves-primary-auto-match",
+    "playback:avPlayer-two-external-tracks-frame-and-paused-seek",
+    "clock:avPlayer-independent-positive-negative-offsets",
+    "clock:avPlayer-repeated-forward-backward-paused-seeks",
+    "clock:avPlayer-double-speed-shared-clock",
+    "memory:avPlayer-reopen-choices-and-offsets",
+    "memory:avPlayer-secondary-off-reopen-primary-retained",
+    "playback:vlc-two-external-tracks-frame-and-paused-seek",
+    "clock:vlc-independent-positive-negative-offsets",
+    "clock:vlc-repeated-forward-backward-paused-seeks",
+    "clock:vlc-double-speed-shared-clock",
+    "memory:vlc-reopen-choices-and-offsets",
+    "memory:vlc-secondary-off-reopen-primary-retained",
+    "imports:two-managed-copies-off-reenable-originals-deleted",
+    "invalidated:secondary-content-change-keeps-primary",
+    "invalidated:media-revision-suspends-both-lanes",
+    "cancel:both-lanes-old-import-or-discovery-cannot-overwrite-new-video",
+    "cleanup:clear-both-lanes-for-current-video"
+  ],
+  "device" : "iPad",
+  "error" : "",
+  "events" : [
+    "attempt_automatic",
+    "engine_avplayer",
+    "resource_ready_local",
+    "first_frame"
+  ],
+  "os" : "26.3.1",
+  "passed" : true,
+  "scope" : "Production local native\/VLC playback, paired external subtitle sessions and managed storage; authored media only",
+  "seekSamples" : [
+    {
+      "actual" : 1,
+      "engine" : "avPlayer",
+      "target" : 1,
+      "tolerance" : 0.40000000000000002
+    },
+    {
+      "actual" : 4.5,
+      "engine" : "avPlayer",
+      "target" : 4.5,
+      "tolerance" : 0.40000000000000002
+    },
+    {
+      "actual" : 2,
+      "engine" : "avPlayer",
+      "paused" : true,
+      "repeatedPausedSeek" : true,
+      "target" : 2,
+      "tolerance" : 0.40000000000000002
+    },
+    {
+      "actual" : 7,
+      "engine" : "avPlayer",
+      "paused" : true,
+      "repeatedPausedSeek" : true,
+      "target" : 7,
+      "tolerance" : 0.40000000000000002
+    },
+    {
+      "actual" : 2,
+      "engine" : "avPlayer",
+      "paused" : true,
+      "repeatedPausedSeek" : true,
+      "target" : 2,
+      "tolerance" : 0.40000000000000002
+    },
+    {
+      "actual" : 7,
+      "engine" : "avPlayer",
+      "paused" : true,
+      "repeatedPausedSeek" : true,
+      "target" : 7,
+      "tolerance" : 0.40000000000000002
+    },
+    {
+      "actual" : 1,
+      "engine" : "vlc",
+      "target" : 1,
+      "tolerance" : 0.80000000000000004
+    },
+    {
+      "actual" : 4.5,
+      "engine" : "vlc",
+      "target" : 4.5,
+      "tolerance" : 0.80000000000000004
+    },
+    {
+      "actual" : 2,
+      "engine" : "vlc",
+      "paused" : true,
+      "repeatedPausedSeek" : true,
+      "target" : 2,
+      "tolerance" : 0.80000000000000004
+    },
+    {
+      "actual" : 7,
+      "engine" : "vlc",
+      "paused" : true,
+      "repeatedPausedSeek" : true,
+      "target" : 7,
+      "tolerance" : 0.80000000000000004
+    },
+    {
+      "actual" : 2,
+      "engine" : "vlc",
+      "paused" : true,
+      "repeatedPausedSeek" : true,
+      "target" : 2,
+      "tolerance" : 0.80000000000000004
+    },
+    {
+      "actual" : 7,
+      "engine" : "vlc",
+      "paused" : true,
+      "repeatedPausedSeek" : true,
+      "target" : 7,
+      "tolerance" : 0.80000000000000004
+    }
+  ],
+  "stage" : "双字幕验证通过",
+  "timestamp" : "2026-10-20T10:33:52Z",
+  "version" : "1.9.0 (1)"
+}

@@ -1,0 +1,102 @@
+{
+  "checks" : [
+    "avPlayer:subtitle-navigation-includes-positive-delay-and-pause",
+    "avPlayer:sentence-replay-stops-at-shifted-end",
+    "avPlayer:three-ab-repeats-at-double-speed-no-next-video",
+    "avPlayer:pause-freezes-loop",
+    "avPlayer:outside-seek-exits-loop-preserving-pause",
+    "avPlayer:invalid-b-rejected-and-inside-seek-retains-loop",
+    "avPlayer:tail-loop-overrides-auto-outro-and-next",
+    "avPlayer:video-switch-clears-range-and-count",
+    "vlc:subtitle-navigation-includes-positive-delay-and-pause",
+    "vlc:sentence-replay-stops-at-shifted-end",
+    "vlc:three-ab-repeats-at-double-speed-no-next-video",
+    "vlc:pause-freezes-loop",
+    "vlc:outside-seek-exits-loop-preserving-pause",
+    "vlc:invalid-b-rejected-and-inside-seek-retains-loop"
+  ],
+  "device" : "iPad",
+  "error" : "等待超时：vlc 片尾与跳过优先级，time=11.55，seeking=false，loop=0，message=",
+  "os" : "26.3.1",
+  "passed" : false,
+  "samples" : [
+    {
+      "actual" : 0.75,
+      "completed" : 0,
+      "engine" : "avPlayer",
+      "loops" : 0,
+      "name" : "delay-aware-navigation",
+      "playing" : false,
+      "rate" : 1,
+      "requestedPlaying" : false,
+      "target" : 0.75
+    },
+    {
+      "actual" : 5.0005512909999998,
+      "completed" : 0,
+      "engine" : "avPlayer",
+      "loops" : 0,
+      "name" : "sentence-stopped",
+      "playing" : false,
+      "rate" : 1,
+      "requestedPlaying" : false,
+      "target" : 4.75
+    },
+    {
+      "actual" : 2.0015666680000002,
+      "completed" : 0,
+      "engine" : "avPlayer",
+      "loops" : 3,
+      "name" : "three-repeat-boundaries",
+      "playing" : true,
+      "rate" : 2,
+      "requestedPlaying" : true
+    },
+    {
+      "actual" : 10,
+      "completed" : 0,
+      "engine" : "avPlayer",
+      "loops" : 2,
+      "name" : "tail-loop-priority",
+      "playing" : true,
+      "rate" : 2,
+      "requestedPlaying" : true
+    },
+    {
+      "actual" : 1.1599999999999999,
+      "completed" : 0,
+      "engine" : "vlc",
+      "loops" : 0,
+      "name" : "delay-aware-navigation",
+      "playing" : false,
+      "rate" : 2,
+      "requestedPlaying" : false,
+      "target" : 0.75
+    },
+    {
+      "actual" : 5.4199999999999999,
+      "completed" : 0,
+      "engine" : "vlc",
+      "loops" : 0,
+      "name" : "sentence-stopped",
+      "playing" : false,
+      "rate" : 2,
+      "requestedPlaying" : false,
+      "target" : 4.75
+    },
+    {
+      "actual" : 2,
+      "completed" : 0,
+      "engine" : "vlc",
+      "loops" : 3,
+      "name" : "three-repeat-boundaries",
+      "playing" : true,
+      "rate" : 2,
+      "requestedPlaying" : true
+    }
+  ],
+  "scope" : "Real local AVPlayer\/VLC with production subtitle navigation, sentence replay and A-B loop controller; authored media; no decoder substitution",
+  "stage" : "字幕导航验证未完成",
+  "timestamp" : "2026-10-20T09:59:57Z",
+  "version" : "1.9.0 (1)"
+}

@@ -1,0 +1,47 @@
+{
+  "version": "1.11.0 (2)",
+  "coreTests": {
+    "swiftTesting": 195,
+    "xctest": 7,
+    "total": 202,
+    "failures": 0,
+    "newASSCases": 6
+  },
+  "simulator": {
+    "device": "iPhone 13 Pro Max",
+    "os": "26.3.1",
+    "casesPassed": 1,
+    "engines": [
+      "avPlayer",
+      "vlc"
+    ],
+    "failed": 0,
+    "skipped": 0,
+    "checks": "Actual authored video frames, bilingual rendered text, real paused seek, drawing commands hidden, subtitle off/reenable"
+  },
+  "physicalDevice": {
+    "device": "iPhone 13 Pro Max",
+    "os": "27.0",
+    "checksPassed": 10,
+    "expectedChecks": 10,
+    "passed": true,
+    "actualCaptionTime": 16.18,
+    "reportTimestamp": "2026-10-22T10:13:15Z",
+    "sourceCodec": "ass",
+    "cleanCueCount": 707,
+    "cleanOverrideCueCount": 0,
+    "visualReview": "Production subtitle overlay visibly displayed Chinese and English dialogue without control tags in Device Hub preview; private screenshot not committed",
+    "subtitleMemoryRestored": true,
+    "normalApplicationRestored": true
+  },
+  "release": {
+    "archive": "passed",
+    "signature": "passed",
+    "symbols": "passed",
+    "uploaded": false,
+    "preflight": "passed"
+  },
+  "commit": false,
+  "push": false,
+  "tag": false
+}

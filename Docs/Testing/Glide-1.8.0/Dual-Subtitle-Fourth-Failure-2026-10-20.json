@@ -1,0 +1,45 @@
+{
+  "checks" : [
+    "default:secondary-off-preserves-primary-auto-match",
+    "playback:avPlayer-two-external-tracks-frame-and-paused-seek",
+    "clock:avPlayer-independent-positive-negative-offsets",
+    "clock:avPlayer-double-speed-shared-clock",
+    "memory:avPlayer-reopen-choices-and-offsets",
+    "memory:avPlayer-secondary-off-reopen-primary-retained"
+  ],
+  "device" : "iPad",
+  "error" : "两路字幕没有使用同一时钟",
+  "events" : [
+    "attempt_automatic",
+    "engine_vlc",
+    "resource_ready_local",
+    "first_frame",
+    "vlc_output_color_not_verified"
+  ],
+  "os" : "26.3.1",
+  "passed" : false,
+  "scope" : "Production local native\/VLC playback, paired external subtitle sessions and managed storage; authored media only",
+  "seekSamples" : [
+    {
+      "actual" : 1,
+      "engine" : "avPlayer",
+      "target" : 1,
+      "tolerance" : 0.40000000000000002
+    },
+    {
+      "actual" : 4.5,
+      "engine" : "avPlayer",
+      "target" : 4.5,
+      "tolerance" : 0.40000000000000002
+    },
+    {
+      "actual" : 0.25,
+      "engine" : "vlc",
+      "target" : 1,
+      "tolerance" : 0.80000000000000004
+    }
+  ],
+  "stage" : "双字幕验证未完成",
+  "timestamp" : "2026-10-20T07:27:56Z",
+  "version" : "1.8.0 (1)"
+}

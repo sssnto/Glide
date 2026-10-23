@@ -13,7 +13,15 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 PIN = ROOT / 'Dependencies/MobileVLCKit.json'
-PREPARATION_VERSION = 2
+PREPARATION_VERSION = 3
+HEADER_IMPORTS = {
+    'VLCAdjustFilter.h': 'VLCFilter.h',
+    'VLCConsoleLogger.h': 'VLCLogging.h',
+    'VLCFileLogger.h': 'VLCLogging.h',
+    'VLCLogMessageFormatter.h': 'VLCLogging.h',
+}
+TRANSFORMATION = ('Architecture thinning and public-header import normalization only; '
+                  'official matching dSYMs retained; decoder binaries unchanged')
 
 
 def digest(path):
@@ -22,6 +30,38 @@ def digest(path):
         for block in iter(lambda: stream.read(1024 * 1024), b''):
             result.update(block)
     return result.hexdigest()
+
+
+def normalize_header_imports(framework):
+    changes = []
+    for name, imported in HEADER_IMPORTS.items():
+        header = framework / 'Headers' / name
+        original = header.read_bytes()
+        quoted = ('#import "' + imported + '"').encode()
+        qualified = ('#import <MobileVLCKit/' + imported + '>').encode()
+        if original.count(quoted) == 1 and qualified not in original:
+            changes.append((header, original.replace(quoted, qualified)))
+        elif quoted in original or original.count(qualified) != 1:
+            raise SystemExit('Unexpected SDK header import; normalization refused: ' + str(header))
+    # Check every input before publishing any changes. Already normalized files
+    # are accepted so an interrupted managed-cache upgrade can be retried.
+    for header, contents in changes:
+        temporary = header.with_suffix('.h.normalized')
+        temporary.write_bytes(contents)
+        temporary.replace(header)
+
+
+def header_fingerprints(target):
+    result = {}
+    for identifier in ['ios-arm64', 'ios-arm64_x86_64-simulator']:
+        for name, imported in HEADER_IMPORTS.items():
+            header = target / identifier / 'MobileVLCKit.framework/Headers' / name
+            contents = header.read_bytes()
+            qualified = ('#import <MobileVLCKit/' + imported + '>').encode()
+            if contents.count(qualified) != 1 or ('#import "' + imported + '"').encode() in contents:
+                raise SystemExit('Unnormalized SDK header; rerun SDK preparation: ' + str(header))
+            result[str(header.relative_to(target))] = digest(header)
+    return result
 
 
 def uuids(path):
@@ -79,12 +119,25 @@ def prepare(work, archive=None):
                 not (target / name).exists() or digest(target / name) != sha
                 for name, sha in report['binaries'].items()):
             raise SystemExit('Prepared SDK changed; choose a fresh work directory')
-        if report.get('preparationVersion') == PREPARATION_VERSION:
+        if report.get('preparationVersion') in (2, PREPARATION_VERSION):
             if not report.get('symbols') or any(
                     not (target / name).exists() or digest(target / name) != sha
                     for name, sha in report['symbols'].items()):
                 raise SystemExit('Prepared SDK symbols changed; choose a fresh work directory')
             validate_symbols(target)
+            if report['preparationVersion'] == 2:
+                # Upgrade headers without downloading or changing decoder / dSYM
+                # binaries whose checksums and UUIDs have just been validated.
+                for framework in target.glob('*/MobileVLCKit.framework'):
+                    normalize_header_imports(framework)
+                report.update(preparationVersion=PREPARATION_VERSION,
+                              transformation=TRANSFORMATION,
+                              headers=header_fingerprints(target))
+                temporary_stamp = stamp.with_suffix('.json.normalized')
+                temporary_stamp.write_text(json.dumps(report, indent=2) + '\n')
+                temporary_stamp.replace(stamp)
+            elif report.get('headers') != header_fingerprints(target):
+                raise SystemExit('Prepared SDK headers changed; choose a fresh work directory')
             print(target)
             return target
         # Migrate the earlier managed output that excluded official dSYMs.
@@ -121,6 +174,7 @@ def prepare(work, archive=None):
                 ('ios-arm64_i386_x86_64-simulator', ['arm64', 'x86_64'])]:
             framework = stage / identifier / 'MobileVLCKit.framework'
             shutil.copytree(original / identifier / 'MobileVLCKit.framework', framework)
+            normalize_header_imports(framework)
             binary = framework / 'MobileVLCKit'
             thin(binary, architectures)
             dsym = stage / identifier / 'MobileVLCKit.framework.dSYM'
@@ -141,7 +195,7 @@ def prepare(work, archive=None):
             raise SystemExit('Symbol migration changed framework binaries; preparation refused')
         report = {'preparationVersion': PREPARATION_VERSION, 'sdkVersion': pin['version'], 'archiveSHA256': pin['sha256'],
             'deviceArchitectures': ['arm64'], 'simulatorArchitectures': ['arm64', 'x86_64'],
-            'transformation': 'Architecture thinning only; official matching dSYMs retained; no decoder source modifications',
+            'transformation': TRANSFORMATION, 'headers': header_fingerprints(candidate),
             'binaries': binaries, 'symbols': symbols, 'uuids': symbol_uuids}
         candidate_stamp = stage / 'prepared-sdk.json'
         candidate_stamp.write_text(json.dumps(report, indent=2) + '\n')

@@ -96,7 +96,7 @@ import Testing
     #expect(!PlaybackDelivery.suspectHEVCMP4("HEVC", tag: "hvc1", container: "mp4"))
     #expect(body["EnableDirectPlay"] as? Bool == false)
     #expect(body["EnableDirectStream"] as? Bool == true)
-    #expect(body["EnableTranscoding"] as? Bool == false)
+    #expect(body["EnableTranscoding"] as? Bool == true, "HLS remux/audio conversion uses this route; the copy URL is validated separately")
     #expect(body["AllowVideoStreamCopy"] as? Bool == true)
     #expect(PlaybackDelivery.negotiated(url: URL(string: "https://example.test/a.m3u8?AllowVideoStreamCopy=true")!, quality: .automatic) == .serverStream)
     #expect(PlaybackDelivery.negotiated(url: URL(string: "https://example.test/a.m3u8?VideoCodec=copy&AudioCodec=copy")!, quality: .compatible) == .remux)
@@ -130,7 +130,7 @@ import Testing
     for i in 0..<40 { value.event("event_\(i)") }
     #expect(value.events.count == 30)
     #expect(!value.export.contains("api_key"))
-    #expect(value.schema == 9)
+    #expect(value.schema == 10)
 }
 
 @Test func nativeHLSUnwrapsOnlyOneSelfContainedRendition() throws {

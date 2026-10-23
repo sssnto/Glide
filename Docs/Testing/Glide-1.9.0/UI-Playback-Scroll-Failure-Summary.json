@@ -1,0 +1,52 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "A517192E-7F4D-4ED6-9ADF-8E7E513C6913",
+        "deviceName" : "Glide App Store iPad",
+        "modelName" : "iPad Pro (12.9-inch) (6th generation)",
+        "osBuildNumber" : "23D8133",
+        "osVersion" : "26.3.1",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 1,
+      "passedTests" : 3,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "GlideCompatibilityQA · Built with macOS 27.0.1",
+  "expectedFailures" : 0,
+  "failedTests" : 1,
+  "finishTime" : 1792491899.454,
+  "passedTests" : 3,
+  "result" : "Failed",
+  "runtimeWarnings" : [
+
+  ],
+  "skippedTests" : 0,
+  "startTime" : 1792491748.403,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "Failed to get matching snapshot: No matches found for Elements matching predicate '\"player.engine.compatibility\" IN identifiers' from input {(\n    Button, label: 'Sheet Grabber', value: Half screen,\n    Button, identifier: 'chevron.down', label: '返回片库',\n    Button, identifier: 'lock.open', label: '锁定触控',\n    Button, identifier: 'ellipsis', label: '播放设置',\n    Button, identifier: 'backward.end.fill', label: '上一个视频',\n    Button, identifier: 'gobackward.10', label: '快退 10 秒',\n    Button, identifier: 'play.fill', label: '播放',\n    Button, identifier: 'goforward.10', label: '快进 10 秒',\n    Button, identifier: 'forward.end.fill', label: '下一个视频', Disabled,\n    Button, identifier: 'player.mode', label: '顺序播放',\n    Button, identifier: 'player.quick.speed', label: '播放速度',\n    Button, identifier: 'player.quick.audio', label: '音轨', value: Track 1 - [English],\n    Button, identifier: 'player.quick.subtitle', label: '字幕', value: 关闭,\n    Button, identifier: 'player.rotate', label: '切换横屏',\n    Button,\n    Button,\n    Button,\n    Button, label: 'Hide Sidebar',\n    Button, identifier: 'player.settings.done', label: '完成',\n    Button, identifier: 'links.open', label: '链接与 STRM',\n    Button, identifier: 'pins.open', label: '固定目录',\n    Button, identifier: 'sources.open', label: 'FormatFixtures',\n    Button, identifier: 'directory.refresh', label: '刷新本目录',\n    Button, label: '媒体', Selected,\n    Button, label: '目录',\n    Button, identifier: 'directory.pin', label: '固定此目录',\n    Button, identifier: 'library.scope', label: '浏览范围：包含子目录',\n    Button, identifier: 'library.sort', label: '视频排序：名称升序',\n    Button, identifier: 'heart', label: '只看收藏',\n    Button, identifier: 'directory.play', label: '播放全部',\n    Button,\n    Button,\n    Button, identifier: 'list.number', label: '顺序播放', Selected,\n    Button, identifier: 'shuffle', label: '随机播放',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:01-h264-aac.mp4', label: '视频, 01-h264-aac.mp4, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:02-hevc-aac.mp4', label: '视频, 02-hevc-aac.mp4, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:03-h264-aac.mkv', label: '视频, 03-h264-aac.mkv, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:04-mpeg4-mp3.avi', label: '视频, 04-mpeg4-mp3.avi, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:05-renamed-mkv.mp4', label: '视频, 05-renamed-mkv.mp4, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:06-truncated.mp4', label: '视频, 06-truncated.mp4, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:07-audio-only.mp4', label: '视频, 07-audio-only.mp4, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:08-multi-track.mp4', label: '视频, 08-multi-track.mp4, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:11-hd-dual-ass.mkv', label: '视频, 11-hd-dual-ass.mkv, FormatFixtures',\n    Button, identifier: 'player.loop.open', label: '单句重播与 A–B 循环',\n    Button, label: '视频信息',\n    Button, identifier: 'player.diagnostic', label: '播放诊断',\n    Button, identifier: 'player.skip.settings', label: '片头片尾',\n    Button, identifier: 'player.speed.menu', label: '播放速度, 1×',\n    Button, identifier: 'player.audio.menu', label: '音轨, Track 1 - [English]',\n    Button, identifier: 'player.subtitle.menu', label: '字幕, 关闭',\n    Button, label: '播放顺序, 顺序播放',\n    Button, identifier: 'player.engine.native', label: '系统播放',\n    Button,\n    Button,\n    Button,\n    Button\n)}\nPossibly caused by runtime issues:\nAutomation type mismatch: computed Button from legacy attributes vs PopUpButton from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 14;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 1108101562369;\n}\nSee test report attachments for more detail.",
+      "targetName" : "GlideUITests",
+      "testIdentifier" : 1,
+      "testIdentifierString" : "CompatibilityPlaybackUITests/testCompatibility1080pSeekAndPause()",
+      "testIdentifierURL" : "test://com.apple.xcode/Glide/GlideUITests/CompatibilityPlaybackUITests/testCompatibility1080pSeekAndPause",
+      "testName" : "testCompatibility1080pSeekAndPause()"
+    }
+  ],
+  "title" : "Test - GlideCompatibilityQA",
+  "topInsights" : [
+
+  ],
+  "totalTestCount" : 4
+}

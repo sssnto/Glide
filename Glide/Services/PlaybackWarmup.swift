@@ -37,6 +37,7 @@ import Network
         return ready
     }
     func prepare(_ video: Video, server: MediaServer?) async {
+        guard server?.kind != .smb else { cancel(); return }
         let local = DownloadStore.shared.localURL(videoID: video.id) ?? (video.url?.isFileURL == true ? video.url : nil)
         guard (wifi || local != nil || server?.kind == .local), !ProcessInfo.processInfo.isLowPowerModeEnabled,
               !PlaybackRouteMemory().prefersVideoConversion(for: video.id),

@@ -20,6 +20,7 @@ four_k_lock = threading.Lock()
 four_k_transport = os.environ.get('GLIDE_4K_TRANSPORT_FIXTURE') == '1'
 transport_menu_fixture = os.environ.get('GLIDE_TRANSPORT_MENU_FIXTURE') == '1'
 design_fixture = os.environ.get('GLIDE_DESIGN_FIXTURE') == '1'
+subtitle_switch_fixture = os.environ.get('GLIDE_SUBTITLE_SWITCH_FIXTURE') == '1'
 if four_k_transport:
     assert four_k_file, 'Transport fixture requires the authored 4K MP4'
     subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(four_k_file), '-c', 'copy',
@@ -55,6 +56,24 @@ prefix = '/mock/jellyfin'
 def catalog_item(id, name, kind, **extra):
     return dict(Id=id, Name=name, Type=kind, Overview='A local fixture story for testing media details.', ProductionYear=2026, Genres=['Adventure'], Tags=['精彩 & 推荐'], CommunityRating=8.4, **extra)
 film = catalog_item('demo0', 'Fixture Movie', 'Movie', RunTimeTicks=120000000, MediaSources=[dict(Id='demo0', Name='Original', Container='mp4', Size=(resources/'demo0.mp4').stat().st_size, MediaStreams=[dict(Index=1, Type='Audio', DisplayTitle='English DD_2.0 · Dolby Digital+ · Stereo · Original commentary track'), dict(Index=4, Type='Subtitle', DisplayTitle='中上英下 SUP_YYeTs 字幕 Chinese 默认 强制的 PGS Subtitle Extended Track')])])
+switch_pgs = b""
+switch_subtitles = {4: '第一路中文字幕', 5: 'English fixture subtitles', 6: '第二路中文字幕'}
+if subtitle_switch_fixture:
+    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-stream_loop', '-1', '-i', str(resources/'demo0.mp4'),
+                    '-t', '120', '-c', 'copy', '-hls_time', '4', '-hls_list_size', '0', str(hls/'demo0.m3u8')], check=True)
+    for audio_index, frequency in [(1, 440), (2, 880)]:
+        subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-stream_loop', '-1', '-i', str(resources/'demo0.mp4'),
+                        '-f', 'lavfi', '-i', f'sine=frequency={frequency}:sample_rate=48000', '-t', '120',
+                        '-map', '0:v:0', '-map', '1:a:0', '-c:v', 'copy', '-c:a', 'aac', '-threads', '1',
+                        '-hls_time', '4', '-hls_list_size', '0', str(hls/f'audio{audio_index}.m3u8')], check=True)
+    film['RunTimeTicks'] = 1_200_000_000
+    measured = json.loads(subprocess.check_output(['ffprobe', '-v', 'error', '-show_streams', '-of', 'json', str(resources/'demo0.mp4')]))
+    video = next(s for s in measured['streams'] if s['codec_type'] == 'video')
+    from generate_pgs_fixture import make_pgs
+    switch_pgs = make_pgs(resources/'SubtitleFonts/GlideSubtitleFallback.otf', video['width'], video['height'])
+    film['MediaSources'][0]['MediaStreams'] = [dict(Index=0, Type='Video', Codec=video['codec_name'], Width=video['width'], Height=video['height'])] + [dict(Index=i, Type='Audio', Codec='aac', Language='eng' if i == 1 else 'zho', DisplayTitle='English 440 Hz' if i == 1 else '中文 880 Hz', IsDefault=i == 1) for i in [1, 2]] + [
+        dict(Index=i, Type='Subtitle', Codec='subrip', Language='eng' if i == 5 else 'zho', DisplayTitle=title, IsDefault=i == 4)
+        for i, title in switch_subtitles.items()] + [dict(Index=7, Type='Subtitle', Codec='pgssub', Language='zho', DisplayTitle='图形字幕目录样例')]
 download_fixture_id = os.environ.get('GLIDE_DOWNLOAD_FIXTURE_ID')
 if download_fixture_id:
     film['Id'] = download_fixture_id
@@ -89,7 +108,14 @@ if design_fixture:
         design_films.append(sample)
 catalog = {x['Id']:x for x in [film, broken, series]+seasons+episodes+design_films}
 
-metrics = {'buffering_fixture': int(buffering_fixture), 'four_k_fixture': int(four_k_file is not None), 'design_fixture': int(design_fixture)}
+navigation_fixture = os.environ.get('GLIDE_NAVIGATION_FIXTURE') == '1'
+if navigation_fixture:
+    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(resources/'demo0.mp4'), '-vf', 'fps=1/2,scale=160:90,tile=4x3', '-frames:v', '1', str(hls/'navigation.jpg')], check=True)
+    film['MediaSources'][0]['Size'] = (resources/'demo0.mp4').stat().st_size
+    film['Chapters'] = [dict(Name='原创开场', StartPositionTicks=0), dict(Name='原创后半段', StartPositionTicks=60000000)]
+    film['Trickplay'] = {'demo0': {'160': dict(Width=160, Height=90, TileWidth=4, TileHeight=3, ThumbnailCount=6, Interval=2000)}}
+
+metrics = {'buffering_fixture': int(buffering_fixture), 'four_k_fixture': int(four_k_file is not None), 'design_fixture': int(design_fixture), 'subtitle_switch_fixture': int(subtitle_switch_fixture)}
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         # Never log query strings, authorization headers, or passwords.
@@ -117,6 +143,15 @@ class Handler(BaseHTTPRequestHandler):
         if path.endswith('/PlaybackInfo'):
             metrics[path] = metrics.get(path, 0) + 1
             item = path.split('/')[-2]
+            if subtitle_switch_fixture and item == 'demo0':
+                selected = data.get('SubtitleStreamIndex', 4)
+                assert selected in [-1, 4, 5, 6, 7]
+                audio_index = data.get('AudioStreamIndex', 1)
+                assert audio_index in [1, 2]
+                metrics['selected_audio_index'] = audio_index
+                source = dict(film['MediaSources'][0], SupportsDirectPlay=False, SupportsDirectStream=True,
+                    DefaultAudioStreamIndex=audio_index, TranscodingUrl=prefix+f'/streams/audio{audio_index}.m3u8?api_key=fixture-token&VideoCodec=copy&AudioStreamIndex={audio_index}&SubtitleStreamIndex={selected}&SubtitleMethod={"Drop" if selected == -1 else "External"}')
+                return self.send(200, json.dumps(dict(MediaSources=[source], PlaySessionId='subtitle-switch-session')).encode())
             assert data.get('DeviceProfile', {}).get('TranscodingProfiles'), 'Missing HLS profile'
             if data.get('AudioStreamIndex') == 1:
                 assert data.get('SubtitleStreamIndex') == 4
@@ -216,6 +251,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send(200, master.encode(), 'application/vnd.apple.mpegurl')
             return self.media(sdr/Path(path).name)
         if path.startswith(prefix) and not '/streams/' in path and not self.jelly_auth(): return self.send(401)
+        if subtitle_switch_fixture and path == prefix+'/Videos/demo0/demo0/Subtitles/7/Stream.pgssub':
+            return self.send(200, switch_pgs, 'application/octet-stream')
+        if subtitle_switch_fixture and re.fullmatch(prefix+r'/Videos/demo0/demo0/Subtitles/[456]/Stream.srt', path):
+            index = int(path.split('/')[-2])
+            return self.send(200, f'1\n00:00:00,000 --> 00:02:00,000\n{switch_subtitles[index]}\n'.encode(), 'application/x-subrip; charset=utf-8')
         if path == prefix+'/Items/person-b/Images/Primary': return self.send(404)
         if path.endswith('/Images/Primary'):
             delayed = design_fixture and path == prefix+'/Items/demo0/Images/Primary' and parse_qs(urlsplit(self.path).query).get('maxWidth') == ['420'] and not metrics.get('design_first_poster_delivered')
@@ -239,6 +279,10 @@ class Handler(BaseHTTPRequestHandler):
             return self.media(resources/'demo0.mp4')
         if path == prefix+'/Items/series':
             return self.send(200, json.dumps(series).encode())
+        if navigation_fixture and path == prefix+'/Videos/demo0/Trickplay/160/0.jpg':
+            assert parse_qs(urlsplit(self.path).query).get('MediaSourceId') == ['demo0']
+            if not self.jelly_auth(): return self.send(401)
+            return self.send(200, (hls/'navigation.jpg').read_bytes(), 'image/jpeg')
         if path.startswith(prefix+'/Users/fixture-user/Items/'):
             if path.endswith('/series'): return self.send(404)
             item = catalog.get(path.split('/')[-1])
@@ -365,8 +409,10 @@ class Handler(BaseHTTPRequestHandler):
                     self.wfile.write(data); self.wfile.flush()
                     offset += len(data)
         except (BrokenPipeError, ConnectionResetError): pass
-print('Fixture running on http://127.0.0.1:8768',flush=True)
-try: ThreadingHTTPServer(('127.0.0.1',8768),Handler).serve_forever()
+fixture_bind = os.environ.get('GLIDE_FIXTURE_BIND', '127.0.0.1')
+fixture_port = int(os.environ.get('GLIDE_FIXTURE_PORT', '8768'))
+print(f'Fixture running on http://{fixture_bind}:{fixture_port}',flush=True)
+try: ThreadingHTTPServer((fixture_bind,fixture_port),Handler).serve_forever()
 finally:
     import shutil
     shutil.rmtree(hls)

@@ -1,0 +1,11 @@
+{
+  "version": "1.11.0",
+  "build": "2",
+  "archivePath": "/tmp/Glide1110-ASS/Glide-1.11.0-2.xcarchive",
+  "binarySHA256": "f061c4241d25dc61a3980f0fa1427afe39d7da54514ab8bfff56ed1595b71e65",
+  "debugBinarySHA256": "20ea7309975c1c22cbf907f918517ce68ebc0fb162d834c0d7097454c9c7c99a",
+  "sourceSnapshot": "Source-Snapshot.json",
+  "signatureVerified": true,
+  "symbolReport": "Archive-Symbols.json",
+  "uploaded": false
+}

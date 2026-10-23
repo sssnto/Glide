@@ -32,6 +32,10 @@ struct SourcesView: View {
                     Text("导入会复制视频到 Glide；添加目录只保存授权，文件仍留在原位置。播放格式取决于设备与所选播放器。")
                         .font(.footnote).foregroundStyle(.secondary)
                 }.disabled(importing)
+                Section {
+                    NavigationLink { StreamLinksView(library: library) } label: { Label("链接与 STRM", systemImage: "link") }
+                        .accessibilityIdentifier("sources.links")
+                }
                 Section("我的来源") {
                     ForEach(library.servers) { server in
                         Button {
@@ -63,10 +67,11 @@ struct SourcesView: View {
                 }.disabled(importing)
                 Section { NavigationLink("设置") { SettingsView(library: library) } }
                 Section {
-                    Text("Jellyfin 支持媒体库、播放进度和服务器转码。NAS 可通过 WebDAV 直接浏览并播放系统支持的视频格式。")
+                    Text("Jellyfin 与 Emby 支持媒体库与服务器转码。NAS 可通过 SMB 2/3 或 WebDAV 浏览视频；SMB 使用兼容播放器，WebDAV 使用系统播放器。")
                     Text("账号凭据仅保存在此设备的系统钥匙串中。")
                 }.font(.footnote).foregroundStyle(.secondary)
-            }.scrollContentBackground(.hidden).background(GlideTheme.background)
+            }.accessibilityIdentifier("sources.list")
+                .scrollContentBackground(.hidden).background(GlideTheme.background)
                 .font(GlideTheme.Typography.body).navigationTitle("媒体来源").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) { Button { adding = true } label: { Label("添加媒体源", systemImage: "plus") }.accessibilityIdentifier("sources.add").disabled(importing) }
@@ -123,9 +128,17 @@ struct AddSourceView: View {
     @State private var address = ""
     @State private var username = ""
     @State private var password = ""
+    @State private var share = ""
+    @State private var guest = false
+    @State private var domain = ""
+    @State private var encrypted = false
+    @State private var verifiedSMB: SMBVerification?
+    @State private var remembersPlayback = false
     @State private var connecting = false
     @State private var error: String?
     @State private var task: Task<Void, Never>?
+    private enum Field: Hashable { case name, address, share, username, password }
+    @FocusState private var focusedField: Field?
     var body: some View {
         NavigationStack {
             Form {
@@ -143,31 +156,61 @@ struct AddSourceView: View {
                 }
                 Section("服务器") {
                     TextField("名称（可选）", text: $name)
-                    TextField(kind == .jellyfin ? "http://192.168.1.10:8096" : "https://nas.example.com:5006/video/", text: $address)
+                        .focused($focusedField, equals: .name).submitLabel(.next).onSubmit { focusedField = .address }
+                    TextField(kind == .smb ? "192.168.1.10" : kind.isCatalogSource ? "http://192.168.1.10:8096" : "https://nas.example.com:5006/video/", text: $address)
                         .keyboardType(.URL).textContentType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled().accessibilityLabel("服务器地址")
+                        .focused($focusedField, equals: .address).submitLabel(.next).onSubmit { focusedField = kind == .smb ? .share : .username }
+                    if kind == .smb {
+                        TextField("共享目录，例如 video/家庭视频", text: $share)
+                            .textInputAutocapitalization(.never).autocorrectionDisabled().accessibilityIdentifier("sources.smbShare")
+                            .focused($focusedField, equals: .share).submitLabel(.next).onSubmit { focusedField = guest ? nil : .username }
+                    }
                 }
                 Section("登录账号") {
+                    if kind == .smb { Toggle("访客访问", isOn: $guest).accessibilityIdentifier("sources.smbGuest") }
+                    if kind != .smb || !guest {
                     TextField("用户名", text: $username).textContentType(.username).textInputAutocapitalization(.never).autocorrectionDisabled()
+                        .focused($focusedField, equals: .username).submitLabel(.next).onSubmit { focusedField = .password }
                     SecureField("密码", text: $password).textContentType(.password)
+                        .focused($focusedField, equals: .password).submitLabel(.done).onSubmit { focusedField = nil }
+                    }
+                    if kind == .smb {
+                        DisclosureGroup("高级选项") {
+                            TextField("域（可选）", text: $domain).textInputAutocapitalization(.never).autocorrectionDisabled()
+                            Toggle("要求 SMB 3 加密", isOn: $encrypted)
+                        }
+                        Button("测试连接") { testSMB() }.accessibilityIdentifier("sources.testSMB")
+                            .disabled(address.isEmpty)
+                        if let verifiedSMB {
+                            Label("连接成功，可读取 \(verifiedSMB.entries.count) 个条目", systemImage: "checkmark.circle.fill")
+                                .font(.caption).foregroundStyle(GlideTheme.accent)
+                        }
+                    }
                 }
                 Section {
-                    Label(kind == .jellyfin ? "连接与你的设备处于同一网络的 Jellyfin，或填写可访问的远程地址。支持包含 /jellyfin 等路径前缀的地址。" : "请先在 NAS 中启用 WebDAV，并填写视频目录地址。支持 Basic 认证；服务器需要支持 Range 分段读取。", systemImage: "info.circle").font(.footnote).foregroundStyle(.secondary)
+                    Label(kind == .smb ? "在 NAS 中启用 SMB 2/3，填写服务器地址与共享目录。只读访问，不会修改远端文件。访客访问需要服务器允许。" : kind.isCatalogSource ? "连接同一网络的 \(kind.title)，或填写可访问的远程地址。支持服务器配置的路径前缀，例如 /emby 或 /jellyfin。" : "请先在 NAS 中启用 WebDAV，并填写视频目录地址。支持 Basic 认证；服务器需要支持 Range 分段读取。", systemImage: "info.circle").font(.footnote).foregroundStyle(.secondary)
                     if address.lowercased().hasPrefix("http://") { Text("此地址使用明文 HTTP，仅建议在可信局域网中使用。远程连接请使用 HTTPS。") .font(.footnote).foregroundStyle(.orange) }
+                }
+                if kind.isFileSource {
+                    Section("播放记录") {
+                        Toggle("记住播放进度", isOn: $remembersPlayback).accessibilityIdentifier("sources.remembersPlayback")
+                        Text("开启后保存观看进度，并加入最近观看。关闭时保留从头刷看的习惯。").font(.caption).foregroundStyle(.secondary)
+                    }
                 }
                 if let error { Section { Text(error).font(.callout).foregroundStyle(.red) } }
             }.disabled(connecting).scrollContentBackground(.hidden).background(GlideTheme.background)
                 .safeAreaInset(edge: .bottom) {
                     Button(action: connect) {
                         HStack(spacing: 10) {
-                            if connecting { ProgressView().tint(.black) }
+                            if connecting { ProgressView().tint(GlideTheme.onAccent) }
                             Text(connecting ? "正在连接…" : "连接并打开片库").fontWeight(.semibold)
                         }
                         .frame(maxWidth: .infinity, minHeight: 48)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(GlideTheme.onAccent)
                         .background(GlideTheme.accent, in: RoundedRectangle(cornerRadius: 12))
                     }
-                    .disabled(connecting || address.isEmpty || (kind == .jellyfin && username.isEmpty))
-                    .opacity(connecting || address.isEmpty || (kind == .jellyfin && username.isEmpty) ? 0.5 : 1)
+                    .disabled(connecting || address.isEmpty || (kind.isCatalogSource && username.isEmpty))
+                    .opacity(connecting || address.isEmpty || (kind.isCatalogSource && username.isEmpty) ? 0.5 : 1)
                     .accessibilityIdentifier("sources.connect")
                     .padding(.horizontal, 20).padding(.top, 10).padding(.bottom, 8)
                     .background(GlideTheme.background)
@@ -176,14 +219,29 @@ struct AddSourceView: View {
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("取消") { task?.cancel(); dismiss() } } }
                 .interactiveDismissDisabled(connecting)
                 .onDisappear { task?.cancel() }
+                .onChange(of: [address, share, username, password, domain, String(guest), String(encrypted)]) { _, _ in verifiedSMB = nil }
         }.tint(GlideTheme.accent)
     }
     private func connect() {
         connecting = true; error = nil
         task = Task {
             do {
-                try await library.add(name: name, kind: kind, address: address, username: username, password: password)
+                let url = try kind == .smb ? SMBLocation.parse(address: address, share: share).absoluteString : address
+                try await library.add(name: name, kind: kind, address: url, username: kind == .smb && guest ? "" : username, password: kind == .smb && guest ? "" : password,
+                    smb: kind == .smb ? SMBOptions(guest: guest, domain: domain, encrypted: encrypted) : nil,
+                    verifiedSMB: kind == .smb ? verifiedSMB : nil, remembersPlayback: remembersPlayback)
                 password = ""; dismiss()
+            } catch { if !Task.isCancelled { self.error = error.localizedDescription } }
+            connecting = false
+        }
+    }
+    private func testSMB() {
+        connecting = true; error = nil; verifiedSMB = nil
+        task = Task {
+            do {
+                var candidate = MediaServer(name: name, kind: .smb, address: try SMBLocation.parse(address: address, share: share), username: guest ? "" : username)
+                candidate.smb = SMBOptions(guest: guest, domain: domain, encrypted: encrypted)
+                verifiedSMB = try await SMBSourceProvider.verify(server: candidate, password: guest ? "" : password)
             } catch { if !Task.isCancelled { self.error = error.localizedDescription } }
             connecting = false
         }
@@ -227,6 +285,7 @@ struct ReconnectSourceView: View {
     @State private var address = ""
     @State private var password = ""
     @State private var busy = false
+    @State private var remembersPlayback = false
     @State private var error: String?
     @State private var task: Task<Void, Never>?
     var body: some View {
@@ -234,23 +293,24 @@ struct ReconnectSourceView: View {
             Form {
                 Section("来源") {
                     TextField("名称", text: $name)
-                    TextField("服务器地址", text: $address).keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled().disabled(server.kind == .webDAV)
+                    TextField("服务器地址", text: $address).keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled().disabled(server.kind.isFileSource)
                     LabeledContent("账号", value: server.username)
                     SecureField("重新输入密码", text: $password)
+                    if server.kind.isFileSource { Toggle("记住播放进度", isOn: $remembersPlayback) }
                     Text("保留此来源的收藏、目录和观看记录。切换账号请添加新来源。").font(.caption).foregroundStyle(.secondary)
                 }
                 if let error { Text(error).foregroundStyle(.orange) }
                 Button(busy ? "正在验证…" : "验证并保存") {
                     busy = true; error = nil
                     task = Task {
-                        do { try await library.reconnect(server, name: name, address: address, password: password); password = ""; dismiss() }
+                        do { try await library.reconnect(server, name: name, address: address, password: password, remembersPlayback: server.kind.isFileSource ? remembersPlayback : nil); password = ""; dismiss() }
                         catch { if !Task.isCancelled { self.error = error.localizedDescription } }
                         busy = false
                     }
                 }.disabled(busy).accessibilityIdentifier("source.reconnect")
             }.font(GlideTheme.Typography.body).scrollContentBackground(.hidden).background(GlideTheme.background).navigationTitle("编辑与重新登录").navigationBarTitleDisplayMode(.inline).interactiveDismissDisabled(busy)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("取消") { task?.cancel(); dismiss() } } }
-                .onAppear { name = server.name; address = server.address.absoluteString }
+                .onAppear { name = server.name; address = server.address.absoluteString; remembersPlayback = server.remembersPlayback == true }
                 .onDisappear { task?.cancel() }
         }
     }

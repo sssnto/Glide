@@ -14,9 +14,9 @@ final class LibraryStore {
     var folderTotal = 0
     var hasMoreFolders: Bool { folderNextIndex < folderTotal }
     var nextIndex = 0
-    var hasMore: Bool { selectedServer?.kind == .jellyfin && !jellyPath.isEmpty && nextIndex < total }
+    var hasMore: Bool { selectedServer?.kind.isCatalogSource == true && !jellyPath.isEmpty && nextIndex < total }
     var hasParent: Bool { !path.isEmpty || !jellyPath.isEmpty }
-    var currentDirectoryName: String { jellyPath.last?.name ?? path.last?.lastPathComponent ?? (selectedServer?.kind == .jellyfin ? "媒体库" : selectedServer?.name ?? "离线演示") }
+    var currentDirectoryName: String { jellyPath.last?.name ?? path.last?.lastPathComponent ?? (selectedServer?.kind.isCatalogSource == true ? "媒体库" : selectedServer?.name ?? "离线演示") }
     var locationKey: String {
         if let server = selectedServer, server.kind == .local {
             return server.id.uuidString + ":local:" + ((try? LocalMediaIdentity.relativePath(root: server.address, file: path.last ?? server.address)) ?? "")
@@ -32,6 +32,13 @@ final class LibraryStore {
     var canPinDirectory: Bool { selectedServer != nil && (selectedServer?.kind.isFileSource == true || !jellyPath.isEmpty) }
     var isDirectoryPinned: Bool { bookmarks.contains { $0.id == locationKey } }
     var loading = false
+    private(set) var scannedVideoCount = 0
+    private(set) var scanStopped = false
+    func cancelDirectoryScan() {
+        guard selectedServer?.kind.isFileSource == true else { return }
+        loadID = UUID(); SMBSourceProvider.cancelBrowsing(); loading = false; scanStopped = true
+        remember(videos)
+    }
     var error: String?
     private(set) var storageMessage: String?
     private var storageBlocked = false
@@ -98,6 +105,8 @@ final class LibraryStore {
         else { restoreLocation(); restoreBrowseOptions() }
     }
     func showDemo() {
+        SMBSourceProvider.cancelBrowsing()
+        scannedVideoCount = 0; scanStopped = false
         browseOptions = BrowseOptions()
         folderSort = .nameAscending
         folderNextIndex = 0; folderTotal = 0
@@ -123,15 +132,24 @@ final class LibraryStore {
             return false
         }
     }
-    func add(name: String, kind: SourceKind, address: String, username: String, password: String) async throws {
+    func add(name: String, kind: SourceKind, address: String, username: String, password: String, smb: SMBOptions? = nil, verifiedSMB: SMBVerification? = nil, remembersPlayback: Bool = false) async throws {
         guard kind.requiresCredentials else { throw MediaError.message("请通过文件或目录入口添加本地来源。") }
-        let url = try ServerURL.parse(address)
+        let url = try kind == .smb ? SMBLocation.parse(address: address) : ServerURL.parse(address)
         var server = MediaServer(name: name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? (url.host ?? kind.title) : name, kind: kind, address: url, username: username)
-        if kind == .jellyfin {
+        server.smb = kind == .smb ? (smb ?? SMBOptions()) : nil
+        server.remembersPlayback = kind.isFileSource ? remembersPlayback : nil
+        var smbEntries: [DAVEntry]?
+        if kind.isCatalogSource {
             let (token, userID) = try await MediaClient.shared.signIn(server: server, password: password)
             server.userID = userID
             try Task.checkCancellation()
             try Credentials.save(token, for: server.id)
+        } else if kind == .smb {
+            if let verifiedSMB, verifiedSMB.matches(server, password: password) {
+                server.id = verifiedSMB.server.id; smbEntries = verifiedSMB.entries
+            } else { smbEntries = try await SMBSourceProvider.entries(server: server, directory: nil, password: password) }
+            try Task.checkCancellation()
+            try Credentials.save(password, for: server.id)
         } else {
             _ = try await MediaClient.shared.webDAV(server: server, password: password)
             try Task.checkCancellation()
@@ -139,6 +157,7 @@ final class LibraryStore {
         }
         servers.append(server)
         guard persist() else { servers.removeAll { $0.id == server.id }; Credentials.delete(server.id); throw MediaError.message(storageMessage ?? "无法保存来源。") }
+        if let smbEntries { SMBSourceProvider.seed(server: server, entries: smbEntries) }
         await select(server.id)
     }
     func mountLocalDirectory(_ url: URL, replacing original: MediaServer? = nil) async throws {
@@ -199,6 +218,10 @@ final class LibraryStore {
             throw MediaError.message(storageMessage ?? "无法保存删除结果。")
         }
         try manager.removeItem(at: trash)
+        do { try SubtitleSource.store.remove(videoID: video.id) }
+        catch { storageMessage = "视频副本已删除，但字幕记忆暂未清理。" }
+        do { try PlaybackSkipSession.remove(videoID: video.id) }
+        catch { storageMessage = "视频副本已删除，但跳过规则暂未清理。" }
         snapshots.removeAll(); snapshotOrder.removeAll(); LocalArtwork.clear()
         await reload()
     }
@@ -217,6 +240,10 @@ final class LibraryStore {
         folderSortPreferences = folderSortPreferences.filter { !$0.key.hasPrefix(server.id.uuidString + ":") }
         persistDirectorySettings()
         Credentials.delete(server.id)
+        do { try SubtitleSource.store.remove(sourceID: server.id) }
+        catch { storageMessage = "来源已移除，但字幕记忆暂未清理，可稍后重试。" }
+        do { try PlaybackSkipSession.remove(sourceID: server.id) }
+        catch { storageMessage = "来源已移除，但跳过规则暂未清理，可稍后重试。" }
         UserDefaults.standard.removeObject(forKey: "jellyPath." + server.id.uuidString)
         UserDefaults.standard.removeObject(forKey: "davPath." + server.id.uuidString)
         UserDefaults.standard.removeObject(forKey: "localPath." + server.id.uuidString)
@@ -232,6 +259,7 @@ final class LibraryStore {
         if selectedID == server.id { showDemo() }
     }
     func select(_ id: UUID?) async {
+        SMBSourceProvider.cancelBrowsing()
         guard let id else { showDemo(); return }
         retainContents()
         selectedID = id; path = []; jellyPath = []; clearContents()
@@ -240,6 +268,8 @@ final class LibraryStore {
         await reload()
     }
     func reload(directory: URL? = nil) async {
+        SMBSourceProvider.cancelBrowsing()
+        scannedVideoCount = 0; scanStopped = false
         guard let server = selectedServer else { showDemo(); return }
         let retainedNext = contentsKey == snapshotKey ? nextIndex : 0
         let retainedFolderNext = contentsKey == snapshotKey ? folderNextIndex : 0
@@ -249,7 +279,7 @@ final class LibraryStore {
         let sort = folderSort
         defer { if generation == loadID { loading = false } }
         do {
-            if server.kind == .jellyfin {
+            if server.kind.isCatalogSource {
                 // Refresh legacy saved locations that predate collection-type persistence.
                 if let first = jellyPath.first, first.collectionType == nil {
                     let roots = try await MediaClient.shared.browse(server: server, parentID: nil, sort: sort)
@@ -304,7 +334,13 @@ final class LibraryStore {
                     guard generation == self.loadID else { throw CancellationError() }
                     if url == root { return entries }
                     return try await provider.entries(server: server, directory: url)
-                }, progress: { _ in })
+                }, progress: { count in
+                    if generation == self.loadID { self.scannedVideoCount = count }
+                }, partial: { found in
+                    guard generation == self.loadID else { return }
+                    self.videos = options.sort.sorted(found.compactMap { try? self.fileVideo($0, server: server) })
+                    self.total = self.videos.count
+                })
                 guard generation == loadID else { return }
                 videos = try descendants.map { try fileVideo($0, server: server) }
                 videos = options.sort.sorted(videos)
@@ -312,7 +348,7 @@ final class LibraryStore {
             }
             contentsKey = snapshotKey
             remember(videos)
-        } catch { if generation == loadID { self.error = error.localizedDescription } }
+        } catch { if generation == loadID && !(error is CancellationError) { self.error = error.localizedDescription } }
     }
     func enter(_ directory: URL) async { retainContents(); path.append(directory); saveLocation(); restoreBrowseOptions(); clearContents(); await restoreOrReload() }
     func enter(_ folder: MediaFolder) async {
@@ -370,7 +406,7 @@ final class LibraryStore {
     private func clearContents() { contentsKey = nil; loadID = UUID(); loading = false; videos = []; folders = []; directories = []; total = 0; nextIndex = 0; folderNextIndex = 0; folderTotal = 0; error = nil }
 
     func more() async {
-        guard !loading, !loadingMore, hasMore, let server = selectedServer, server.kind == .jellyfin else { return }
+        guard !loading, !loadingMore, hasMore, let server = selectedServer, server.kind.isCatalogSource else { return }
         let generation = loadID
         let options = browseOptions
         loadingMore = true
@@ -404,7 +440,7 @@ final class LibraryStore {
     func collectPlaybackVideos(search: String = "", progress: (Int) -> Void) async throws -> [Video] {
         guard let server = selectedServer else { return videos }
         let options = browseOptions
-        if server.kind == .jellyfin {
+        if server.kind.isCatalogSource {
             guard let parentID = jellyPath.last?.id else { throw MediaError.message("请先选择一个媒体库或目录。") }
             return try await ScopedQueueCollector.pages(fetch: { start in
                 try await MediaClient.shared.playbackVideos(server: server, parentID: parentID, start: start, search: search, options: options)
@@ -421,7 +457,7 @@ final class LibraryStore {
         let relative = server.kind == .local ? try LocalMediaIdentity.relativePath(root: server.address, file: entry.url) : nil
         return Video(id: relative.map { LocalMediaIdentity.id(sourceID: server.id, relativePath: $0) } ?? server.id.uuidString + entry.id,
                      title: entry.name, subtitle: server.name, sourceID: server.id, url: entry.url,
-                     addedAt: entry.displayDate, localRelativePath: relative)
+                     artwork: entry.artwork, addedAt: entry.displayDate, localRelativePath: relative)
     }
     private func localAncestors(_ relative: String, root: URL) -> [URL] {
         let parts = relative.split(separator: "/")
@@ -475,7 +511,7 @@ final class LibraryStore {
         }
         retainContents()
         selectedID = server.id
-        jellyPath = server.kind == .jellyfin ? bookmark.jellyPath : []
+        jellyPath = server.kind.isCatalogSource ? bookmark.jellyPath : []
         path = server.kind == .webDAV ? bookmark.davPath : []
         if server.kind == .local { path = localAncestors(bookmark.localPath ?? "", root: server.address) }
         UserDefaults.standard.set(server.id.uuidString, forKey: "selectedServer")
@@ -545,7 +581,14 @@ final class LibraryStore {
         personalVideos.values.filter { favorites.contains($0.id) && isAvailable($0.video) }
             .map { resolved($0.video) }.sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
     }
-    private func isAvailable(_ video: Video) -> Bool { video.sourceID == nil || servers.contains { $0.id == video.sourceID } }
+    private func isAvailable(_ video: Video) -> Bool {
+        if let id = video.streamLinkID { return StreamLinkStore.shared.links.contains { $0.id == id && $0.video.id == video.id } }
+        return video.sourceID == nil || servers.contains { $0.id == video.sourceID }
+    }
+    func removeStreamLinkRecords(_ videoID: String) {
+        personalVideos[videoID] = nil; favorites.remove(videoID); positions[videoID] = nil; progressSnapshots[videoID] = nil
+        persist()
+    }
     private func resolved(_ video: Video) -> Video {
         var result = video
         if let index = video.demoIndex { result.url = Bundle.main.url(forResource: "demo\(index)", withExtension: "mp4") }
@@ -599,15 +642,19 @@ extension LibraryStore {
             return merged
         } catch { return resumePosition(video) }
     }
-    func reconnect(_ original: MediaServer, name: String, address: String, password: String) async throws {
+    func reconnect(_ original: MediaServer, name: String, address: String, password: String, remembersPlayback: Bool? = nil) async throws {
         var candidate = original
+        if original.kind.isFileSource, let remembersPlayback { candidate.remembersPlayback = remembersPlayback }
         candidate.name = name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? original.name : name
-        candidate.address = try ServerURL.parse(address)
+        candidate.address = try original.kind == .smb ? SMBLocation.parse(address: address) : ServerURL.parse(address)
         let secret: String
-        if original.kind == .jellyfin {
+        if original.kind.isCatalogSource {
             let (token, userID) = try await MediaClient.shared.signIn(server: candidate, password: password)
             guard userID == original.userID else { throw MediaError.message("这个地址对应不同账号。请添加为新来源，避免混合观看记录。") }
             secret = token
+        } else if original.kind == .smb {
+            guard candidate.address == original.address else { throw MediaError.message("SMB 共享目录变更请添加为新来源。") }
+            _ = try await SMBSourceProvider.entries(server: candidate, directory: nil, password: password); secret = password
         } else {
             guard candidate.address == original.address else { throw MediaError.message("WebDAV 路径变更请添加为新来源。") }
             _ = try await MediaClient.shared.webDAV(server: candidate, password: password); secret = password

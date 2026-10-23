@@ -1,0 +1,32 @@
+{
+  "checks" : [
+    "identity:stable-authored-source",
+    "map:actual-local-asset-ready",
+    "map:bounded-whole-video-plan",
+    "map:refinement-remains-in-selected-window",
+    "map:actual-image-and-labelled-time",
+    "cache:actual-time-preserved-on-reload",
+    "moments:save-and-reload",
+    "moments:rename-preserves-identity",
+    "moments:resolve-from-stable-identity",
+    "player:actual-frame-at-saved-position-without-history",
+    "player:map-time-uses-real-seek",
+    "player:changed-file-blocked-before-first-frame",
+    "moments:delete-keeps-original-video",
+    "privacy:no-test-server-or-personal-history-created"
+  ],
+  "error" : "",
+  "expectedChecks" : 14,
+  "measurements" : {
+    "actualFrameTime" : 6,
+    "actualResumeTime" : 6,
+    "actualSeekTime" : 2,
+    "firstFrameGenerationSeconds" : 0.084808124927803874
+  },
+  "passed" : true,
+  "scope" : "Authored bundled MP4, production map frame generator\/cache, isolated recoverable moment store, actual PlaybackController\/decoder seeking and changed-revision rejection; no private servers or watch progress",
+  "stage" : "内容地图与时刻验证通过",
+  "system" : "27.0",
+  "timestamp" : "2026-10-22T09:51:05Z",
+  "version" : "1.11.0 (1)"
+}

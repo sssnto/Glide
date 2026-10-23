@@ -1,0 +1,54 @@
+{
+  "version": "1.10.0 (1)",
+  "coreTests": {
+    "swiftTesting": 178,
+    "xctest": 7,
+    "total": 185,
+    "failures": 0,
+    "newDiscoveryCases": 14
+  },
+  "simulator": {
+    "device": "iPhone 13 Pro Max",
+    "os": "26.3.1",
+    "finalCasesPassed": 5,
+    "failures": 0,
+    "skipped": 0,
+    "batches": [
+      "Discovery-Final-Controls-Summary.json",
+      "Discovery-Final-Regression-Summary.json"
+    ]
+  },
+  "physicalDevice": {
+    "device": "iPhone 13 Pro Max",
+    "os": "27.0",
+    "finalPackageInstalled": true,
+    "probe": "passed",
+    "passed": true,
+    "checksPassed": 12,
+    "expectedChecks": 12,
+    "reportTimestamp": "2026-10-22T08:52:37Z",
+    "report": "Discovery-iPhone-Final.json",
+    "scope": "Authored bundle videos; production scope resolver, planners, isolated recoverable channel store and actual PlayerView/AVPlayer automatic queue; no personal servers or watch progress",
+    "normalApplicationRestored": true,
+    "touchAutomationCompleted": false
+  },
+  "release": {
+    "archive": "passed",
+    "signature": "passed",
+    "appAndFrameworkDSYMs": "passed",
+    "preflight": "passed",
+    "uploaded": false
+  },
+  "prototype": {
+    "authoredFrames": 9,
+    "classifiedFrames": 9,
+    "location": "Prototype/Results.json",
+    "platform": "macOS",
+    "naturalLanguageSearchDelivered": false
+  },
+  "sourceSnapshot": "Source-Snapshot.json",
+  "localFixtureServiceStopped": true,
+  "commit": false,
+  "push": false,
+  "tag": false
+}

@@ -10,6 +10,9 @@ libVLC base source: https://code.videolan.org/videolan/vlc/-/tree/79128878
 Project: https://www.videolan.org/vlc/libvlc.html
 
 Glide keeps the official decoder binary and removes unused architecture slices.
+Glide normalizes four public headers to use framework-qualified angle-bracket
+imports; no decoder implementation is changed. Reproducible preparation:
+Scripts/prepare_compatibility_sdk.py in the Glide source tree.
 
 Glide Subtitle Fallback / Noto Sans CJK SC 2.004
 
@@ -20,3 +23,31 @@ Source: https://github.com/notofonts/noto-cjk/tree/Sans2.004
 Glide renames the font and adds a legacy family alias for libVLC 3's default
 ASS fallback. The original glyphs, copyright and license metadata are retained.
 Reproducible build: Scripts/prepare_subtitle_font.py in the Glide source tree.
+
+libsmb2 4.0.0
+
+Copyright (C) 2016 Ronnie Sahlberg and contributors.
+LGPL 2.1 or later; full text: MobileVLCKit-LGPL-2.1.txt.
+Source: https://github.com/sahlberg/libsmb2/tree/v4.0.0
+Glide uses the libsmb2 binary already included in the fixed MobileVLCKit SDK.
+Unmodified public headers are in Glide/Services/SMB/Vendor/smb2; provenance:
+Docs/Dependencies/libsmb2-4.0.0-headers.json.
+
+libass 0.17.3 (in the fixed MobileVLCKit binary)
+
+Copyright (C) 2006-2016 libass contributors
+Public headers: Copyright (C) 2006 Evgeniy Stepanov; (C) 2011 Grigori Goronzy.
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+Glide invokes libass's public API for original ASS/SSA subtitle rendering.
+Public headers: https://github.com/libass/libass/tree/0.17.3/libass
+No decoder binary changes or additional framework are introduced.

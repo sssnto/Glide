@@ -28,9 +28,10 @@ import Foundation
 @MainActor enum SourceProviders {
     static func directories(for kind: SourceKind) throws -> any DirectorySourceProvider {
         switch kind {
+        case .smb: return SMBSourceProvider()
         case .webDAV: return WebDAVSourceProvider()
         case .local: return LocalSourceProvider()
-        case .jellyfin: throw MediaError.message("Jellyfin 目录使用媒体库接口。")
+        case .jellyfin, .emby: throw MediaError.message("媒体服务器目录使用媒体库接口。")
         }
     }
 }

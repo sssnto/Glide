@@ -95,6 +95,15 @@ struct PlaybackStallTracker {
 /// A Direct Stream flag describes one negotiation, not whether a later HLS
 /// request can copy video. Probe large direct sources and validate the copy URL.
 enum OriginalTransportPolicy {
+    static func preferredHDRCopyURL(_ url: URL, sourceCodec: String?, hdr: Bool, bitrate: Int?) -> URL? {
+        guard hdr, sourceCodec?.lowercased() == "hevc", let bitrate, bitrate > 0, bitrate <= 200_000_000 else { return nil }
+        let query = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
+        guard let raw = query.last(where: { $0.name.lowercased() == "transcodereasons" })?.value else { return nil }
+        let reasons = raw.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces).lowercased() }
+        let transportReasons: Set<String> = ["containernotsupported", "audiocodecnotsupported", "audiobitratenotsupported", "audiochannelsnotsupported", "audioprofilenotsupported", "audiosampleratenotsupported", "audiobitdepthnotsupported", "videocodectagnotsupported"]
+        guard !reasons.isEmpty, reasons.allSatisfy(transportReasons.contains) else { return nil }
+        return try? videoCopyURL(url, sourceCodec: sourceCodec)
+    }
     static func prefersSegments(local: Bool, delivery: PlaybackDelivery,
                                 width: Int?, height: Int?, bitrate: Int?) -> Bool {
         delivery == .direct &&
@@ -178,7 +187,9 @@ enum JellyfinPlaybackPolicy {
         profile["CodecProfiles"] = [["Type": "Video", "Codec": "h264", "Conditions": avcConditions]]
         return ["UserId": userID, "DeviceProfile": profile, "MaxStreamingBitrate": bitrate, "StartTimeTicks": 0,
                 "EnableDirectPlay": quality == .automatic || quality == .original, "EnableDirectStream": quality == .automatic || quality == .compatible,
-                "EnableTranscoding": quality != .original && quality != .compatible, "AllowVideoStreamCopy": quality != .hd1080 && quality != .hd720,
+                // HLS remux/audio/WebVTT jobs use the server transcoding route.
+                // Compatible must still pass videoCopyURL before any playback.
+                "EnableTranscoding": quality != .original, "AllowVideoStreamCopy": quality != .hd1080 && quality != .hd720,
                 "AllowAudioStreamCopy": quality != .hd1080 && quality != .hd720]
     }
     static func transcodeURL(_ url: URL, quality: PlaybackQuality) -> URL {

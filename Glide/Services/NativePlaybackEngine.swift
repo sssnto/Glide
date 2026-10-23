@@ -45,6 +45,11 @@ import UIKit
         guard let group, let option = player.currentItem?.currentMediaSelection.selectedMediaOption(in: group) else { return nil }
         return tracks.first { $0.kind == kind && options[$0.id] == option }?.id
     }
+    var subtitleClock: Double? {
+        guard !player.isExternalPlaybackActive, player.currentItem != nil else { return nil }
+        let time = player.currentTime().seconds
+        return time.isFinite ? time : nil
+    }
     var snapshot: PlaybackEngineSnapshot {
         guard let item = player.currentItem else { return PlaybackEngineSnapshot() }
         let rawTime = player.currentTime().seconds, rawDuration = item.duration.seconds
@@ -186,7 +191,7 @@ import UIKit
             let id = kind.rawValue + "-" + String(index)
             options[id] = option
             tracks.append(PlaybackTrack(id: id, kind: kind, displayName: option.displayName,
-                language: option.extendedLanguageTag, forced: option.hasMediaCharacteristic(.containsOnlyForcedSubtitles)))
+                language: option.extendedLanguageTag ?? option.locale?.language.languageCode?.identifier, forced: option.hasMediaCharacteristic(.containsOnlyForcedSubtitles)))
         }
     }
     func selectTrack(_ id: String?, kind: PlaybackTrack.Kind) {
@@ -210,9 +215,10 @@ import UIKit
     func cancelPendingSeeks() { cancelRebuffer(); isSeeking = false; lifetime.cancelSeek(); player.currentItem?.cancelPendingSeeks() }
     func seek(to time: Double, tolerance: Double, completion: @escaping (Bool, Double) -> Void) {
         guard player.currentItem != nil else { return }
-        cancelRebuffer(); isSeeking = true
+        // Retire the previous operation before publishing the new seek token.
+        // Loop boundaries and a following manual seek can arrive back-to-back.
+        cancelPendingSeeks(); isSeeking = true
         let token = lifetime.beginSeek()
-        player.currentItem?.cancelPendingSeeks()
         let delta = CMTime(seconds: tolerance, preferredTimescale: 600)
         player.seek(to: CMTime(seconds: time, preferredTimescale: 600), toleranceBefore: delta, toleranceAfter: delta) { [weak self] finished in
             Task { @MainActor in

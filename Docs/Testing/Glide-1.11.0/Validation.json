@@ -1,0 +1,76 @@
+{
+  "version": "1.11.0 (1)",
+  "coreTests": {
+    "swiftTesting": 189,
+    "xctest": 7,
+    "total": 196,
+    "failures": 0,
+    "newNavigationCases": 11
+  },
+  "simulator": {
+    "device": "iPhone 13 Pro Max",
+    "os": "26.3.1",
+    "resolvedCasesPassed": 6,
+    "unresolvedFailures": 0,
+    "skipped": 0,
+    "cases": {
+      "testContentMapRefinementCacheAndActualSeek": {
+        "passed": true,
+        "evidence": "Navigation-Final-Controls-Summary.json"
+      },
+      "testMomentCreateRestartRenameOpenAndDelete": {
+        "passed": true,
+        "evidence": "Navigation-Final-Controls-Summary.json"
+      },
+      "testNavigationProductionProbe": {
+        "passed": true,
+        "evidence": "Navigation-Final-Controls-Summary.json",
+        "probeChecks": 14
+      },
+      "testJellyfinTrickplayAndChapterNavigation": {
+        "passed": true,
+        "evidence": "Navigation-Server-Regression-Summary.json"
+      },
+      "testDiscoveryProductionPlayerQueueAndIsolatedStoreProbe": {
+        "passed": true,
+        "evidence": "Navigation-Server-Regression-Summary.json"
+      },
+      "testNativeAppearanceAndLibraryNavigation": {
+        "passed": true,
+        "evidence": "Navigation-Server-Regression-Summary.json"
+      }
+    },
+    "note": "The Final-Controls batch retained one superseded server-case failure. Its complete replacement passed in Server-Regression; the other three cases passed against the same production app source. Test harness waits for completed seeking before reopening navigation."
+  },
+  "physicalDevice": {
+    "device": "iPhone 13 Pro Max",
+    "os": "27.0",
+    "finalPackageInstalled": true,
+    "probe": "passed",
+    "passed": true,
+    "expectedChecks": 14,
+    "checksPassed": 14,
+    "reportTimestamp": "2026-10-22T09:51:05Z",
+    "report": "Navigation-iPhone-Final.json",
+    "measurements": {
+      "actualFrameTime": 6,
+      "actualResumeTime": 6,
+      "actualSeekTime": 2,
+      "firstFrameGenerationSeconds": 0.08480812492780387
+    },
+    "normalApplicationRestored": true,
+    "touchAutomationCompleted": false
+  },
+  "release": {
+    "archive": "passed",
+    "signature": "passed",
+    "appAndFrameworkDSYMs": "passed",
+    "preflight": "passed",
+    "uploaded": false
+  },
+  "sourceSnapshot": "Source-Snapshot.json",
+  "localFixtureServiceStopped": true,
+  "commit": false,
+  "push": false,
+  "tag": false
+}

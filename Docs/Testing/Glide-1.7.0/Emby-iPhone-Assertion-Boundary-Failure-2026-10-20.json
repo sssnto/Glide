@@ -1,0 +1,19 @@
+{
+  "checks" : [
+    "auth:wrong-password-no-source-valid-login-keychain-snapshot",
+    "auth:failed-reconnect-preserves-working-credential",
+    "catalog:official-views-movie-detail-search-authenticated-poster",
+    "catalog:official-pagination-60-plus-remainder-no-duplicates",
+    "catalog:series-season-ordered-episodes-chinese-home-recursion",
+    "native:direct-first-frame-paused-seek-and-play",
+    "native:official-video-copy-hls-first-frame-paused-seek-stop"
+  ],
+  "device" : "iPhone",
+  "error" : "等待超时：验证双音轨与服务器字幕协商；位置 4.5 \/ 660.0；已暂停",
+  "os" : "27.0",
+  "passed" : false,
+  "scope" : "Official Emby fixture; production authentication\/catalog\/native playback\/progress\/download\/subtitle\/skip",
+  "stage" : "Emby 验证未完成",
+  "timestamp" : "2026-10-20T05:36:30Z",
+  "version" : "1.7.0 (1)"
+}

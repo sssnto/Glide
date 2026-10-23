@@ -1,0 +1,69 @@
+{
+  "checks" : [
+    "precision:55.231",
+    "precision:71.5",
+    "precision:300.75",
+    "progress:opt-in-persist-reload",
+    "precision-playing:54.88",
+    "precision-playing:71.5",
+    "precision-playing:300.75"
+  ],
+  "device" : "iPad",
+  "diagnostic" : {
+    "accessLogBytesTransferred" : 20441014,
+    "attemptSeconds" : [
+      1.1512160301208496
+    ],
+    "bufferedAheadSeconds" : 0,
+    "bufferingCount" : 0,
+    "bufferingSeconds" : 0,
+    "delivery" : "原画直放",
+    "device" : "arm64",
+    "events" : [
+      "attempt_automatic",
+      "engine_vlc",
+      "resource_ready_direct",
+      "first_frame",
+      "vlc_output_color_not_verified"
+    ],
+    "firstFrameSeconds" : 1.1512160301208496,
+    "localMedia" : {
+      "audioCodecs" : [
+        "mp4a"
+      ],
+      "audioTracks" : 1,
+      "container" : "unknown",
+      "subtitleTracks" : 0,
+      "videoCodec" : "h264",
+      "videoTracks" : 1
+    },
+    "originalTransportAttempts" : 0,
+    "outputHeight" : 1080,
+    "outputWidth" : 1920,
+    "playerReadySeconds" : 0.13873708248138428,
+    "recoveryCount" : 0,
+    "requestedQuality" : "automatic",
+    "resourceReadySeconds" : 0.036275029182434082,
+    "schema" : 9,
+    "session" : "73026693-DF42-47DF-ABA2-4ECD1C8766CB",
+    "state" : "播放中",
+    "system" : "26.3.1",
+    "totalFirstFrameSeconds" : 1.1512299776077271,
+    "version" : "1.5.0 (1)"
+  },
+  "error" : "",
+  "measurements" : {
+    "pausedTime:55.231" : 55.231000000000002,
+    "pausedTime:71.5" : 71.5,
+    "pausedTime:300.75" : 300.75,
+    "playingTime:54.88" : 54.880000000000003,
+    "playingTime:71.5" : 70.617999999999995,
+    "playingTime:300.75" : 300.75
+  },
+  "os" : "26.3.1",
+  "passed" : true,
+  "scope" : "Authored loopback Samba; production provider, controller and rendered VideoSurface",
+  "stage" : "SMB 非关键帧定位验证通过",
+  "timestamp" : "2026-10-19T04:35:06Z",
+  "version" : "1.5.0 (1)"
+}

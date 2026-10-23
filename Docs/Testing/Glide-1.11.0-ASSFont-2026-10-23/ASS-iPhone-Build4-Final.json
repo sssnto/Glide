@@ -1,0 +1,189 @@
+{
+  "context" : {
+    "allowsCellularInProbe" : true,
+    "audioSessionActivated" : true,
+    "explicitEpisodeMatched" : true,
+    "jellyfinSourceCount" : 2,
+    "matchedDiagnosticFormat" : true,
+    "recentCandidateCount" : 32,
+    "recentFormats" : [
+      {
+        "codec" : "hevc",
+        "dvProfile" : 0,
+        "height" : 1080,
+        "range" : "SDR",
+        "width" : 1920
+      }
+    ],
+    "serverSubtitlesDisabled" : false,
+    "serverVersion" : "12.2.0",
+    "sourceBitrate" : 1536408,
+    "sourceCodec" : "hevc",
+    "sourceRange" : "SDR",
+    "sourceSubtitleFormats" : [
+      {
+        "codec" : "ass",
+        "default" : false,
+        "forced" : false,
+        "language" : "unknown"
+      },
+      {
+        "codec" : "subrip",
+        "default" : false,
+        "forced" : false,
+        "language" : "eng"
+      }
+    ],
+    "subtitleMemoryRestored" : true,
+    "textSubtitleRequested" : false
+  },
+  "results" : [
+    {
+      "actualTime" : 2.0020007519999998,
+      "diagnostic" : {
+        "accessLogBytesTransferred" : 9410957,
+        "accessLogTransferSeconds" : 1.6848273749999998,
+        "attemptSeconds" : [
+          2.1204869747161865
+        ],
+        "bitDepth" : 10,
+        "bufferedAheadSeconds" : 35.243718880999999,
+        "bufferEmpty" : false,
+        "bufferFull" : true,
+        "bufferingCount" : 0,
+        "bufferingSeconds" : 0,
+        "clientSubtitleCueCount" : 707,
+        "delivery" : "服务器流（方式待确认）",
+        "device" : "iPhone14,3",
+        "directStreamFlag" : false,
+        "droppedVideoFrames" : 0,
+        "events" : [
+          "attempt_automatic",
+          "subtitle_client_text",
+          "engine_avplayer",
+          "resource_ready_serverStream",
+          "first_frame",
+          "output_color_unavailable"
+        ],
+        "firstFrameSeconds" : 2.1204869747161865,
+        "forwardBufferTargetSeconds" : 30,
+        "height" : 1080,
+        "indicatedBitrate" : 9858550,
+        "level" : 120,
+        "likelyToKeepUp" : true,
+        "nativeStalls" : 0,
+        "nativeTimeControlStatus" : "playing",
+        "observedBitrate" : 45559078,
+        "originalTransportAttempts" : 0,
+        "outputHeight" : 1080,
+        "outputVideoCodec" : "hvc1",
+        "outputWidth" : 1920,
+        "playerReadySeconds" : 2.0898779630661011,
+        "playlistMode" : "master",
+        "preferredTextSubtitle" : false,
+        "profile" : "Main 10",
+        "rebufferCount" : 0,
+        "recoveryCount" : 0,
+        "requestedQuality" : "automatic",
+        "resourceReadySeconds" : 0.67234694957733154,
+        "schema" : 10,
+        "serverSubtitleIndex" : -1,
+        "session" : "9AF6A7B2-4C72-47A2-A930-CF19B5508D57",
+        "sourceBitrate" : 1916998,
+        "sourceFrameRate" : 23.976025,
+        "sourceKind" : "jellyfin",
+        "state" : "播放中",
+        "subtitleMethod" : "Drop",
+        "system" : "27.0.1",
+        "totalFirstFrameSeconds" : 2.1205340623855591,
+        "version" : "1.11.0 (4)",
+        "videoCodec" : "hevc",
+        "videoRangeType" : "SDR",
+        "width" : 1920
+      },
+      "elapsedSeconds" : 4.3018725416695816,
+      "externalSubtitleCueCount" : 707,
+      "failed" : false,
+      "frameReady" : true,
+      "globalSubtitlePreferenceOff" : false,
+      "rememberedSubtitleSuppressesNative" : true,
+      "route" : "production-controller",
+      "selectedSubtitleLanguage" : "unknown",
+      "subtitleLanguages" : [
+        "unknown"
+      ],
+      "subtitleSelected" : false,
+      "subtitleTrackCount" : 1
+    },
+    {
+      "report" : {
+        "checks" : [
+          "fixed-libass-0.17.3-runtime",
+          "all-authored-events-loaded",
+          "multi-layer-shaping-outline-shadow-and-drawing",
+          "original-red-blue-and-green-colours",
+          "alpha-antialiasing-and-blur-preserved",
+          "fade-and-karaoke-change-with-real-timestamps",
+          "paused-frame-reuses-raster",
+          "move-rotation-transform-interpolates",
+          "inverse-clip-and-scaling-render",
+          "viewport-resize-retains-script-coordinates",
+          "event-end-clears-overlay",
+          "backward-seek-restores-original-frame",
+          "authored-font-choice-changes-glyphs",
+          "declared-ycbcr-matrix-maps-to-video-colour-space"
+        ],
+        "colouredPixels" : {
+          "blue" : 365,
+          "green" : 1600,
+          "red" : 549
+        },
+        "expectedChecks" : 14,
+        "passed" : true,
+        "timestamp" : "2026-10-23T01:01:51Z",
+        "version" : 24129536
+      },
+      "route" : "authored-ass-original-effects"
+    },
+    {
+      "actualTime" : 16.18,
+      "assByteCount" : 179684,
+      "eventCount" : 707,
+      "fontAttachmentCount" : 0,
+      "matchedProvidedFontCount" : 1,
+      "missingFontCount" : 0,
+      "rendered" : true,
+      "requestedFontCount" : 1,
+      "route" : "ass-original-visual-checkpoint",
+      "target" : 16.18
+    },
+    {
+      "actualTime" : 17.502113644000001,
+      "checks" : [
+        "authored-libass-effects",
+        "production-original-ass-track-selected",
+        "original-style-table-and-overrides-reach-libass",
+        "bilingual-dialogue-and-transcript-retained",
+        "real-decoder-seek-to-original-dialogue",
+        "production-libass-pixels-visible-at-decoder-clock",
+        "ordinary-text-overlay-suppressed-for-ass",
+        "provided-original-font-selected-by-libass",
+        "subtitle-off-clears-original-layer-without-video-reopen",
+        "switch-ass-to-plain-text-preserves-video",
+        "switch-back-restores-ass-and-pause-clock",
+        "original-styled-pixels-reappear-after-switch",
+        "styled-ass-plays-in-original-video-session"
+      ],
+      "expectedChecks" : 13,
+      "failed" : false,
+      "failedCheck" : "none",
+      "passed" : true,
+      "route" : "production-ass-original-style"
+    }
+  ],
+  "scope" : "Authorized in-app recent-item metadata and short real AVPlayer trials; no credentials, host, URL, title, item identifier or media bytes exported",
+  "stage" : "完整生产流程验证结束",
+  "system" : "27.0.1",
+  "timestamp" : "2026-10-23T01:02:14Z",
+  "version" : "1.11.0 (4)"
+}

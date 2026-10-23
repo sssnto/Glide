@@ -1,0 +1,60 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "C35967C8-D815-4F3C-8D7C-9019AB98AF2B",
+        "deviceName" : "Glide App Store iPhone",
+        "modelName" : "iPhone 13 Pro Max",
+        "osBuildNumber" : "23D8133",
+        "osVersion" : "26.3.1",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 2,
+      "passedTests" : 1,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "Glide · Built with macOS 27.0.1",
+  "expectedFailures" : 0,
+  "failedTests" : 2,
+  "finishTime" : 1792655741.503,
+  "passedTests" : 1,
+  "result" : "Failed",
+  "runtimeWarnings" : [
+
+  ],
+  "skippedTests" : 0,
+  "startTime" : 1792655507.369,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "Failed to get matching snapshot: No matches found for first query match sequence: `Descendants matching type StaticText`, given input StaticText, identifier: 'discovery.queue.1', label: '蓝色时分'\nPossibly caused by runtime issues:\nAutomation type mismatch: computed Other from legacy attributes vs StaticText from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 48;\n    \"XC_kAXXCAttributeElementBaseType\" = UILabel;\n    \"XC_kAXXCAttributeElementType\" = UILabel;\n    \"XC_kAXXCAttributeTraits\" = 8590000128;\n}\nSee test report attachments for more detail.",
+      "targetName" : "GlideUITests",
+      "testIdentifier" : 1,
+      "testIdentifierString" : "GlideUITests/testDiscoveryChannelCreateAutomaticAdvanceEditAndRestart()",
+      "testIdentifierURL" : "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDiscoveryChannelCreateAutomaticAdvanceEditAndRestart",
+      "testName" : "testDiscoveryChannelCreateAutomaticAdvanceEditAndRestart()"
+    },
+    {
+      "failureText" : "XCTAssertEqual failed: (\"XCTWaiterResult(rawValue: 2)\") is not equal to (\"XCTWaiterResult(rawValue: 1)\")",
+      "targetName" : "GlideUITests",
+      "testIdentifier" : 3,
+      "testIdentifierString" : "GlideUITests/testDiscoveryTimePickPreferencesScopeAndActualPlayback()",
+      "testIdentifierURL" : "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDiscoveryTimePickPreferencesScopeAndActualPlayback",
+      "testName" : "testDiscoveryTimePickPreferencesScopeAndActualPlayback()"
+    }
+  ],
+  "title" : "Test - Glide",
+  "topInsights" : [
+
+  ],
+  "totalTestCount" : 3
+}

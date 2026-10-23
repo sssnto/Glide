@@ -1,0 +1,12 @@
+{
+  "version": "0.17.3",
+  "apiVersion": "0x01703000",
+  "binary": "Unmodified fixed MobileVLCKit 3.7.3, device and simulator exports",
+  "source": "https://github.com/libass/libass/tree/0.17.3",
+  "license": "ISC",
+  "headers": {
+    "ass.h": "c322bb1f03dfe3a2bdbcd61002ff92684cd6f6ef593bc4a9dbca13f79f9c6ba2",
+    "ass_types.h": "b2f06eaaba5d80b3a23fb08726f1152f12a0f583346ad0086a80ebbdb4c48cf8"
+  },
+  "scope": "Unmodified official public headers; runtime rejects other ABI versions."
+}

@@ -1,0 +1,52 @@
+{
+  "appVersion": "1.9.0",
+  "build": {
+    "debugDevice": "succeeded",
+    "simulator": "succeeded",
+    "staticReleasePreflight": "passed",
+    "gitDiffCheck": "passed",
+    "newReleaseArchive": false,
+    "finalDeviceAppPath": "/tmp/Glide190/UIAuditDebug/Build/Products/Debug-iphoneos/Glide.app",
+    "appExecutableSHA256": "8e8e680046367343341d50cfc71a92f22463f067b21fa361b945c5b50c0761bd"
+  },
+  "finalizedUTC": "2026-10-21T10:50:51.627875+00:00",
+  "acceptance": "Implementation and four scoped simulator cases passed; final physical install and full touch audit pending",
+  "publicReleaseAcceptance": false,
+  "simulator": {
+    "model": "iPhone 13 Pro Max",
+    "system": "26.3.1",
+    "uniqueFinalCasesPassed": 4,
+    "cases": {
+      "appearanceAndLibraryNavigation": "Native-Appearance-Final-Summary.json",
+      "scopeSortAndPinnedDirectory": "Native-Menu-Final-Summary.json",
+      "denseCatalogScroll": "Native-Final-Summary.json",
+      "mediaDetailsAndPlaybackControls": "Native-Final-Summary.json"
+    },
+    "note": "Final application sources identical across final batches. Test harness subsequently adjusted menu type and presentation synchronization. Mixed failed batches remain recorded."
+  },
+  "physical": {
+    "model": "iPhone 13 Pro Max",
+    "system": "27.0",
+    "earlyPreviewInstalled": true,
+    "finalBuildInstalled": false,
+    "failure": "Device not found on final install; physical phone absent from devicectl inventory",
+    "visualObserved": [
+      "intermediate build 5 library light",
+      "intermediate build 5 settings light",
+      "intermediate build 5 settings dark"
+    ],
+    "touchAuditStatus": "blocked before any test case started",
+    "bootstrapAttempts": 7,
+    "bootstrapErrorCode": 74,
+    "credentialsExported": false,
+    "rawScreenshotsCommitted": false
+  },
+  "performance": {
+    "before": "sustained approximately 90 percent CPU after first swipe, main-thread sample concentrated in SwiftUI graph and UIKit trait updates",
+    "colorSimplificationAloneResolved": false,
+    "targetedLayoutChange": "VStack wrapper with inner LazyVGrid, rather than nested lazy wrappers",
+    "after": "dense scroll completed twice; 38 authored cards, detail return anchor and cache reuse assertions passed",
+    "deviceFPSMeasured": false
+  },
+  "sourceSnapshot": "Source-Snapshot.json"
+}

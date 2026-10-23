@@ -1,0 +1,3 @@
+ERROR: The device must be paired before it can be connected. (com.apple.dt.CoreDeviceError error 2 (0x02))
+       ----------------------------------------
+           The device must be paired before it can be connected. (com.apple.dt.RemotePairingError error 2 (0x02))

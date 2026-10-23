@@ -1,0 +1,31 @@
+{
+  "coreInitialEnvironmentAttempt": "Default Swift module cache was denied by sandbox before compilation; rerun with caches and scratch build under /tmp passed.",
+  "fixtureInitialEnvironmentAttempt": "Installed FFmpeg has no drawtext filter. Used system CoreText with the bundled font to generate original SUP glyphs; initial fixture row reversal corrected after screenshot inspection. No player raster orientation code changed.",
+  "uiAttempts": [
+    {
+      "summary": "UI-Attempt1-Summary.json",
+      "passed": 1,
+      "failed": 1,
+      "scope": "PGS/audio passed; text-switch UI off menu tap failed while preceding menu dismissed."
+    },
+    {
+      "summary": "UI-Attempt2-Summary.json",
+      "passed": 1,
+      "failed": 2,
+      "scope": "Dual production probe passed; PGS/audio off menu tap and text-switch pause tap did not reach expected UI state."
+    },
+    {
+      "summary": "UI-Final-Summary.json",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "scope": "Wait for menu and pause state; query menu by identifier independent of legacy Button/modern PopUpButton type. All prior functional assertions retained."
+    }
+  ],
+  "physicalAttempts": [
+    "Production-iPhone-Attempt1.json",
+    "Production-iPhone-Final.json"
+  ],
+  "signatureInitialEnvironmentAttempt": "Sandbox verification could not read system certificate trust (CSSMERR_TP_NOT_TRUSTED). Same strict command with host trust access passed.",
+  "cleanup": "Simulator app had already terminated; simctl shutdown succeeded. No source or acceptance assertions removed for cleanup errors."
+}

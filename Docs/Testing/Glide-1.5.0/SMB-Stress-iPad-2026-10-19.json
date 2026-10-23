@@ -1,0 +1,369 @@
+{
+  "passed": true,
+  "appReport": {
+    "checks": [
+      "list:unicode-space-percent-hash",
+      "read:offset-short-read-eof",
+      "list:1000-entries-three-levels",
+      "auth:wrong-password-rejected",
+      "error:missing-file",
+      "error:permission-distinct-from-auth",
+      "cancel:eight-active-and-queued-then-reconnect",
+      "auth:guest",
+      "protocol-fixture:1446",
+      "protocol-fixture:1447",
+      "protocol-fixture:1448",
+      "source:save-browse-keychain",
+      "identity:same-name-different-directories",
+      "play-seek-pause:1080p.mp4",
+      "play-seek-pause:11-hd-dual-ass.mkv",
+      "play-seek-pause:中文 空格 #%.mp4",
+      "play-seek-pause:特殊 @+ &%#.mp4",
+      "play-seek-pause:4k-hevc.mp4",
+      "protocol-play-seek:1446-sealed:false-guest:false",
+      "protocol-play-seek:1447-sealed:false-guest:false",
+      "protocol-play-seek:1448-sealed:true-guest:false",
+      "protocol-play-seek:1445-sealed:true-guest:false",
+      "protocol-play-seek:1445-sealed:false-guest:true",
+      "protocol-play-seek:1445-sealed:false-guest:false",
+      "seek:20-rapid-last-intent-paused",
+      "lifecycle:50-open-stop",
+      "network:reconnect-0",
+      "network:reconnect-1",
+      "network:reconnect-2",
+      "network:reconnect-3",
+      "network:reconnect-4",
+      "playback:30-minutes"
+    ],
+    "device": "iPad",
+    "diagnostic": {
+      "accessLogBytesTransferred": 834164366,
+      "attemptSeconds": [
+        0.9825639724731445
+      ],
+      "bufferedAheadSeconds": 0,
+      "bufferingCount": 0,
+      "bufferingSeconds": 0,
+      "delivery": "原画直放",
+      "device": "arm64",
+      "events": [
+        "attempt_automatic",
+        "engine_vlc",
+        "resource_ready_direct",
+        "first_frame",
+        "vlc_output_color_not_verified"
+      ],
+      "firstFrameSeconds": 0.9825639724731445,
+      "localMedia": {
+        "audioCodecs": [
+          "mp4a"
+        ],
+        "audioTracks": 1,
+        "container": "unknown",
+        "subtitleTracks": 0,
+        "videoCodec": "h264",
+        "videoTracks": 1
+      },
+      "originalTransportAttempts": 0,
+      "outputHeight": 1080,
+      "outputWidth": 1920,
+      "playerReadySeconds": 0.2588930130004883,
+      "recoveryCount": 0,
+      "requestedQuality": "automatic",
+      "resourceReadySeconds": 0.15746092796325684,
+      "schema": 9,
+      "session": "B7FFFBCE-9714-447E-8EC7-FF371351E47B",
+      "state": "播放中",
+      "system": "26.3.1",
+      "totalFirstFrameSeconds": 0.9825799465179443,
+      "version": "1.5.0 (1)"
+    },
+    "error": "",
+    "measurements": {
+      "cancelEightOperationsSeconds": 0.09121220838278532,
+      "continuousMediaSeconds": 1800.001,
+      "continuousPlaybackSeconds": 1800.2473582916427,
+      "fileBytes:11-hd-dual-ass.mkv": 27916261,
+      "fileBytes:1080p.mp4": 27198085,
+      "firstFrame:4k-hevc.mp4": 1.148977999924682,
+      "firstFrame:11-hd-dual-ass.mkv": 0.8578285833355039,
+      "firstFrame:1080p.mp4": 2.3522566666360945,
+      "firstFrame:中文 空格 #%.mp4": 0.6285489166621119,
+      "firstFrame:特殊 @+ &%#.mp4": 0.614607208292,
+      "interruptedPosition:0": 55.26,
+      "interruptedPosition:1": 54.881,
+      "interruptedPosition:2": 56.843,
+      "interruptedPosition:3": 55.799,
+      "interruptedPosition:4": 54.768,
+      "readBytesAtFirstFrame:4k-hevc.mp4": 21273294,
+      "readBytesAtFirstFrame:11-hd-dual-ass.mkv": 18395696,
+      "readBytesAtFirstFrame:1080p.mp4": 18446468,
+      "readBytesAtFirstFrame:中文 空格 #%.mp4": 58319,
+      "readBytesAtFirstFrame:特殊 @+ &%#.mp4": 58319,
+      "resumedPosition:0": 55.26,
+      "resumedPosition:1": 54.881,
+      "resumedPosition:2": 56.843,
+      "resumedPosition:3": 56.299,
+      "resumedPosition:4": 54.565
+    },
+    "os": "26.3.1",
+    "passed": true,
+    "scope": "Authored loopback Samba; production provider, controller and rendered VideoSurface",
+    "stage": "SMB 合成服务验收通过",
+    "timestamp": "2026-10-19T05:11:52Z",
+    "version": "1.5.0 (1)"
+  },
+  "rssSamples": [
+    {
+      "monotonicSeconds": 368.32573075,
+      "rssKiB": 119728
+    },
+    {
+      "monotonicSeconds": 398.715346791,
+      "rssKiB": 156768
+    },
+    {
+      "monotonicSeconds": 428.970044791,
+      "rssKiB": 250224
+    },
+    {
+      "monotonicSeconds": 459.130941541,
+      "rssKiB": 284528
+    },
+    {
+      "monotonicSeconds": 489.299942208,
+      "rssKiB": 255536
+    },
+    {
+      "monotonicSeconds": 519.466499083,
+      "rssKiB": 267776
+    },
+    {
+      "monotonicSeconds": 549.697618416,
+      "rssKiB": 292816
+    },
+    {
+      "monotonicSeconds": 579.923473375,
+      "rssKiB": 250896
+    },
+    {
+      "monotonicSeconds": 610.14920425,
+      "rssKiB": 267520
+    },
+    {
+      "monotonicSeconds": 640.340286083,
+      "rssKiB": 243280
+    },
+    {
+      "monotonicSeconds": 670.515163666,
+      "rssKiB": 238416
+    },
+    {
+      "monotonicSeconds": 700.6890825,
+      "rssKiB": 288944
+    },
+    {
+      "monotonicSeconds": 730.949412833,
+      "rssKiB": 266320
+    },
+    {
+      "monotonicSeconds": 761.261670333,
+      "rssKiB": 298144
+    },
+    {
+      "monotonicSeconds": 791.469117708,
+      "rssKiB": 281392
+    },
+    {
+      "monotonicSeconds": 821.706700541,
+      "rssKiB": 262768
+    },
+    {
+      "monotonicSeconds": 851.887034041,
+      "rssKiB": 215888
+    },
+    {
+      "monotonicSeconds": 882.053089291,
+      "rssKiB": 273648
+    },
+    {
+      "monotonicSeconds": 912.236965541,
+      "rssKiB": 255328
+    },
+    {
+      "monotonicSeconds": 942.41534875,
+      "rssKiB": 249472
+    },
+    {
+      "monotonicSeconds": 972.590243333,
+      "rssKiB": 268720
+    },
+    {
+      "monotonicSeconds": 1002.779806541,
+      "rssKiB": 268480
+    },
+    {
+      "monotonicSeconds": 1032.955292916,
+      "rssKiB": 274480
+    },
+    {
+      "monotonicSeconds": 1063.117550083,
+      "rssKiB": 228400
+    },
+    {
+      "monotonicSeconds": 1093.3139655,
+      "rssKiB": 258544
+    },
+    {
+      "monotonicSeconds": 1123.480077208,
+      "rssKiB": 265888
+    },
+    {
+      "monotonicSeconds": 1153.6805275,
+      "rssKiB": 295968
+    },
+    {
+      "monotonicSeconds": 1183.923489541,
+      "rssKiB": 282048
+    },
+    {
+      "monotonicSeconds": 1214.221345875,
+      "rssKiB": 293088
+    },
+    {
+      "monotonicSeconds": 1244.509182291,
+      "rssKiB": 292048
+    },
+    {
+      "monotonicSeconds": 1274.77847575,
+      "rssKiB": 239792
+    },
+    {
+      "monotonicSeconds": 1305.00082525,
+      "rssKiB": 268704
+    },
+    {
+      "monotonicSeconds": 1335.205831416,
+      "rssKiB": 245328
+    },
+    {
+      "monotonicSeconds": 1365.47394375,
+      "rssKiB": 271584
+    },
+    {
+      "monotonicSeconds": 1395.77674375,
+      "rssKiB": 257360
+    },
+    {
+      "monotonicSeconds": 1426.046628,
+      "rssKiB": 273648
+    },
+    {
+      "monotonicSeconds": 1456.266705958,
+      "rssKiB": 273872
+    },
+    {
+      "monotonicSeconds": 1486.552486,
+      "rssKiB": 249968
+    },
+    {
+      "monotonicSeconds": 1516.826689,
+      "rssKiB": 266896
+    },
+    {
+      "monotonicSeconds": 1547.082078208,
+      "rssKiB": 301184
+    },
+    {
+      "monotonicSeconds": 1577.341837166,
+      "rssKiB": 272336
+    },
+    {
+      "monotonicSeconds": 1607.604685708,
+      "rssKiB": 246576
+    },
+    {
+      "monotonicSeconds": 1637.868448208,
+      "rssKiB": 276016
+    },
+    {
+      "monotonicSeconds": 1668.104855125,
+      "rssKiB": 276144
+    },
+    {
+      "monotonicSeconds": 1698.374412041,
+      "rssKiB": 246896
+    },
+    {
+      "monotonicSeconds": 1728.657709208,
+      "rssKiB": 299648
+    },
+    {
+      "monotonicSeconds": 1758.892901791,
+      "rssKiB": 272624
+    },
+    {
+      "monotonicSeconds": 1789.147857916,
+      "rssKiB": 273600
+    },
+    {
+      "monotonicSeconds": 1819.371154666,
+      "rssKiB": 265216
+    },
+    {
+      "monotonicSeconds": 1849.573667625,
+      "rssKiB": 283344
+    },
+    {
+      "monotonicSeconds": 1879.767595791,
+      "rssKiB": 282400
+    },
+    {
+      "monotonicSeconds": 1909.963416166,
+      "rssKiB": 229776
+    },
+    {
+      "monotonicSeconds": 1940.177485708,
+      "rssKiB": 251776
+    },
+    {
+      "monotonicSeconds": 1970.383213958,
+      "rssKiB": 219680
+    },
+    {
+      "monotonicSeconds": 2000.560275,
+      "rssKiB": 276912
+    },
+    {
+      "monotonicSeconds": 2030.731856541,
+      "rssKiB": 283984
+    },
+    {
+      "monotonicSeconds": 2060.929456458,
+      "rssKiB": 242272
+    },
+    {
+      "monotonicSeconds": 2091.08116575,
+      "rssKiB": 288336
+    },
+    {
+      "monotonicSeconds": 2121.268792208,
+      "rssKiB": 264544
+    },
+    {
+      "monotonicSeconds": 2151.428849875,
+      "rssKiB": 292560
+    }
+  ],
+  "memoryScope": "macOS simulator process RSS; not a physical-device heap or leak measurement",
+  "connectionsAfterStop": "Samba version 4.13.7\nPID     Username     Group        Machine                                   Protocol Version  Encryption           Signing              \n----------------------------------------------------------------------------------------------------------------------------------------",
+  "simulator": "A517192E-7F4D-4ED6-9ADF-8E7E513C6913",
+  "rssSummary": {
+    "samples": 60,
+    "warmupExcludedSeconds": 300,
+    "postWarmupMinMiB": 210.828125,
+    "postWarmupMaxMiB": 294.125,
+    "postWarmupSlopeMiBPerMinute": 0.13721419329368184,
+    "note": "Observed macOS simulator RSS only. Memory pressure and paging affect this value; not proof of physical-device heap or absence of leaks."
+  }
+}

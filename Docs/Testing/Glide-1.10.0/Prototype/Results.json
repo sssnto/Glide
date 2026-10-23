@@ -1,0 +1,286 @@
+{
+  "elapsedSeconds" : 1.3649987500011775,
+  "frames" : [
+    {
+      "actualSeconds" : 1,
+      "classificationSeconds" : 0.30774308333457157,
+      "frameSeconds" : 0.27768141666638257,
+      "height" : 180,
+      "labels" : [
+        {
+          "confidence" : 0.11069229245185852,
+          "label" : "outdoor"
+        },
+        {
+          "confidence" : 0.10815457254648209,
+          "label" : "celestial_body"
+        },
+        {
+          "confidence" : 0.108154296875,
+          "label" : "moon"
+        },
+        {
+          "confidence" : 0.060302734375,
+          "label" : "daytime"
+        },
+        {
+          "confidence" : 0.060302734375,
+          "label" : "sun"
+        }
+      ],
+      "requestedSeconds" : 1,
+      "sample" : "Demo0-1s.png",
+      "width" : 101
+    },
+    {
+      "actualSeconds" : 4,
+      "classificationSeconds" : 0.0081511666667211102,
+      "frameSeconds" : 0.031620583333278773,
+      "height" : 180,
+      "labels" : [
+        {
+          "confidence" : 0.10663632303476334,
+          "label" : "outdoor"
+        },
+        {
+          "confidence" : 0.10327167063951492,
+          "label" : "celestial_body"
+        },
+        {
+          "confidence" : 0.103271484375,
+          "label" : "moon"
+        },
+        {
+          "confidence" : 0.062744140625,
+          "label" : "daytime"
+        },
+        {
+          "confidence" : 0.062744140625,
+          "label" : "sun"
+        }
+      ],
+      "requestedSeconds" : 4,
+      "sample" : "Demo0-4s.png",
+      "width" : 101
+    },
+    {
+      "actualSeconds" : 8,
+      "classificationSeconds" : 0.0086237083341984544,
+      "frameSeconds" : 0.045849833333704737,
+      "height" : 180,
+      "labels" : [
+        {
+          "confidence" : 0.087431691586971283,
+          "label" : "outdoor"
+        },
+        {
+          "confidence" : 0.083496294915676117,
+          "label" : "celestial_body"
+        },
+        {
+          "confidence" : 0.08349609375,
+          "label" : "moon"
+        },
+        {
+          "confidence" : 0.055908203125,
+          "label" : "daytime"
+        },
+        {
+          "confidence" : 0.055908203125,
+          "label" : "sun"
+        }
+      ],
+      "requestedSeconds" : 8,
+      "sample" : "Demo0-8s.png",
+      "width" : 101
+    },
+    {
+      "actualSeconds" : 1,
+      "classificationSeconds" : 0.0071993333331192844,
+      "frameSeconds" : 0.016353625000192551,
+      "height" : 180,
+      "labels" : [
+        {
+          "confidence" : 0.12256152182817459,
+          "label" : "art"
+        },
+        {
+          "confidence" : 0.12255859375,
+          "label" : "illustrations"
+        },
+        {
+          "confidence" : 0.066162601113319397,
+          "label" : "document"
+        },
+        {
+          "confidence" : 0.031387805938720703,
+          "label" : "outdoor"
+        },
+        {
+          "confidence" : 0.02978515625,
+          "label" : "daytime"
+        }
+      ],
+      "requestedSeconds" : 1,
+      "sample" : "Demo1-1s.png",
+      "width" : 101
+    },
+    {
+      "actualSeconds" : 4,
+      "classificationSeconds" : 0.011512333332575508,
+      "frameSeconds" : 0.035841416665789438,
+      "height" : 180,
+      "labels" : [
+        {
+          "confidence" : 0.12329427152872086,
+          "label" : "art"
+        },
+        {
+          "confidence" : 0.123291015625,
+          "label" : "illustrations"
+        },
+        {
+          "confidence" : 0.05517636239528656,
+          "label" : "document"
+        },
+        {
+          "confidence" : 0.030454231426119804,
+          "label" : "outdoor"
+        },
+        {
+          "confidence" : 0.029052734375,
+          "label" : "daytime"
+        }
+      ],
+      "requestedSeconds" : 4,
+      "sample" : "Demo1-4s.png",
+      "width" : 101
+    },
+    {
+      "actualSeconds" : 8,
+      "classificationSeconds" : 0.0083496666666178498,
+      "frameSeconds" : 0.049172625000210246,
+      "height" : 180,
+      "labels" : [
+        {
+          "confidence" : 0.10987237095832825,
+          "label" : "art"
+        },
+        {
+          "confidence" : 0.10986328125,
+          "label" : "illustrations"
+        },
+        {
+          "confidence" : 0.064453482627868652,
+          "label" : "document"
+        },
+        {
+          "confidence" : 0.025769110769033432,
+          "label" : "outdoor"
+        },
+        {
+          "confidence" : 0.024658203125,
+          "label" : "daytime"
+        }
+      ],
+      "requestedSeconds" : 8,
+      "sample" : "Demo1-8s.png",
+      "width" : 101
+    },
+    {
+      "actualSeconds" : 1,
+      "classificationSeconds" : 0.009008833334519295,
+      "frameSeconds" : 0.020217833334754687,
+      "height" : 180,
+      "labels" : [
+        {
+          "confidence" : 0.098946548998355865,
+          "label" : "outdoor"
+        },
+        {
+          "confidence" : 0.0849609375,
+          "label" : "daytime"
+        },
+        {
+          "confidence" : 0.0849609375,
+          "label" : "sun"
+        },
+        {
+          "confidence" : 0.076438270509243011,
+          "label" : "sky"
+        },
+        {
+          "confidence" : 0.076416015625,
+          "label" : "blue_sky"
+        }
+      ],
+      "requestedSeconds" : 1,
+      "sample" : "Demo2-1s.png",
+      "width" : 101
+    },
+    {
+      "actualSeconds" : 4,
+      "classificationSeconds" : 0.007506666666813544,
+      "frameSeconds" : 0.029185833333031042,
+      "height" : 180,
+      "labels" : [
+        {
+          "confidence" : 0.10110954940319061,
+          "label" : "outdoor"
+        },
+        {
+          "confidence" : 0.09033203125,
+          "label" : "daytime"
+        },
+        {
+          "confidence" : 0.09033203125,
+          "label" : "sun"
+        },
+        {
+          "confidence" : 0.073759131133556366,
+          "label" : "sky"
+        },
+        {
+          "confidence" : 0.07373046875,
+          "label" : "blue_sky"
+        }
+      ],
+      "requestedSeconds" : 4,
+      "sample" : "Demo2-4s.png",
+      "width" : 101
+    },
+    {
+      "actualSeconds" : 8,
+      "classificationSeconds" : 0.29891895833316084,
+      "frameSeconds" : 0.11956783333334897,
+      "height" : 180,
+      "labels" : [
+        {
+          "confidence" : 0.097926922142505646,
+          "label" : "outdoor"
+        },
+        {
+          "confidence" : 0.084716796875,
+          "label" : "daytime"
+        },
+        {
+          "confidence" : 0.084716796875,
+          "label" : "sun"
+        },
+        {
+          "confidence" : 0.075458168983459473,
+          "label" : "sky"
+        },
+        {
+          "confidence" : 0.075439453125,
+          "label" : "blue_sky"
+        }
+      ],
+      "requestedSeconds" : 8,
+      "sample" : "Demo2-8s.png",
+      "width" : 101
+    }
+  ],
+  "scope" : "macOS prototype with nine real authored-demo frames; no private media; no natural-language search capability claimed",
+  "timestamp" : "2026-10-22T08:21:32Z"
+}

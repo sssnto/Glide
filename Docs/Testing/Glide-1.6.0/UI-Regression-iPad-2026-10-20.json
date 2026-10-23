@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-20",
+  "appVersion": "1.6.0 (1)",
+  "device": "iPad Pro (12.9-inch) (6th generation)",
+  "os": "26.3.1",
+  "passed": 3,
+  "failed": 0,
+  "skipped": 0,
+  "tests": [
+    {
+      "name": "testLinkPlaybackSkipMemoryAndCRUD",
+      "seconds": 188.953,
+      "coverage": "Invalid address, save, manual skip stays paused, restart restore, clear, swipe edit and delete"
+    },
+    {
+      "name": "testLinkSkipProductionProbe",
+      "seconds": 36.504,
+      "coverage": "12 production checks plus normal context-menu edit navigation"
+    },
+    {
+      "name": "testNativeTrackSelection",
+      "seconds": 51.859,
+      "coverage": "Native audio/subtitle choice, turn subtitles off, return to media information"
+    }
+  ],
+  "xcresult": "/Users/songpeng/Library/Developer/XcodeBuildMCP/workspaces/Glide-c699267400c0/result-bundles/test_sim_2026-10-20T03-24-40-187Z_pid66807_be6212dc.xcresult",
+  "summary": "UI-Final-Summary-2026-10-20.json",
+  "log": "Logs/UI-Final.log",
+  "toolTransportTimedOutAtSeconds": 300,
+  "actualXcodeResult": "TEST EXECUTE SUCCEEDED, 3 passed, 0 failed; verified directly in xcresult",
+  "earlierFailures": "Earlier attempts failed for overlay/gesture hit testing, stacked menu/sheet navigation, ambiguous controls and scrolling. Fixes were rerun; earlier failures are not counted as passes.",
+  "runtimeWarnings": "One _UIReparentingView warning when opening native audio Menu, preserved in summary and raw log; tested track changes and navigation passed. Root cause inside framework not established.",
+  "postUIRunDebugOnlyDifference": "Redirect rejection QA now uses a valid fixture credential to avoid mistaking 401 for rejection; final simulator production probe rerun passed 12."
+}

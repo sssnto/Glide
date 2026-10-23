@@ -1,0 +1,197 @@
+{
+  "context" : {
+    "allowsCellularInProbe" : true,
+    "audioSessionActivated" : true,
+    "explicitEpisodeMatched" : true,
+    "jellyfinSourceCount" : 2,
+    "matchedDiagnosticFormat" : true,
+    "negotiation" : {
+      "audiocodec" : "aac",
+      "container" : "mkv",
+      "explicitSubtitleIndex" : -1,
+      "h264-profile" : "high",
+      "h264-rangetype" : "SDR",
+      "h264-videobitdepth" : "8",
+      "masterDeclarations" : [
+        {
+          "CODECS" : "avc1.640028,mp4a.40.2",
+          "FRAME-RATE" : "23.976",
+          "RESOLUTION" : "1920x1080",
+          "VIDEO-RANGE" : "SDR"
+        }
+      ],
+      "segmentcontainer" : "mp4",
+      "serverDefaultSubtitleIndex" : -1,
+      "subtitleExtractionNegotiation" : {
+        "audiocodec" : "aac",
+        "container" : "mkv",
+        "explicitSubtitleIndex" : -2,
+        "h264-profile" : "high",
+        "h264-rangetype" : "SDR",
+        "h264-videobitdepth" : "8",
+        "segmentcontainer" : "mp4",
+        "serverDefaultSubtitleIndex" : 2,
+        "supportsDirectPlay" : false,
+        "supportsDirectStream" : false,
+        "transcodereasons" : "ContainerNotSupported,AudioCodecNotSupported",
+        "videocodec" : "h264,hevc"
+      },
+      "subtitlemethod" : "Encode",
+      "supportsDirectPlay" : false,
+      "supportsDirectStream" : false,
+      "transcodereasons" : "ContainerNotSupported,AudioCodecNotSupported",
+      "videocodec" : "h264,hevc"
+    },
+    "recentCandidateCount" : 32,
+    "recentFormats" : [
+      {
+        "codec" : "h264",
+        "dvProfile" : 0,
+        "height" : 1080,
+        "range" : "SDR",
+        "width" : 1920
+      }
+    ],
+    "serverSubtitlesDisabled" : false,
+    "serverVersion" : "12.2.0",
+    "sourceBitrate" : 12938982,
+    "sourceCodec" : "h264",
+    "sourceRange" : "SDR",
+    "sourceSubtitleFormats" : [
+      {
+        "codec" : "subrip",
+        "default" : true,
+        "forced" : false,
+        "language" : "unknown"
+      }
+    ],
+    "sourceTransfer" : "bt709",
+    "subtitleMemoryRestored" : true,
+    "textSubtitleRequested" : false
+  },
+  "results" : [
+    {
+      "actualTime" : 2.0536764569999999,
+      "bitmapCueCount" : 0,
+      "chineseCueCount" : 0,
+      "clientCaptionVisibleAtCurrentClock" : false,
+      "diagnostic" : {
+        "accessLogBytesTransferred" : 30113162,
+        "accessLogTransferSeconds" : 7.0360092080000003,
+        "attemptSeconds" : [
+          10.369768977165222
+        ],
+        "bitDepth" : 8,
+        "bufferedAheadSeconds" : 14.797145085,
+        "bufferEmpty" : false,
+        "bufferFull" : false,
+        "bufferingCount" : 0,
+        "bufferingSeconds" : 0,
+        "clientSubtitleCueCount" : 870,
+        "delivery" : "服务器流（方式待确认）",
+        "device" : "iPhone14,3",
+        "directStreamFlag" : false,
+        "droppedVideoFrames" : 0,
+        "events" : [
+          "attempt_automatic",
+          "subtitle_client_text",
+          "engine_avplayer",
+          "hls_single_variant",
+          "resource_ready_serverStream",
+          "first_frame"
+        ],
+        "firstFrameSeconds" : 10.369768977165222,
+        "forwardBufferTargetSeconds" : 30,
+        "height" : 1080,
+        "level" : 40,
+        "likelyToKeepUp" : true,
+        "nativeStalls" : 0,
+        "nativeTimeControlStatus" : "playing",
+        "observedBitrate" : 31656321,
+        "originalTransportAttempts" : 0,
+        "outputColorEvidence" : "compressedTrack",
+        "outputColorMatrix" : "ITU_R_709_2",
+        "outputColorPrimaries" : "ITU_R_709_2",
+        "outputColorTransfer" : "ITU_R_709_2",
+        "outputHeight" : 1080,
+        "outputVideoCodec" : "avc1",
+        "outputWidth" : 1920,
+        "playerReadySeconds" : 10.344419002532959,
+        "playlistMode" : "media",
+        "preferredTextSubtitle" : false,
+        "profile" : "High",
+        "rebufferCount" : 0,
+        "recoveryCount" : 0,
+        "requestedQuality" : "automatic",
+        "resourceReadySeconds" : 3.4004489183425903,
+        "schema" : 10,
+        "serverSubtitleIndex" : -1,
+        "session" : "310CD967-0D66-488F-B50B-F284DB1F7703",
+        "sourceBitrate" : 13581167,
+        "sourceColorPrimaries" : "bt709",
+        "sourceColorSpace" : "bt709",
+        "sourceColorTransfer" : "bt709",
+        "sourceFrameRate" : 23.976025,
+        "sourceKind" : "jellyfin",
+        "state" : "播放中",
+        "subtitleMethod" : "Drop",
+        "system" : "27.0",
+        "totalFirstFrameSeconds" : 10.369840025901794,
+        "version" : "1.9.0 (6)",
+        "videoCodec" : "h264",
+        "videoRangeType" : "SDR",
+        "width" : 1920
+      },
+      "elapsedSeconds" : 12.620451958384365,
+      "externalSubtitleCueCount" : 870,
+      "failed" : false,
+      "frameReady" : true,
+      "globalSubtitlePreferenceOff" : false,
+      "rememberedSubtitleSuppressesNative" : false,
+      "route" : "production-controller",
+      "selectedServerSubtitleIndex" : 2,
+      "selectedSubtitleLanguage" : "unknown",
+      "serverSubtitleCount" : 1,
+      "subtitleChoice" : "automatic",
+      "subtitleLanguages" : [
+
+      ],
+      "subtitleMemoryPresent" : false,
+      "subtitleSelected" : false,
+      "subtitleTrackCount" : 0
+    },
+    {
+      "actualTime" : 16.184999999999999,
+      "captionActive" : true,
+      "chineseCaptionActive" : false,
+      "clientSubtitleCueCount" : 870,
+      "route" : "default-subtitle-caption-checkpoint",
+      "selectedServerSubtitleIndex" : 2,
+      "target" : 16.186
+    },
+    {
+      "actualTime" : 2.003413959,
+      "checks" : [
+        "automatic-default-client-caption-loaded",
+        "pause-freezes-clock",
+        "paused-seek-keeps-clock-and-pause",
+        "caption-active-at-real-clock",
+        "off-clears-overlay-without-reopening-video",
+        "reenable-restores-caption-with-session-clock-and-pause",
+        "resume-advances-original-video-session",
+        "subtitle-restores-after-player-reopen"
+      ],
+      "clientSubtitleCueCount" : 870,
+      "expectedChecks" : 8,
+      "failed" : false,
+      "failedCheck" : "none",
+      "route" : "production-default-subtitle",
+      "selectedServerSubtitleIndex" : 2
+    }
+  ],
+  "scope" : "Authorized in-app recent-item metadata and short real AVPlayer trials; no credentials, host, URL, title, item identifier or media bytes exported",
+  "stage" : "完整生产流程验证结束",
+  "system" : "27.0",
+  "timestamp" : "2026-10-22T00:55:11Z",
+  "version" : "1.9.0 (6)"
+}

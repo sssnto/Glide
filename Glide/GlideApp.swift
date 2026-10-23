@@ -4,15 +4,31 @@ import SwiftUI
 struct GlideApp: App {
     @UIApplicationDelegateAdaptor(GlideAppDelegate.self) private var appDelegate
     @State private var library = LibraryStore()
+    @AppStorage("appAppearance") private var appearance = GlideAppearance.system.rawValue
     var body: some Scene {
         WindowGroup {
             root
-                .preferredColorScheme(.dark)
+                .preferredColorScheme((GlideAppearance(rawValue: appearance) ?? .system).colorScheme)
                 .tint(GlideTheme.accent)
-                .foregroundStyle(GlideTheme.text)
                 #if DEBUG
+                .onAppear {
+                    if ProcessInfo.processInfo.arguments.contains("--glide-ui-audit") { UIApplication.shared.isIdleTimerDisabled = true }
+                }
                 .task {
-                    if ProcessInfo.processInfo.arguments.contains("--glide-jellyfin-fixture") {
+                    if ProcessInfo.processInfo.arguments.contains("--glide-link-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-discovery-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-map-fixture") { library.showDemo() }
+                    if ProcessInfo.processInfo.arguments.contains("--glide-dual-subtitle-fixture") {
+                        do { try await DualSubtitleFixtures.prepare(library) }
+                        catch { library.error = "双字幕验证准备失败：" + error.localizedDescription }
+                    } else if ProcessInfo.processInfo.arguments.contains("--glide-subtitle-smb-fixture") {
+                        do { try await SubtitleFixtures.prepareSMB(library) }
+                        catch { library.error = "SMB 字幕验证准备失败：" + error.localizedDescription }
+                    } else if ProcessInfo.processInfo.arguments.contains("--glide-subtitle-fixture") {
+                        do { try await SubtitleFixtures.prepare(library) }
+                        catch { library.error = "字幕验证准备失败：" + error.localizedDescription }
+                    } else if ProcessInfo.processInfo.arguments.contains("--glide-smb-fixture") {
+                        do { try await library.prepareSMBFixture() }
+                        catch { library.error = "SMB 验证准备失败：" + error.localizedDescription }
+                    } else if ProcessInfo.processInfo.arguments.contains("--glide-jellyfin-fixture") {
                         do { try await library.prepareJellyfinFixture() }
                         catch { library.error = "服务器验证准备失败：" + error.localizedDescription }
                     } else if ProcessInfo.processInfo.arguments.contains("--glide-format-fixtures") {
@@ -28,7 +44,25 @@ struct GlideApp: App {
     }
     @ViewBuilder private var root: some View {
 #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("--glide-network-buffer-probe") {
+        if ProcessInfo.processInfo.arguments.contains("--glide-map-probe") {
+            VideoNavigationQAProbe(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-discovery-probe") {
+            DiscoveryQAProbe(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-jellyfin-investigation") {
+            JellyfinPlaybackQAProbe(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-subtitle-study-probe") {
+            SubtitleStudyQAProbe(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-dual-subtitle-probe") {
+            DualSubtitleQAProbe(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-emby-probe") {
+            EmbyQAProbe(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-link-skip-probe") {
+            LinkSkipQAProbe(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-subtitle-probe") {
+            SubtitleQAProbe(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-smb-probe") {
+            SMBQAProbe(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-network-buffer-probe") {
             NetworkBufferQAProbe(library: library)
         } else if ProcessInfo.processInfo.arguments.contains("--glide-compatibility-probe") {
             CompatibilityQAProbe(library: library)
@@ -41,9 +75,18 @@ struct GlideApp: App {
 
 #if DEBUG
 extension LibraryStore {
+    func prepareSMBFixture() async throws {
+        let address = try SMBLocation.parse(address: UserDefaults.standard.string(forKey: "glideSMBFixtureAddress") ?? "127.0.0.1:1445", share: "media")
+        if let fixture = servers.first(where: { $0.name == "SMB UI Playback Fixture" && $0.address == address }) {
+            try Credentials.save("glide150-fixture", for: fixture.id)
+            UserDefaults.standard.removeObject(forKey: "davPath." + fixture.id.uuidString)
+            await select(fixture.id)
+        } else { try await add(name: "SMB UI Playback Fixture", kind: .smb, address: address.absoluteString, username: "glide", password: "glide150-fixture") }
+    }
     /// The project's loopback-only synthetic server, using production authentication and storage.
     func prepareJellyfinFixture() async throws {
-        let address = "http://127.0.0.1:8768/mock/jellyfin"
+        let port = UserDefaults.standard.bool(forKey: "glideSubtitleSwitchFixture") ? 8793 : 8768
+        let address = "http://127.0.0.1:\(port)/mock/jellyfin"
         let fixture = servers.first { $0.name == "Glide Recovery Fixture" && $0.address.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/")) == address }
         if let fixture {
             // Reinstalling an unsigned simulator build can retain its snapshot

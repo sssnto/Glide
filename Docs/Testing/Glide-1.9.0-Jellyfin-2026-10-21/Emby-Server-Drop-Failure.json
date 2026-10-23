@@ -1,0 +1,10 @@
+{
+  "serverVersion": "4.9.3.0",
+  "source": "Isolated official Emby fixture /tmp/Glide170/EmbyConfig/logs/embyserver.txt, 2026-10-21 01:57:40 UTC",
+  "httpStatus": 400,
+  "exception": "System.ArgumentException: Requested value 'Drop' was not found.",
+  "subtitleMethod": "Drop",
+  "subtitleStreamIndex": -1,
+  "audioStreamIndex": 2,
+  "fix": "Apply explicit Drop URL normalization only to Jellyfin; preserve Emby negotiated URL"
+}

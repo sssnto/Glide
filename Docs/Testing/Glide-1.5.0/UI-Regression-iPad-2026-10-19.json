@@ -1,0 +1,107 @@
+{
+  "scope": "Six targeted simulator test cases passed in the listed bundles. Historical failed attempts remain separate; do not treat unlisted cases as passed.",
+  "tests": [
+    {
+      "test": "testWebDAVRangePlaybackAndLandscape()",
+      "result": "Passed",
+      "seconds": 43.2822630405426,
+      "devices": [
+        {
+          "architecture": "arm64",
+          "deviceId": "A517192E-7F4D-4ED6-9ADF-8E7E513C6913",
+          "deviceName": "Glide App Store iPad",
+          "modelName": "iPad Pro (12.9-inch) (6th generation)",
+          "osBuildNumber": "23D8133",
+          "osVersion": "26.3.1",
+          "platform": "iOS Simulator"
+        }
+      ],
+      "resultBundle": "test_sim_2026-10-19T03-40-16-044Z_pid97319_6d55a643.xcresult"
+    },
+    {
+      "test": "testScopeSortAndPinnedDirectory()",
+      "result": "Passed",
+      "seconds": 100.78249299526215,
+      "devices": [
+        {
+          "architecture": "arm64",
+          "deviceId": "A517192E-7F4D-4ED6-9ADF-8E7E513C6913",
+          "deviceName": "Glide App Store iPad",
+          "modelName": "iPad Pro (12.9-inch) (6th generation)",
+          "osBuildNumber": "23D8133",
+          "osVersion": "26.3.1",
+          "platform": "iOS Simulator"
+        }
+      ],
+      "resultBundle": "test_sim_2026-10-19T03-59-03-503Z_pid97319_b70552ec.xcresult"
+    },
+    {
+      "test": "testSMBChineseSubtitles()",
+      "result": "Passed",
+      "seconds": 53.815696001052856,
+      "devices": [
+        {
+          "architecture": "arm64",
+          "deviceId": "A517192E-7F4D-4ED6-9ADF-8E7E513C6913",
+          "deviceName": "Glide App Store iPad",
+          "modelName": "iPad Pro (12.9-inch) (6th generation)",
+          "osBuildNumber": "23D8133",
+          "osVersion": "26.3.1",
+          "platform": "iOS Simulator"
+        }
+      ],
+      "resultBundle": "test_sim_2026-10-19T04-09-51-807Z_pid97319_8b5fa7e3.xcresult"
+    },
+    {
+      "test": "testJellyfinOriginalTransportRecoveryAndOfflineRetention()",
+      "result": "Passed",
+      "seconds": 106.90358698368073,
+      "devices": [
+        {
+          "architecture": "arm64",
+          "deviceId": "A517192E-7F4D-4ED6-9ADF-8E7E513C6913",
+          "deviceName": "Glide App Store iPad",
+          "modelName": "iPad Pro (12.9-inch) (6th generation)",
+          "osBuildNumber": "23D8133",
+          "osVersion": "26.3.1",
+          "platform": "iOS Simulator"
+        }
+      ],
+      "resultBundle": "test_sim_2026-10-19T05-12-18-773Z_pid77513_3a4fd67e.xcresult"
+    },
+    {
+      "test": "testLocalImportMountedDirectoryAndRestart()",
+      "result": "Passed",
+      "seconds": 101.16382896900177,
+      "devices": [
+        {
+          "architecture": "arm64",
+          "deviceId": "A517192E-7F4D-4ED6-9ADF-8E7E513C6913",
+          "deviceName": "Glide App Store iPad",
+          "modelName": "iPad Pro (12.9-inch) (6th generation)",
+          "osBuildNumber": "23D8133",
+          "osVersion": "26.3.1",
+          "platform": "iOS Simulator"
+        }
+      ],
+      "resultBundle": "test_sim_2026-10-19T05-43-59-177Z_pid77513_d52d7043.xcresult"
+    },
+    {
+      "test": "testSMBSourceBrowseAndPlayback()",
+      "result": "Passed",
+      "seconds": 83.53754794597626,
+      "devices": [
+        {
+          "architecture": "arm64",
+          "deviceId": "A517192E-7F4D-4ED6-9ADF-8E7E513C6913",
+          "deviceName": "Glide App Store iPad",
+          "modelName": "iPad Pro (12.9-inch) (6th generation)",
+          "osBuildNumber": "23D8133",
+          "osVersion": "26.3.1",
+          "platform": "iOS Simulator"
+        }
+      ],
+      "resultBundle": "test_sim_2026-10-19T05-43-59-177Z_pid77513_d52d7043.xcresult"
+    }
+  ]
+}

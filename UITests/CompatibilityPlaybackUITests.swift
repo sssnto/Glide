@@ -53,7 +53,13 @@ final class CompatibilityPlaybackUITests: XCTestCase {
     @MainActor private func open(_ name: String, in app: XCUIApplication) {
         let video = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'video.' AND identifier ENDSWITH %@", ":local:" + name)).firstMatch
         for _ in 0..<10 { if video.isHittable { break }; app.swipeUp() }
-        XCTAssertTrue(video.waitForExistence(timeout: 10), name); video.tap()
+        XCTAssertTrue(video.waitForExistence(timeout: 10), name)
+        for _ in 0..<3 {
+            if app.otherElements["player.canvas"].exists { break }
+            video.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.35)).press(forDuration: 0.2)
+            if app.otherElements["player.canvas"].waitForExistence(timeout: 4) { break }
+        }
+        XCTAssertTrue(app.otherElements["player.canvas"].exists)
     }
     @MainActor private func picture(_ app: XCUIApplication) {
         wait(app.otherElements["player.canvas"], "label CONTAINS '已显示画面'", seconds: 25)
@@ -76,7 +82,7 @@ final class CompatibilityPlaybackUITests: XCTestCase {
         for _ in 0..<10 {
             // A clipped row can report hittable while its tap point lies under
             // the home indicator. Require the complete row inside the viewport.
-            if element.isHittable, element.frame.minY >= app.buttons["player.settings.done"].frame.maxY + 8,
+            if element.exists, element.isHittable, element.frame.minY >= app.buttons["player.settings.done"].frame.maxY + 8,
                element.frame.maxY <= app.frame.maxY - 40 { return }
             if upwards { form.swipeUp() } else { form.swipeDown() }
         }
@@ -211,10 +217,9 @@ final class CompatibilityPlaybackUITests: XCTestCase {
         open("11-hd-dual-ass.mkv", in: app); picture(app)
         let slider = app.descendants(matching: .any)["player.seekBar"].firstMatch
         let elapsed = app.staticTexts["player.elapsed"]
-        let width = slider.frame.width
-        let fraction = Double(seconds(elapsed.label)) / 60
-        let from = slider.coordinate(withNormalizedOffset: CGVector(dx: (15 + (width - 30) * fraction) / width, dy: 0.5))
-        from.press(forDuration: 0.1, thenDragTo: slider.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)), withVelocity: .slow, thenHoldForDuration: 0.2)
+        // The control supports tapping anywhere on the track. Verify this path
+        // here; the bilingual UI test separately exercises dragging the thumb.
+        slider.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         wait(elapsed, "label >= '00:28' AND label <= '00:32'")
         XCTAssertTrue(app.buttons["播放"].exists)
         app.buttons["播放"].tap()
@@ -223,6 +228,7 @@ final class CompatibilityPlaybackUITests: XCTestCase {
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = "Glide 1080p compatibility playback"; attachment.lifetime = .keepAlways; add(attachment)
         settings(app)
+        reveal(app.buttons["player.engine.compatibility"], in: app)
         XCTAssertTrue(app.buttons["player.engine.compatibility"].label.contains("✓"))
     }
 }

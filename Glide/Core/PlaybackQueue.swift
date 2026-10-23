@@ -87,6 +87,9 @@ extension DirectoryQuery {
 
 enum DirectoryScope {
     static func contains(root: URL, child: URL) -> Bool {
+        if root.scheme?.lowercased() == "smb" || child.scheme?.lowercased() == "smb" {
+            return (try? SMBLocation(root).relativePath(child)) != nil
+        }
         if root.isFileURL || child.isFileURL {
             return (try? LocalMediaIdentity.relativePath(root: root, file: child)) != nil
         }
@@ -116,9 +119,10 @@ enum DirectoryScope {
         }
         return result
     }
-    static func webDAV(root: URL, recursive: Bool = true, fetch: (URL) async throws -> [DAVEntry], progress: (Int) -> Void) async throws -> [DAVEntry] {
+    static func webDAV(root: URL, recursive: Bool = true, fetch: (URL) async throws -> [DAVEntry], progress: (Int) -> Void, partial: ([DAVEntry]) -> Void = { _ in }) async throws -> [DAVEntry] {
         var pending = [root], cursor = 0, seenFolders = Set<String>(), seenFiles = Set<String>()
         var result: [DAVEntry] = []
+        var lastPublished = Date.distantPast
         while cursor < pending.count {
             try Task.checkCancellation()
             let directory = pending[cursor]; cursor += 1
@@ -133,7 +137,11 @@ enum DirectoryScope {
                 }
             }
             progress(result.count)
+            if Date().timeIntervalSince(lastPublished) >= 0.25 {
+                partial(result); lastPublished = Date()
+            }
         }
+        partial(result)
         return result.sorted { $0.url.path.localizedStandardCompare($1.url.path) == .orderedAscending }
     }
 }

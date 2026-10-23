@@ -1,0 +1,198 @@
+{
+  "context" : {
+    "allowsCellularInProbe" : true,
+    "audioSessionActivated" : true,
+    "explicitEpisodeMatched" : true,
+    "jellyfinSourceCount" : 2,
+    "matchedDiagnosticFormat" : true,
+    "recentCandidateCount" : 28,
+    "recentFormats" : [
+      {
+        "codec" : "hevc",
+        "dvProfile" : 8,
+        "height" : 2160,
+        "range" : "DOVIWithHDR10",
+        "width" : 3840
+      }
+    ],
+    "serverSubtitlesDisabled" : false,
+    "serverVersion" : "12.2.0",
+    "sourceBitrate" : 12515901,
+    "sourceCodec" : "hevc",
+    "sourceDvProfile" : 8,
+    "sourceRange" : "DOVIWithHDR10",
+    "sourceSubtitleFormats" : [
+      {
+        "codec" : "PGSSUB",
+        "default" : true,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "PGSSUB",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "PGSSUB",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "PGSSUB",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "PGSSUB",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "PGSSUB",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "PGSSUB",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "PGSSUB",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "subrip",
+        "default" : false,
+        "forced" : false,
+        "language" : "eng"
+      },
+      {
+        "codec" : "subrip",
+        "default" : false,
+        "forced" : false,
+        "language" : "eng"
+      },
+      {
+        "codec" : "subrip",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "subrip",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      }
+    ],
+    "sourceTransfer" : "smpte2084",
+    "textSubtitleRequested" : false
+  },
+  "results" : [
+    {
+      "actualTime" : 0,
+      "diagnostic" : {
+        "accessLogBytesTransferred" : 1101868,
+        "accessLogTransferSeconds" : 2.788756792,
+        "attemptSeconds" : [
+          25.762621998786926,
+          25.44334602355957,
+          25.646422982215881
+        ],
+        "bitDepth" : 10,
+        "bufferedAheadSeconds" : 2.8573333333333335,
+        "bufferEmpty" : false,
+        "bufferFull" : false,
+        "bufferingCount" : 0,
+        "bufferingSeconds" : 0,
+        "delivery" : "视频转码",
+        "device" : "iPhone14,3",
+        "directStreamFlag" : false,
+        "dolbyVisionProfile" : 8,
+        "droppedVideoFrames" : 0,
+        "events" : [
+          "attempt_automatic",
+          "engine_avplayer",
+          "resource_ready_serverStream",
+          "hls_hdr_initial_variant",
+          "recovery_2",
+          "attempt_hd1080",
+          "engine_avplayer",
+          "hdr_sdr_output_requested",
+          "resource_ready_videoConversion",
+          "recovery_3",
+          "attempt_hd720",
+          "engine_avplayer",
+          "hdr_sdr_output_requested",
+          "resource_ready_videoConversion",
+          "failed"
+        ],
+        "forwardBufferTargetSeconds" : 2,
+        "height" : 2160,
+        "indicatedBitrate" : 3000000,
+        "level" : 150,
+        "likelyToKeepUp" : false,
+        "nativeStalls" : 0,
+        "nativeTimeControlStatus" : "paused",
+        "observedBitrate" : 21962426,
+        "originalTransportAttempts" : 0,
+        "playlistMode" : "master",
+        "preferredTextSubtitle" : false,
+        "profile" : "Main 10",
+        "rebufferCount" : 0,
+        "recoveryCount" : 2,
+        "requestedOutputCodec" : "h264",
+        "requestedOutputRange" : "SDR",
+        "requestedQuality" : "hd720",
+        "resourceReadySeconds" : 0.66668403148651123,
+        "schema" : 10,
+        "serverSubtitleIndex" : 13,
+        "session" : "FECC7D83-28CF-4BF1-8826-A6B35C064581",
+        "sourceBitrate" : 13923901,
+        "sourceColorPrimaries" : "bt2020",
+        "sourceColorSpace" : "bt2020nc",
+        "sourceColorTransfer" : "smpte2084",
+        "sourceFrameRate" : 23.976025,
+        "sourceKind" : "jellyfin",
+        "state" : "播放失败",
+        "subtitleMethod" : "Hls",
+        "system" : "27.0",
+        "version" : "1.9.0 (2)",
+        "videoCodec" : "hevc",
+        "videoRangeType" : "DOVIWithHDR10",
+        "width" : 3840
+      },
+      "elapsedSeconds" : 76.935628499952145,
+      "externalSubtitleCueCount" : 0,
+      "failed" : true,
+      "frameReady" : false,
+      "globalSubtitlePreferenceOff" : false,
+      "rememberedSubtitleSuppressesNative" : false,
+      "route" : "production-controller",
+      "selectedSubtitleLanguage" : "zho",
+      "subtitleLanguages" : [
+        "eng",
+        "eng",
+        "zho",
+        "zho"
+      ],
+      "subtitleSelected" : true,
+      "subtitleTrackCount" : 4
+    }
+  ],
+  "scope" : "Authorized in-app recent-item metadata and short real AVPlayer trials; no credentials, host, URL, title, item identifier or media bytes exported",
+  "stage" : "完整生产流程验证结束",
+  "system" : "27.0",
+  "timestamp" : "2026-10-21T01:30:40Z",
+  "version" : "1.9.0 (2)"
+}

@@ -1,0 +1,27 @@
+{
+  "result": "Failed",
+  "totalTestCount": 2,
+  "passedTests": 0,
+  "failedTests": 2,
+  "skippedTests": 0,
+  "startTime": 1792577232.444,
+  "finishTime": 1792578028.299,
+  "testFailures": [
+    {
+      "failureText": "XCTAssertTrue failed",
+      "targetName": "GlideUITests",
+      "testIdentifier": 1,
+      "testIdentifierString": "GlideUITests/testNativeAppearanceAndLibraryNavigation()",
+      "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testNativeAppearanceAndLibraryNavigation",
+      "testName": "testNativeAppearanceAndLibraryNavigation()"
+    },
+    {
+      "failureText": "Testing was canceled",
+      "targetName": "GlideUITests",
+      "testIdentifier": 2,
+      "testIdentifierString": "GlideUITests/testProfessionalCatalogScroll()",
+      "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testProfessionalCatalogScroll",
+      "testName": "testProfessionalCatalogScroll()"
+    }
+  ]
+}

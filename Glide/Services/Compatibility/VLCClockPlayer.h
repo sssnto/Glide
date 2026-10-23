@@ -1,5 +1,6 @@
 #import <MobileVLCKit/VLCLibrary.h>
 #import <MobileVLCKit/VLCMediaPlayer.h>
+#import "../SMB/GlideSMBSession.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -9,6 +10,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable instancetype)initWithLibrary:(VLCLibrary *)library;
 @property (nonatomic, strong, readonly) VLCMediaPlayer *player;
 @property (nonatomic, readonly) int64_t timeMilliseconds;
+@property (nonatomic, readonly) int nativeState;
+@property (nonatomic, readonly) BOOL hasEnded;
 @end
 
 NS_ASSUME_NONNULL_END
+
+#import "GlideASSRenderer.h"

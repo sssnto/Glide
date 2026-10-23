@@ -1,0 +1,5 @@
+{
+  "version": "4.9.3.0",
+  "image": "emby/embyserver_arm64v8@sha256:22aeef01c017467c3e41d5f735bf93bff5745b54b7366b2df951d99efdf5f9da",
+  "authoredFiles": 69
+}

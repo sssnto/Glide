@@ -3,6 +3,7 @@ import AVKit
 
 struct SettingsView: View {
     var library: LibraryStore
+    @AppStorage("appAppearance") private var appearance = GlideAppearance.system.rawValue
     @AppStorage("preferredAudioLanguage") private var audio = ""
     @AppStorage("preferredSubtitleLanguage") private var subtitle = ""
     @AppStorage("forcedSubtitlesOnly") private var forced = false
@@ -16,12 +17,17 @@ struct SettingsView: View {
     @State private var message: String?
     var body: some View {
         Form {
+            Section("外观") {
+                Picker("显示模式", selection: $appearance) {
+                    ForEach(GlideAppearance.allCases) { mode in Text(mode.title).tag(mode.rawValue) }
+                }.accessibilityIdentifier("settings.appearance")
+            }
             Section {
                 Toggle("允许蜂窝网络播放", isOn: $cellular)
                 Picker("快进与快退", selection: $seek) { ForEach([5.0, 10, 15, 30], id: \.self) { Text("\(Int($0)) 秒").tag($0) } }
                 Picker("控制栏自动隐藏", selection: $delay) { ForEach([3.0, 5, 8], id: \.self) { Text("\(Int($0)) 秒").tag($0) } }
 
-            } header: { Text("播放") } footer: { Text("播放器优先使用原画，必要时请求 Jellyfin 转码。服务器需允许当前账号转码。") }
+            } header: { Text("播放") } footer: { Text("播放器优先使用原画，必要时请求 Jellyfin 或 Emby 转码。服务器需允许当前账号转码。") }
             Section {
                 languagePicker("首选声音", selection: $audio, allowOff: false)
                 languagePicker("首选字幕", selection: $subtitle, allowOff: true)
@@ -55,9 +61,9 @@ struct SettingsView: View {
                 LabeledContent("版本", value: PlaybackPreferences.appVersion)
 
             } header: { Text("帮助与反馈") } footer: { Text("反馈时请附版本、设备和复现步骤。诊断导出前可预览，内容不包含片名、服务器地址或凭据。") }
-        }.scrollContentBackground(.hidden).background(GlideTheme.background)
+        }
             .tint(GlideTheme.accent)
-            .font(GlideTheme.Typography.body).navigationTitle("设置").navigationBarTitleDisplayMode(.inline).accessibilityIdentifier("settings.screen")
+            .font(.body).navigationTitle("设置").navigationBarTitleDisplayMode(.inline).accessibilityIdentifier("settings.screen")
     }
     private func languagePicker(_ title: String, selection: Binding<String>, allowOff: Bool) -> some View {
         Picker(title, selection: selection) {

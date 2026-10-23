@@ -1,0 +1,13 @@
+{
+  "appVersion": "1.9.0",
+  "build": "3",
+  "bundleIdentifier": "com.songpeng.glide",
+  "qaFlagsAbsent": true,
+  "checks": {
+    "--glide-jellyfin-investigation": true,
+    "glideInvestigationSubtitleSwitch": true,
+    "glideSubtitleSwitchFixture": true,
+    "--glide-dual-subtitle-probe": true,
+    "--glide-emby-probe": true
+  }
+}

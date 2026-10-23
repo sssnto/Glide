@@ -249,6 +249,7 @@ enum PlaybackDelivery: String, Codable {
         if quality == .hd1080 || quality == .hd720 { return .videoConversion }
         let pairs = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
         let query = Dictionary(pairs.map { ($0.name.lowercased(), ($0.value ?? "").lowercased()) }, uniquingKeysWith: { _, new in new })
+        if query["subtitlemethod"] == "encode" { return .videoConversion }
         if query["videocodec"] == "copy" {
             return query["audiocodec"] == "copy" ? .remux : .audioConversion
         }
@@ -282,7 +283,13 @@ struct ProgressSnapshot: Codable, Equatable {
 
 /// Export only structured technical fields. Never serialize Error.localizedDescription, URL, title or stream DisplayTitle.
 struct PlaybackDiagnostic: Codable {
-    var schema = 9
+    var schema = 10
+    var sourceKind: String?
+    var subtitleMethod: String?
+    var serverSubtitleIndex: Int?
+    var preferredTextSubtitle: Bool?
+    var clientSubtitleCueCount: Int?
+    var clientSubtitleLanguage: String?
     var version = ""
     var system = ""
     var device = ""

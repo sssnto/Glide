@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-21",
+  "acceptedPhysicalReports": [
+    "Production-iPhone-Final.json",
+    "Production-iPhone-Frozen-Final.json"
+  ],
+  "unacceptedPhysicalReports": [
+    {
+      "file": "Physical-First-Incomplete.json",
+      "reason": "Initial stage only, no completed result. Relaunched same app binary and accepted only completed reports."
+    }
+  ],
+  "uiAttempts": [
+    {
+      "summary": "UI-First-Summary.json",
+      "accepted": false,
+      "reason": "Automation startup delay and first detail navigation did not complete; no subtitle assertions reached."
+    },
+    {
+      "summary": "UI-Second-Summary.json",
+      "accepted": false,
+      "reason": "12-second sample autoplays; pause launch setting did not apply to Jellyfin fixture. Body assertion timed out after menu processing."
+    },
+    {
+      "summary": "UI-Third-Summary.json",
+      "accepted": false,
+      "reason": "Paused-at-zero HLS startup did not reach frame assertion. No switching steps reached."
+    },
+    {
+      "summary": "UI-Final-Summary.json",
+      "accepted": true,
+      "reason": "120-second authored loop, real start then actual UI pause; retains frame, inventory, body, off, reenable and selection assertions."
+    }
+  ],
+  "productDefaultAutoplayChanged": false,
+  "finalSourceSnapshot": "Source-Snapshot.json",
+  "watchProgressRecordedByPrivateEpisodeProbe": false,
+  "privateSubtitleMemoryRestoredAtAcceptedRunEnd": true
+}

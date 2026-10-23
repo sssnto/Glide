@@ -1,0 +1,29 @@
+{
+  "checks" : [
+    "auth:wrong-password-no-source-valid-login-keychain-snapshot",
+    "auth:failed-reconnect-preserves-working-credential",
+    "catalog:official-views-movie-detail-search-authenticated-poster",
+    "catalog:official-pagination-60-plus-remainder-no-duplicates",
+    "catalog:series-season-ordered-episodes-chinese-home-recursion",
+    "native:direct-first-frame-paused-seek-and-play",
+    "native:official-video-copy-hls-first-frame-paused-seek-stop",
+    "native:long-gop-authored-file-paused-seek-accurate-or-recovered",
+    "contract:injected-seek-mismatch-production-controller-original-recovery-preserves-intent"
+  ],
+  "device" : "iPad",
+  "error" : "当前文件无法播放，请检查网络、媒体格式或服务器转码状态。；位置 0.0 \/ 660.0；播放失败；画面 false；定位中 false；传输 videoConversion；事件 error_network_-1008,recovery_3,attempt_hd720,engine_avplayer,resource_ready_videoConversion,item_failed,error_network_-1008,failed",
+  "injectedContractChecks" : 1,
+  "longGOPSeek" : {
+    "actual" : "24.0",
+    "delivery" : "direct",
+    "recoveryTriggered" : "true",
+    "requested" : "24"
+  },
+  "nativeAndServiceChecks" : 8,
+  "os" : "26.3.1",
+  "passed" : false,
+  "scope" : "Official Emby service and native playback; contract-prefixed check separately injects decoder seek result into production controller",
+  "stage" : "Emby 验证未完成",
+  "timestamp" : "2026-10-21T01:57:41Z",
+  "version" : "1.9.0 (2)"
+}

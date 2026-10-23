@@ -1,0 +1,174 @@
+{
+  "context" : {
+    "explicitEpisodeMatched" : true,
+    "jellyfinSourceCount" : 2,
+    "matchedDiagnosticFormat" : true,
+    "negotiation_automatic" : {
+      "audiocodec" : "aac",
+      "container" : "mkv",
+      "h264-profile" : "baseline,constrainedbaseline,main,high",
+      "h264-rangetype" : "SDR",
+      "h264-videobitdepth" : "8",
+      "hevc-profile" : "main10",
+      "hevc-videobitdepth" : "10",
+      "masterDeclarations" : [
+        {
+          "CODECS" : "hvc1.2.4.L150.B0,mp4a.40.2",
+          "FRAME-RATE" : "23.976",
+          "RESOLUTION" : "3840x2160",
+          "VIDEO-RANGE" : "PQ"
+        },
+        {
+          "CODECS" : "avc1.42E029,mp4a.40.2",
+          "FRAME-RATE" : "23.976",
+          "RESOLUTION" : "3840x2160",
+          "VIDEO-RANGE" : "SDR"
+        }
+      ],
+      "segmentcontainer" : "mp4",
+      "subtitlemethod" : "Encode",
+      "supportsDirectPlay" : false,
+      "supportsDirectStream" : false,
+      "transcodereasons" : "ContainerNotSupported,AudioCodecNotSupported",
+      "videocodec" : "h264,hevc"
+    },
+    "negotiation_compatible" : {
+      "audiocodec" : "aac",
+      "container" : "mkv",
+      "h264-profile" : "baseline,constrainedbaseline,main,high",
+      "h264-rangetype" : "SDR",
+      "h264-videobitdepth" : "8",
+      "hevc-profile" : "main10",
+      "hevc-videobitdepth" : "10",
+      "segmentcontainer" : "mp4",
+      "subtitlemethod" : "Encode",
+      "supportsDirectPlay" : false,
+      "supportsDirectStream" : false,
+      "transcodereasons" : "ContainerNotSupported,AudioCodecNotSupported",
+      "videocodec" : "h264,hevc"
+    },
+    "recentCandidateCount" : 28,
+    "recentFormats" : [
+      {
+        "codec" : "hevc",
+        "dvProfile" : 8,
+        "height" : 2160,
+        "range" : "DOVIWithHDR10",
+        "width" : 3840
+      }
+    ],
+    "serverSubtitlesDisabled" : true,
+    "serverVersion" : "12.2.0",
+    "sourceBitrate" : 12515901,
+    "sourceCodec" : "hevc",
+    "sourceDvProfile" : 8,
+    "sourceRange" : "DOVIWithHDR10",
+    "sourceSubtitleFormats" : [
+      {
+        "codec" : "PGSSUB",
+        "default" : true,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "PGSSUB",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "PGSSUB",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "PGSSUB",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "PGSSUB",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "PGSSUB",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "PGSSUB",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "PGSSUB",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "subrip",
+        "default" : false,
+        "forced" : false,
+        "language" : "eng"
+      },
+      {
+        "codec" : "subrip",
+        "default" : false,
+        "forced" : false,
+        "language" : "eng"
+      },
+      {
+        "codec" : "subrip",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      },
+      {
+        "codec" : "subrip",
+        "default" : false,
+        "forced" : false,
+        "language" : "zho"
+      }
+    ],
+    "sourceTransfer" : "smpte2084",
+    "textSubtitleRequested" : false
+  },
+  "results" : [
+    {
+      "actualTime" : 0,
+      "delivery" : "videoConversion",
+      "elapsedSeconds" : 30.131347916671075,
+      "errors" : [
+
+      ],
+      "firstHDRVariantRequested" : true,
+      "frameReady" : false,
+      "output" : {
+
+      },
+      "requestedCodec" : "hevc",
+      "route" : "automatic"
+    },
+    {
+      "negotiationErrors" : [
+        {
+          "code" : 3,
+          "domain" : "GlideTransportError"
+        }
+      ],
+      "route" : "compatible"
+    }
+  ],
+  "scope" : "Authorized in-app recent-item metadata and short real AVPlayer trials; no credentials, host, URL, title, item identifier or media bytes exported",
+  "stage" : "Jellyfin 原片诊断完成",
+  "system" : "27.0",
+  "timestamp" : "2026-10-21T01:05:35Z",
+  "version" : "1.9.0 (2)"
+}

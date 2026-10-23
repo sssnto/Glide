@@ -1,0 +1,127 @@
+{
+  "context" : {
+    "allowsCellularInProbe" : true,
+    "audioSessionActivated" : true,
+    "explicitEpisodeMatched" : true,
+    "jellyfinSourceCount" : 2,
+    "matchedDiagnosticFormat" : true,
+    "recentCandidateCount" : 32,
+    "recentFormats" : [
+      {
+        "codec" : "h264",
+        "dvProfile" : 0,
+        "height" : 1080,
+        "range" : "SDR",
+        "width" : 1920
+      }
+    ],
+    "serverSubtitlesDisabled" : false,
+    "serverVersion" : "12.2.0",
+    "sourceBitrate" : 12938982,
+    "sourceCodec" : "h264",
+    "sourceRange" : "SDR",
+    "sourceSubtitleFormats" : [
+      {
+        "codec" : "subrip",
+        "default" : true,
+        "forced" : false,
+        "language" : "unknown"
+      }
+    ],
+    "sourceTransfer" : "bt709",
+    "subtitleMemoryRestored" : true,
+    "textSubtitleRequested" : false
+  },
+  "results" : [
+    {
+      "actualTime" : 2.0013339700000001,
+      "bitmapCueCount" : 0,
+      "clientCaptionVisibleAtCurrentClock" : false,
+      "diagnostic" : {
+        "accessLogBytesTransferred" : 19793236,
+        "accessLogTransferSeconds" : 4.0231190420000003,
+        "attemptSeconds" : [
+          5.3909679651260376
+        ],
+        "bitDepth" : 8,
+        "bufferedAheadSeconds" : 9.6358048709999995,
+        "bufferEmpty" : false,
+        "bufferFull" : false,
+        "bufferingCount" : 0,
+        "bufferingSeconds" : 0,
+        "delivery" : "服务器流（方式待确认）",
+        "device" : "iPhone14,3",
+        "directStreamFlag" : false,
+        "droppedVideoFrames" : 0,
+        "events" : [
+          "attempt_automatic",
+          "engine_avplayer",
+          "hls_single_variant",
+          "resource_ready_serverStream",
+          "first_frame"
+        ],
+        "firstFrameSeconds" : 5.3909679651260376,
+        "forwardBufferTargetSeconds" : 30,
+        "height" : 1080,
+        "level" : 40,
+        "likelyToKeepUp" : true,
+        "nativeStalls" : 0,
+        "nativeTimeControlStatus" : "playing",
+        "observedBitrate" : 30191676,
+        "originalTransportAttempts" : 0,
+        "outputColorEvidence" : "compressedTrack",
+        "outputColorMatrix" : "ITU_R_709_2",
+        "outputColorPrimaries" : "ITU_R_709_2",
+        "outputColorTransfer" : "ITU_R_709_2",
+        "outputHeight" : 1080,
+        "outputVideoCodec" : "avc1",
+        "outputWidth" : 1920,
+        "playerReadySeconds" : 5.3575600385665894,
+        "playlistMode" : "media",
+        "preferredTextSubtitle" : false,
+        "profile" : "High",
+        "rebufferCount" : 0,
+        "recoveryCount" : 0,
+        "requestedQuality" : "automatic",
+        "resourceReadySeconds" : 0.95312893390655518,
+        "schema" : 10,
+        "session" : "7CBE7C62-E05E-45F5-AA22-F71E5ED72A98",
+        "sourceBitrate" : 13581167,
+        "sourceColorPrimaries" : "bt709",
+        "sourceColorSpace" : "bt709",
+        "sourceColorTransfer" : "bt709",
+        "sourceFrameRate" : 23.976025,
+        "sourceKind" : "jellyfin",
+        "state" : "播放中",
+        "system" : "27.0",
+        "totalFirstFrameSeconds" : 5.3910559415817261,
+        "version" : "1.9.0 (6)",
+        "videoCodec" : "h264",
+        "videoRangeType" : "SDR",
+        "width" : 1920
+      },
+      "elapsedSeconds" : 7.526048208354041,
+      "externalSubtitleCueCount" : 0,
+      "failed" : false,
+      "frameReady" : true,
+      "globalSubtitlePreferenceOff" : false,
+      "rememberedSubtitleSuppressesNative" : false,
+      "route" : "production-controller",
+      "selectedServerSubtitleIndex" : -1,
+      "selectedSubtitleLanguage" : "unknown",
+      "serverSubtitleCount" : 1,
+      "subtitleChoice" : "automatic",
+      "subtitleLanguages" : [
+
+      ],
+      "subtitleMemoryPresent" : false,
+      "subtitleSelected" : false,
+      "subtitleTrackCount" : 0
+    }
+  ],
+  "scope" : "Authorized in-app recent-item metadata and short real AVPlayer trials; no credentials, host, URL, title, item identifier or media bytes exported",
+  "stage" : "完整生产流程验证结束",
+  "system" : "27.0",
+  "timestamp" : "2026-10-22T00:45:17Z",
+  "version" : "1.9.0 (6)"
+}

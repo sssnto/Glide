@@ -1,0 +1,30 @@
+[
+  {
+    "result": "failed",
+    "checksPassed": 16,
+    "report": "Study-iPhone-EOF-Failure-2026-10-21.json",
+    "source": "2026-10-20 final source",
+    "timestampUTC": "2026-10-21T00:26:51Z",
+    "error": "VLC tail loop timed out at real clock 11.524/12 seconds; requested playback true, actual playback false; no loop completed"
+  },
+  {
+    "result": "passed",
+    "checksPassed": 19,
+    "report": "Study-iPhone-First-Pass-2026-10-21.json",
+    "timestampUTC": "2026-10-21T00:30:14Z",
+    "source": "Native libVLC EOF state fix; final 2026-10-21 frozen source"
+  },
+  {
+    "result": "passed",
+    "checksPassed": 19,
+    "report": "Study-iPhone-Final-2026-10-21.json",
+    "timestampUTC": "2026-10-21T00:31:18Z",
+    "source": "Same installed binary; no rebuild; repeated complete acceptance"
+  },
+  {
+    "result": "launched",
+    "mode": "normal UI with authored dual subtitle media",
+    "log": "Logs/Device-Normal-Launch-2026-10-21.log",
+    "note": "Launch succeeded; manual listening and physical UI walkthrough remain user acceptance, not automated claim"
+  }
+]

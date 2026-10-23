@@ -1,0 +1,90 @@
+{
+  "physicalBootstrap": [
+    {
+      "attempt": "Baseline",
+      "testCasesStarted": 0,
+      "result": "runner bootstrap failed",
+      "errorCode": 74
+    },
+    {
+      "attempt": "Baseline-Retry",
+      "testCasesStarted": 0,
+      "result": "runner bootstrap failed",
+      "errorCode": 74
+    },
+    {
+      "attempt": "Baseline-Debug",
+      "testCasesStarted": 0,
+      "result": "runner bootstrap failed",
+      "errorCode": 74
+    },
+    {
+      "attempt": "Baseline-Authorized",
+      "testCasesStarted": 0,
+      "result": "runner bootstrap failed",
+      "errorCode": 74
+    },
+    {
+      "attempt": "Native",
+      "testCasesStarted": 0,
+      "result": "runner bootstrap failed",
+      "errorCode": 74
+    },
+    {
+      "attempt": "Native-Reconnected",
+      "testCasesStarted": 0,
+      "result": "runner bootstrap failed",
+      "errorCode": 74
+    },
+    {
+      "attempt": "Native-FreshTools",
+      "testCasesStarted": 0,
+      "result": "runner bootstrap failed",
+      "errorCode": 74
+    }
+  ],
+  "simulatorAttempts": [
+    {
+      "summary": "Native-Appearance-Final-Summary.json",
+      "result": "Passed",
+      "passedTests": 1,
+      "failedTests": 0,
+      "skippedTests": 0
+    },
+    {
+      "summary": "Native-Final-Summary.json",
+      "result": "Failed",
+      "passedTests": 2,
+      "failedTests": 2,
+      "skippedTests": 0
+    },
+    {
+      "summary": "Native-Menu-Final-Summary.json",
+      "result": "Failed",
+      "passedTests": 1,
+      "failedTests": 1,
+      "skippedTests": 0
+    },
+    {
+      "summary": "Native-Simulator-Refined-Summary.json",
+      "result": "Failed",
+      "passedTests": 0,
+      "failedTests": 2,
+      "skippedTests": 0
+    },
+    {
+      "summary": "Native-Simulator-Summary.json",
+      "result": "Failed",
+      "passedTests": 0,
+      "failedTests": 2,
+      "skippedTests": 0
+    },
+    {
+      "summary": "Native-SingleLazy-Summary.json",
+      "result": "Passed",
+      "passedTests": 2,
+      "failedTests": 0,
+      "skippedTests": 0
+    }
+  ]
+}

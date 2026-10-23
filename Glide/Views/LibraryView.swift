@@ -9,7 +9,7 @@ struct PlaySelection: Identifiable {
 }
 
 enum LibrarySheet: String, Identifiable {
-    case sources, help, personal, pins, downloads, settings
+    case sources, help, personal, pins, downloads, settings, links
     var id: String { rawValue }
 }
 
@@ -70,7 +70,7 @@ struct LibraryView: View {
     }
     var body: some View {
         Group {
-            if let server = library.selectedServer, server.kind == .jellyfin,
+            if let server = library.selectedServer, server.kind.isCatalogSource,
                let folder = library.jellyPath.first, LibraryExperience(collectionType: folder.collectionType) != .home {
                 CatalogView(library: library, server: server, folder: folder)
             } else { homeBody }
@@ -79,12 +79,36 @@ struct LibraryView: View {
             homeBrowseView = .videos
             search = ""; favoritesOnly = false; restorePosition()
         }
+        #if DEBUG
+        .onAppear {
+            if ProcessInfo.processInfo.arguments.contains("--glide-ui-audit"), ProcessInfo.processInfo.arguments.contains("--glide-ui-audit-sources") { sheet = .sources }
+        }
+        #endif
     }
     private var homeBody: some View {
+        NavigationStack {
+            homeContent
+                .navigationTitle(library.selectedServer?.name ?? "片库")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button { sheet = .sources } label: { Label("媒体来源", systemImage: "externaldrive") }
+                            .accessibilityIdentifier("sources.open")
+                            .accessibilityValue(library.selectedServer?.name ?? "未连接")
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Menu {
+                            Button { sheet = .links } label: { Label("链接与 STRM", systemImage: "link") }.accessibilityIdentifier("links.open")
+                            Button { sheet = .pins } label: { Label("固定目录", systemImage: "pin") }.accessibilityIdentifier("pins.open")
+                        } label: { Label("更多", systemImage: "ellipsis.circle") }
+                        .accessibilityIdentifier("library.more")
+                    }
+                }
+        }
+    }
+    private var homeContent: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                header.padding(.horizontal, geometry.size.width > 600 ? 32 : 20)
-                    .padding(.vertical, 8)
                 if library.selectedID != nil && !isLibraryRoot {
                     directoryNavigation.padding(.horizontal, geometry.size.width > 600 ? 32 : 20)
                         .padding(.vertical, 2)
@@ -96,7 +120,7 @@ struct LibraryView: View {
                         .padding(.vertical, 8)
                 }
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 16) {
                         if library.selectedID == nil { demoHero }
                         else if !isLibraryRoot { serverHero }
                         pinnedSection
@@ -116,6 +140,18 @@ struct LibraryView: View {
                                     Button("管理媒体源") { sheet = .sources }.buttonStyle(.borderedProminent)
                                 }
                             }.padding().frame(maxWidth: .infinity, alignment: .leading).background(GlideTheme.panel, in: RoundedRectangle(cornerRadius: 16))
+                        }
+                        if library.loading && library.selectedServer?.kind.isFileSource == true {
+                            HStack {
+                                ProgressView()
+                                Text("已找到 \(library.scannedVideoCount) 个视频").font(.caption).foregroundStyle(.secondary)
+                                Spacer()
+                                Button("停止扫描") { library.cancelDirectoryScan() }.font(.caption).frame(minHeight: 44)
+                                    .accessibilityIdentifier("directory.cancelScan")
+                            }
+                        } else if library.scanStopped {
+                            Text("扫描已停止，已保留当前结果。下拉刷新可重新扫描。")
+                                .font(.caption).foregroundStyle(.secondary)
                         }
                         if showsVideos {
                             videoHeading
@@ -222,6 +258,7 @@ struct LibraryView: View {
             }
         }) { destination in
             switch destination {
+            case .links: NavigationStack { StreamLinksView(library: library).toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { sheet = nil } } } }
             case .sources: SourcesView(library: library)
             case .downloads: NavigationStack { DownloadsView(library: library).toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { sheet = nil } } } }
             case .settings: NavigationStack { SettingsView(library: library).toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { sheet = nil } } } }
@@ -253,7 +290,7 @@ struct LibraryView: View {
             searchError = error.localizedDescription; failedKey = key
         }
     }
-    private var isLibraryRoot: Bool { library.selectedServer?.kind == .jellyfin && library.jellyPath.isEmpty }
+    private var isLibraryRoot: Bool { library.selectedServer?.kind.isCatalogSource == true && library.jellyPath.isEmpty }
     private var modePicker: some View {
         Picker("播放顺序", selection: $playbackMode) {
             ForEach(PlaybackMode.allCases) { mode in Label(mode.title, systemImage: mode.symbol).tag(mode) }
@@ -323,10 +360,10 @@ struct LibraryView: View {
                 }
                 Spacer()
                 Button { Task { await library.reload() } } label: {
-                    Label(library.selectedServer?.kind == .jellyfin && library.jellyPath.isEmpty ? "刷新媒体库" : "刷新本目录", systemImage: "arrow.clockwise").font(.subheadline)
+                    Label(library.selectedServer?.kind.isCatalogSource == true && library.jellyPath.isEmpty ? "刷新媒体库" : "刷新本目录", systemImage: "arrow.clockwise").font(.subheadline)
                 }.frame(minHeight: 44).disabled(library.loading).accessibilityIdentifier("directory.refresh")
             }
-            if library.selectedServer?.kind == .jellyfin && !library.jellyPath.isEmpty {
+            if library.selectedServer?.kind.isCatalogSource == true && !library.jellyPath.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 7) {
                         Button("媒体库") { Task { await library.jump(to: 0) } }
@@ -339,25 +376,6 @@ struct LibraryView: View {
             } else if !library.path.isEmpty {
                 Text(library.path.map(\.lastPathComponent).joined(separator: " / ")).font(.caption).foregroundStyle(GlideTheme.muted).lineLimit(2)
             }
-        }
-    }
-    private var header: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Glide").font(GlideTheme.Typography.pageTitle)
-                if !dynamicTypeSize.isAccessibilitySize {
-                    Text(library.selectedID == nil ? "视频播放器" : "媒体资料库").font(GlideTheme.Typography.caption).foregroundStyle(GlideTheme.muted)
-                }
-            }
-            Spacer()
-            Button { sheet = .pins } label: { Image(systemName: "pin").frame(width: 44, height: 44) }
-                .accessibilityLabel("固定目录").accessibilityIdentifier("pins.open")
-            Button { sheet = .sources } label: {
-                Label(library.selectedServer?.name ?? "连接片库", systemImage: library.selectedServer?.kind.symbol ?? "plus")
-                    .font(.caption.weight(.medium)).lineLimit(1).padding(.horizontal, 14).frame(minHeight: 44)
-                    .frame(maxWidth: 180)
-                    .background(GlideTheme.panel, in: RoundedRectangle(cornerRadius: 10))
-            }.buttonStyle(.plain).accessibilityIdentifier("sources.open")
         }
     }
     @ViewBuilder private func folderSection(width: CGFloat) -> some View {
@@ -428,7 +446,7 @@ struct LibraryView: View {
         Button { startPlayback(useFilters: usesFilters) } label: {
             Label(usesFilters ? "播放结果" : library.selectedID == nil ? "播放演示" : "播放全部", systemImage: "play.fill")
                 .font(.subheadline.weight(.semibold)).fixedSize().padding(.horizontal, 18).frame(minHeight: 44)
-                .background(GlideTheme.accent, in: RoundedRectangle(cornerRadius: 12)).foregroundStyle(.black)
+                .background(GlideTheme.accent, in: RoundedRectangle(cornerRadius: 12)).foregroundStyle(GlideTheme.onAccent)
         }.disabled(library.loading || filtering || (usesFilters && filtered.isEmpty)).accessibilityIdentifier(library.selectedID == nil ? "demo.play" : "directory.play")
     }
     private var demoHero: some View {
@@ -437,7 +455,7 @@ struct LibraryView: View {
                 .foregroundStyle(GlideTheme.accent).frame(width: 48, height: 64)
             VStack(alignment: .leading, spacing: 6) {
                 Text("从你的媒体开始").font(GlideTheme.Typography.sectionTitle)
-                Text("连接 Jellyfin、导入本地视频，或先播放下方演示。")
+                Text("连接 Jellyfin / Emby、导入本地视频，或先播放下方演示。")
                     .font(GlideTheme.Typography.secondary).foregroundStyle(GlideTheme.muted)
                 Button("添加媒体来源", systemImage: "plus") { sheet = .sources }
                     .font(GlideTheme.Typography.body.weight(.semibold)).frame(minHeight: 44)
@@ -522,7 +540,7 @@ struct LibraryView: View {
         Button { startPlayback(selected: video, useFilters: true) } label: {
             VStack(alignment: .leading, spacing: 6) {
                 VideoPreviewArtwork(video: video, server: library.servers.first { $0.id == video.sourceID })
-                    .overlay(alignment: .bottomTrailing) { Text(video.duration > 0 ? video.duration.mediaTime : "视频").font(.system(.caption2, design: .monospaced, weight: .semibold)).padding(6).background(.black.opacity(0.4), in: Capsule()).padding(9) }
+                    .overlay(alignment: .bottomTrailing) { Text(video.duration > 0 ? video.duration.mediaTime : "视频").font(.system(.caption2, design: .monospaced, weight: .semibold)).foregroundStyle(.white).padding(6).background(.black.opacity(0.65), in: Capsule()).padding(9) }
                     .overlay(alignment: .topLeading) { if library.favorites.contains(video.id) { Image(systemName: "heart.fill").font(.caption).foregroundStyle(GlideTheme.accent).padding(10) } }
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 Text(video.title).font(GlideTheme.Typography.itemTitle).lineLimit(2)

@@ -1,0 +1,27 @@
+{
+  "result": "Failed",
+  "totalTestCount": 2,
+  "passedTests": 0,
+  "failedTests": 2,
+  "skippedTests": 0,
+  "startTime": 1792578299.115,
+  "finishTime": 1792578577.711,
+  "testFailures": [
+    {
+      "failureText": "Failed to tap \"深色\" StaticText: No matches found for first query match sequence: `Descendants matching type StaticText` -> `Elements matching predicate '\"深色\" IN identifiers'`, given input App element pid: 77382\nPossibly caused by runtime issues:\nAutomation type mismatch: computed Other from legacy attributes vs StaticText from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 48;\n    \"XC_kAXXCAttributeElementBaseType\" = UILabel;\n    \"XC_kAXXCAttributeElementType\" = UILabel;\n    \"XC_kAXXCAttributeTraits\" = 8590000128;\n}\nSee test report attachments for more detail.",
+      "targetName": "GlideUITests",
+      "testIdentifier": 1,
+      "testIdentifierString": "GlideUITests/testNativeAppearanceAndLibraryNavigation()",
+      "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testNativeAppearanceAndLibraryNavigation",
+      "testName": "testNativeAppearanceAndLibraryNavigation()"
+    },
+    {
+      "failureText": "Testing was canceled",
+      "targetName": "GlideUITests",
+      "testIdentifier": 2,
+      "testIdentifierString": "GlideUITests/testProfessionalCatalogScroll()",
+      "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testProfessionalCatalogScroll",
+      "testName": "testProfessionalCatalogScroll()"
+    }
+  ]
+}

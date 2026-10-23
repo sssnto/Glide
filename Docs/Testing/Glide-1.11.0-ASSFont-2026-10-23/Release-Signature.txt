@@ -1,0 +1,2 @@
+/tmp/Glide1110-ASSStyle/Device-2026-10-23/Glide-1.11.0-4.xcarchive/Products/Applications/Glide.app: valid on disk
+/tmp/Glide1110-ASSStyle/Device-2026-10-23/Glide-1.11.0-4.xcarchive/Products/Applications/Glide.app: satisfies its Designated Requirement

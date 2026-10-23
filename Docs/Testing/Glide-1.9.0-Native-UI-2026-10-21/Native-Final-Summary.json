@@ -1,0 +1,27 @@
+{
+  "result": "Failed",
+  "totalTestCount": 4,
+  "passedTests": 2,
+  "failedTests": 2,
+  "skippedTests": 0,
+  "startTime": 1792578944.692,
+  "finishTime": 1792579246.804,
+  "testFailures": [
+    {
+      "failureText": "XCTAssertTrue failed",
+      "targetName": "GlideUITests",
+      "testIdentifier": 1,
+      "testIdentifierString": "GlideUITests/testNativeAppearanceAndLibraryNavigation()",
+      "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testNativeAppearanceAndLibraryNavigation",
+      "testName": "testNativeAppearanceAndLibraryNavigation()"
+    },
+    {
+      "failureText": "Failed to tap \"包含子目录\" Button: No matches found for Elements matching predicate '\"包含子目录\" IN identifiers' from input {(\n    Button, label: '片库', Selected,\n    Button, label: '我的',\n    Button, label: '离线',\n    Button, label: '设置',\n    Button, identifier: 'sources.open', label: '媒体来源', value: Glide Recovery Fix...,\n    Button, identifier: 'library.more', label: '更多',\n    Button, identifier: 'directory.back', label: '上一级',\n    Button, identifier: 'directory.refresh', label: '刷新本目录',\n    Button, label: '媒体', Selected,\n    Button, label: '目录',\n    Button, label: '媒体库',\n    Button, label: 'Fixture Library',\n    Button, identifier: 'directory.pin', label: '固定此目录',\n    Button, identifier: 'library.scope', label: '浏览范围：包含子目录',\n    Button, identifier: 'library.sort', label: '视频排序：名称升序',\n    Button, identifier: 'heart', label: '只看收藏',\n    Button, identifier: 'directory.play', label: '播放全部',\n    Button,\n    Button,\n    Button, identifier: 'list.number', label: '顺序播放', Selected,\n    Button, identifier: 'shuffle', label: '随机播放',\n    Button, identifier: 'video.demo0', label: '00:12, Fixture A, 2026 · Glide Recovery Fixture', value: 19%,\n    Button, identifier: 'video.demo1', label: '00:12, Fixture B, 2026 · Glide Recovery Fixture',\n    Button, identifier: 'video.demo2', label: '00:12, Fixture C, 2026 · Glide Recovery Fixture'\n)}\nPossibly caused by runtime issues:\nAutomation type mismatch: computed Button from legacy attributes vs PopUpButton from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 14;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 1108101562369;\n}\nAutomation type mismatch: computed Button from legacy attributes vs ProgressIndicator from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 35;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 8589935105;\n}\nSee test report attachments for more detail.",
+      "targetName": "GlideUITests",
+      "testIdentifier": 4,
+      "testIdentifierString": "GlideUITests/testScopeSortAndPinnedDirectory()",
+      "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testScopeSortAndPinnedDirectory",
+      "testName": "testScopeSortAndPinnedDirectory()"
+    }
+  ]
+}

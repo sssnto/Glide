@@ -1,0 +1,33 @@
+{
+  "baselineQuotedIncludeDiagnostics": 4,
+  "strictHeaderChecks": {
+    "arm64-apple-ios17.0": {
+      "exitCode": 0,
+      "quotedIncludeDiagnostics": 0
+    },
+    "arm64-apple-ios17.0-simulator": {
+      "exitCode": 0,
+      "quotedIncludeDiagnostics": 0
+    },
+    "x86_64-apple-ios17.0-simulator": {
+      "exitCode": 0,
+      "quotedIncludeDiagnostics": 0
+    }
+  },
+  "preparedHeaderCount": 8,
+  "cachePreparationVersion": 3,
+  "decoderBinariesUnchanged": true,
+  "dSYMHashesAndUUIDsUnchanged": true,
+  "repeatedPreparationIdempotent": true,
+  "freshHeaderNormalizationIdempotent": true,
+  "unexpectedHeaderRejected": true,
+  "date": "2026-10-19",
+  "releaseBuild": {
+    "configuration": "Release",
+    "destination": "generic/platform=iOS",
+    "status": "passed",
+    "codeSigningAllowed": false,
+    "quotedIncludeDiagnostics": 0,
+    "otherDiagnostic": "AppIntents metadata extraction skipped because this target has no AppIntents.framework dependency"
+  }
+}

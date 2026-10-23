@@ -1,0 +1,361 @@
+[
+  {
+    "xcresult": "/tmp/Glide180/UI-Dual-First.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 2,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "Failed to tap \"subtitles.primary.sidecar.paired.zh-Hans.srt\" Button: No matches found for Elements matching predicate '\"subtitles.primary.sidecar.paired.zh-Hans.srt\" IN identifiers' from input {(\n    Button, label: 'Sheet Grabber', value: Half screen,\n    Button, identifier: 'chevron.down', label: '返回片库',\n    Button, identifier: 'lock.open', label: '锁定触控',\n    Button, identifier: 'ellipsis', label: '播放设置',\n    Button, identifier: 'backward.end.fill', label: '上一个视频',\n    Button, identifier: 'gobackward.10', label: '快退 10 秒',\n    Button, identifier: 'play.fill', label: '播放',\n    Button, identifier: 'goforward.10', label: '快进 10 秒',\n    Button, identifier: 'forward.end.fill', label: '下一个视频', Disabled,\n    Button, identifier: 'player.mode', label: '顺序播放',\n    Button, identifier: 'player.quick.speed', label: '播放速度',\n    Button, identifier: 'player.quick.audio', label: '音轨', value: 无可切换音轨, Disabled,\n    Button, identifier: 'player.quick.subtitle', label: '字幕', value: 关闭,\n    Button, identifier: 'player.rotate', label: '切换横屏',\n    Button,\n    Button, Disabled,\n    Button,\n    Button, label: 'Hide Sidebar',\n    Button, identifier: 'subtitles.done', label: '完成',\n    Button, identifier: 'links.open', label: '链接与 STRM',\n    Button, identifier: 'pins.open', label: '固定目录',\n    Button, identifier: 'sources.open', label: '双字幕原创验证',\n    Button, identifier: 'directory.refresh', label: '刷新本目录',\n    Button, label: '媒体', Selected,\n    Button, label: '目录',\n    Button, identifier: 'directory.pin', label: '固定此目录',\n    Button, identifier: 'library.scope', label: '浏览范围：包含子目录',\n    Button, identifier: 'library.sort', label: '视频排序：名称升序',\n    Button, identifier: 'heart', label: '只看收藏',\n    Button, identifier: 'directory.play', label: '播放全部',\n    Button,\n    Button,\n    Button, identifier: 'list.number', label: '顺序播放', Selected,\n    Button, identifier: 'shuffle', label: '随机播放',\n    Button, identifier: 'video.BE42D4C6-AD9C-4993-9691-B11E27860ED4:local:manual.mp4', label: '视频, manual.mp4, DualSubtitleFixture',\n    Button, identifier: 'video.BE42D4C6-AD9C-4993-9691-B11E27860ED4:local:other/paired.mp4', label: '视频, paired.mp4, DualSubtitleFixture',\n    Button, identifier: 'video.BE42D4C6-AD9C-4993-9691-B11E27860ED4:local:paired.mp4', label: '视频, paired.mp4, DualSubtitleFixture',\n    Button, identifier: 'subtitles.primary.import', label: '导入主字幕…',\n    Button, identifier: 'subtitles.primary.candidates', label: '选择同目录字幕',\n    Button, identifier: 'subtitles.secondary.import', label: '导入第二字幕…', Disabled,\n    Button, identifier: 'subtitles.secondary.candidates', label: '选择同目录字幕', Disabled,\n    Button,\n    Button, Disabled,\n    Button, identifier: 'Decrement', label: '底部距离：12%, Decrement', value: 12,\n    Button, identifier: 'Increment', label: '底部距离：12%, Increment', value: 12,\n    Button, identifier: 'subtitles.secondary.scale-Decrement', label: '第二字幕字号：85%, Decrement', value: 85,\n    Button, identifier: 'subtitles.secondary.scale-Increment', label: '第二字幕字号：85%, Increment', value: 85\n)}\nPossibly caused by runtime issues:\nAutomation type mismatch: computed Button from legacy attributes vs PopUpButton from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 14;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 1108101562369;\n}\nAutomation type mismatch: computed Button from legacy attributes vs PopUpButton from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 14;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 1108101562625;\n}\nSee test report attachments for more detail.",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testDualSubtitleControlsOffsetsAndRestart()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleControlsOffsetsAndRestart",
+        "testName": "testDualSubtitleControlsOffsetsAndRestart()"
+      },
+      {
+        "failureText": "XCTAssertEqual failed: (\"双字幕验证未完成\") is not equal to (\"双字幕验证通过\")",
+        "targetName": "GlideUITests",
+        "testIdentifier": 2,
+        "testIdentifierString": "GlideUITests/testDualSubtitleProductionProbe()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleProductionProbe",
+        "testName": "testDualSubtitleProductionProbe()"
+      }
+    ],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "Nested native menu navigation and a new probe tolerance narrower than the existing VLC tolerance."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Dual-Second.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 2,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertTrue failed",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testDualSubtitleControlsOffsetsAndRestart()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleControlsOffsetsAndRestart",
+        "testName": "testDualSubtitleControlsOffsetsAndRestart()"
+      },
+      {
+        "failureText": "XCTAssertEqual failed: (\"双字幕验证未完成\") is not equal to (\"双字幕验证通过\")",
+        "targetName": "GlideUITests",
+        "testIdentifier": 2,
+        "testIdentifierString": "GlideUITests/testDualSubtitleProductionProbe()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleProductionProbe",
+        "testName": "testDualSubtitleProductionProbe()"
+      }
+    ],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "Controls reopened through a moving menu; consecutive VLC paused seek remained near the prior clock."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Probe-Third.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertEqual failed: (\"双字幕验证未完成\") is not equal to (\"双字幕验证通过\")",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testDualSubtitleProductionProbe()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleProductionProbe",
+        "testName": "testDualSubtitleProductionProbe()"
+      }
+    ],
+    "runtimeWarnings": [],
+    "note": "Consecutive VLC paused seek still retained the old clock."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Probe-Fourth.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertEqual failed: (\"双字幕验证未完成\") is not equal to (\"双字幕验证通过\")",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testDualSubtitleProductionProbe()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleProductionProbe",
+        "testName": "testDualSubtitleProductionProbe()"
+      }
+    ],
+    "runtimeWarnings": [],
+    "note": "Absolute-time trial reached 0.25s, before a +0.3s delayed cue; assertion setup was invalid at that boundary."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Probe-Fifth.xcresult",
+    "result": "Passed",
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "testFailures": [],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "Historical pass with a broader frame-step trial; SMB was then restored to its prior single-step limit."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Playback-Final.xcresult",
+    "result": "Failed",
+    "passed": 1,
+    "failed": 2,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertTrue failed - 11-hd-dual-ass.mkv",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "CompatibilityPlaybackUITests/testCompatibility1080pSeekAndPause()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/CompatibilityPlaybackUITests/testCompatibility1080pSeekAndPause",
+        "testName": "testCompatibility1080pSeekAndPause()"
+      },
+      {
+        "failureText": "Failed to tap Button (First Match): No matches found for first query match sequence: `Descendants matching type Button` -> `Elements matching predicate 'label BEGINSWITH \"关闭字幕\"'`, given input App element pid: 15382\nPossibly caused by runtime issues:\nAutomation type mismatch: computed Button from legacy attributes vs PopUpButton from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 14;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 1108101562369;\n}\nAutomation type mismatch: computed Button from legacy attributes vs PopUpButton from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 14;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 1108101562625;\n}\nSee test report attachments for more detail.",
+        "targetName": "GlideUITests",
+        "testIdentifier": 3,
+        "testIdentifierString": "GlideUITests/testManagedSubtitleOffRestartAndReenable()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testManagedSubtitleOffRestartAndReenable",
+        "testName": "testManagedSubtitleOffRestartAndReenable()"
+      }
+    ],
+    "runtimeWarnings": [],
+    "note": "Dual production checks passed; 1080p target missing because fixtures were seeded under Documents, and a legacy UI menu tap failed."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Controls-Final.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertTrue failed",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testDualSubtitleControlsOffsetsAndRestart()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleControlsOffsetsAndRestart",
+        "testName": "testDualSubtitleControlsOffsetsAndRestart()"
+      }
+    ],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "Partially clipped secondary delay stepper was not activated by automation."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Controls-Verified.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertTrue failed",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testDualSubtitleControlsOffsetsAndRestart()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleControlsOffsetsAndRestart",
+        "testName": "testDualSubtitleControlsOffsetsAndRestart()"
+      }
+    ],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "Offsets, visible captions, OCR and restart passed; file-picker cancellation did not return to controls."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Controls-Acceptance.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertEqual failed: (\"XCTWaiterResult(rawValue: 2)\") is not equal to (\"XCTWaiterResult(rawValue: 1)\")",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testDualSubtitleControlsOffsetsAndRestart()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleControlsOffsetsAndRestart",
+        "testName": "testDualSubtitleControlsOffsetsAndRestart()"
+      }
+    ],
+    "runtimeWarnings": [],
+    "note": "Initial automated video tap did not open the player."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Controls-Complete.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertTrue failed",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testDualSubtitleControlsOffsetsAndRestart()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleControlsOffsetsAndRestart",
+        "testName": "testDualSubtitleControlsOffsetsAndRestart()"
+      }
+    ],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "Automated scrolling overshot the target row."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Controls-Visual-Final.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertTrue failed",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testDualSubtitleControlsOffsetsAndRestart()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleControlsOffsetsAndRestart",
+        "testName": "testDualSubtitleControlsOffsetsAndRestart()"
+      }
+    ],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "Caption contrast, timeline spacing and offsets passed; reopened native menu was tapped during its positioning animation."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Controls-Stable-Menu.xcresult",
+    "result": "Passed",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "testFailures": [],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "Final product UI workflow passed, including cancellation return; later change only adjusted the legacy regression test menu helper."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Regression-Final.xcresult",
+    "result": "Failed",
+    "passed": 3,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertEqual failed: (\"双字幕验证未完成\") is not equal to (\"双字幕验证通过\")",
+        "targetName": "GlideUITests",
+        "testIdentifier": 2,
+        "testIdentifierString": "GlideUITests/testDualSubtitleProductionProbe()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleProductionProbe",
+        "testName": "testDualSubtitleProductionProbe()"
+      }
+    ],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "Pre-correction batch: 1080p, Emby and legacy subtitle passed; dual repeated paused seek failed with the percentage seek plus frame-step trial."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Accurate-Time-Seeks.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 2,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "Failed to get matching snapshot: No matches found for Elements matching predicate '\"player.canvas\" IN identifiers' from input {(\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other, label: 'Vertical scroll bar, 2 pages', value: 0%,\n    Other,\n    Other,\n    Other,\n    Other, label: 'Vertical scroll bar, 1 pages', value: 0%,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other,\n    Other\n)}\nPossibly caused by runtime issues:\nAutomation type mismatch: computed Other from legacy attributes vs StaticText from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 48;\n    \"XC_kAXXCAttributeElementBaseType\" = UILabel;\n    \"XC_kAXXCAttributeElementType\" = UILabel;\n    \"XC_kAXXCAttributeTraits\" = 8590000128;\n}\nSee test report attachments for more detail.",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "CompatibilityPlaybackUITests/testCompatibility1080pSeekAndPause()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/CompatibilityPlaybackUITests/testCompatibility1080pSeekAndPause",
+        "testName": "testCompatibility1080pSeekAndPause()"
+      },
+      {
+        "failureText": "XCTAssertEqual failed: (\"双字幕验证未完成\") is not equal to (\"双字幕验证通过\")",
+        "targetName": "GlideUITests",
+        "testIdentifier": 2,
+        "testIdentifierString": "GlideUITests/testDualSubtitleProductionProbe()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleProductionProbe",
+        "testName": "testDualSubtitleProductionProbe()"
+      }
+    ],
+    "runtimeWarnings": [],
+    "note": "Time-only trial still failed on repeated backward seeking; the 1080p case did not open the player through the old single-tap helper."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Paused-Preroll-Final.xcresult",
+    "result": "Failed",
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertEqual failed: (\"XCTWaiterResult(rawValue: 2)\") is not equal to (\"XCTWaiterResult(rawValue: 1)\") - label >= '00:28' AND label <= '00:32': 00:01",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "CompatibilityPlaybackUITests/testCompatibility1080pSeekAndPause()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/CompatibilityPlaybackUITests/testCompatibility1080pSeekAndPause",
+        "testName": "testCompatibility1080pSeekAndPause()"
+      }
+    ],
+    "runtimeWarnings": [],
+    "note": "Muted local preroll passed 18 dual checks; the 1080p drag case did not reach its expected position. Retained before switching this case to track tapping; dragging remains covered by the bilingual UI case."
+  },
+  {
+    "xcresult": "/tmp/Glide180/UI-Final-Validated.xcresult",
+    "result": "Passed",
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "testFailures": [],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "Final source regression batch: all four cases passed, including 18 dual checks, 12 legacy subtitle checks, 14 Emby checks and 1080p VLC timeline tap/resume/pause."
+  }
+]

@@ -11,7 +11,20 @@ struct PlayerView: View {
     var initialTracks = TrackSelection()
     var initialResumeAt: Double?
     var loadFullQueue: (() async throws -> [Video])? = nil
+    var initialMoment: MediaMoment? = nil
+    var momentStore = MomentStore.shared
+    var channelMode = false
+    var onFirstFrame: ((Video) -> Void)? = nil
+    var onQueueFinished: (() -> Void)? = nil
+    var returnLabel = "返回片库"
+    @State private var notifiedStarts = Set<String>()
     private var isCinema: Bool { cinematic || ["Movie", "Episode"].contains(current.mediaType ?? "") }
+    private var recordsProgress: Bool {
+#if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--glide-ui-audit") || ProcessInfo.processInfo.arguments.contains("--glide-discovery-probe") || ProcessInfo.processInfo.arguments.contains("--glide-map-probe") || ProcessInfo.processInfo.arguments.contains("--glide-map-fixture") { return false }
+#endif
+        return isCinema || library.servers.first(where: { $0.id == current.sourceID })?.remembersPlayback == true
+    }
     private var isEpisode: Bool { current.mediaType == "Episode" }
     @AppStorage("playbackMode") private var preferredMode: PlaybackMode = .sequential
     @Environment(\.dismiss) private var dismiss
@@ -28,17 +41,26 @@ struct PlayerView: View {
     @State private var hideTask: Task<Void, Never>?
     @State private var suppressTapUntil = Date.distantPast
     @State private var settingsOpen = false
-    private enum SettingsAction { case diagnostic, videoInfo, subtitleImport }
+    private enum SettingsAction { case diagnostic, videoInfo, subtitleImport, subtitleControls, navigation, moment }
     @State private var pendingSettingsAction: SettingsAction?
+    @State private var navigationSelection: VideoNavigationPresentation?
+    @State private var navigationWasPlaying = false
+    @State private var navigationTarget: Double?
     @State private var diagnosticOpen = false
     @State private var videoInfoOpen = false
+    @State private var skipSettingsOpen = false
     @State private var pathCopied = false
     @State private var episodesOpen = false
     @State private var videoDetail: CatalogItem?
     @State private var importingSubtitle = false
-    @State private var externalSubtitles: [SubtitleCue] = []
-    @State private var subtitleDelay = 0.0
-    @State private var subtitleMessage: String?
+    private var subtitles: SubtitleSession { playback.subtitles }
+    @State private var bottomControlsHeight: CGFloat = 0
+    @State private var subtitleControlsOpen = false
+    @State private var subtitlePresentationTask: Task<Void, Never>?
+    @State private var subtitleImportLane = SubtitleLane.primary
+    @State private var subtitleImportReturnsToControls = false
+    @State private var pendingSubtitleLane: SubtitleLane?
+    @State private var subtitleImportVideoID: String?
     @AppStorage("externalSubtitleBottom") private var subtitleBottom = 12.0
     @State private var initialOrientation: UIInterfaceOrientation?
     @State private var manuallyRotated = false
@@ -72,23 +94,27 @@ struct PlayerView: View {
                 Color.black.ignoresSafeArea()
                 VideoSurface(presentation: playback.presentation, onLayer: { playback.attachLayer($0) }, identity: current.id, title: current.title,
                     frameReady: playback.frameReady, locked: locked, filled: filled,
-                    onSwipe: { if !isCinema || isEpisode { move($0) } },
+                    onSwipe: { if channelMode || !isCinema || isEpisode { move($0) } },
                     onToggle: { playback.toggle(); scheduleHideAfterInteraction() }, onSeek: {
                         // SpatialTapGesture can also complete when a long press is released.
                         suppressTapUntil = Date().addingTimeInterval(0.5)
                         playback.seek(playback.time + $0); scheduleHideAfterInteraction()
                     },
-                    onSpeedPreset: { playback.setRate($0); scheduleHideAfterInteraction() }, onHUD: showHUD)
+                    onSpeedPreset: { playback.setRate($0); scheduleHideAfterInteraction() }, onHUD: showHUD, subtitleSession: subtitles, secondarySubtitleSession: playback.secondarySubtitles,
+                    subtitleClock: { playback.subtitleRenderTime }, subtitleVideoMatrix: playback.subtitleVideoMatrix, subtitleSourceSize: playback.subtitleVideoSize)
                     .ignoresSafeArea()
                 if !playback.frameReady && playback.error == nil {
-                    if let server = library.servers.first(where: { $0.id == current.sourceID }), server.kind == .jellyfin, let id = current.remoteID {
+                    if let server = library.servers.first(where: { $0.id == current.sourceID }), server.kind.isCatalogSource, let id = current.remoteID {
                         CatalogArtwork(item: CatalogItem(Id: id, Name: current.title, Type: current.mediaType), server: server, contentMode: .fit).opacity(0.45).allowsHitTesting(false)
                     } else { VideoArtwork(video: current, contentMode: .fit).opacity(0.45).allowsHitTesting(false) }
                 }
-                PlayerSubtitleOverlay(playback: playback, cues: externalSubtitles, delay: subtitleDelay,
-                                      bottomInset: geometry.size.height * subtitleBottom / 100)
                 if controls {
                     LinearGradient(stops: [.init(color: .black.opacity(0.65), location: 0), .init(color: .clear, location: 0.3), .init(color: .clear, location: 0.55), .init(color: .black.opacity(0.85), location: 1)], startPoint: .top, endPoint: .bottom).ignoresSafeArea().allowsHitTesting(false)
+                }
+                PlayerPGSOverlay(session: subtitles, filled: filled).ignoresSafeArea()
+                PlayerSubtitleOverlay(playback: playback, cues: subtitles.overlayCues, delay: subtitles.delay,
+                                      bottomInset: max(geometry.size.height * subtitleBottom / 100, controls && !locked ? bottomControlsHeight + 24 : 0), secondaryCues: playback.secondarySubtitles.overlayCues, secondaryDelay: playback.secondarySubtitles.delay)
+                if controls {
                     VStack {
                         if locked { HStack { Spacer(); RoundControl(symbol: "lock.fill", label: "解锁触控") { locked = false; scheduleHideAfterInteraction() } } }
                         else { topBar }
@@ -96,6 +122,10 @@ struct PlayerView: View {
                         if !locked { bottomControls(compact: landscape) }
                     }.padding(.horizontal, landscape ? 28 : 20).padding(.top, 4).padding(.bottom, 8)
                     .transition(.opacity)
+                }
+                PlayerSkipControls(playback: playback, locked: locked, controls: controls, landscape: landscape) {
+                    suppressTapUntil = Date().addingTimeInterval(0.5)
+                    scheduleHideAfterInteraction()
                 }
                 if playback.loading && !playback.frameReady && playback.error == nil {
                     VStack(spacing: 12) { ProgressView().tint(GlideTheme.accent).scaleEffect(1.2); Text("正在准备画面…").font(.caption).foregroundStyle(.white.opacity(0.7)) }
@@ -109,6 +139,11 @@ struct PlayerView: View {
                         Image(systemName: "exclamationmark.triangle").font(.largeTitle).foregroundStyle(GlideTheme.accent)
                         Text("暂时无法播放").font(.title3.bold())
                         Text(error).accessibilityIdentifier("player.error").font(.footnote).multilineTextAlignment(.center).foregroundStyle(.secondary)
+                        if playback.showsOriginalTransport {
+                            Button(playback.originalTransportTitle) { playback.tryOriginalTransport() }
+                                .buttonStyle(.bordered).disabled(!playback.canTryOriginalTransport)
+                                .accessibilityIdentifier("player.transport.afterFailure")
+                        }
                         if playback.canSwitchEngine {
                             Button(playback.engineDescriptor.id == .avPlayer ? "尝试兼容播放" : "返回系统播放") {
                                 suppressTapUntil = Date().addingTimeInterval(0.5)
@@ -120,36 +155,47 @@ struct PlayerView: View {
                             Button("返回片库") { dismiss() }
                             Spacer()
                             Button("播放诊断") { diagnosticOpen = true }
-                            Button("重试") { playback.open(current, library: library, recordsProgress: isCinema) }.buttonStyle(.borderedProminent).tint(GlideTheme.accent).foregroundStyle(.black)
+                            Button("重试") { playback.retry() }.buttonStyle(.borderedProminent).tint(GlideTheme.accent).foregroundStyle(GlideTheme.onAccent)
                         }
                     }.padding(26).frame(maxWidth: 370).background(GlideTheme.panel, in: RoundedRectangle(cornerRadius: 24)).padding(24)
                 }
+            }
+            .onPreferenceChange(PlayerControlsHeightKey.self) { value in
+                if abs(bottomControlsHeight - value) > 0.5 { bottomControlsHeight = value }
             }
             .simultaneousGesture(SpatialTapGesture().onEnded { touch in
                 // Keep the tap above the video renderer, including after the
                 // controls fade away. Buttons retain their own touch targets.
                 guard Date() >= suppressTapUntil else { return }
+                if !locked, playback.activeSkip != nil {
+                    let inset = PlayerSkipControls.bottomInset(controls: controls, landscape: landscape)
+                    // Ignore the skip controls' band regardless of gesture callback order.
+                    if touch.location.y >= geometry.size.height - inset - 64,
+                       touch.location.y <= geometry.size.height - inset + 16 { return }
+                }
                 if controls && (touch.location.y < 110 || touch.location.y > geometry.size.height - (landscape ? 150 : 230)) { return }
                 toggleControls()
             })
         }
+        .preferredColorScheme(.dark)
         .statusBarHidden(!controls)
         .persistentSystemOverlays(controls ? .visible : .hidden)
         .onAppear {
             initialOrientation = ScreenRotation.activeScene?.interfaceOrientation
             UIApplication.shared.isIdleTimerDisabled = true
             playback.tracks = initialTracks
+            playback.pendingMomentReference = initialMoment?.reference
             var autoplay = true
 #if DEBUG
-            if ProcessInfo.processInfo.arguments.contains("--glide-format-fixtures") {
+            if ProcessInfo.processInfo.arguments.contains("--glide-dual-subtitle-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-format-fixtures") || ProcessInfo.processInfo.arguments.contains("--glide-subtitle-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-subtitle-smb-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-smb-fixture") {
                 autoplay = !UserDefaults.standard.bool(forKey: "glideQAStartPaused")
             }
 #endif
-            playback.open(current, library: library, resumeAt: initialResumeAt, autoplay: autoplay, recordsProgress: isCinema); scheduleHide()
+            playback.open(current, library: library, resumeAt: initialResumeAt, autoplay: autoplay, recordsProgress: recordsProgress); scheduleHide()
         }
         .onDisappear {
             scrubTarget = nil
-            playback.pictureInPicture.stop(); playback.close(); hudTask?.cancel(); hideTask?.cancel()
+            playback.pictureInPicture.stop(); playback.close(); hudTask?.cancel(); hideTask?.cancel(); subtitlePresentationTask?.cancel()
             UIApplication.shared.isIdleTimerDisabled = false
             if manuallyRotated, let initialOrientation { ScreenRotation.request(ScreenRotation.mask(for: initialOrientation)) { _ in } }
         }
@@ -161,33 +207,40 @@ struct PlayerView: View {
             guard !Task.isCancelled else { return }
             await playback.prepareNext(nextVideo, library: library)
         }
-        .fileImporter(isPresented: $importingSubtitle, allowedContentTypes: [.plainText, UTType(filenameExtension: "srt") ?? .plainText, UTType(filenameExtension: "vtt") ?? .plainText]) { result in
-            do {
-                let url = try result.get()
-                let access = url.startAccessingSecurityScopedResource(); defer { if access { url.stopAccessingSecurityScopedResource() } }
-                let size = (try url.resourceValues(forKeys: [.fileSizeKey])).fileSize ?? 0
-                guard size <= 2_000_000 else { subtitleMessage = "字幕文件超过 2 MB，请使用较小的 SRT/VTT 文件。"; return }
-                let cues = SubtitleCue.parse(try String(contentsOf: url, encoding: .utf8))
-                guard !cues.isEmpty else { subtitleMessage = "没有识别到字幕，请使用 UTF-8 编码的 SRT/VTT 文件。"; return }
-                externalSubtitles = cues; subtitleDelay = 0; playback.selectSubtitle(nil); subtitleMessage = "已导入字幕，仅用于当前视频。"
-            } catch { subtitleMessage = "字幕导入未完成，请重试。" }
-            controls = true; settingsOpen = true
+        .fileImporter(isPresented: $importingSubtitle, allowedContentTypes: [.plainText, UTType(filenameExtension: "srt") ?? .plainText, UTType(filenameExtension: "vtt") ?? .plainText, UTType(filenameExtension: "ass") ?? .plainText, UTType(filenameExtension: "ssa") ?? .plainText], allowsMultipleSelection: false, onCompletion: { result in
+            if case .success(let urls) = result, let url = urls.first {
+                if subtitleImportVideoID == current.id { (subtitleImportLane == .primary ? subtitles : playback.secondarySubtitles).importFile(url) }
+                else { subtitles.message = "视频已切换，请为当前视频重新选择字幕。" }
+            }
+            finishSubtitleImport()
+        }, onCancellation: { finishSubtitleImport() })
+        .onChange(of: current.id) { _, _ in scrubTarget = nil; subtitlePresentationTask?.cancel() }
+        .sheet(item: $navigationSelection, onDismiss: finishNavigation) { selection in
+            VideoNavigationView(library: library, selection: selection, store: momentStore) { navigationTarget = $0 }
         }
-        .onChange(of: current.id) { _, _ in externalSubtitles = []; subtitleDelay = 0; subtitleMessage = nil }
-        .onChange(of: current.id) { _, _ in scrubTarget = nil }
         .sheet(isPresented: $diagnosticOpen, onDismiss: { scheduleHide() }) {
             NavigationStack { DiagnosticView(diagnostic: playback.diagnostic).toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { diagnosticOpen = false } } } }
         }
         .sheet(isPresented: $videoInfoOpen, onDismiss: { scheduleHide() }) { videoInfoPanel }
         .sheet(isPresented: $settingsOpen, onDismiss: {
+            skipSettingsOpen = false
             let action = pendingSettingsAction; pendingSettingsAction = nil
             switch action {
+            case .navigation: presentNavigation()
+            case .moment: presentNavigation(createMoment: true)
             case .diagnostic: diagnosticOpen = true
             case .videoInfo: videoInfoOpen = true
-            case .subtitleImport: importingSubtitle = true
+            case .subtitleImport: beginSubtitleImport()
+            case .subtitleControls: subtitleControlsOpen = true
             case nil: scheduleHide()
             }
         }) { settingsPanel }
+        .sheet(isPresented: $subtitleControlsOpen, onDismiss: {
+            if let lane = pendingSubtitleLane { pendingSubtitleLane = nil; beginSubtitleImport(lane, returnToControls: true) }
+            else { scheduleHide() }
+        }) {
+            SubtitleControlsView(playback: playback) { lane in pendingSubtitleLane = lane }
+        }
         .sheet(isPresented: $episodesOpen, onDismiss: { scheduleHide() }) {
             EpisodePickerView(videos: queue.source.filter { $0.mediaType == "Episode" }, currentID: current.id,
                               loading: queueLoading, failed: queueLoadError,
@@ -196,7 +249,7 @@ struct PlayerView: View {
         .task(id: videoInfoOpen ? current.id : "") {
             pathCopied = false
             guard videoInfoOpen, let server = library.servers.first(where: { $0.id == current.sourceID }),
-                  server.kind == .jellyfin, let id = current.remoteID else { videoDetail = nil; return }
+                  server.kind.isCatalogSource, let id = current.remoteID else { videoDetail = nil; return }
             videoDetail = nil
             let detail = try? await MediaClient.shared.catalogDetail(server: server, id: id)
             guard !Task.isCancelled, current.remoteID == id else { return }
@@ -207,6 +260,12 @@ struct PlayerView: View {
         .onChange(of: scenePhase) { _, phase in if phase == .background && !playback.pictureInPicture.active && !playback.externalPlaybackActive { playback.pause(); controls = true } }
         .onChange(of: playback.isPlaying) { _, playing in if playing { scheduleHide() } else if !playback.loading { controls = true } }
         .onChange(of: playback.completedCount) { _, _ in if scenePhase == .active { advance(1, automatic: true) } }
+        .onChange(of: playback.frameReady) { _, ready in
+#if DEBUG
+            if (ProcessInfo.processInfo.arguments.contains("--glide-discovery-probe") || ProcessInfo.processInfo.arguments.contains("--glide-map-probe") || ProcessInfo.processInfo.arguments.contains("--glide-map-fixture")), case .native(let player) = playback.presentation { player.isMuted = true }
+#endif
+            if ready, notifiedStarts.insert(current.id).inserted { onFirstFrame?(current) }
+        }
         .onChange(of: playback.playbackNotice) { _, notice in
             if notice != nil { controls = true; scheduleHide() }
         }
@@ -217,23 +276,43 @@ struct PlayerView: View {
     }
     private var topBar: some View {
         HStack(spacing: 10) {
-            RoundControl(symbol: "chevron.down", label: "返回片库") { dismiss() }
+            RoundControl(symbol: "chevron.down", label: returnLabel) { dismiss() }
             VStack(alignment: .leading, spacing: 3) {
                 Text(current.title).font(GlideTheme.Typography.itemTitle).lineLimit(1).foregroundStyle(.white)
                 Text((isEpisode && !episodePosition.isEmpty ? episodePosition + " · " : "") + "\(queue.index + 1) / \(queue.ordered.count)" + (queueLoading ? (isEpisode ? " · 正在加载剧集" : " · 正在补全目录") : ""))
                     .font(.caption2).monospacedDigit().foregroundStyle(.white.opacity(0.58))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            RoundControl(symbol: "rectangle.split.3x3", label: "画面与时刻") { presentNavigation() }
+                .disabled(playback.navigationPosition == nil)
+                .accessibilityIdentifier("player.navigation")
             RoundControl(symbol: "lock.open", label: "锁定触控") { locked = true; showHUD("已锁定触控"); scheduleHideAfterInteraction() }
             RoundControl(symbol: "ellipsis", label: "播放设置") {
                 quickMenuHolding = false; hideTask?.cancel(); settingsOpen = true
             }
         }
     }
+    private func presentNavigation(createMoment: Bool = false) {
+        guard let position = playback.navigationPosition, let resource = playback.resource else { return }
+        quickMenuHolding = false; hideTask?.cancel(); playback.cancelWarmup()
+        navigationWasPlaying = playback.isPlaying; navigationTarget = nil
+        playback.pause()
+        navigationSelection = VideoNavigationPresentation(video: current, resource: resource, duration: playback.duration, position: position, createMoment: createMoment)
+    }
+    private func finishNavigation() {
+        if let target = navigationTarget { playback.seek(target); playback.play() }
+        else if navigationWasPlaying { playback.play() }
+        navigationTarget = nil; navigationWasPlaying = false; scheduleHide()
+    }
     private var settingsPanel: some View {
         NavigationStack {
             Form {
                 Section {
+                    Button("内容地图与章节", systemImage: "rectangle.split.3x3") { pendingSettingsAction = .navigation; settingsOpen = false }
+                        .disabled(playback.navigationPosition == nil).accessibilityIdentifier("player.map.open")
+                    Button("收藏当前时刻", systemImage: "bookmark") { pendingSettingsAction = .moment; settingsOpen = false }
+                        .disabled(playback.navigationPosition == nil).accessibilityIdentifier("player.moment.create")
+                    NavigationLink { PlaybackLoopView(playback: playback) } label: { Label("单句重播与 A–B 循环", systemImage: "repeat") }.accessibilityIdentifier("player.loop.open")
                     HStack(spacing: 12) {
                         Button { pendingSettingsAction = .videoInfo; settingsOpen = false } label: {
                             Label("视频信息", systemImage: "info.circle")
@@ -244,6 +323,11 @@ struct PlayerView: View {
                             Label("播放诊断", systemImage: "waveform.path.ecg")
                                 .frame(maxWidth: .infinity, minHeight: 44)
                         }.accessibilityIdentifier("player.diagnostic")
+                        Divider()
+                        Button { skipSettingsOpen = true } label: {
+                            Label("片头片尾", systemImage: "forward.end.alt")
+                                .frame(maxWidth: .infinity, minHeight: 44)
+                        }.accessibilityIdentifier("player.skip.settings")
                     }.font(.footnote.weight(.medium))
                 }
                 if playback.canPlayOnline || playback.showsOriginalTransport || playback.originalTransportActive {
@@ -270,17 +354,17 @@ struct PlayerView: View {
                         PlayerSettingsLabel(title: "播放速度", symbol: "speedometer", value: "\(playback.rate.formatted())×")
                     }.accessibilityIdentifier("player.speed.menu")
                     Menu { audioMenuItems } label: {
-                        PlayerSettingsLabel(title: "音轨", symbol: "waveform", value: playback.audioOptions.isEmpty ? "无可切换音轨" : playback.selectedAudio?.displayName ?? "默认")
-                    }.accessibilityIdentifier("player.audio.menu").disabled(playback.audioOptions.isEmpty)
+                        PlayerSettingsLabel(title: "音轨", symbol: "waveform", value: playback.audioMenuValue)
+                    }.accessibilityIdentifier("player.audio.menu").disabled(!playback.hasAudioOptions)
                     Menu { subtitleMenuItems } label: {
-                        PlayerSettingsLabel(title: "字幕", symbol: "captions.bubble", value: subtitleSelectionTitle)
+                        PlayerSettingsLabel(title: "字幕", symbol: "captions.bubble", value: subtitleMenuValue)
                     }.accessibilityIdentifier("player.subtitle.menu")
                     if playback.engineDescriptor.capabilities.contains(.aspectFill) {
                         Button { filled.toggle() } label: {
                             PlayerSettingsLabel(title: filled ? "完整显示画面" : "填满屏幕", symbol: "arrow.up.left.and.arrow.down.right", value: filled ? "已填满" : "适应")
                         }
                     }
-                    if !isCinema {
+                    if !isCinema && !channelMode {
                         Menu {
                             ForEach(PlaybackMode.allCases) { mode in
                                 Button { changeMode(mode) } label: {
@@ -319,14 +403,20 @@ struct PlayerView: View {
                     }
                 }
                 Section("外部字幕") {
-                    Button("导入 SRT / VTT 字幕", systemImage: "doc.badge.plus") { pendingSettingsAction = .subtitleImport; settingsOpen = false }
-                    if !externalSubtitles.isEmpty {
-                        Stepper("字幕延迟：\(subtitleDelay, specifier: "%.1f") 秒", value: $subtitleDelay, in: -30...30, step: 0.5)
-                        Stepper("字幕底部距离：\(Int(subtitleBottom))%", value: $subtitleBottom, in: 5...35, step: 2)
-                        Button("移除外部字幕") { externalSubtitles = [] }
+                    Button("字幕控制与双字幕…") { pendingSettingsAction = .subtitleControls; settingsOpen = false }.accessibilityIdentifier("player.settings.subtitleControls")
+                    Button("导入 SRT／VTT／ASS／SSA 字幕", systemImage: "doc.badge.plus") { pendingSettingsAction = .subtitleImport; settingsOpen = false }
+                    if subtitles.discovering { ProgressView("正在匹配同目录字幕…") }
+                    if subtitles.reading { ProgressView("正在读取字幕…") }
+                    if let name = subtitles.activeName { Text(name).font(.caption).textSelection(.enabled).accessibilityIdentifier("player.subtitle.filename") }
+                    if !subtitles.cues.isEmpty || subtitles.hasASS {
+                        Stepper("字幕延迟：\(subtitles.delay, specifier: "%.1f") 秒", value: Binding(get: { subtitles.delay }, set: { subtitles.setDelay($0) }), in: -30...30, step: 0.5)
+                            .accessibilityIdentifier("player.subtitle.delay")
+                        if !subtitles.hasASS { Stepper("字幕底部距离：\(Int(subtitleBottom))%", value: $subtitleBottom, in: 5...35, step: 2) }
+                        Button("关闭全部字幕") { playback.closeExternalSubtitles() }
                         Text("外部字幕显示在本机画面中，画中画与 AirPlay 不包含此字幕。").font(.caption).foregroundStyle(.secondary)
                     }
-                    if let subtitleMessage { Text(subtitleMessage).font(.caption).foregroundStyle(.secondary) }
+                    if subtitles.hasMemory { Button("清除此视频的字幕记忆") { subtitles.forget() }.accessibilityIdentifier("player.subtitle.forget") }
+                    if let message = subtitles.message { Text(message).font(.caption).foregroundStyle(.secondary).accessibilityIdentifier("player.subtitle.message") }
                 }
                 Section {
                     Button(library.favorites.contains(current.id) ? "取消收藏" : "收藏视频", systemImage: library.favorites.contains(current.id) ? "heart.fill" : "heart") { library.toggleFavorite(current); settingsOpen = false }
@@ -337,18 +427,24 @@ struct PlayerView: View {
             .buttonStyle(.plain)
             .tint(GlideTheme.accent)
             .accessibilityIdentifier("player.settings.list")
+            .navigationDestination(isPresented: $skipSettingsOpen) {
+                PlaybackSkipSettings(session: playback.skips, duration: playback.duration, position: playback.time)
+            }
             .navigationTitle("播放设置")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) {
                 Button("完成") { settingsOpen = false }.accessibilityIdentifier("player.settings.done")
             } }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents(skipSettingsOpen ? [.large] : [.medium, .large])
         .presentationDragIndicator(.visible)
         .preferredColorScheme(.dark)
     }
     private var subtitleSelectionTitle: String {
-        !externalSubtitles.isEmpty ? "外部字幕" : playback.selectedSubtitle?.displayName ?? "关闭"
+        !playback.secondarySubtitles.cues.isEmpty ? (subtitles.cues.isEmpty ? "第二字幕" : "双字幕") : subtitles.activeName ?? playback.selectedServerSubtitle?.label ?? playback.selectedSubtitle?.displayName ?? "关闭"
+    }
+    private var subtitleMenuValue: String {
+        playback.serverSubtitleOptions.isEmpty ? subtitleSelectionTitle : subtitleSelectionTitle + " · \(playback.serverSubtitleOptions.count) 条可选"
     }
     @ViewBuilder private var speedMenuItems: some View {
         ForEach([0.5, 0.75, 1.0, 1.25, 1.5, 2.0], id: \.self) { rate in
@@ -356,26 +452,83 @@ struct PlayerView: View {
         }
     }
     @ViewBuilder private var audioMenuItems: some View {
-        ForEach(playback.audioOptions) { option in
-            Button(option.displayName + (playback.selectedAudio == option ? " ✓" : "")) { playback.selectAudio(option); scheduleHideAfterInteraction() }
-                .accessibilityIdentifier("player.audio." + option.id)
+        if !playback.serverAudioOptions.isEmpty {
+            Section("服务器音轨 · \(playback.serverAudioOptions.count)") {
+                ForEach(playback.serverAudioOptions) { stream in
+                    Button(stream.label + " · #\(stream.Index)" + (playback.selectedServerAudioIndex == stream.Index ? " ✓" : "")) {
+                        playback.chooseServerAudio(stream); scheduleHideAfterInteraction()
+                    }.disabled(playback.pictureInPicture.active).accessibilityIdentifier("player.audio.server.\(stream.Index)")
+                }
+            }
+            if playback.pictureInPicture.active { Text("请先关闭画中画，再切换音轨") }
+        } else {
+            ForEach(playback.audioOptions) { option in
+                Button(option.displayName + (playback.selectedAudio == option ? " ✓" : "")) { playback.selectAudio(option); scheduleHideAfterInteraction() }
+                    .accessibilityIdentifier("player.audio." + option.id)
+            }
+            if playback.audioOptions.isEmpty { Text("当前流没有可选音轨") }
         }
-        if playback.audioOptions.isEmpty { Text("当前流没有可选音轨") }
     }
     @ViewBuilder private var subtitleMenuItems: some View {
-        Button("关闭字幕" + (playback.selectedSubtitle == nil && externalSubtitles.isEmpty ? " ✓" : "")) { externalSubtitles = []; playback.selectSubtitle(nil); scheduleHideAfterInteraction() }
-        ForEach(playback.subtitleOptions) { option in
-            Button(option.displayName + (playback.selectedSubtitle == option && externalSubtitles.isEmpty ? " ✓" : "")) { externalSubtitles = []; playback.selectSubtitle(option); scheduleHideAfterInteraction() }
-                .accessibilityIdentifier("player.subtitle." + option.id)
+        Button("关闭字幕" + (playback.selectedServerSubtitleIndex == nil && playback.selectedSubtitle == nil && !subtitles.hasASS && !playback.secondarySubtitles.hasASS && subtitles.cues.isEmpty && playback.secondarySubtitles.cues.isEmpty ? " ✓" : "")) { playback.closeExternalSubtitles(); scheduleHideAfterInteraction() }
+            .accessibilityIdentifier("player.subtitle.off")
+        if !playback.serverSubtitleOptions.isEmpty {
+            Section("服务器字幕 · \(playback.serverSubtitleOptions.count)") {
+                ForEach(playback.serverSubtitleOptions) { stream in
+                    Button(stream.label + " · #\(stream.Index)" + (playback.selectedServerSubtitleIndex == stream.Index ? " ✓" : "")) {
+                        playback.chooseServerSubtitle(stream); scheduleHideAfterInteraction()
+                    }.disabled(playback.pictureInPicture.active).accessibilityIdentifier("player.subtitle.server.\(stream.Index)")
+                }
+            }
+        } else {
+            ForEach(playback.subtitleOptions) { option in
+                Button(option.displayName + (playback.selectedSubtitle == option && !subtitles.hasASS && subtitles.cues.isEmpty ? " ✓" : "")) { playback.chooseEmbeddedSubtitle(option); scheduleHideAfterInteraction() }
+                    .accessibilityIdentifier("player.subtitle." + option.id)
+            }
+            if playback.subtitleOptions.isEmpty { Text("当前流没有内嵌字幕") }
         }
-        if playback.subtitleOptions.isEmpty { Text("当前流没有可选字幕") }
+        if playback.serverSubtitlePendingIndex != nil { Text("正在读取所选字幕…") }
+        if let message = subtitles.message { Text(message) }
+        if let saved = subtitles.importedCopy {
+            Button("已导入：" + saved.name + (subtitles.choice == saved.choice ? " ✓" : "")) { subtitles.useImportedCopy(); scheduleHideAfterInteraction() }
+                .accessibilityIdentifier("player.subtitle.imported")
+        }
+        if !subtitles.candidates.isEmpty {
+            Section("同目录字幕") {
+                ForEach(subtitles.candidates) { candidate in
+                    Button(candidate.name + (subtitles.activeName == candidate.name ? " ✓" : "")) { subtitles.choose(candidate); scheduleHideAfterInteraction() }
+                        .accessibilityIdentifier("player.subtitle.sidecar." + candidate.name)
+                }
+            }
+        }
+        if subtitles.discovering { Text("正在匹配同目录字幕…") }
+        if subtitles.hasMemory || playback.secondarySubtitles.hasMemory { Button("清除此视频的字幕记忆") { playback.forgetSubtitles(); scheduleHideAfterInteraction() }.accessibilityIdentifier("player.subtitle.forget") }
         Divider()
-        Button("导入 SRT / VTT 字幕") {
+        Button("字幕控制与双字幕…") { presentSubtitleControls() }
+            .accessibilityIdentifier("player.subtitle.controls")
+        Button("导入 SRT／VTT／ASS／SSA 字幕") {
             quickMenuHolding = false; hideTask?.cancel()
             if settingsOpen { pendingSettingsAction = .subtitleImport; settingsOpen = false }
-            else { importingSubtitle = true }
+            else { beginSubtitleImport() }
         }
     }
+    private func presentSubtitleControls() {
+        quickMenuHolding = false; hideTask?.cancel(); subtitlePresentationTask?.cancel()
+        if settingsOpen { pendingSettingsAction = .subtitleControls; settingsOpen = false; return }
+        let videoID = current.id
+        subtitlePresentationTask = Task { @MainActor in
+            // Let the native menu dismiss before presenting another controller.
+            try? await Task.sleep(for: .milliseconds(300))
+            guard !Task.isCancelled, current.id == videoID else { return }
+            subtitleControlsOpen = true
+        }
+    }
+    private func finishSubtitleImport() {
+        subtitleImportVideoID = nil; controls = true
+        if subtitleImportReturnsToControls { presentSubtitleControls() } else { settingsOpen = true }
+        subtitleImportReturnsToControls = false
+    }
+    private func beginSubtitleImport(_ lane: SubtitleLane = .primary, returnToControls: Bool = false) { subtitleImportReturnsToControls = returnToControls; subtitleImportLane = lane; subtitleImportVideoID = current.id; importingSubtitle = true }
     private var sourceVideoStream: CatalogItem.Stream? {
         playback.resource?.videoStream ?? selectedMediaSource?.MediaStreams?.first { $0.Type == "Video" }
     }
@@ -478,6 +631,7 @@ struct PlayerView: View {
     }
     private func bottomControls(compact: Bool) -> some View {
         VStack(alignment: .leading, spacing: compact ? 0 : 8) {
+            PlayerLoopStatus(playback: playback)
             PlayerTimeline(playback: playback, identity: current.id, scrubTarget: $scrubTarget,
                            onScrubStart: { quickMenuHolding = false; hideTask?.cancel() }, onScrubEnd: scheduleHideAfterInteraction)
             if compact && !dynamicTypeSize.isAccessibilitySize {
@@ -503,9 +657,13 @@ struct PlayerView: View {
                 Button(isEpisode ? "剧集列表加载失败，重试" : "剩余视频加载失败，重试") { queueReload += 1 }
                     .font(.caption2).foregroundStyle(.orange).frame(minHeight: 44)
             }
+        }.background {
+            GeometryReader { proxy in Color.clear.preference(key: PlayerControlsHeightKey.self, value: proxy.size.height) }
+                .allowsHitTesting(false)
         }
     }
     private func expandQueue() async {
+        if channelMode { queueExpansionComplete = true; return }
         guard !queueExpansionComplete else { return }
         let expandsEpisodes = isEpisode && queue.source.count == 1 && loadFullQueue == nil
         guard loadFullQueue != nil || expandsEpisodes else { return }
@@ -522,7 +680,7 @@ struct PlayerView: View {
             if let loadFullQueue { complete = try await loadFullQueue() }
             else {
                 guard let server = library.servers.first(where: { $0.id == current.sourceID }),
-                      server.kind == .jellyfin, let id = current.remoteID else {
+                      server.kind.isCatalogSource, let id = current.remoteID else {
                     throw MediaError.message("无法读取此剧集的选集列表。")
                 }
                 var seriesID = current.seriesID
@@ -546,12 +704,12 @@ struct PlayerView: View {
     }
     private func transportControls(compact: Bool) -> some View {
         HStack(spacing: compact ? 4 : 12) {
-            RoundControl(symbol: "backward.end.fill", label: isEpisode ? "上一集" : "上一个视频") { move(-1) }
+            RoundControl(symbol: "backward.end.fill", label: !channelMode && isEpisode ? "上一集" : "上一个视频") { move(-1) }
                 .disabled(!queue.canGoBack).opacity(queue.canGoBack ? 1 : 0.3)
             RoundControl(symbol: "gobackward.10", label: "快退 \(Int(PlaybackPreferences.seekInterval)) 秒") { playback.seek(playback.time - PlaybackPreferences.seekInterval); scheduleHideAfterInteraction() }
             RoundControl(symbol: playback.isPlaybackRequested ? "pause.fill" : "play.fill", label: playback.isPlaybackRequested ? "暂停" : "播放", prominent: true, compact: compact) { playback.toggle(); scheduleHideAfterInteraction() }
             RoundControl(symbol: "goforward.10", label: "快进 \(Int(PlaybackPreferences.seekInterval)) 秒") { playback.seek(playback.time + PlaybackPreferences.seekInterval); scheduleHideAfterInteraction() }
-            RoundControl(symbol: "forward.end.fill", label: isEpisode ? "下一集" : "下一个视频") { move(1) }
+            RoundControl(symbol: "forward.end.fill", label: !channelMode && isEpisode ? "下一集" : "下一个视频") { move(1) }
                 .disabled(!queue.canGoForward).opacity(queue.canGoForward ? 1 : 0.3)
         }
     }
@@ -561,7 +719,7 @@ struct PlayerView: View {
                 Button { quickMenuHolding = false; hideTask?.cancel(); episodesOpen = true } label: {
                     PlayerQuickActionLabel(title: "选集", symbol: "list.bullet.rectangle")
                 }.accessibilityIdentifier("player.episodes")
-            } else if !isCinema {
+            } else if !isCinema && !channelMode {
                 Button { changeMode(queue.mode == .sequential ? .random : .sequential) } label: {
                     PlayerQuickActionLabel(title: queue.mode == .random ? "随机" : "顺序", symbol: queue.mode.symbol)
                 }.accessibilityLabel(queue.mode.title).accessibilityIdentifier("player.mode")
@@ -571,14 +729,14 @@ struct PlayerView: View {
             }.accessibilityLabel("播放速度").accessibilityIdentifier("player.quick.speed")
                 .simultaneousGesture(TapGesture().onEnded { holdControlsForQuickMenu() })
             Menu { audioMenuItems } label: {
-                PlayerQuickActionLabel(title: "音轨", symbol: "waveform")
-            }.accessibilityLabel("音轨").accessibilityValue(playback.audioOptions.isEmpty ? "无可切换音轨" : playback.selectedAudio?.displayName ?? "默认")
+                PlayerQuickActionLabel(title: playback.serverAudioOptions.count > 1 ? "音轨 · \(playback.serverAudioOptions.count)" : "音轨", symbol: "waveform")
+            }.accessibilityLabel("音轨").accessibilityValue(playback.audioMenuValue)
                 .accessibilityIdentifier("player.quick.audio")
-                .simultaneousGesture(TapGesture().onEnded { if !playback.audioOptions.isEmpty { holdControlsForQuickMenu() } })
-                .disabled(playback.audioOptions.isEmpty).opacity(playback.audioOptions.isEmpty ? 0.45 : 1)
+                .simultaneousGesture(TapGesture().onEnded { if playback.hasAudioOptions { holdControlsForQuickMenu() } })
+                .disabled(!playback.hasAudioOptions).opacity(playback.hasAudioOptions ? 1 : 0.45)
             Menu { subtitleMenuItems } label: {
-                PlayerQuickActionLabel(title: "字幕", symbol: "captions.bubble", active: !externalSubtitles.isEmpty || playback.selectedSubtitle != nil)
-            }.accessibilityLabel("字幕").accessibilityValue(subtitleSelectionTitle)
+                PlayerQuickActionLabel(title: "字幕", symbol: "captions.bubble", active: subtitles.hasASS || subtitles.hasBitmap || !subtitles.cues.isEmpty || !playback.secondarySubtitles.cues.isEmpty || playback.selectedSubtitle != nil)
+            }.accessibilityLabel("字幕").accessibilityValue(subtitleMenuValue)
                 .accessibilityIdentifier("player.quick.subtitle")
                 .simultaneousGesture(TapGesture().onEnded { holdControlsForQuickMenu() })
             Button {
@@ -593,6 +751,7 @@ struct PlayerView: View {
         .foregroundStyle(.white.opacity(0.82))
     }
     private func changeMode(_ mode: PlaybackMode) {
+        guard !channelMode else { return }
         queue.setMode(mode); preferredMode = mode
         showHUD(mode.title); scheduleHideAfterInteraction()
     }
@@ -610,13 +769,14 @@ struct PlayerView: View {
         guard automatic || !locked else { return }
         if !automatic { pendingAutomaticAdvance = false }
         guard queue.move(delta) else {
+            if automatic && channelMode { onQueueFinished?() }
             if delta > 0 && !queueExpansionComplete && (loadFullQueue != nil || isEpisode && queue.source.count == 1) {
                 if automatic { pendingAutomaticAdvance = true }
                 showHUD(isEpisode ? "正在加载下一集…" : "正在加载下一部…")
                 return
             }
             if automatic { controls = true }
-            showHUD(delta > 0 ? (isEpisode ? "已经是最后一集" : isCinema ? "已播放完毕" : "本目录已刷完") : (isEpisode ? "已经是第一集" : "已经是第一部"))
+            showHUD(delta > 0 ? (channelMode ? "频道本次已播完" : isEpisode ? "已经是最后一集" : isCinema ? "已播放完毕" : "本目录已刷完") : (channelMode ? "已经是频道第一条" : isEpisode ? "已经是第一集" : "已经是第一部"))
             return
         }
         playCurrent(automatic: automatic)
@@ -624,7 +784,7 @@ struct PlayerView: View {
     private func playCurrent(automatic: Bool) {
         // Stream indices and source IDs belong to one file, never reuse them for another episode.
         playback.tracks = TrackSelection()
-        playback.open(current, library: library, recordsProgress: isCinema)
+        playback.open(current, library: library, recordsProgress: recordsProgress)
         if !automatic { UISelectionFeedbackGenerator().selectionChanged() }
         showHUD((isEpisode && !episodePosition.isEmpty ? episodePosition : "\(queue.index + 1) / \(queue.ordered.count)") + " · \(current.title)"); scheduleHide()
     }
@@ -657,11 +817,45 @@ struct PlayerView: View {
     }
     private func scheduleHide() {
         hideTask?.cancel()
-        guard !voiceOverEnabled, !quickMenuHolding, controls, scrubTarget == nil, !settingsOpen, !diagnosticOpen, !episodesOpen, !videoInfoOpen else { return }
+        guard !voiceOverEnabled, !quickMenuHolding, controls, scrubTarget == nil, !settingsOpen, !subtitleControlsOpen, !diagnosticOpen, !episodesOpen, !videoInfoOpen, navigationSelection == nil else { return }
         hideTask = Task {
             try? await Task.sleep(for: .seconds(PlaybackPreferences.controlsDelay))
-            guard !Task.isCancelled, !voiceOverEnabled, !quickMenuHolding, scrubTarget == nil, !settingsOpen, !diagnosticOpen, !episodesOpen, !videoInfoOpen, playback.error == nil, playback.isPlaying else { return }
+            guard !Task.isCancelled, !voiceOverEnabled, !quickMenuHolding, scrubTarget == nil, !settingsOpen, !subtitleControlsOpen, !diagnosticOpen, !episodesOpen, !videoInfoOpen, navigationSelection == nil, playback.error == nil, playback.isPlaying else { return }
             withAnimation { controls = false }
+        }
+    }
+}
+
+/// Observe the playback clock here so the player menus do not rebuild every tick.
+private struct PlayerSkipControls: View {
+    var playback: PlaybackController
+    var locked: Bool
+    var controls: Bool
+    var landscape: Bool
+    var onInteraction: () -> Void
+    static func bottomInset(controls: Bool, landscape: Bool) -> CGFloat { controls ? (landscape ? 152 : 210) : 28 }
+    var body: some View {
+        if !locked, playback.frameReady, playback.error == nil, let segment = playback.activeSkip {
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    HStack(spacing: 4) {
+                        Button {
+                            onInteraction(); playback.skip(segment)
+                        } label: {
+                            Label(segment.kind.title, systemImage: "forward.end").frame(minHeight: 44)
+                        }
+                            .accessibilityIdentifier("player.skip.action")
+                            .disabled(playback.isSeeking)
+                        Button {
+                            onInteraction(); playback.skips.consume(segment)
+                        } label: { Image(systemName: "xmark").frame(width: 44, height: 44) }
+                            .accessibilityLabel("本次不跳过").accessibilityIdentifier("player.skip.dismiss")
+                    }.font(.subheadline.weight(.medium)).padding(.leading, 14)
+                        .background(.black.opacity(0.8), in: Capsule()).foregroundStyle(.white)
+                }
+            }.padding(.horizontal, 24).padding(.bottom, Self.bottomInset(controls: controls, landscape: landscape))
         }
     }
 }
@@ -748,20 +942,62 @@ private struct PlayerTimeline: View {
     }
 }
 
-private struct PlayerSubtitleOverlay: View {
+struct PlayerPGSOverlay: View {
+    var session: SubtitleSession
+    var filled = false
+    var body: some View {
+        if let frame = session.bitmapFrame {
+            GeometryReader { geometry in
+                let sx = geometry.size.width / CGFloat(frame.width), sy = geometry.size.height / CGFloat(frame.height)
+                let scale = filled ? max(sx, sy) : min(sx, sy)
+                let originX = (geometry.size.width - CGFloat(frame.width) * scale) / 2
+                let originY = (geometry.size.height - CGFloat(frame.height) * scale) / 2
+                ZStack(alignment: .topLeading) {
+                    ForEach(frame.layers.indices, id: \.self) { index in
+                        let layer = frame.layers[index]
+                        Image(decorative: layer.image, scale: 1).resizable()
+                            .frame(width: CGFloat(layer.rect.width) * scale, height: CGFloat(layer.rect.height) * scale)
+                            .offset(x: originX + CGFloat(layer.rect.x) * scale, y: originY + CGFloat(layer.rect.y) * scale)
+                    }
+                }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading).clipped()
+            }.allowsHitTesting(false).accessibilityLabel("PGS 图形字幕").accessibilityIdentifier("player.subtitle.bitmap")
+        }
+    }
+}
+
+struct PlayerSubtitleOverlay: View {
     var playback: PlaybackController
     var cues: [SubtitleCue]
     var delay: Double
     var bottomInset: CGFloat
+    var secondaryCues: [SubtitleCue] = []
+    var secondaryDelay: Double = 0
+    @AppStorage("externalSubtitleAppearance.v1") private var appearanceData = Data()
+    @AppStorage("subtitleScale") private var legacyScale = 100.0
+    @AppStorage("externalSubtitleSecondaryScale") private var legacySecondaryScale = 85.0
     var body: some View {
-        if !cues.isEmpty, let text = SubtitleCue.visible(cues, time: playback.time, delay: delay) {
+        let primary = SubtitleCue.visible(cues, time: playback.time, delay: delay)
+        let secondary = SubtitleCue.visible(secondaryCues, time: playback.time, delay: secondaryDelay)
+        if primary != nil || secondary != nil {
             VStack {
                 Spacer()
-                Text(text).font(.system(size: 20 * PlaybackPreferences.subtitleScale / 100, weight: .medium))
-                    .multilineTextAlignment(.center).foregroundStyle(.white)
-                    .padding(6).background(.black.opacity(0.6), in: RoundedRectangle(cornerRadius: 5))
-                    .padding(.horizontal, 24).padding(.bottom, bottomInset)
+                SubtitleCaptionStack(primary: primary, secondary: secondary, appearance: .restore(appearanceData, legacyScale: legacyScale, legacySecondaryScale: legacySecondaryScale))
+                .padding(.horizontal, 24).padding(.bottom, bottomInset)
             }.allowsHitTesting(false)
+        }
+    }
+}
+
+private struct PlayerLoopStatus: View {
+    var playback: PlaybackController
+    var body: some View {
+        if let loop = playback.loop {
+            HStack(spacing: 8) {
+                Label(loop.mode == .once ? "单句重播" : "A–B \(loop.start.mediaTime)–\(loop.end.mediaTime)", systemImage: "repeat")
+                    .accessibilityIdentifier("player.loop.status")
+                Spacer()
+                Button("退出") { playback.clearLoop() }.frame(minWidth: 44, minHeight: 44).accessibilityIdentifier("player.loop.clear")
+            }.font(.caption).foregroundStyle(GlideTheme.accent)
         }
     }
 }
@@ -901,7 +1137,7 @@ private final class BufferedSeekControl: UIControl {
                 let segment = CGRect(x: 15 + width * CGFloat(start), y: y - 2, width: width * CGFloat(end - start), height: 4)
                 UIBezierPath(roundedRect: segment, cornerRadius: 2).fill()
             }
-            UIColor(red: 0.773, green: 0.871, blue: 0.773, alpha: 1).setFill()
+            UIColor.white.setFill()
             let fraction = min(1, max(0, value / duration))
             UIBezierPath(roundedRect: CGRect(x: 15, y: y - 2, width: width * CGFloat(fraction), height: 4), cornerRadius: 2).fill()
         }
@@ -909,4 +1145,9 @@ private final class BufferedSeekControl: UIControl {
         UIColor.white.setFill()
         UIBezierPath(ovalIn: CGRect(x: 15 + width * CGFloat(fraction) - 10, y: y - 10, width: 20, height: 20)).fill()
     }
+}
+
+private struct PlayerControlsHeightKey: PreferenceKey {
+    static let defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = max(value, nextValue()) }
 }

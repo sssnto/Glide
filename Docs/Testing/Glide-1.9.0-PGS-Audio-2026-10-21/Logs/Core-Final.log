@@ -1,0 +1,368 @@
+warning: /Users/songpeng/Library/org.swift.swiftpm/configuration is not accessible or not writable, disabling user-level cache features.
+warning: /Users/songpeng/Library/org.swift.swiftpm/security is not accessible or not writable, disabling user-level cache features.
+Building for debugging...
+[2 / 6] GlideCoreTests-product
+[4 / 8] GlideCoreTests-product
+[10 / 12] GlideCoreTests-product
+[12 / 12] GlideCoreTests-product
+Build complete! (5.04秒)
+Test Suite 'All tests' started at 2026-10-21 16:54:07.446.
+Test Suite 'GlideCoreTests.xctest' started at 2026-10-21 16:54:07.453.
+Test Suite 'PlaybackEngineModelsTests' started at 2026-10-21 16:54:07.453.
+Test Case '-[GlideCoreTests.PlaybackEngineModelsTests testCompatibilityPreferenceNeverEscapesTheLocalFileBoundary]' started.
+Test Case '-[GlideCoreTests.PlaybackEngineModelsTests testCompatibilityPreferenceNeverEscapesTheLocalFileBoundary]' passed (0.006 seconds).
+Test Case '-[GlideCoreTests.PlaybackEngineModelsTests testContainerHintsUseBytesAndTolerateTruncation]' started.
+Test Case '-[GlideCoreTests.PlaybackEngineModelsTests testContainerHintsUseBytesAndTolerateTruncation]' passed (0.001 seconds).
+Test Case '-[GlideCoreTests.PlaybackEngineModelsTests testMissingMetadataDoesNotAssertUnsupportedOrNoVideo]' started.
+Test Case '-[GlideCoreTests.PlaybackEngineModelsTests testMissingMetadataDoesNotAssertUnsupportedOrNoVideo]' passed (0.001 seconds).
+Test Case '-[GlideCoreTests.PlaybackEngineModelsTests testOnlyLatestLoadAndSeekCanPublish]' started.
+Test Case '-[GlideCoreTests.PlaybackEngineModelsTests testOnlyLatestLoadAndSeekCanPublish]' passed (0.000 seconds).
+Test Suite 'PlaybackEngineModelsTests' passed at 2026-10-21 16:54:07.461.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.007 (0.008) seconds
+Test Suite 'SMBReadStallTests' started at 2026-10-21 16:54:07.462.
+Test Case '-[GlideCoreTests.SMBReadStallTests testCachedVideoMayContinueAfterNetworkStops]' started.
+Test Case '-[GlideCoreTests.SMBReadStallTests testCachedVideoMayContinueAfterNetworkStops]' passed (0.000 seconds).
+Test Case '-[GlideCoreTests.SMBReadStallTests testMovingAudioClockDoesNotHideMissingInputAndPictures]' started.
+Test Case '-[GlideCoreTests.SMBReadStallTests testMovingAudioClockDoesNotHideMissingInputAndPictures]' passed (0.000 seconds).
+Test Case '-[GlideCoreTests.SMBReadStallTests testPauseSeekAndBackgroundDoNotBecomeNetworkFailures]' started.
+Test Case '-[GlideCoreTests.SMBReadStallTests testPauseSeekAndBackgroundDoNotBecomeNetworkFailures]' passed (0.000 seconds).
+Test Suite 'SMBReadStallTests' passed at 2026-10-21 16:54:07.463.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'GlideCoreTests.xctest' passed at 2026-10-21 16:54:07.463.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.008 (0.010) seconds
+Test Suite 'All tests' passed at 2026-10-21 16:54:07.463.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.008 (0.017) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test onlyTypedSMBResourcesEnterNetworkCompatibilityRoute() started.
+◇ Test smbRejectsTraversalCrossShareAndAccountURLs() started.
+◇ Test relatedMediaUsesExactPersonAcrossPagesAndRetainsUserPermissions() started.
+◇ Test preservesReverseProxyPathAndEncodesQuery() started.
+◇ Test episodePlaybackMetadataSurvivesPersistenceAndOldRecordsStillDecode() started.
+◇ Suite LinkSkipTests started.
+◇ Test addedDateSortUsesServerFieldAndKeepsUndatedVideosLast() started.
+◇ Suite MediaServerAPITests started.
+◇ Suite DualSubtitleTests started.
+◇ Suite PGSSubtitleTests started.
+◇ Test languagePreferencesUseSemanticLanguageAndForcedFlag() started.
+◇ Test olderSavedFoldersWithoutArtworkStillDecode() started.
+◇ Test nativeHLSRejectsInvalidAndCrossOriginPlaylists() started.
+◇ Suite PlaybackLoopTests started.
+◇ Test explicitManualRetryRemainsAvailableAfterAutomaticFailureButCannotOverlap() started.
+◇ Test nativeBufferingKeepsStartupShortAndScalesWithPlaybackSpeed() started.
+◇ Suite SubtitleSelectionTests started.
+◇ Test hdrAVCConversionHasOneSDRConstraintWithoutChangingCopyOrHEVC() started.
+◇ Test recoveredBufferingKeepsTheWorkingStream() started.
+◇ Test intentionalPlaybackChangesAndBackwardsClockResetStallObservation() started.
+◇ Test hdrSourceNeverBypassesHLSMasterValidation() started.
+◇ Test webDAVRecursionStaysInsideRootAndStopsCycles() started.
+◇ Test webDAVCreationAndModificationDatesAreAvailableForSorting() started.
+◇ Test jellyfinPerformanceMetadataDecodesWithoutRequiringNewFieldsInOlderServers() started.
+◇ Test selectedTracksAreSentWithoutConfusingOffWithDefault() started.
+◇ Test localEnumerationSkipsHiddenFilesAndSymlinksAndHonorsQueueScope() started.
+◇ Test randomVisitsWholeQueueOnceAndBackUsesHistory() started.
+◇ Test bookmarkAndPerDirectoryPreferencesRoundTripWithoutColliding() started.
+◇ Test hardwareProfileDoesNotAdvertiseUnsupportedVideoCodecs() started.
+◇ Test nativeHDRInitialSelectionRequiresFirstDeclaredHEVCHDRVariant() started.
+◇ Test bufferedTimelineShowsOnlyLoadedIntervals() started.
+◇ Test historySnapshotDoesNotPersistPlaybackCredentials() started.
+◇ Test jellyfinCodecCandidateURLIsExplicitlyConstrainedToVideoCopy() started.
+◇ Test downloadedMovieRetainsContainerAndCanBePublishedAfterRestart() started.
+◇ Test recursivePlaybackRetainsSelectedDirectoryOnEveryPage() started.
+◇ Test expandingRandomPreviewKeepsPlayedHistory() started.
+◇ Test sourcePathsDecodePerVersionAndDisplayWithoutURLCredentials() started.
+◇ Test outputColorValidationDoesNotGuessFromTenBitOrBT2020Alone() started.
+◇ Test catalogSortingUsesServerFieldsAndPersistsDirection() started.
+◇ Test completedEpisodeAdvancesAcrossSeasonsAndSkipsSpecialsAndWatchedEpisodes() started.
+◇ Test scopedSearchRetainsDirectoryAndPagination() started.
+◇ Test davNamespacesStatusAndOrigin() started.
+◇ Test bufferedAheadDoesNotCountDisjointDownloadedRanges() started.
+◇ Test nativeHDRPrefersNegotiatedHEVCAndKeepsCodecQualifiedRangesSeparate() started.
+◇ Test cancellationDoesNotStartCollection() started.
+◇ Test originalTransportProbesLargeNetworkDirectSourcesBasedOnLoad() started.
+◇ Test folderSortUsesServerOrderForEveryPageAndSortsUndatedEntriesLast() started.
+◇ Test episodeOrderUsesNumbersAndKeepsSpecials() started.
+◇ Test rebufferingHasAnEndOfMovieAndPlatformCapacityEscape() started.
+◇ Test catalogFacetsPreserveKindAndEncodeFilters() started.
+◇ Test nativeHLSUnwrapsOnlyOneSelfContainedRendition() started.
+◇ Test emptyAndSingleVideoQueues() started.
+◇ Test explicitScopeAndSortApplyToEveryPageAndSearch() started.
+◇ Test browsingMetadataPreservesDiscoveredRuntimeAndHistoryDate() started.
+◇ Test localResetOverridesServerWatchedAndUnknownCatalogRetainsEntry() started.
+◇ Test original4KBufferingIncludesPortraitVideoAndExcludesConvertedOrLocalMedia() started.
+◇ Test timeFormatting() started.
+◇ Test migrationPreservesOldRecordsAndRejectsCorruptLegacyJSON() started.
+◇ Test offlineDownloadRejectsErrorPagesAndIncompleteFiles() started.
+◇ Test seriesContinueGroupsHistoryWithoutMixingSourcesOrFavorites() started.
+◇ Test absentMetadataAndIndexedTracksDecode() started.
+◇ Test hdrCopyPreferenceDoesNotBypassEncodingOrBurnRequirements() started.
+◇ Test aGrowingBufferGetsExtraTimeButCannotWaitForever() started.
+◇ Test changingModeKeepsCurrentVideoAndRestoresSequentialOrder() started.
+◇ Test learnedConversionRouteIsScopedAndExpires() started.
+◇ Test naturalSortHasDeterministicTiesAndQueueKeepsItsOrder() started.
+◇ Test originalNeverRequestsTranscoding() started.
+◇ Test rejectsCredentialsAndUnsupportedSchemes() started.
+◇ Test hd720ForcesLowerBitrateAndResolution() started.
+◇ Test compatiblePlaybackPreservesVideoWithoutClaimingTranscode() started.
+◇ Test sequentialQueueAndEndBoundaries() started.
+◇ Test personMediaExcludesIndividualEpisodes() started.
+◇ Test hd1080ForcesEncodingAndBoundsResolutionAndBitrate() started.
+◇ Test smbLocationsKeepCredentialsOutAndSpecialNamesRoundTrip() started.
+◇ Test directoryScopeNeverBecomesGlobalOrRecursive() started.
+◇ Test queueWaitsForActiveTransferAndAdvancesInInsertionOrder() started.
+◇ Test offlineDownloadDoesNotStageFilesOutsideItsDirectory() started.
+◇ Test incompletePaginationDoesNotSilentlyReturnPartialQueue() started.
+◇ Test hdrCopyPreferenceRequiresTransportOnlyReasons() started.
+◇ Test originalTransportTrialReturnsToDirectOnceAndRequiresANewSessionToRetry() started.
+◇ Test rejectsMalformedDAV() started.
+◇ Test directWebDAVScopeDoesNotFetchDescendants() started.
+◇ Test resumeExcludesNewCompletedAndInvalidPositions() started.
+◇ Test smbConfigurationMigratesOldSourcesAndKeepsIdentitySeparate() started.
+◇ Test transportDecisionAndFailureSurviveRepeatedNativeNotifications() started.
+◇ Test nativeBufferingAdaptsToRebufferingWithoutDelayingStartupOrGrowingWithoutBounds() started.
+◇ Test localSourcesDoNotAdvertiseServerProgressOrDownload() started.
+◇ Test progressConflictHonorsUnsentLocalChangesAndNewerServer() started.
+◇ Test rebufferingRequiresUsefulContiguousMediaInsteadOfTheNextSmallPacket() started.
+◇ Test ongoingStallNeedsBothTimeAndLackOfUsableBufferProgress() started.
+◇ Test completedMoviesDisappearButPartiallyWatchedMoviesRemain() started.
+◇ Test libraryTypesAndLegacyPaths() started.
+◇ Test automaticStartsWithOriginalAndFallsBackWithoutQualityPicker() started.
+◇ Test snapshotRecoversLastValidBackupAndDoesNotReplaceItWithCorruptData() started.
+◇ Test nativeHDRInitialSelectionRejectsAmbiguousAndInvalidMasters() started.
+◇ Test externalSubtitlesParseSRTVTTAndRespectPositiveDelay() started.
+◇ Test personnelDecodeKeepsIdentityAndImageWithoutRequiringThem() started.
+◇ Test gapsRemainActionableInsteadOfClaimingSeriesComplete() started.
+◇ Test expandingPreviewPreservesCurrentAndSequentialOrder() started.
+◇ Test nativeNegotiationPreservesHEVCButConstrainsAVCToSDR() started.
+◇ Test futureSnapshotIsNeverDowngradedToAnOlderBackup() started.
+◇ Test completeCollectionIncludesLaterPagesAndDeduplicates() started.
+◇ Test legacyBookmarksDecodeAndNewRulesRoundTrip() started.
+◇ Test localIdentitySurvivesSourceRelocationAndRetainsNamespaces() started.
+◇ Test selectingEpisodeKeepsQueueOrderAndAdjacentNavigation() started.
+◇ Test originalTransportNegotiationAllowsHLSTransportWithCopyValidation() started.
+◇ Test nativeDecoderDiagnosticsRetainCodesWithoutSensitiveErrorText() started.
+◇ Test diagnosticsNeverIncludeURLAndKeepBoundedEvents() started.
+◇ Test savedMetadataAndPersonalRecordsContainNoPlaybackSecret() started.
+◇ Test strmIsOneBoundedUTF8Address() started.
+◇ Test linkAcceptsSignedQueriesButRejectsAmbiguousOrUnsafeInput() started.
+◇ Test jellyfinTicksIdentityUnknownTypesAndDuplicatesAreValidated() started.
+◇ Test headersPreserveValuesAndRejectDuplicatesOrTransportOverrides() started.
+◇ Test ruleSnapshotsRoundTripWithoutMixingVideos() started.
+◇ Test manualIntervalsOverrideOnlyCorrespondingServerKinds() started.
+◇ Test invalidRulesNeverSkipWholeOrUnknownDuration() started.
+◇ Test embyHLSKeepsAPIPathPrefixAndRejectsOtherOrigins() started.
+◇ Test embyIsCatalogAndExistingSourcesStillDecode() started.
+◇ Test sharedClockRespectsIndependentPositiveAndNegativeDelays() started.
+◇ Test embyStaticHTTPIsReportedAsDirectStream() started.
+◇ Test pendingImportSurvivesOtherLaneCollectionAndReleasesWhenAbandoned() started.
+◇ Test embyProfileRetainsCodecLimitsAndCopyRules() started.
+◇ Test legacyMemoryAndSecondaryOffsetsRoundTripIndependently() started.
+◇ Test primaryMemoryKeyPreservesLegacyIdentityAndSecondaryIsSeparate() started.
+◇ Test explicitSubtitleOffAlsoRequiresSourceBinding() started.
+◇ Test twoImportedCopiesSurviveOffAndOtherLaneReplacement() started.
+◇ Test embyRoutesPreservePrefixAndPlaybackSession() started.
+◇ Test videoRemovalClearsBothLanesWithoutRemovingAnotherVideo() started.
+◇ Test jellyfinTextSubtitlesUseClientDeliveryWithoutRemovingBitmapFallback() started.
+◇ Test jellyfinRoutesKeepLegacyContract() started.
+◇ Test episodeMetadataAndResumeDecodeFromEmbyContract() started.
+◇ Test subtitleAndSkipIdentityDoNotCrossServerKindsOrAccounts() started.
+◇ Test authUsesServerSchemeAndEscapesQuotedValues() started.
+◇ Test copiedEmbySeekRecoversOnceWithoutDroppingTrackChoices() started.
+◇ Test preferredTextSubtitleKeepsRequestedLanguageAndForcedFilter() started.
+◇ Test embySubtitleOffPreservesNegotiatedMethod() started.
+◇ Test implicitBitmapAlternativeKeepsLanguageAndForcedStatus() started.
+◇ Test explicitSubtitleOffRemovesBurnParametersWithoutChangingSession() started.
+◇ Test extendedRunsClipToWindowWithoutChangingPremultipliedAlpha() started.
+◇ Test presentationClearsAndSeekUsesOriginalTimestamps() started.
+◇ Test hostileTruncatedAndOversizedDataFailsWithoutAllocatingImages() started.
+◇ Test corruptedSegmentsRemainBoundedAndNeverIndexOutsideData() started.
+◇ Test ptsWrapAndNormalPaletteOnlyUpdatesReuseObjects() started.
+◇ Test fragmentedObjectsAndCropRetainGeometryAndAlpha() started.
+✔ Test onlyTypedSMBResourcesEnterNetworkCompatibilityRoute() passed after 0.020 seconds.
+◇ Test onlyPlayingSettledClockCrossingEndCanLoop() started.
+◇ Test sentenceRangesUseDelayAndClampAtMediaEdges() started.
+◇ Test largeTranscriptLookupAndSearchAreConsistent() started.
+◇ Test invalidRangesAreRejected() started.
+◇ Test transcriptSearchRetainsDuplicateRowsAndStableIdentity() started.
+◇ Test appearanceRejectsUnboundedRenderingValues() started.
+◇ Test appearanceMigratesLegacySizesAndRoundTrips() started.
+◇ Test activeSentenceHonorsDelayOverlapAndGaps() started.
+✔ Test explicitManualRetryRemainsAvailableAfterAutomaticFailureButCannotOverlap() passed after 0.020 seconds.
+✔ Test languagePreferencesUseSemanticLanguageAndForcedFlag() passed after 0.020 seconds.
+✔ Test addedDateSortUsesServerFieldAndKeepsUndatedVideosLast() passed after 0.021 seconds.
+✔ Test nativeBufferingKeepsStartupShortAndScalesWithPlaybackSpeed() passed after 0.021 seconds.
+✔ Test preservesReverseProxyPathAndEncodesQuery() passed after 0.022 seconds.
+◇ Test documentLimitsEncodingAndClock() started.
+◇ Test exactStemLanguageAndEpisodeBoundaries() started.
+✔ Test olderSavedFoldersWithoutArtworkStillDecode() passed after 0.022 seconds.
+◇ Test identitySeparatesAccountRootAndPath() started.
+◇ Test disabledImportedCopyRemainsAvailableAfterOtherVideosChange() started.
+◇ Test sameLanguageServerVariantsRemainDistinct() started.
+◇ Test embeddedMemorySurvivesEngineChangeWithoutGuessingAmongLanguages() started.
+◇ Test backupRetainsPreviousCopyAndCorruptionDoesNotEraseMemory() started.
+◇ Test managedCopySurvivesOriginalDeletionAndStoreRecreation() started.
+◇ Test serverSubtitleIdentityRequiresMatchingSourceIndexAndFormat() started.
+◇ Test importedIdentitySurvivesSandboxRelocation() started.
+◇ Test serverSubtitleMemoryRoundTripsWithoutSubtitleBody() started.
+◇ Test ambiguousCandidatesRequireUniquePreference() started.
+◇ Test sourceRemovalAndOffMemoryStayIsolated() started.
+✔ Test nativeHLSRejectsInvalidAndCrossOriginPlaylists() passed after 0.022 seconds.
+✔ Test recoveredBufferingKeepsTheWorkingStream() passed after 0.022 seconds.
+✔ Test episodePlaybackMetadataSurvivesPersistenceAndOldRecordsStillDecode() passed after 0.022 seconds.
+✔ Test intentionalPlaybackChangesAndBackwardsClockResetStallObservation() passed after 0.022 seconds.
+✔ Test jellyfinPerformanceMetadataDecodesWithoutRequiringNewFieldsInOlderServers() passed after 0.022 seconds.
+✔ Test hdrSourceNeverBypassesHLSMasterValidation() passed after 0.022 seconds.
+✔ Test selectedTracksAreSentWithoutConfusingOffWithDefault() passed after 0.022 seconds.
+✔ Test bookmarkAndPerDirectoryPreferencesRoundTripWithoutColliding() passed after 0.022 seconds.
+✔ Test hardwareProfileDoesNotAdvertiseUnsupportedVideoCodecs() passed after 0.022 seconds.
+✔ Test hdrAVCConversionHasOneSDRConstraintWithoutChangingCopyOrHEVC() passed after 0.022 seconds.
+✔ Test historySnapshotDoesNotPersistPlaybackCredentials() passed after 0.022 seconds.
+✔ Test bufferedTimelineShowsOnlyLoadedIntervals() passed after 0.022 seconds.
+✔ Test nativeHDRInitialSelectionRequiresFirstDeclaredHEVCHDRVariant() passed after 0.022 seconds.
+✔ Test relatedMediaUsesExactPersonAcrossPagesAndRetainsUserPermissions() passed after 0.023 seconds.
+✔ Test expandingRandomPreviewKeepsPlayedHistory() passed after 0.022 seconds.
+✔ Test recursivePlaybackRetainsSelectedDirectoryOnEveryPage() passed after 0.022 seconds.
+✔ Test outputColorValidationDoesNotGuessFromTenBitOrBT2020Alone() passed after 0.022 seconds.
+✔ Test jellyfinCodecCandidateURLIsExplicitlyConstrainedToVideoCopy() passed after 0.022 seconds.
+✔ Test randomVisitsWholeQueueOnceAndBackUsesHistory() passed after 0.022 seconds.
+✔ Test completedEpisodeAdvancesAcrossSeasonsAndSkipsSpecialsAndWatchedEpisodes() passed after 0.022 seconds.
+✔ Test bufferedAheadDoesNotCountDisjointDownloadedRanges() passed after 0.022 seconds.
+✔ Test scopedSearchRetainsDirectoryAndPagination() passed after 0.022 seconds.
+✔ Test sourcePathsDecodePerVersionAndDisplayWithoutURLCredentials() passed after 0.023 seconds.
+✔ Test nativeHDRPrefersNegotiatedHEVCAndKeepsCodecQualifiedRangesSeparate() passed after 0.022 seconds.
+✔ Test originalTransportProbesLargeNetworkDirectSourcesBasedOnLoad() passed after 0.022 seconds.
+✔ Test episodeOrderUsesNumbersAndKeepsSpecials() passed after 0.022 seconds.
+✔ Test smbRejectsTraversalCrossShareAndAccountURLs() passed after 0.023 seconds.
+✔ Test catalogSortingUsesServerFieldsAndPersistsDirection() passed after 0.022 seconds.
+✔ Test catalogFacetsPreserveKindAndEncodeFilters() passed after 0.023 seconds.
+✔ Test emptyAndSingleVideoQueues() passed after 0.022 seconds.
+✔ Test rebufferingHasAnEndOfMovieAndPlatformCapacityEscape() passed after 0.022 seconds.
+✔ Test browsingMetadataPreservesDiscoveredRuntimeAndHistoryDate() passed after 0.022 seconds.
+✔ Test explicitScopeAndSortApplyToEveryPageAndSearch() passed after 0.022 seconds.
+✔ Test localResetOverridesServerWatchedAndUnknownCatalogRetainsEntry() passed after 0.022 seconds.
+✔ Test original4KBufferingIncludesPortraitVideoAndExcludesConvertedOrLocalMedia() passed after 0.022 seconds.
+✔ Test timeFormatting() passed after 0.022 seconds.
+✔ Test seriesContinueGroupsHistoryWithoutMixingSourcesOrFavorites() passed after 0.022 seconds.
+✔ Test davNamespacesStatusAndOrigin() passed after 0.023 seconds.
+✔ Test absentMetadataAndIndexedTracksDecode() passed after 0.022 seconds.
+✔ Test hdrCopyPreferenceDoesNotBypassEncodingOrBurnRequirements() passed after 0.022 seconds.
+✔ Test changingModeKeepsCurrentVideoAndRestoresSequentialOrder() passed after 0.022 seconds.
+✔ Test nativeHLSUnwrapsOnlyOneSelfContainedRendition() passed after 0.023 seconds.
+✔ Test aGrowingBufferGetsExtraTimeButCannotWaitForever() passed after 0.023 seconds.
+✔ Test folderSortUsesServerOrderForEveryPageAndSortsUndatedEntriesLast() passed after 0.023 seconds.
+✔ Test originalNeverRequestsTranscoding() passed after 0.023 seconds.
+✔ Test rejectsCredentialsAndUnsupportedSchemes() passed after 0.022 seconds.
+✔ Test hd720ForcesLowerBitrateAndResolution() passed after 0.022 seconds.
+✔ Test sequentialQueueAndEndBoundaries() passed after 0.022 seconds.
+✔ Test naturalSortHasDeterministicTiesAndQueueKeepsItsOrder() passed after 0.022 seconds.
+✔ Test personMediaExcludesIndividualEpisodes() passed after 0.022 seconds.
+✔ Test compatiblePlaybackPreservesVideoWithoutClaimingTranscode() passed after 0.022 seconds.
+✔ Test hd1080ForcesEncodingAndBoundsResolutionAndBitrate() passed after 0.022 seconds.
+✔ Test directoryScopeNeverBecomesGlobalOrRecursive() passed after 0.022 seconds.
+✔ Test queueWaitsForActiveTransferAndAdvancesInInsertionOrder() passed after 0.022 seconds.
+✔ Test smbLocationsKeepCredentialsOutAndSpecialNamesRoundTrip() passed after 0.022 seconds.
+✔ Test hdrCopyPreferenceRequiresTransportOnlyReasons() passed after 0.022 seconds.
+✔ Test rejectsMalformedDAV() passed after 0.024 seconds.
+✔ Test resumeExcludesNewCompletedAndInvalidPositions() passed after 0.024 seconds.
+✔ Test originalTransportTrialReturnsToDirectOnceAndRequiresANewSessionToRetry() passed after 0.024 seconds.
+✔ Test offlineDownloadDoesNotStageFilesOutsideItsDirectory() passed after 0.024 seconds.
+✔ Test nativeBufferingAdaptsToRebufferingWithoutDelayingStartupOrGrowingWithoutBounds() passed after 0.024 seconds.
+✔ Test localSourcesDoNotAdvertiseServerProgressOrDownload() passed after 0.024 seconds.
+✔ Test smbConfigurationMigratesOldSourcesAndKeepsIdentitySeparate() passed after 0.024 seconds.
+✔ Test progressConflictHonorsUnsentLocalChangesAndNewerServer() passed after 0.024 seconds.
+✔ Test rebufferingRequiresUsefulContiguousMediaInsteadOfTheNextSmallPacket() passed after 0.024 seconds.
+✔ Test ongoingStallNeedsBothTimeAndLackOfUsableBufferProgress() passed after 0.055 seconds.
+✔ Test completedMoviesDisappearButPartiallyWatchedMoviesRemain() passed after 0.055 seconds.
+✔ Test transportDecisionAndFailureSurviveRepeatedNativeNotifications() passed after 0.056 seconds.
+✔ Test automaticStartsWithOriginalAndFallsBackWithoutQualityPicker() passed after 0.055 seconds.
+✔ Test libraryTypesAndLegacyPaths() passed after 0.056 seconds.
+✔ Test nativeHDRInitialSelectionRejectsAmbiguousAndInvalidMasters() passed after 0.056 seconds.
+✔ Test offlineDownloadRejectsErrorPagesAndIncompleteFiles() passed after 0.061 seconds.
+✔ Test learnedConversionRouteIsScopedAndExpires() passed after 0.061 seconds.
+✔ Test externalSubtitlesParseSRTVTTAndRespectPositiveDelay() passed after 0.065 seconds.
+✔ Test personnelDecodeKeepsIdentityAndImageWithoutRequiringThem() passed after 0.064 seconds.
+✔ Test gapsRemainActionableInsteadOfClaimingSeriesComplete() passed after 0.064 seconds.
+✔ Test nativeNegotiationPreservesHEVCButConstrainsAVCToSDR() passed after 0.064 seconds.
+✔ Test legacyBookmarksDecodeAndNewRulesRoundTrip() passed after 0.064 seconds.
+✔ Test expandingPreviewPreservesCurrentAndSequentialOrder() passed after 0.064 seconds.
+✔ Test selectingEpisodeKeepsQueueOrderAndAdjacentNavigation() passed after 0.064 seconds.
+✔ Test localIdentitySurvivesSourceRelocationAndRetainsNamespaces() passed after 0.065 seconds.
+✔ Test originalTransportNegotiationAllowsHLSTransportWithCopyValidation() passed after 0.065 seconds.
+✔ Test nativeDecoderDiagnosticsRetainCodesWithoutSensitiveErrorText() passed after 0.095 seconds.
+✔ Test webDAVCreationAndModificationDatesAreAvailableForSorting() passed after 0.104 seconds.
+✔ Test webDAVRecursionStaysInsideRootAndStopsCycles() passed after 0.104 seconds.
+✔ Test savedMetadataAndPersonalRecordsContainNoPlaybackSecret() passed after 0.090 seconds.
+✔ Test diagnosticsNeverIncludeURLAndKeepBoundedEvents() passed after 0.101 seconds.
+✔ Test strmIsOneBoundedUTF8Address() passed after 0.090 seconds.
+✔ Test jellyfinTicksIdentityUnknownTypesAndDuplicatesAreValidated() passed after 0.090 seconds.
+✔ Test linkAcceptsSignedQueriesButRejectsAmbiguousOrUnsafeInput() passed after 0.090 seconds.
+✔ Test manualIntervalsOverrideOnlyCorrespondingServerKinds() passed after 0.090 seconds.
+✔ Test headersPreserveValuesAndRejectDuplicatesOrTransportOverrides() passed after 0.090 seconds.
+✔ Test directWebDAVScopeDoesNotFetchDescendants() passed after 0.104 seconds.
+✔ Test invalidRulesNeverSkipWholeOrUnknownDuration() passed after 0.090 seconds.
+✔ Test embyHLSKeepsAPIPathPrefixAndRejectsOtherOrigins() passed after 0.087 seconds.
+✔ Test sharedClockRespectsIndependentPositiveAndNegativeDelays() passed after 0.087 seconds.
+✔ Test embyStaticHTTPIsReportedAsDirectStream() passed after 0.087 seconds.
+✔ Test embyIsCatalogAndExistingSourcesStillDecode() passed after 0.087 seconds.
+✔ Test embyProfileRetainsCodecLimitsAndCopyRules() passed after 0.087 seconds.
+✔ Test migrationPreservesOldRecordsAndRejectsCorruptLegacyJSON() passed after 0.104 seconds.
+✔ Test primaryMemoryKeyPreservesLegacyIdentityAndSecondaryIsSeparate() passed after 0.087 seconds.
+✔ Test explicitSubtitleOffAlsoRequiresSourceBinding() passed after 0.087 seconds.
+✔ Test ruleSnapshotsRoundTripWithoutMixingVideos() passed after 0.090 seconds.
+✔ Test embyRoutesPreservePrefixAndPlaybackSession() passed after 0.087 seconds.
+✔ Test futureSnapshotIsNeverDowngradedToAnOlderBackup() passed after 0.102 seconds.
+✔ Test jellyfinTextSubtitlesUseClientDeliveryWithoutRemovingBitmapFallback() passed after 0.087 seconds.
+✔ Test jellyfinRoutesKeepLegacyContract() passed after 0.087 seconds.
+✔ Test episodeMetadataAndResumeDecodeFromEmbyContract() passed after 0.087 seconds.
+✔ Test subtitleAndSkipIdentityDoNotCrossServerKindsOrAccounts() passed after 0.087 seconds.
+✔ Test authUsesServerSchemeAndEscapesQuotedValues() passed after 0.087 seconds.
+✔ Test copiedEmbySeekRecoversOnceWithoutDroppingTrackChoices() passed after 0.087 seconds.
+✔ Test preferredTextSubtitleKeepsRequestedLanguageAndForcedFilter() passed after 0.087 seconds.
+✔ Test embySubtitleOffPreservesNegotiatedMethod() passed after 0.087 seconds.
+✔ Test implicitBitmapAlternativeKeepsLanguageAndForcedStatus() passed after 0.087 seconds.
+✔ Test explicitSubtitleOffRemovesBurnParametersWithoutChangingSession() passed after 0.087 seconds.
+✔ Test extendedRunsClipToWindowWithoutChangingPremultipliedAlpha() passed after 0.087 seconds.
+✔ Test presentationClearsAndSeekUsesOriginalTimestamps() passed after 0.086 seconds.
+✔ Test snapshotRecoversLastValidBackupAndDoesNotReplaceItWithCorruptData() passed after 0.104 seconds.
+✔ Test hostileTruncatedAndOversizedDataFailsWithoutAllocatingImages() passed after 0.086 seconds.
+✔ Test ptsWrapAndNormalPaletteOnlyUpdatesReuseObjects() passed after 0.086 seconds.
+✔ Test fragmentedObjectsAndCropRetainGeometryAndAlpha() passed after 0.085 seconds.
+✔ Test onlyPlayingSettledClockCrossingEndCanLoop() passed after 0.084 seconds.
+✔ Test sentenceRangesUseDelayAndClampAtMediaEdges() passed after 0.084 seconds.
+✔ Test pendingImportSurvivesOtherLaneCollectionAndReleasesWhenAbandoned() passed after 0.088 seconds.
+✔ Test invalidRangesAreRejected() passed after 0.084 seconds.
+✔ Test transcriptSearchRetainsDuplicateRowsAndStableIdentity() passed after 0.084 seconds.
+✔ Test appearanceRejectsUnboundedRenderingValues() passed after 0.084 seconds.
+✔ Test appearanceMigratesLegacySizesAndRoundTrips() passed after 0.084 seconds.
+✔ Test activeSentenceHonorsDelayOverlapAndGaps() passed after 0.084 seconds.
+✔ Test corruptedSegmentsRemainBoundedAndNeverIndexOutsideData() passed after 0.086 seconds.
+✔ Test documentLimitsEncodingAndClock() passed after 0.083 seconds.
+✔ Test completeCollectionIncludesLaterPagesAndDeduplicates() passed after 0.102 seconds.
+✔ Test exactStemLanguageAndEpisodeBoundaries() passed after 0.083 seconds.
+✔ Test sameLanguageServerVariantsRemainDistinct() passed after 0.083 seconds.
+✔ Test identitySeparatesAccountRootAndPath() passed after 0.083 seconds.
+✔ Test embeddedMemorySurvivesEngineChangeWithoutGuessingAmongLanguages() passed after 0.083 seconds.
+✔ Test legacyMemoryAndSecondaryOffsetsRoundTripIndependently() passed after 0.088 seconds.
+✔ Test serverSubtitleIdentityRequiresMatchingSourceIndexAndFormat() passed after 0.083 seconds.
+✔ Test twoImportedCopiesSurviveOffAndOtherLaneReplacement() passed after 0.088 seconds.
+✔ Test importedIdentitySurvivesSandboxRelocation() passed after 0.083 seconds.
+✔ Test serverSubtitleMemoryRoundTripsWithoutSubtitleBody() passed after 0.083 seconds.
+✔ Test videoRemovalClearsBothLanesWithoutRemovingAnotherVideo() passed after 0.088 seconds.
+✔ Test ambiguousCandidatesRequireUniquePreference() passed after 0.083 seconds.
+✔ Test cancellationDoesNotStartCollection() passed after 0.105 seconds.
+✔ Test incompletePaginationDoesNotSilentlyReturnPartialQueue() passed after 0.105 seconds.
+✔ Test backupRetainsPreviousCopyAndCorruptionDoesNotEraseMemory() passed after 0.083 seconds.
+✔ Suite LinkSkipTests passed after 0.106 seconds.
+✔ Suite DualSubtitleTests passed after 0.106 seconds.
+✔ Suite PGSSubtitleTests passed after 0.106 seconds.
+✔ Suite MediaServerAPITests passed after 0.106 seconds.
+✔ Test managedCopySurvivesOriginalDeletionAndStoreRecreation() passed after 0.083 seconds.
+✔ Test disabledImportedCopyRemainsAvailableAfterOtherVideosChange() passed after 0.094 seconds.
+✔ Test sourceRemovalAndOffMemoryStayIsolated() passed after 0.105 seconds.
+✔ Suite SubtitleSelectionTests passed after 0.128 seconds.
+sysctlbyname for kern.hv_vmm_present failed with status -1✔ Test largeTranscriptLookupAndSearchAreConsistent() passed after 0.119 seconds.
+✔ Suite PlaybackLoopTests passed after 0.140 seconds.
+✔ Test downloadedMovieRetainsContainerAndCanBePublishedAfterRestart() passed after 0.184 seconds.
+✔ Test localEnumerationSkipsHiddenFilesAndSymlinksAndHonorsQueueScope() passed after 0.406 seconds.
+✔ Test run with 159 tests in 6 suites passed after 0.407 seconds.

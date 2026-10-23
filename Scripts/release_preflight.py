@@ -7,6 +7,7 @@ import re
 import sys
 from prepare_compatibility_sdk import validate_symbols
 from verify_archive_symbols import verify as verify_archive_symbols
+from verify_smb_sdk import verify as verify_smb_sdk
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--archive', type=Path, help='Also verify the app/framework UUID coverage in this actual archive')
@@ -20,6 +21,7 @@ problems = []
 
 try:
     validate_symbols(root / '.build/CompatibilitySDK/MobileVLCKit.xcframework')
+    verify_smb_sdk(root / '.build/CompatibilitySDK/MobileVLCKit.xcframework')
 except (SystemExit, OSError, ValueError, KeyError) as error:
     problems.append('兼容 SDK 符号不完整；运行 python3 Scripts/prepare_compatibility_sdk.py：' + str(error))
 if args.archive:

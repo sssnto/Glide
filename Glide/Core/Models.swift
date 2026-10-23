@@ -4,15 +4,16 @@ import FoundationXML
 #endif
 
 enum SourceKind: String, Codable, CaseIterable, Identifiable, Sendable {
-    case jellyfin, webDAV, local
+    case jellyfin, emby, smb, webDAV, local
     var id: String { rawValue }
     var title: String {
-        switch self { case .jellyfin: "Jellyfin"; case .webDAV: "NAS · WebDAV"; case .local: "本地视频" }
+        switch self { case .jellyfin: "Jellyfin"; case .emby: "Emby"; case .smb: "SMB"; case .webDAV: "WebDAV"; case .local: "本地视频" }
     }
     var symbol: String {
-        switch self { case .jellyfin: "play.rectangle.on.rectangle"; case .webDAV: "externaldrive.connected.to.line.below"; case .local: "folder" }
+        switch self { case .jellyfin, .emby: "play.rectangle.on.rectangle"; case .smb, .webDAV: "externaldrive.connected.to.line.below"; case .local: "folder" }
     }
-    var isFileSource: Bool { self != .jellyfin }
+    var isCatalogSource: Bool { self == .jellyfin || self == .emby }
+    var isFileSource: Bool { !isCatalogSource }
     var requiresCredentials: Bool { self != .local }
 }
 
@@ -25,6 +26,9 @@ struct MediaServer: Codable, Identifiable, Equatable, Sendable {
     var userID: String?
     /// Nil for the app's imported collection; otherwise an explicitly authorized folder.
     var localBookmark: Data? = nil
+    var smb: SMBOptions? = nil
+    /// File sources keep private swipe behavior unless explicitly enabled.
+    var remembersPlayback: Bool? = nil
 }
 
 struct Video: Identifiable, Equatable, Codable, Sendable {
@@ -47,6 +51,7 @@ struct Video: Identifiable, Equatable, Codable, Sendable {
     var isWatched: Bool? = nil
     /// Relative to the authorized source, independent of a changing sandbox/root URL.
     var localRelativePath: String? = nil
+    var streamLinkID: UUID? = nil
 }
 
 struct DAVEntry: Identifiable, Equatable, Sendable {
@@ -55,6 +60,7 @@ struct DAVEntry: Identifiable, Equatable, Sendable {
     var isDirectory: Bool
     var createdAt: Date? = nil
     var modifiedAt: Date? = nil
+    var artwork: URL? = nil
     var id: String { url.absoluteString }
     var displayDate: Date? { createdAt ?? modifiedAt }
 }
@@ -113,7 +119,7 @@ enum ServerURL {
         return parts.url!
     }
     static func sameOrigin(_ a: URL, _ b: URL) -> Bool {
-        func port(_ u: URL) -> Int { u.port ?? (u.scheme?.lowercased() == "https" ? 443 : 80) }
+        func port(_ u: URL) -> Int { u.port ?? (u.scheme?.lowercased() == "https" ? 443 : u.scheme?.lowercased() == "smb" ? 445 : 80) }
         return a.scheme?.lowercased() == b.scheme?.lowercased() && a.host?.lowercased() == b.host?.lowercased() && port(a) == port(b)
     }
 }

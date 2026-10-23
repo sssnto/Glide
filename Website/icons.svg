@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg"><defs>
+<symbol id="download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+<symbol id="library" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M6 4h12M9 1h6"/></symbol>
+<symbol id="device" viewBox="0 0 24 24"><rect x="2" y="3" width="13" height="18" rx="2"/><rect x="16" y="8" width="6" height="13" rx="1.4"/><path d="M7 17h3m8 1h2"/></symbol>
+<symbol id="shield" viewBox="0 0 24 24"><path d="m12 2 8 3v6c0 5-4 8-8 11-4-3-8-6-8-11V5z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></symbol>
+<symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></symbol>
+<symbol id="channel" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="m9 1 3 4 3-4M8 23h8m-6-14 5 3-5 3z"/></symbol>
+<symbol id="map" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M9 3v18M2 12h20M15 3v18"/></symbol>
+<symbol id="play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4z"/></symbol>
+<symbol id="pause" viewBox="0 0 24 24"><path d="M6 4h4v16H6zm8 0h4v16h-4z"/></symbol>
+<symbol id="subtitles" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="15" rx="2"/><path d="M6 10h4m4 0h4M6 14h12M8 22l4-3"/></symbol>
+<symbol id="repeat" viewBox="0 0 24 24"><path d="M4 9V5h15m-3-3 3 3-3 3M20 15v4H5m3-3-3 3 3 3"/></symbol>
+<symbol id="folder" viewBox="0 0 24 24"><path d="M2 7V5a2 2 0 0 1 2-2h6l2 3h8a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7h20"/></symbol>
+<symbol id="server" viewBox="0 0 24 24"><rect x="3" y="2" width="18" height="8" rx="2"/><rect x="3" y="14" width="18" height="8" rx="2"/><path d="M7 6h.01M7 18h.01M11 6h6m-6 12h6"/></symbol>
+<symbol id="drive" viewBox="0 0 24 24"><path d="M4 3h16l2 13H2z"/><rect x="2" y="16" width="20" height="6" rx="2"/><path d="M17 19h.01M13 19h.01M8 6h8"/></symbol>
+<symbol id="link" viewBox="0 0 24 24"><path d="m10 14 4-4m-6 6-2 2a4.2 4.2 0 0 1-6-6l5-5a4.2 4.2 0 0 1 6 0m2 10a4.2 4.2 0 0 0 6 0l5-5a4.2 4.2 0 0 0-6-6l-2 2" transform="translate(1 0) scale(.91)"/></symbol>
+</defs></svg>

@@ -1,0 +1,26 @@
+{
+  "checks" : [
+    "fixed-libass-0.17.3-runtime",
+    "all-authored-events-loaded",
+    "multi-layer-shaping-outline-shadow-and-drawing",
+    "original-red-blue-and-green-colours",
+    "alpha-antialiasing-and-blur-preserved",
+    "fade-and-karaoke-change-with-real-timestamps",
+    "paused-frame-reuses-raster",
+    "move-rotation-transform-interpolates",
+    "inverse-clip-and-scaling-render",
+    "viewport-resize-retains-script-coordinates",
+    "event-end-clears-overlay",
+    "backward-seek-restores-original-frame",
+    "authored-font-choice-changes-glyphs"
+  ],
+  "colouredPixels" : {
+    "blue" : 365,
+    "green" : 1600,
+    "red" : 549
+  },
+  "expectedChecks" : 13,
+  "passed" : true,
+  "timestamp" : "2026-10-22T10:42:19Z",
+  "version" : 24129536
+}

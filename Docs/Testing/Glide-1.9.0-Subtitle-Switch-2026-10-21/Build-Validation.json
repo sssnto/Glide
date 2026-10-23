@@ -1,0 +1,127 @@
+{
+  "finalizedUTC": "2026-10-21T08:13:00.015959+00:00",
+  "appVersion": "1.9.0",
+  "build": "3",
+  "repositoryHEAD": "fb8877408059b8e4a5690cbd77f4d89ca94b6817",
+  "workingTreeHasUncommittedChanges": true,
+  "acceptanceStatus": "passed for server-subtitle list and switching regression; implementation, scoped UI, real episode, core and Release complete",
+  "publicReleaseAcceptance": false,
+  "sourceSnapshot": "Source-Snapshot.json",
+  "sourceFileCount": 110,
+  "coreTests": {
+    "passed": 160,
+    "failed": 0,
+    "swiftTesting": 153,
+    "xctest": 7,
+    "log": "Logs/Core-Final.log"
+  },
+  "simulator": {
+    "model": "iPad Pro 12.9 inch (6th generation)",
+    "system": "26.3.1",
+    "uiSubtitleSwitch": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "summary": "UI-Final-Summary.json",
+      "runnerEnvironment": {
+        "GLIDE_SUBTITLE_SWITCH_FIXTURE": "1"
+      }
+    },
+    "sharedRegression": {
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "summary": "UI-Shared-Final-Summary.json",
+      "runnerEnvironment": {
+        "GLIDE_EMBY_FIXTURE": "1"
+      },
+      "dualNativeChecks": 18,
+      "embyServiceNativeChecks": 13,
+      "embyInjectedContractChecks": 1
+    },
+    "warnings": [
+      "UIKit native Menu _UIReparentingView retained in final UI summary."
+    ],
+    "fixture": "Authored demo loop 120s, three text subtitles and one inventory-only bitmap entry; no private account or subtitle content."
+  },
+  "physical": {
+    "app": "Glide",
+    "bundleIdentifier": "com.songpeng.glide",
+    "version": "1.9.0 (3)",
+    "model": "iPhone 13 Pro Max",
+    "system": "27.0",
+    "finalSourceInstalled": true,
+    "normalLaunchSucceeded": true,
+    "finalReport": "Production-iPhone-Frozen-Final.json",
+    "timestamp": "2026-10-21T08:06:29Z",
+    "switchChecksPassed": 9,
+    "playbackControlChecksPassed": 5,
+    "serverSubtitleCount": 12,
+    "clientSubtitleCueCount": 823,
+    "firstFrameSeconds": 6.226319074630737,
+    "restoredChoiceFirstFrameSeconds": 3.5501760244369507,
+    "outputWidth": 3840,
+    "outputHeight": 2160,
+    "outputColorTransfer": "SMPTE_ST_2084_PQ",
+    "videoSessionPreservedDuringTextSwitch": true,
+    "subtitleMemoryRestored": true,
+    "watchProgressRecorded": false,
+    "credentialsOrPrivateContentsExported": false
+  },
+  "release": {
+    "archive": "/tmp/Glide190/Glide-1.9.0-3.xcarchive",
+    "archiveSucceeded": true,
+    "preflightPassed": true,
+    "strictSignaturePassed": true,
+    "symbolsPassed": true,
+    "qaFlagsAbsent": true,
+    "uploaded": false,
+    "appBinarySHA256": "a8cc54457169b7578962c2d0797e0e02bc589e1f820551f779e2c45fe86378e6",
+    "mobileVLCBinarySHA256": "9901273fa963c92630f5192235da33d56be30c505ae4d4e35944af8efd2eccab"
+  },
+  "boundaries": [
+    "Physical production controller checks plus simulator normal UI; not physical UI tapping/OCR on private media.",
+    "Real PGS streams are inventoried but bitmap burning not individually accepted; still depends on server HDR/transcode configuration.",
+    "Short startup and control trials, not full episode or manual listening.",
+    "PQ/BT.2020 decoded frames verified, not full Dolby Vision display certification.",
+    "No PiP/AirPlay subtitle output matrix claimed."
+  ],
+  "history": "Attempt-History.json",
+  "gitPushed": false,
+  "gitTagCreated": false,
+  "oldBuild1And2EvidenceModified": false,
+  "evidenceSHA256": {
+    "Archive-Symbols-Final.json": "3f459ed43584522aa26486dcac63bbec91145165e097595e769844148552aeb3",
+    "Attempt-History.json": "9c4ecb78834564ceeae3a1b5323ca2a77720f2f0f585475d42180457869aa73f",
+    "Dual-iPad-Final.json": "b72daa2dfbff791110f92dd9a6332643c517fb66b602c87426ac0019de5455d5",
+    "Emby-iPad-Final.json": "13b4764f7ccbc0d39fd1d2efcd247908a4e47493fa8adf2bb7c74bc2bc85b3d1",
+    "Logs/Core-Final.log": "270fc7e79bc8b87e31e6baa652b67a6d39df053290efe002aceb668b11304d72",
+    "Logs/Device-Build-Final.log": "ab3c2226d953f37137a249a893746323a18aa04a92b302bffbc049e73c92153a",
+    "Logs/Device-Build-Frozen.log": "f699473d6c82db915a36f887977a21f458226b71bcbd0bf0a054efcb63490f24",
+    "Logs/Device-Install-Final.log": "62d7b29e8fd701a3805f637c7c1617ca753feee919e11d085139aff0d22e5d90",
+    "Logs/Device-Launch-Final.log": "c50d8e63c32bf9c83239f525b7635740b0745d18ce3c71a5447d2ea0b15ec13c",
+    "Logs/Device-Launch-First.log": "c50d8e63c32bf9c83239f525b7635740b0745d18ce3c71a5447d2ea0b15ec13c",
+    "Logs/Device-Normal-Launch-Final.log": "c50d8e63c32bf9c83239f525b7635740b0745d18ce3c71a5447d2ea0b15ec13c",
+    "Logs/Device-Report-Copy-Final.log": "21403d78fecbb6400a620951890296b870ff94f92fb55122ac40ac040b755713",
+    "Logs/Release-Archive-Final.log": "8062d0510222b467006ecb73b6c5aa1335fde938122aa31570e1659f1c79f949",
+    "Logs/Release-Preflight-Final.log": "5f135d2f7003c7f472b750c4b7498c77aed6c51e5ab2f4a0e693769bd147c125",
+    "Logs/Release-Signature-Final.log": "11029151654053399a0403c452d5c4be96181d368a1e138cec9e6b345e39aa04",
+    "Logs/Shared-Regression-Final.log": "d559dba9f8330f2310b9d54b464d1190bf2b20c1407d10086da1810634cf37ca",
+    "Logs/UI-Final.log": "cb9de5986066cf07c0d48ea6d562d9a3c4319ed85f4d6696bec1a80c4abd0cf7",
+    "Logs/UI-First.log": "f6c974d905b32995b2e9a9dbce8831d54aef8d2cadd902c53da79fad44cc1425",
+    "Logs/UI-Second.log": "dea8d2e9618fb5160863600057f06c1aab85797a098ef985d397742321dfd769",
+    "Logs/UI-Third.log": "94fd17f3f80e82876f2be4ff2c8487a0c1757086e6592022893c8b2521952c4c",
+    "Physical-First-Incomplete.json": "215e6035df6621ed15ee1b347279214aa1bc395bf0c565dbc38ff51332c7e12e",
+    "Production-iPhone-Final.json": "3c344129f4023316a27be1ed5f6344ceeb26dbbc5ffe848619f8fdc70fcc1e89",
+    "Production-iPhone-Frozen-Final.json": "109a63ed46ec91c5d8e4b491ce9b61ad3dc2115b0f00d043d8c56e07e34d4363",
+    "README.md": "fedb80fe5004a1cb48b53a03841d4724bff90c7fadc0148471ba3c5b96cf8a33",
+    "Release-Binary-Checks.json": "f71de30ff1a433b20bba303c5e2925879c86164f82894159573fbad0fbc15fd3",
+    "Screenshots/Server-Subtitle-Choices.png": "45738adf140f31a847bb2889995632f8a14fbd820e6efa399fb2d8a9875eac2a",
+    "Source-Snapshot.json": "85294da325493359ea2223748811290961401b17543101a95a71e474bcd05061",
+    "UI-Final-Summary.json": "6b3c0e8b33f41cd360987dfedec7fb3039a627fbb49d473d3679389c660ebcfc",
+    "UI-First-Summary.json": "211aedc1cc65779c113739be0b879ae02e7acde90adf32a337d5dbd0bc97e7a2",
+    "UI-Second-Summary.json": "aa951e57398db57bdc128edfd15ce707b320ec8f703911047960337d8b358f01",
+    "UI-Shared-Final-Summary.json": "e877fa927070d1e481c062dfcfaf000b4d8882cceded11065505715b8b728cf3",
+    "UI-Third-Summary.json": "fb02684ede0957a14a4a510f3ec049a8098f366945c379e5564885edb7594452"
+  }
+}

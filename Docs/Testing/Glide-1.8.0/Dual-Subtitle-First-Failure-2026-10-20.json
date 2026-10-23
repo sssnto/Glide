@@ -1,0 +1,18 @@
+{
+  "checks" : [
+    "default:secondary-off-preserves-primary-auto-match",
+    "playback:avPlayer-two-external-tracks-frame-and-paused-seek",
+    "clock:avPlayer-independent-positive-negative-offsets",
+    "clock:avPlayer-double-speed-shared-clock",
+    "memory:avPlayer-reopen-choices-and-offsets",
+    "memory:avPlayer-secondary-off-reopen-primary-retained"
+  ],
+  "device" : "iPad",
+  "error" : "等待超时：验证 vlc 双字幕",
+  "os" : "26.3.1",
+  "passed" : false,
+  "scope" : "Production local native\/VLC playback, paired external subtitle sessions and managed storage; authored media only",
+  "stage" : "双字幕验证未完成",
+  "timestamp" : "2026-10-20T07:10:24Z",
+  "version" : "1.8.0 (1)"
+}

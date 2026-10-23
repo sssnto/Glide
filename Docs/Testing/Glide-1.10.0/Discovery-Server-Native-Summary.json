@@ -1,0 +1,52 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "C35967C8-D815-4F3C-8D7C-9019AB98AF2B",
+        "deviceName" : "Glide App Store iPhone",
+        "modelName" : "iPhone 13 Pro Max",
+        "osBuildNumber" : "23D8133",
+        "osVersion" : "26.3.1",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 1,
+      "passedTests" : 1,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "Glide · Built with macOS 27.0.1",
+  "expectedFailures" : 0,
+  "failedTests" : 1,
+  "finishTime" : 1792657009.244,
+  "passedTests" : 1,
+  "result" : "Failed",
+  "runtimeWarnings" : [
+
+  ],
+  "skippedTests" : 0,
+  "startTime" : 1792656902.972,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "Failed to tap \"discovery.scope.done\" Button: No matches found for Elements matching predicate '\"discovery.scope.done\" IN identifiers' from input {(\n    Button, identifier: 'BackButton', label: '选择内容范围',\n    Button, label: '首页', Selected,\n    Button, label: '片库',\n    Button, label: '我的',\n    Button, label: '离线',\n    Button, label: '设置',\n    Button, identifier: 'BackButton', label: '首页',\n    Button, identifier: 'discovery.scope.entire', label: '加入整个范围',\n    Button, label: 'Fixture Library',\n    Button, identifier: 'plus.circle', label: '选择“Fixture Library”',\n    Button, label: 'Fixture Movies',\n    Button, identifier: 'checkmark.circle.fill', label: '选择“Fixture Movies”', Selected,\n    Button, label: 'Fixture Shows',\n    Button, identifier: 'plus.circle', label: '选择“Fixture Shows”',\n    Button, identifier: 'discovery.time.preference', label: '想看什么, 都可以',\n    Button, identifier: 'discovery.time.scopes', label: '内容范围, 1 个',\n    Button, identifier: 'discovery.pick.D5AB18E6-59FB-46BB-AD75-334998F20606demo0', label: 'Fixture A, 剩余 00:09, Glide Recovery Fixture, 继续上次观看 · 可在 45 分钟内看完',\n    Button, identifier: 'discovery.pick.D5AB18E6-59FB-46BB-AD75-334998F20606demo1', label: 'Fixture B, 片长 00:12, Glide Recovery Fixture, 尚未看完 · 可在 45 分钟内看完',\n    Button, identifier: 'discovery.pick.D5AB18E6-59FB-46BB-AD75-334998F20606demo2', label: 'Fixture C, 片长 00:12, Glide Recovery Fixture, 尚未看完 · 可在 45 分钟内看完',\n    Button, identifier: 'discovery.time.refresh', label: '换一组',\n    Button, label: '20 分钟',\n    Button, label: '45 分钟', Selected,\n    Button, label: '90 分钟',\n    Button, identifier: 'discovery.time.custom-Decrement', label: '自定义：45 分钟, Decrement', value: 45,\n    Button, identifier: 'discovery.time.custom-Increment', label: '自定义：45 分钟, Increment', value: 45\n)}",
+      "targetName" : "GlideUITests",
+      "testIdentifier" : 1,
+      "testIdentifierString" : "GlideUITests/testDiscoveryScopedServerSelectionPagingAndPlayback()",
+      "testIdentifierURL" : "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDiscoveryScopedServerSelectionPagingAndPlayback",
+      "testName" : "testDiscoveryScopedServerSelectionPagingAndPlayback()"
+    }
+  ],
+  "title" : "Test - Glide",
+  "topInsights" : [
+
+  ],
+  "totalTestCount" : 2
+}

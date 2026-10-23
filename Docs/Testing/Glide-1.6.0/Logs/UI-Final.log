@@ -1,0 +1,1769 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project /Users/songpeng/code/github/tools/Glide/Glide.xcodeproj -scheme GlideCompatibilityQA -configuration CompatibilityQA -skipMacroValidation -destination "platform=iOS Simulator,id=A517192E-7F4D-4ED6-9ADF-8E7E513C6913" -collect-test-diagnostics never COMPILER_INDEX_STORE_ENABLE=NO ONLY_ACTIVE_ARCH=YES -packageCachePath /Users/songpeng/Library/Caches/org.swift.swiftpm -derivedDataPath /tmp/Glide151/DerivedData -jobs 2 -parallel-testing-enabled NO "-only-testing:GlideUITests/GlideUITests/testLinkPlaybackSkipMemoryAndCRUD" "-only-testing:GlideUITests/GlideUITests/testLinkSkipProductionProbe" "-only-testing:GlideUITests/GlideUITests/testNativeTrackSelection" -testProductsPath /Users/songpeng/Library/Developer/XcodeBuildMCP/workspaces/Glide-c699267400c0/test-products/test_sim_2026-10-20T03-24-40-187Z_pid66807_f0141c93.xctestproducts build-for-testing
+
+Build settings from command line:
+    COMPILER_INDEX_STORE_ENABLE = NO
+    ONLY_ACTIVE_ARCH = YES
+
+2026-10-20 11:24:42.756 xcodebuild[98761:44180136] Writing test products to /Users/songpeng/Library/Developer/XcodeBuildMCP/workspaces/Glide-c699267400c0/test-products/test_sim_2026-10-20T03-24-40-187Z_pid66807_f0141c93.xctestproducts
+Build Preparation
+Build task concurrency set to 2 via user default IDEBuildOperationMaxNumberOfConcurrentCompileTasks
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (2 targets)
+    Target 'GlideUITests' in project 'Glide'
+        ➜ Explicit dependency on target 'Glide' in project 'Glide'
+    Target 'Glide' in project 'Glide' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /tmp/Glide151/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/songpeng/code/github/tools/Glide/Glide.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /tmp/Glide151/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+note: Run script build phase 'Validate Compatibility SDK' will be run during every build because the option to run the script phase "Based on dependency analysis" is unchecked. (in target 'Glide' from project 'Glide')
+SwiftDriver Glide normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Glide -Onone @/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /tmp/Glide151/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -swift-version 5 -I /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -F /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/Glide151/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/Glide151/DerivedData/ModuleCache.noindex -sdk-module-cache-path /tmp/Glide151/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/Glide151/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-generated-files.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-own-target-headers.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-project-headers.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/include -Xcc -I/Users/songpeng/code/github/tools/Glide/Glide/Services/SMB/Vendor -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/DerivedSources-normal/arm64 -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/DerivedSources/arm64 -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide-Swift.h -import-objc-header /Users/songpeng/code/github/tools/Glide/Glide/Services/Compatibility/VLCClockPlayer.h -working-directory /Users/songpeng/code/github/tools/Glide -experimental-emit-module-separately -disable-cmo
+
+SwiftGeneratePch normal arm64 Compiling\ bridging\ header (in target 'Glide' from project 'Glide')
+
+SwiftDriverJobDiscovery normal arm64 Compiling bridging header (in target 'Glide' from project 'Glide')
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ Glide (in target 'Glide' from project 'Glide')
+
+SwiftCompile normal arm64 (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    
+
+SwiftCompile normal arm64 Compiling\ StreamLinksView.swift /Users/songpeng/code/github/tools/Glide/Glide/Views/StreamLinksView.swift (in target 'Glide' from project 'Glide')
+
+SwiftCompile normal arm64 /Users/songpeng/code/github/tools/Glide/Glide/Views/StreamLinksView.swift (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-SwiftPerFileCompile StreamLinksView.swift
+
+SwiftDriverJobDiscovery normal arm64 Compiling StreamLinksView.swift (in target 'Glide' from project 'Glide')
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for Glide (in target 'Glide' from project 'Glide')
+
+SwiftDriver\ Compilation\ Requirements Glide normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Glide -Onone @/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /tmp/Glide151/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -swift-version 5 -I /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -F /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/Glide151/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/Glide151/DerivedData/ModuleCache.noindex -sdk-module-cache-path /tmp/Glide151/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/Glide151/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-generated-files.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-own-target-headers.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-project-headers.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/include -Xcc -I/Users/songpeng/code/github/tools/Glide/Glide/Services/SMB/Vendor -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/DerivedSources-normal/arm64 -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/DerivedSources/arm64 -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide-Swift.h -import-objc-header /Users/songpeng/code/github/tools/Glide/Glide/Services/Compatibility/VLCClockPlayer.h -working-directory /Users/songpeng/code/github/tools/Glide -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver\ Compilation Glide normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Glide -Onone @/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /tmp/Glide151/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -swift-version 5 -I /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -F /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/Glide151/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/Glide151/DerivedData/ModuleCache.noindex -sdk-module-cache-path /tmp/Glide151/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/Glide151/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-generated-files.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-own-target-headers.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-project-headers.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/include -Xcc -I/Users/songpeng/code/github/tools/Glide/Glide/Services/SMB/Vendor -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/DerivedSources-normal/arm64 -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/DerivedSources/arm64 -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide-Swift.h -import-objc-header /Users/songpeng/code/github/tools/Glide/Glide/Services/Compatibility/VLCClockPlayer.h -working-directory /Users/songpeng/code/github/tools/Glide -experimental-emit-module-separately -disable-cmo
+
+Copy /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.swiftsourceinfo (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.swiftsourceinfo /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+Copy /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.swiftmodule/arm64-apple-ios-simulator.abi.json /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.abi.json (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.abi.json /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+SwiftDriver GlideUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'GlideUITests' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name GlideUITests -O @/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests.SwiftFileList -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /tmp/Glide151/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -swift-version 5 -I /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/Glide151/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/Glide151/DerivedData/ModuleCache.noindex -sdk-module-cache-path /tmp/Glide151/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/Glide151/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests-generated-files.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests-own-target-headers.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests-project-headers.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/include -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/DerivedSources/arm64 -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests-Swift.h -working-directory /Users/songpeng/code/github/tools/Glide -experimental-emit-module-separately -disable-cmo
+
+Ld /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Glide.debug.dylib normal (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -Os -Xlinker -no_warn_duplicate_libraries -L/tmp/Glide151/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/CompatibilityQA-iphonesimulator -L/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -F/tmp/Glide151/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/CompatibilityQA-iphonesimulator -F/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -filelist /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.LinkFileList -install_name @rpath/Glide.debug.dylib -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide_lto.o -rdynamic -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide_dependency_info.dat -fobjc-arc -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.swiftmodule -ObjC -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -framework MobileVLCKit -framework QuartzCore -framework CoreText -framework AVFoundation -framework Security -framework CFNetwork -framework AudioToolbox -framework OpenGLES -framework CoreGraphics -framework VideoToolbox -framework CoreMedia -lc++ -lxml2 -lz -lbz2 -liconv -Xlinker -no_adhoc_codesign -o /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Glide.debug.dylib
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ GlideUITests (in target 'GlideUITests' from project 'Glide')
+
+SwiftCompile normal arm64 (in target 'GlideUITests' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    
+
+SwiftCompile normal arm64 Compiling\ GlideUITests.swift /Users/songpeng/code/github/tools/Glide/UITests/GlideUITests.swift (in target 'GlideUITests' from project 'Glide')
+
+SwiftCompile normal arm64 /Users/songpeng/code/github/tools/Glide/UITests/GlideUITests.swift (in target 'GlideUITests' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-SwiftPerFileCompile GlideUITests.swift
+
+ConstructStubExecutorLinkFileList /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-ExecutorLinkFileList-normal-arm64.txt (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    construct-stub-executor-link-file-list /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Glide.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-ExecutorLinkFileList-normal-arm64.txt
+note: Using stub executor library with Swift entry point. (in target 'Glide' from project 'Glide')
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for GlideUITests (in target 'GlideUITests' from project 'Glide')
+
+SwiftDriver\ Compilation\ Requirements GlideUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'GlideUITests' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name GlideUITests -O @/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests.SwiftFileList -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /tmp/Glide151/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -swift-version 5 -I /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/Glide151/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/Glide151/DerivedData/ModuleCache.noindex -sdk-module-cache-path /tmp/Glide151/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/Glide151/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests-generated-files.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests-own-target-headers.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests-project-headers.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/include -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/DerivedSources/arm64 -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests-Swift.h -working-directory /Users/songpeng/code/github/tools/Glide -experimental-emit-module-separately -disable-cmo
+
+Ld /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Glide normal (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -Os -Xlinker -no_warn_duplicate_libraries -L/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -F/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -Xlinker -rpath -Xlinker @executable_path -Xlinker -rpath -Xlinker @executable_path/Frameworks -rdynamic -Xlinker -objc_abi_version -Xlinker 2 -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-DebugDylibPath-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-DebugDylibInstallName-normal-arm64.txt -Xlinker -filelist -Xlinker /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-ExecutorLinkFileList-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide.app-Simulated.xcent.der /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Glide.debug.dylib -Xlinker -no_adhoc_codesign -o /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Glide
+
+Copy /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests.swiftsourceinfo (in target 'GlideUITests' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests.swiftsourceinfo /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+GenerateDSYMFile /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app.dSYM /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Glide (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    export PATH\=/Applications/Xcode.app/Contents/SharedFrameworks/SwiftBuild.framework/Versions/A/PlugIns/SWBBuildService.bundle/Contents/PlugIns/SWBUniversalPlatformPlugin.bundle/Contents/Frameworks/SWBUniversalPlatform.framework/Resources:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/local/bin:/Users/songpeng/.npm/_npx/99336612077b7094/node_modules/.bin:/Users/songpeng/code/github/tools/Glide/node_modules/.bin:/Users/songpeng/code/github/tools/node_modules/.bin:/Users/songpeng/code/github/node_modules/.bin:/Users/songpeng/code/node_modules/.bin:/Users/songpeng/node_modules/.bin:/Users/node_modules/.bin:/node_modules/.bin:/Users/songpeng/.vmr/versions/node_versions/node-24.6.0/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/Users/songpeng/.codex/tmp/arg0-macos/codex-arg0LNlnZR:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/songpeng/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/opt/homebrew/opt/ruby/bin:/Users/songpeng/.codebuddy/bin:/Users/songpeng/.local/bin:/Users/songpeng/.bun/bin:/Users/songpeng/.antigravity/antigravity/bin:/Users/songpeng/.vmr/versions/node_versions/node/bin:/Users/songpeng/.vmr:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/Users/songpeng/code/ios/flutter/bin:/Applications/极空间.app/Contents/Resources/app.asar.unpacked/bin/platform-tools:/Users/songpeng/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil -q /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Glide -o /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app.dSYM
+
+Copy /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests.swiftmodule/arm64-apple-ios-simulator.abi.json /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests.abi.json (in target 'GlideUITests' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests.abi.json /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+PhaseScriptExecution Validate\ Compatibility\ SDK /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Script-3BD6878CCC01257E98E319FF.sh (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    export ACTION\=build
+    export AD_HOC_CODE_SIGNING_ALLOWED\=YES
+    export AGGREGATE_TRACKED_DOMAINS\=YES
+    export ALLOW_BUILD_REQUEST_OVERRIDES\=NO
+    export ALLOW_TARGET_PLATFORM_SPECIALIZATION\=NO
+    export ALTERNATE_GROUP\=staff
+    export ALTERNATE_MODE\=u+w,go-w,a+rX
+    export ALTERNATE_OWNER\=songpeng
+    export ALTERNATIVE_DISTRIBUTION_WEB\=NO
+    export ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES\=NO
+    export ALWAYS_SEARCH_USER_PATHS\=YES
+    export ALWAYS_USE_SEPARATE_HEADERMAPS\=NO
+    export APPLICATION_EXTENSION_API_ONLY\=NO
+    export APPLY_RULES_IN_COPY_FILES\=NO
+    export APPLY_RULES_IN_COPY_HEADERS\=NO
+    export APP_SHORTCUTS_ENABLE_FLEXIBLE_MATCHING\=YES
+    export ARCHS\=arm64
+    export ARCHS_BASE\=arm64
+    export ARCHS_STANDARD\=arm64\ x86_64
+    export ARCHS_STANDARD_32_64_BIT\=arm64\ x86_64
+    export ARCHS_STANDARD_64_BIT\=arm64\ x86_64
+    export ARCHS_STANDARD_INCLUDING_64_BIT\=arm64\ x86_64
+    export ARCHS_UNIVERSAL_IPHONE_OS\=arm64\ x86_64
+    export ASSETCATALOG_COMPILER_APPICON_NAME\=AppIcon
+    export ASSETCATALOG_FILTER_FOR_DEVICE_MODEL\=iPad14,5-A
+    export ASSETCATALOG_FILTER_FOR_DEVICE_OS_VERSION\=26.3.1
+    export ASSETCATALOG_FILTER_FOR_THINNING_DEVICE_CONFIGURATION\=iPad14,5-A
+    export AUTOMATICALLY_MERGE_DEPENDENCIES\=NO
+    export AUTOMATION_APPLE_EVENTS\=NO
+    export AVAILABLE_PLATFORMS\=android\ appletvos\ appletvsimulator\ driverkit\ freebsd\ iphoneos\ iphonesimulator\ linux\ macosx\ none\ openbsd\ qnx\ staticlinux\ watchos\ watchsimulator\ webassembly\ xros\ xrsimulator
+    export AppIdentifierPrefix\=FR9RTRV9BC.
+    export BUILD_ACTIVE_RESOURCES_ONLY\=YES
+    export BUILD_COMPONENTS\=headers\ build
+    export BUILD_DIR\=/tmp/Glide151/DerivedData/Build/Products
+    export BUILD_LIBRARY_FOR_DISTRIBUTION\=NO
+    export BUILD_ONLY_KNOWN_LOCALIZATIONS\=NO
+    export BUILD_ROOT\=/tmp/Glide151/DerivedData/Build/Products
+    export BUILD_STYLE\=
+    export BUILD_VARIANTS\=normal
+    export BUILT_PRODUCTS_DIR\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator
+    export BUNDLE_CONTENTS_FOLDER_PATH_deep\=Contents/
+    export BUNDLE_EXECUTABLE_FOLDER_NAME_deep\=MacOS
+    export BUNDLE_EXTENSIONS_FOLDER_PATH\=Extensions
+    export BUNDLE_FORMAT\=shallow
+    export BUNDLE_FRAMEWORKS_FOLDER_PATH\=Frameworks
+    export BUNDLE_PLUGINS_FOLDER_PATH\=PlugIns
+    export BUNDLE_PRIVATE_HEADERS_FOLDER_PATH\=PrivateHeaders
+    export BUNDLE_PUBLIC_HEADERS_FOLDER_PATH\=Headers
+    export CACHE_ROOT\=/var/folders/fs/s4nwlcbs4wv2j7q7fwxk1z3r0000gn/C/com.apple.DeveloperTools/27.0-27A266a/Xcode
+    export CCHROOT\=/var/folders/fs/s4nwlcbs4wv2j7q7fwxk1z3r0000gn/C/com.apple.DeveloperTools/27.0-27A266a/Xcode
+    export CHMOD\=/bin/chmod
+    export CHOWN\=chown
+    export CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED\=YES
+    export CLANG_CACHE_FINE_GRAINED_OUTPUTS\=YES
+    export CLANG_ENABLE_EXPLICIT_MODULES\=YES
+    export CLANG_ENABLE_MODULES\=YES
+    export CLANG_ENABLE_OBJC_ARC\=YES
+    export CLANG_ENABLE_OBJC_WEAK\=YES
+    export CLANG_MODULES_BUILD_SESSION_FILE\=/tmp/Glide151/DerivedData/ModuleCache.noindex/Session.modulevalidation
+    export CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING\=YES
+    export CLANG_WARN_BOOL_CONVERSION\=YES
+    export CLANG_WARN_COMMA\=YES
+    export CLANG_WARN_CONSTANT_CONVERSION\=YES
+    export CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS\=YES
+    export CLANG_WARN_EMPTY_BODY\=YES
+    export CLANG_WARN_ENUM_CONVERSION\=YES
+    export CLANG_WARN_INFINITE_RECURSION\=YES
+    export CLANG_WARN_INT_CONVERSION\=YES
+    export CLANG_WARN_NON_LITERAL_NULL_CONVERSION\=YES
+    export CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF\=YES
+    export CLANG_WARN_OBJC_LITERAL_CONVERSION\=YES
+    export CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER\=YES
+    export CLANG_WARN_RANGE_LOOP_ANALYSIS\=YES
+    export CLANG_WARN_STRICT_PROTOTYPES\=YES
+    export CLANG_WARN_SUSPICIOUS_MOVE\=YES
+    export CLANG_WARN_UNREACHABLE_CODE\=YES
+    export CLANG_WARN__DUPLICATE_METHOD_MATCH\=YES
+    export CLASS_FILE_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/JavaClasses
+    export CLEAN_PRECOMPS\=YES
+    export CLONE_HEADERS\=NO
+    export CODESIGNING_FOLDER_PATH\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app
+    export CODE_SIGNING_ALLOWED\=YES
+    export CODE_SIGNING_REQUIRED\=YES
+    export CODE_SIGN_CONTEXT_CLASS\=XCiPhoneSimulatorCodeSignContext
+    export CODE_SIGN_IDENTITY\=-
+    export CODE_SIGN_INJECT_BASE_ENTITLEMENTS\=YES
+    export CODE_SIGN_STYLE\=Automatic
+    export COLOR_DIAGNOSTICS\=NO
+    export COMBINE_HIDPI_IMAGES\=NO
+    export COMPILATION_CACHE_CAS_PATH\=/tmp/Glide151/DerivedData/CompilationCache.noindex
+    export COMPILATION_CACHE_KEEP_CAS_DIRECTORY\=YES
+    export COMPILER_INDEX_STORE_ENABLE\=NO
+    export COMPOSITE_SDK_DIRS\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/CompositeSDKs
+    export COMPRESS_PNG_FILES\=YES
+    export CONFIGURATION\=CompatibilityQA
+    export CONFIGURATION_BUILD_DIR\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator
+    export CONFIGURATION_TEMP_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator
+    export CONTENTS_FOLDER_PATH\=Glide.app
+    export CONTENTS_FOLDER_PATH_SHALLOW_BUNDLE_NO\=Glide.app/Contents
+    export CONTENTS_FOLDER_PATH_SHALLOW_BUNDLE_YES\=Glide.app
+    export COPYING_PRESERVES_HFS_DATA\=NO
+    export COPY_HEADERS_RUN_UNIFDEF\=NO
+    export COPY_PHASE_STRIP\=YES
+    export CORRESPONDING_DEVICE_PLATFORM_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform
+    export CORRESPONDING_DEVICE_PLATFORM_NAME\=iphoneos
+    export CORRESPONDING_DEVICE_SDK_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS27.0.sdk
+    export CORRESPONDING_DEVICE_SDK_NAME\=iphoneos27.0
+    export CP\=/bin/cp
+    export CREATE_INFOPLIST_SECTION_IN_BINARY\=NO
+    export CURRENT_ARCH\=undefined_arch
+    export CURRENT_PROJECT_VERSION\=1
+    export CURRENT_VARIANT\=normal
+    export DEAD_CODE_STRIPPING\=YES
+    export DEBUGGING_SYMBOLS\=YES
+    export DEBUG_INFORMATION_FORMAT\=dwarf-with-dsym
+    export DEBUG_INFORMATION_VERSION\=compiler-default
+    export DEFAULT_COMPILER\=com.apple.compilers.llvm.clang.1_0
+    export DEFAULT_DEXT_INSTALL_PATH\=/System/Library/DriverExtensions
+    export DEFAULT_KEXT_INSTALL_PATH\=/System/Library/Extensions
+    export DEFINES_MODULE\=NO
+    export DEPLOYMENT_LOCATION\=NO
+    export DEPLOYMENT_POSTPROCESSING\=NO
+    export DEPLOYMENT_TARGET_SETTING_NAME\=IPHONEOS_DEPLOYMENT_TARGET
+    export DEPLOYMENT_TARGET_SUGGESTED_VALUES\=15.0\ 15.1\ 15.2\ 15.3\ 15.4\ 15.5\ 15.6\ 16.0\ 16.1\ 16.2\ 16.3\ 16.4\ 16.5\ 16.6\ 17.0\ 17.1\ 17.2\ 17.3\ 17.4\ 17.5\ 17.6\ 18.0\ 18.1\ 18.2\ 18.3\ 18.4\ 18.5\ 18.6\ 26.0\ 26.2\ 26.3\ 26.4\ 26.5\ 26.6\ 27.0
+    export DERIVED_FILES_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/DerivedSources
+    export DERIVED_FILE_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/DerivedSources
+    export DERIVED_SOURCES_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/DerivedSources
+    export DEVELOPER_APPLICATIONS_DIR\=/Applications/Xcode.app/Contents/Developer/Applications
+    export DEVELOPER_BIN_DIR\=/Applications/Xcode.app/Contents/Developer/usr/bin
+    export DEVELOPER_DIR\=/Applications/Xcode.app/Contents/Developer
+    export DEVELOPER_FRAMEWORKS_DIR\=/Applications/Xcode.app/Contents/Developer/Library/Frameworks
+    export DEVELOPER_FRAMEWORKS_DIR_QUOTED\=/Applications/Xcode.app/Contents/Developer/Library/Frameworks
+    export DEVELOPER_LIBRARY_DIR\=/Applications/Xcode.app/Contents/Developer/Library
+    export DEVELOPER_SDK_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
+    export DEVELOPER_TOOLS_DIR\=/Applications/Xcode.app/Contents/Developer/Tools
+    export DEVELOPER_USR_DIR\=/Applications/Xcode.app/Contents/Developer/usr
+    export DEVELOPMENT_LANGUAGE\=zh_CN
+    export DEVELOPMENT_TEAM\=FR9RTRV9BC
+    export DIAGNOSE_MISSING_TARGET_DEPENDENCIES\=YES
+    export DIFF\=/usr/bin/diff
+    export DOCUMENTATION_FOLDER_PATH\=Glide.app/zh_CN.lproj/Documentation
+    export DONT_GENERATE_INFOPLIST_FILE\=NO
+    export DSTROOT\=/tmp/Glide.dst
+    export DT_TOOLCHAIN_DIR\=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
+    export DWARF_DSYM_FILE_NAME\=Glide.app.dSYM
+    export DWARF_DSYM_FILE_SHOULD_ACCOMPANY_PRODUCT\=NO
+    export DWARF_DSYM_FOLDER_PATH\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator
+    export DYNAMIC_LIBRARY_EXTENSION\=dylib
+    export EAGER_COMPILATION_ALLOW_SCRIPTS\=YES
+    export EAGER_LINKING\=NO
+    export EFFECTIVE_PLATFORM_NAME\=-iphonesimulator
+    export EFFECTIVE_SWIFT_VERSION\=5
+    export EMBEDDED_CONTENT_CONTAINS_SWIFT\=NO
+    export EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE\=NO
+    export ENABLE_APP_SANDBOX\=NO
+    export ENABLE_CODE_COVERAGE\=YES
+    export ENABLE_COHORT_ARCHS\=YES
+    export ENABLE_CPLUSPLUS_BOUNDS_SAFE_BUFFERS\=NO
+    export ENABLE_C_BOUNDS_SAFETY\=NO
+    export ENABLE_DEBUG_DYLIB\=YES
+    export ENABLE_DEFAULT_HEADER_SEARCH_PATHS\=YES
+    export ENABLE_DEFAULT_SEARCH_PATHS\=YES
+    export ENABLE_ENHANCED_SECURITY\=NO
+    export ENABLE_HARDENED_RUNTIME\=NO
+    export ENABLE_HARDWARE_CHECKED_POINTER_ARITHMETIC_SLICE\=NO
+    export ENABLE_HEADER_DEPENDENCIES\=YES
+    export ENABLE_INCOMING_NETWORK_CONNECTIONS\=NO
+    export ENABLE_ON_DEMAND_RESOURCES\=YES
+    export ENABLE_OUTGOING_NETWORK_CONNECTIONS\=NO
+    export ENABLE_POINTER_AUTHENTICATION\=NO
+    export ENABLE_PREVIEWS\=NO
+    export ENABLE_RESOURCE_ACCESS_AUDIO_INPUT\=NO
+    export ENABLE_RESOURCE_ACCESS_BLUETOOTH\=NO
+    export ENABLE_RESOURCE_ACCESS_CALENDARS\=NO
+    export ENABLE_RESOURCE_ACCESS_CAMERA\=NO
+    export ENABLE_RESOURCE_ACCESS_CONTACTS\=NO
+    export ENABLE_RESOURCE_ACCESS_LOCATION\=NO
+    export ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY\=NO
+    export ENABLE_RESOURCE_ACCESS_PRINTING\=NO
+    export ENABLE_RESOURCE_ACCESS_USB\=NO
+    export ENABLE_SDK_IMPORTS\=NO
+    export ENABLE_SECURITY_COMPILER_WARNINGS\=NO
+    export ENABLE_STRICT_OBJC_MSGSEND\=YES
+    export ENABLE_TESTABILITY\=YES
+    export ENABLE_TESTING_SEARCH_PATHS\=NO
+    export ENABLE_USER_SCRIPT_SANDBOXING\=YES
+    export ENABLE_XOJIT_PREVIEWS\=YES
+    export ENFORCE_VALID_ARCHS\=YES
+    export ENTITLEMENTS_ALLOWED\=NO
+    export ENTITLEMENTS_DESTINATION\=__entitlements
+    export ENTITLEMENTS_REQUIRED\=NO
+    export EXCLUDED_INSTALLSRC_SUBDIRECTORY_PATTERNS\=.DS_Store\ .svn\ .git\ .hg\ CVS
+    export EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES\=\*.nib\ \*.lproj\ \*.framework\ \*.gch\ \*.xcode\*\ \*.xcassets\ \*.icon\ \(\*\)\ .DS_Store\ CVS\ .svn\ .git\ .hg\ \*.pbproj\ \*.pbxproj
+    export EXECUTABLES_FOLDER_PATH\=Glide.app/Executables
+    export EXECUTABLE_BLANK_INJECTION_DYLIB_PATH\=Glide.app/__preview.dylib
+    export EXECUTABLE_DEBUG_DYLIB_INSTALL_NAME\=@rpath/Glide.debug.dylib
+    export EXECUTABLE_DEBUG_DYLIB_PATH\=Glide.app/Glide.debug.dylib
+    export EXECUTABLE_FOLDER_PATH\=Glide.app
+    export EXECUTABLE_FOLDER_PATH_SHALLOW_BUNDLE_NO\=Glide.app/MacOS
+    export EXECUTABLE_FOLDER_PATH_SHALLOW_BUNDLE_YES\=Glide.app
+    export EXECUTABLE_NAME\=Glide
+    export EXECUTABLE_PATH\=Glide.app/Glide
+    export EXPANDED_CODE_SIGN_IDENTITY\=-
+    export EXPANDED_CODE_SIGN_IDENTITY_NAME\=Sign\ to\ Run\ Locally
+    export EXTENSIONS_FOLDER_PATH\=Glide.app/Extensions
+    export FILE_LIST\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects/LinkFileList
+    export FIXED_FILES_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/FixedFiles
+    export FRAMEWORKS_FOLDER_PATH\=Glide.app/Frameworks
+    export FRAMEWORK_FLAG_PREFIX\=-framework
+    export FRAMEWORK_SEARCH_PATHS\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator\ 
+    export FRAMEWORK_VERSION\=A
+    export FULL_PRODUCT_NAME\=Glide.app
+    export FUSE_BUILD_PHASES\=YES
+    export FUSE_BUILD_SCRIPT_PHASES\=NO
+    export GCC3_VERSION\=3.3
+    export GCC_DYNAMIC_NO_PIC\=NO
+    export GCC_INLINES_ARE_PRIVATE_EXTERN\=YES
+    export GCC_NO_COMMON_BLOCKS\=YES
+    export GCC_OBJC_LEGACY_DISPATCH\=YES
+    export GCC_PFE_FILE_C_DIALECTS\=c\ objective-c\ c++\ objective-c++
+    export GCC_SYMBOLS_PRIVATE_EXTERN\=NO
+    export GCC_TREAT_WARNINGS_AS_ERRORS\=NO
+    export GCC_VERSION\=com.apple.compilers.llvm.clang.1_0
+    export GCC_VERSION_IDENTIFIER\=com_apple_compilers_llvm_clang_1_0
+    export GCC_WARN_64_TO_32_BIT_CONVERSION\=YES
+    export GCC_WARN_ABOUT_RETURN_TYPE\=YES
+    export GCC_WARN_UNDECLARED_SELECTOR\=YES
+    export GCC_WARN_UNINITIALIZED_AUTOS\=YES
+    export GCC_WARN_UNUSED_FUNCTION\=YES
+    export GCC_WARN_UNUSED_VARIABLE\=YES
+    export GENERATED_MODULEMAP_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/GeneratedModuleMaps-iphonesimulator
+    export GENERATE_INFOPLIST_FILE\=NO
+    export GENERATE_INTERMEDIATE_TEXT_BASED_STUBS\=YES
+    export GENERATE_PKGINFO_FILE\=YES
+    export GENERATE_PRELINK_OBJECT_FILE\=NO
+    export GENERATE_PROFILING_CODE\=NO
+    export GENERATE_TEXT_BASED_STUBS\=NO
+    export GID\=20
+    export GLIDE_DISPLAY_NAME\=Glide\ 兼容验证
+    export GROUP\=staff
+    export HEADERMAP_INCLUDES_FLAT_ENTRIES_FOR_TARGET_BEING_BUILT\=YES
+    export HEADERMAP_INCLUDES_FRAMEWORK_ENTRIES_FOR_ALL_PRODUCT_TYPES\=YES
+    export HEADERMAP_INCLUDES_FRAMEWORK_ENTRIES_FOR_TARGETS_NOT_BEING_BUILT\=YES
+    export HEADERMAP_INCLUDES_NONPUBLIC_NONPRIVATE_HEADERS\=YES
+    export HEADERMAP_INCLUDES_PROJECT_HEADERS\=YES
+    export HEADERMAP_USES_FRAMEWORK_PREFIX_ENTRIES\=YES
+    export HEADERMAP_USES_VFS\=NO
+    export HEADER_SEARCH_PATHS\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/include\ \ /Users/songpeng/code/github/tools/Glide/Glide/Services/SMB/Vendor
+    export HOME\=/Users/songpeng
+    export HOST_ARCH\=arm64
+    export HOST_PLATFORM\=macosx
+    export ICONV\=/usr/bin/iconv
+    export IMPLICIT_DEPENDENCY_DOMAIN\=default
+    export INDEX_ENABLE_OPTIMIZATION_LEVEL_OVERRIDE\=YES
+    export INDEX_STORE_COMPRESS\=NO
+    export INDEX_STORE_ONLY_PROJECT_FILES\=NO
+    export INFOPLIST_ENABLE_CFBUNDLEICONS_MERGE\=YES
+    export INFOPLIST_EXPAND_BUILD_SETTINGS\=YES
+    export INFOPLIST_FILE\=Glide/Info.plist
+    export INFOPLIST_OUTPUT_FORMAT\=binary
+    export INFOPLIST_PATH\=Glide.app/Info.plist
+    export INFOPLIST_PREPROCESS\=NO
+    export INFOSTRINGS_PATH\=Glide.app/zh_CN.lproj/InfoPlist.strings
+    export INLINE_PRIVATE_FRAMEWORKS\=NO
+    export INSTALLAPI_IGNORE_SKIP_INSTALL\=YES
+    export INSTALLHDRS_COPY_PHASE\=NO
+    export INSTALLHDRS_SCRIPT_PHASE\=NO
+    export INSTALL_DIR\=/tmp/Glide.dst/Applications
+    export INSTALL_GROUP\=staff
+    export INSTALL_MODE_FLAG\=u+w,go-w,a+rX
+    export INSTALL_OWNER\=songpeng
+    export INSTALL_PATH\=/Applications
+    export INSTALL_ROOT\=/tmp/Glide.dst
+    export IPHONEOS_DEPLOYMENT_TARGET\=17.0
+    export IS_UNOPTIMIZED_BUILD\=YES
+    export JAVAC_DEFAULT_FLAGS\=-J-Xms64m\ -J-XX:NewSize\=4M\ -J-Dfile.encoding\=UTF8
+    export JAVA_APP_STUB\=/System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub
+    export JAVA_ARCHIVE_CLASSES\=YES
+    export JAVA_ARCHIVE_TYPE\=JAR
+    export JAVA_COMPILER\=/usr/bin/javac
+    export JAVA_FOLDER_PATH\=Glide.app/Java
+    export JAVA_FRAMEWORK_RESOURCES_DIRS\=Resources
+    export JAVA_JAR_FLAGS\=cv
+    export JAVA_SOURCE_SUBDIR\=.
+    export JAVA_USE_DEPENDENCIES\=YES
+    export JAVA_ZIP_FLAGS\=-urg
+    export JIKES_DEFAULT_FLAGS\=+E\ +OLDCSO
+    export KEEP_PRIVATE_EXTERNS\=NO
+    export LD_DEPENDENCY_INFO_FILE\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/undefined_arch/Glide_dependency_info.dat
+    export LD_ENTITLEMENTS_SECTION\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide.app-Simulated.xcent
+    export LD_ENTITLEMENTS_SECTION_DER\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide.app-Simulated.xcent.der
+    export LD_EXPORT_GLOBAL_SYMBOLS\=YES
+    export LD_EXPORT_SYMBOLS\=YES
+    export LD_GENERATE_MAP_FILE\=NO
+    export LD_MAP_FILE_PATH\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide-LinkMap-normal-undefined_arch.txt
+    export LD_NO_PIE\=NO
+    export LD_QUOTE_LINKER_ARGUMENTS_FOR_COMPILER_DRIVER\=YES
+    export LD_RUNPATH_SEARCH_PATHS\=\ @executable_path/Frameworks
+    export LD_RUNPATH_SEARCH_PATHS_YES\=@loader_path/../Frameworks
+    export LD_SHARED_CACHE_ELIGIBLE\=Automatic
+    export LD_WARN_DUPLICATE_LIBRARIES\=NO
+    export LD_WARN_UNUSED_DYLIBS\=NO
+    export LEGACY_DEVELOPER_DIR\=/Applications/Xcode.app/Contents/PlugIns/Xcode3Core.ideplugin/Contents/SharedSupport/Developer
+    export LEX\=lex
+    export LIBRARY_DEXT_INSTALL_PATH\=/Library/DriverExtensions
+    export LIBRARY_FLAG_NOSPACE\=YES
+    export LIBRARY_FLAG_PREFIX\=-l
+    export LIBRARY_KEXT_INSTALL_PATH\=/Library/Extensions
+    export LIBRARY_SEARCH_PATHS\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator\ 
+    export LINKER_DISPLAYS_MANGLED_NAMES\=NO
+    export LINK_FILE_LIST_normal_arm64\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.LinkFileList
+    export LINK_OBJC_RUNTIME\=YES
+    export LINK_WITH_STANDARD_LIBRARIES\=YES
+    export LLVM_TARGET_TRIPLE_OS_VERSION\=ios17.0
+    export LLVM_TARGET_TRIPLE_SUFFIX\=-simulator
+    export LLVM_TARGET_TRIPLE_VENDOR\=apple
+    export LM_AUX_CONST_METADATA_LIST_PATH_normal_arm64\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.SwiftConstValuesFileList
+    export LOCALIZATION_EXPORT_SUPPORTED\=YES
+    export LOCALIZATION_PREFERS_STRING_CATALOGS\=NO
+    export LOCALIZED_RESOURCES_FOLDER_PATH\=Glide.app/zh_CN.lproj
+    export LOCALIZED_STRING_CODE_COMMENTS\=NO
+    export LOCALIZED_STRING_MACRO_NAMES\=NSLocalizedString\ CFCopyLocalizedString
+    export LOCALIZED_STRING_SWIFTUI_SUPPORT\=YES
+    export LOCAL_ADMIN_APPS_DIR\=/Applications/Utilities
+    export LOCAL_APPS_DIR\=/Applications
+    export LOCAL_DEVELOPER_DIR\=/Library/Developer
+    export LOCAL_LIBRARY_DIR\=/Library
+    export LOCROOT\=/Users/songpeng/code/github/tools/Glide
+    export LOCSYMROOT\=/Users/songpeng/code/github/tools/Glide
+    export MACH_O_TYPE\=mh_execute
+    export MAC_OS_X_PRODUCT_BUILD_VERSION\=26A434
+    export MAC_OS_X_VERSION_ACTUAL\=270001
+    export MAC_OS_X_VERSION_MAJOR\=270000
+    export MAC_OS_X_VERSION_MINOR\=270000
+    export MAKE_MERGEABLE\=NO
+    export MARKETING_VERSION\=1.6.0
+    export MERGEABLE_LIBRARY\=NO
+    export MERGED_BINARY_TYPE\=none
+    export MERGE_LINKED_LIBRARIES\=NO
+    export METAL_LIBRARY_FILE_BASE\=default
+    export METAL_LIBRARY_OUTPUT_DIR\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app
+    export MODULES_FOLDER_PATH\=Glide.app/Modules
+    export MODULE_CACHE_DIR\=/tmp/Glide151/DerivedData/ModuleCache.noindex
+    export NATIVE_ARCH\=arm64
+    export NATIVE_ARCH_32_BIT\=arm
+    export NATIVE_ARCH_64_BIT\=arm64
+    export NATIVE_ARCH_ACTUAL\=arm64
+    export NO_COMMON\=YES
+    export OBJC_ABI_VERSION\=2
+    export OBJECT_FILE_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects
+    export OBJECT_FILE_DIR_normal\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal
+    export OBJROOT\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex
+    export ONLY_ACTIVE_ARCH\=YES
+    export ONLY_ARCH\=arm64
+    export OS\=MACOS
+    export OSAC\=/usr/bin/osacompile
+    export OTHER_LDFLAGS\=\ -ObjC
+    export PACKAGE_TYPE\=com.apple.package-type.wrapper.application
+    export PASCAL_STRINGS\=YES
+    export PATH\=/Applications/Xcode.app/Contents/SharedFrameworks/SwiftBuild.framework/Versions/A/PlugIns/SWBBuildService.bundle/Contents/PlugIns/SWBUniversalPlatformPlugin.bundle/Contents/Frameworks/SWBUniversalPlatform.framework/Resources:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/local/bin:/Users/songpeng/.npm/_npx/99336612077b7094/node_modules/.bin:/Users/songpeng/code/github/tools/Glide/node_modules/.bin:/Users/songpeng/code/github/tools/node_modules/.bin:/Users/songpeng/code/github/node_modules/.bin:/Users/songpeng/code/node_modules/.bin:/Users/songpeng/node_modules/.bin:/Users/node_modules/.bin:/node_modules/.bin:/Users/songpeng/.vmr/versions/node_versions/node-24.6.0/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/Users/songpeng/.codex/tmp/arg0-macos/codex-arg0LNlnZR:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/songpeng/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/opt/homebrew/opt/ruby/bin:/Users/songpeng/.codebuddy/bin:/Users/songpeng/.local/bin:/Users/songpeng/.bun/bin:/Users/songpeng/.antigravity/antigravity/bin:/Users/songpeng/.vmr/versions/node_versions/node/bin:/Users/songpeng/.vmr:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/Users/songpeng/code/ios/flutter/bin:/Applications/极空间.app/Contents/Resources/app.asar.unpacked/bin/platform-tools:/Users/songpeng/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS
+    export PATH_PREFIXES_EXCLUDED_FROM_HEADER_DEPENDENCIES\=/usr/include\ /usr/local/include\ /System/Library/Frameworks\ /System/Library/PrivateFrameworks\ /Applications/Xcode.app/Contents/Developer/Headers\ /Applications/Xcode.app/Contents/Developer/SDKs\ /Applications/Xcode.app/Contents/Developer/Platforms
+    export PBDEVELOPMENTPLIST_PATH\=Glide.app/pbdevelopment.plist
+    export PER_ARCH_MODULE_FILE_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/undefined_arch
+    export PER_ARCH_OBJECT_FILE_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/undefined_arch
+    export PER_VARIANT_OBJECT_FILE_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal
+    export PKGINFO_FILE_PATH\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/PkgInfo
+    export PKGINFO_PATH\=Glide.app/PkgInfo
+    export PLATFORM_DEVELOPER_APPLICATIONS_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Applications
+    export PLATFORM_DEVELOPER_BIN_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin
+    export PLATFORM_DEVELOPER_LIBRARY_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library
+    export PLATFORM_DEVELOPER_SDK_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs
+    export PLATFORM_DEVELOPER_TOOLS_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Tools
+    export PLATFORM_DEVELOPER_USR_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr
+    export PLATFORM_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform
+    export PLATFORM_DISPLAY_NAME\=iOS\ Simulator
+    export PLATFORM_FAMILY_NAME\=iOS
+    export PLATFORM_NAME\=iphonesimulator
+    export PLATFORM_PREFERRED_ARCH\=x86_64
+    export PLATFORM_PRODUCT_BUILD_VERSION\=24A430
+    export PLATFORM_REQUIRES_SWIFT_AUTOLINK_EXTRACT\=NO
+    export PLATFORM_REQUIRES_SWIFT_MODULEWRAP\=NO
+    export PLATFORM_USES_DSYMS\=YES
+    export PLIST_FILE_OUTPUT_FORMAT\=binary
+    export PLUGINS_FOLDER_PATH\=Glide.app/PlugIns
+    export PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR\=YES
+    export PRECOMP_DESTINATION_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/PrefixHeaders
+    export PRELINK_DEPENDENCY_INFO_FILE\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/undefined_arch/Glide_prelink_dependency_info.dat
+    export PRIVATE_HEADERS_FOLDER_PATH\=Glide.app/PrivateHeaders
+    export PROCESSED_INFOPLIST_PATH\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/undefined_arch/Processed-Info.plist
+    export PRODUCT_BUNDLE_IDENTIFIER\=com.songpeng.glide.compatibilityqa
+    export PRODUCT_BUNDLE_PACKAGE_TYPE\=APPL
+    export PRODUCT_MODULE_NAME\=Glide
+    export PRODUCT_NAME\=Glide
+    export PRODUCT_SETTINGS_PATH\=/Users/songpeng/code/github/tools/Glide/Glide/Info.plist
+    export PRODUCT_TYPE\=com.apple.product-type.application
+    export PROFILING_CODE\=NO
+    export PROJECT\=Glide
+    export PROJECT_DERIVED_FILE_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/DerivedSources
+    export PROJECT_DIR\=/Users/songpeng/code/github/tools/Glide
+    export PROJECT_FILE_PATH\=/Users/songpeng/code/github/tools/Glide/Glide.xcodeproj
+    export PROJECT_GUID\=78aa2f6889821c8513a0eb70fda2691f
+    export PROJECT_NAME\=Glide
+    export PROJECT_TEMP_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build
+    export PROJECT_TEMP_ROOT\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex
+    export PROVISIONING_PROFILE_REQUIRED\=NO
+    export PROVISIONING_PROFILE_REQUIRED_YES_YES\=YES
+    export PROVISIONING_PROFILE_SUPPORTED\=YES
+    export PUBLIC_HEADERS_FOLDER_PATH\=Glide.app/Headers
+    export RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET\=17.0
+    export RECURSIVE_SEARCH_PATHS_FOLLOW_SYMLINKS\=YES
+    export REMOVE_CVS_FROM_RESOURCES\=YES
+    export REMOVE_GIT_FROM_RESOURCES\=YES
+    export REMOVE_HEADERS_FROM_EMBEDDED_BUNDLES\=YES
+    export REMOVE_HG_FROM_RESOURCES\=YES
+    export REMOVE_STATIC_EXECUTABLES_FROM_EMBEDDED_BUNDLES\=YES
+    export REMOVE_SVN_FROM_RESOURCES\=YES
+    export RESCHEDULE_INDEPENDENT_HEADERS_PHASES\=YES
+    export REZ_COLLECTOR_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/ResourceManagerResources
+    export REZ_OBJECTS_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/ResourceManagerResources/Objects
+    export REZ_SEARCH_PATHS\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator\ 
+    export RPATH_ORIGIN\=@loader_path
+    export RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES\=NO
+    export RUNTIME_EXCEPTION_ALLOW_JIT\=NO
+    export RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY\=NO
+    export RUNTIME_EXCEPTION_DEBUGGING_TOOL\=NO
+    export RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION\=NO
+    export RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION\=NO
+    export SCANNING_PCM_KEEP_CACHE_DIRECTORY\=YES
+    export SCAN_ALL_SOURCE_FILES_FOR_INCLUDES\=NO
+    export SCRIPTS_FOLDER_PATH\=Glide.app/Scripts
+    export SCRIPT_INPUT_FILE_0\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Frameworks/MobileVLCKit.framework/MobileVLCKit
+    export SCRIPT_INPUT_FILE_1\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/MobileVLCKit.framework.dSYM/Contents/Resources/DWARF/MobileVLCKit
+    export SCRIPT_INPUT_FILE_COUNT\=2
+    export SCRIPT_INPUT_FILE_LIST_COUNT\=0
+    export SCRIPT_OUTPUT_FILE_COUNT\=0
+    export SCRIPT_OUTPUT_FILE_LIST_COUNT\=0
+    export SDKROOT\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk
+    export SDK_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk
+    export SDK_DIR_iphonesimulator\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk
+    export SDK_DIR_iphonesimulator27_0\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk
+    export SDK_NAME\=iphonesimulator27.0
+    export SDK_NAMES\=iphonesimulator27.0
+    export SDK_PRODUCT_BUILD_VERSION\=24A430
+    export SDK_STAT_CACHE_DIR\=/tmp/Glide151/DerivedData
+    export SDK_STAT_CACHE_ENABLE\=YES
+    export SDK_STAT_CACHE_PATH\=/tmp/Glide151/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    export SDK_VERSION\=27.0
+    export SDK_VERSION_ACTUAL\=270000
+    export SDK_VERSION_MAJOR\=270000
+    export SDK_VERSION_MINOR\=270000
+    export SED\=/usr/bin/sed
+    export SEPARATE_STRIP\=NO
+    export SEPARATE_SYMBOL_EDIT\=NO
+    export SET_DIR_MODE_OWNER_GROUP\=YES
+    export SET_FILE_MODE_OWNER_GROUP\=NO
+    export SHALLOW_BUNDLE\=YES
+    export SHALLOW_BUNDLE_TRIPLE\=ios-simulator
+    export SHALLOW_BUNDLE_ios_macabi\=NO
+    export SHALLOW_BUNDLE_macos\=NO
+    export SHARED_DERIVED_FILE_DIR\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/DerivedSources
+    export SHARED_FRAMEWORKS_FOLDER_PATH\=Glide.app/SharedFrameworks
+    export SHARED_PRECOMPS_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/PrecompiledHeaders
+    export SHARED_SUPPORT_FOLDER_PATH\=Glide.app/SharedSupport
+    export SKIP_COPYING_TEST_FRAMEWORKS\=YES
+    export SKIP_INSTALL\=NO
+    export SKIP_MERGEABLE_LIBRARY_BUNDLE_HOOK\=NO
+    export SOURCE_ROOT\=/Users/songpeng/code/github/tools/Glide
+    export SRCROOT\=/Users/songpeng/code/github/tools/Glide
+    export STRINGSDATA_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/undefined_arch
+    export STRINGSDATA_ROOT\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build
+    export STRINGS_FILE_INFOPLIST_RENAME\=YES
+    export STRINGS_FILE_OUTPUT_ENCODING\=binary
+    export STRING_CATALOG_GENERATE_SYMBOLS\=YES
+    export STRIP_BITCODE_FROM_COPIED_FILES\=NO
+    export STRIP_INSTALLED_PRODUCT\=NO
+    export STRIP_STYLE\=all
+    export STRIP_SWIFT_SYMBOLS\=YES
+    export SUPPORTED_DEVICE_FAMILIES\=1,2
+    export SUPPORTED_PLATFORMS\=iphoneos\ iphonesimulator
+    export SUPPORTS_MACCATALYST\=NO
+    export SUPPORTS_ON_DEMAND_RESOURCES\=YES
+    export SUPPORTS_TEXT_BASED_API\=NO
+    export SUPPRESS_WARNINGS\=NO
+    export SWIFTC_PASS_SDKROOT\=YES
+    export SWIFTC_PASS_SYSROOT\=NO
+    export SWIFT_ACTIVE_COMPILATION_CONDITIONS\=DEBUG
+    export SWIFT_COLOR_DIAGNOSTICS\=NO
+    export SWIFT_EMIT_CONST_VALUE_PROTOCOLS\=AnyResolverProviding\ AppEntity\ AppEnum\ AppExtension\ AppIntent\ AppIntentsPackage\ AppShortcutProviding\ AppShortcutsProvider\ AppUnionValue\ AppUnionValueCasesProviding\ DynamicOptionsProvider\ EntityQuery\ ExtensionPointDefining\ IntentValueQuery\ Resolver\ TransientEntity\ _AssistantIntentsProvider\ _GenerativeFunctionExtractable\ _IntentValueRepresentable
+    export SWIFT_EMIT_LOC_STRINGS\=NO
+    export SWIFT_ENABLE_EXPLICIT_MODULES\=YES
+    export SWIFT_ENABLE_TESTABILITY\=YES
+    export SWIFT_OBJC_BRIDGING_HEADER\=Glide/Services/Compatibility/VLCClockPlayer.h
+    export SWIFT_OPTIMIZATION_LEVEL\=-Onone
+    export SWIFT_PLATFORM_TARGET_PREFIX\=ios
+    export SWIFT_RESPONSE_FILE_PATH_normal_arm64\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.SwiftFileList
+    export SWIFT_VERSION\=5.0
+    export SYMROOT\=/tmp/Glide151/DerivedData/Build/Products
+    export SYSROOT\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk
+    export SYSTEM_ADMIN_APPS_DIR\=/Applications/Utilities
+    export SYSTEM_APPS_DIR\=/Applications
+    export SYSTEM_CORE_SERVICES_DIR\=/System/Library/CoreServices
+    export SYSTEM_DEMOS_DIR\=/Applications/Extras
+    export SYSTEM_DEVELOPER_APPS_DIR\=/Applications/Xcode.app/Contents/Developer/Applications
+    export SYSTEM_DEVELOPER_BIN_DIR\=/Applications/Xcode.app/Contents/Developer/usr/bin
+    export SYSTEM_DEVELOPER_DEMOS_DIR\=/Applications/Xcode.app/Contents/Developer/Applications/Utilities/Built\ Examples
+    export SYSTEM_DEVELOPER_DIR\=/Applications/Xcode.app/Contents/Developer
+    export SYSTEM_DEVELOPER_DOC_DIR\=/Applications/Xcode.app/Contents/Developer/ADC\ Reference\ Library
+    export SYSTEM_DEVELOPER_GRAPHICS_TOOLS_DIR\=/Applications/Xcode.app/Contents/Developer/Applications/Graphics\ Tools
+    export SYSTEM_DEVELOPER_JAVA_TOOLS_DIR\=/Applications/Xcode.app/Contents/Developer/Applications/Java\ Tools
+    export SYSTEM_DEVELOPER_PERFORMANCE_TOOLS_DIR\=/Applications/Xcode.app/Contents/Developer/Applications/Performance\ Tools
+    export SYSTEM_DEVELOPER_RELEASENOTES_DIR\=/Applications/Xcode.app/Contents/Developer/ADC\ Reference\ Library/releasenotes
+    export SYSTEM_DEVELOPER_TOOLS\=/Applications/Xcode.app/Contents/Developer/Tools
+    export SYSTEM_DEVELOPER_TOOLS_DOC_DIR\=/Applications/Xcode.app/Contents/Developer/ADC\ Reference\ Library/documentation/DeveloperTools
+    export SYSTEM_DEVELOPER_TOOLS_RELEASENOTES_DIR\=/Applications/Xcode.app/Contents/Developer/ADC\ Reference\ Library/releasenotes/DeveloperTools
+    export SYSTEM_DEVELOPER_USR_DIR\=/Applications/Xcode.app/Contents/Developer/usr
+    export SYSTEM_DEVELOPER_UTILITIES_DIR\=/Applications/Xcode.app/Contents/Developer/Applications/Utilities
+    export SYSTEM_DEXT_INSTALL_PATH\=/System/Library/DriverExtensions
+    export SYSTEM_DOCUMENTATION_DIR\=/Library/Documentation
+    export SYSTEM_EXTENSIONS_FOLDER_PATH\=Glide.app/SystemExtensions
+    export SYSTEM_EXTENSIONS_FOLDER_PATH_SHALLOW_BUNDLE_NO\=Glide.app/Library/SystemExtensions
+    export SYSTEM_EXTENSIONS_FOLDER_PATH_SHALLOW_BUNDLE_YES\=Glide.app/SystemExtensions
+    export SYSTEM_KEXT_INSTALL_PATH\=/System/Library/Extensions
+    export SYSTEM_LIBRARY_DIR\=/System/Library
+    export TAPI_DEMANGLE\=YES
+    export TAPI_ENABLE_PROJECT_HEADERS\=NO
+    export TAPI_LANGUAGE\=objective-c
+    export TAPI_LANGUAGE_STANDARD\=compiler-default
+    export TAPI_USE_SRCROOT\=YES
+    export TAPI_VERIFY_MODE\=Pedantic
+    export TARGETED_DEVICE_FAMILY\=1,2
+    export TARGETNAME\=Glide
+    export TARGET_BUILD_DIR\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator
+    export TARGET_DEVICE_IDENTIFIER\=A517192E-7F4D-4ED6-9ADF-8E7E513C6913
+    export TARGET_DEVICE_MODEL\=iPad14,5
+    export TARGET_DEVICE_OS_VERSION\=26.3.1
+    export TARGET_DEVICE_PLATFORM_NAME\=iphonesimulator
+    export TARGET_NAME\=Glide
+    export TARGET_TEMP_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build
+    export TEMP_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build
+    export TEMP_FILES_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build
+    export TEMP_FILE_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build
+    export TEMP_ROOT\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex
+    export TEMP_SANDBOX_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/TemporaryTaskSandboxes
+    export TEST_FRAMEWORK_SEARCH_PATHS\=\ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks\ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks
+    export TEST_LIBRARY_SEARCH_PATHS\=\ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib
+    export TOOLCHAINS\=com.apple.dt.toolchain.XcodeDefault
+    export TOOLCHAIN_DIR\=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
+    export TREAT_MISSING_BASELINES_AS_TEST_FAILURES\=NO
+    export TREAT_MISSING_SCRIPT_PHASE_OUTPUTS_AS_ERRORS\=NO
+    export TeamIdentifierPrefix\=FR9RTRV9BC.
+    export UID\=501
+    export UNINSTALLED_PRODUCTS_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/UninstalledProducts
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH\=Glide.app
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH_SHALLOW_BUNDLE_NO\=Glide.app/Resources
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH_SHALLOW_BUNDLE_YES\=Glide.app
+    export UNSTRIPPED_PRODUCT\=NO
+    export USER\=songpeng
+    export USER_APPS_DIR\=/Users/songpeng/Applications
+    export USER_LIBRARY_DIR\=/Users/songpeng/Library
+    export USE_DYNAMIC_NO_PIC\=YES
+    export USE_HEADERMAP\=YES
+    export USE_HEADER_SYMLINKS\=NO
+    export VALIDATE_DEVELOPMENT_ASSET_PATHS\=YES_ERROR
+    export VALIDATE_PRODUCT\=NO
+    export VALID_ARCHS\=arm64\ x86_64
+    export VERBOSE_PBXCP\=NO
+    export VERSIONPLIST_PATH\=Glide.app/version.plist
+    export VERSION_INFO_BUILDER\=songpeng
+    export VERSION_INFO_FILE\=Glide_vers.c
+    export VERSION_INFO_STRING\=\"@\(\#\)PROGRAM:Glide\ \ PROJECT:Glide-1\"
+    export WORKSPACE_DIR\=/Users/songpeng/code/github/tools/Glide/Glide.xcodeproj
+    export WRAPPER_EXTENSION\=app
+    export WRAPPER_NAME\=Glide.app
+    export WRAPPER_SUFFIX\=.app
+    export WRAP_ASSET_PACKS_IN_SEPARATE_DIRECTORIES\=NO
+    export XCODE_APP_SUPPORT_DIR\=/Applications/Xcode.app/Contents/Developer/Library/Xcode
+    export XCODE_PRODUCT_BUILD_VERSION\=27A266a
+    export XCODE_VERSION_ACTUAL\=2700
+    export XCODE_VERSION_MAJOR\=2700
+    export XCODE_VERSION_MINOR\=2700
+    export XPCSERVICES_FOLDER_PATH\=Glide.app/XPCServices
+    export YACC\=yacc
+    export _DISCOVER_COMMAND_LINE_LINKER_INPUTS\=YES
+    export _DISCOVER_COMMAND_LINE_LINKER_INPUTS_INCLUDE_WL\=YES
+    export _LD_MULTIARCH\=YES
+    export _SWIFT_EXPLICIT_MODULES_ALLOW_CXX_INTEROP\=YES
+    export _WRAPPER_CONTENTS_DIR_SHALLOW_BUNDLE_NO\=/Contents
+    export _WRAPPER_PARENT_PATH_SHALLOW_BUNDLE_NO\=/..
+    export _WRAPPER_RESOURCES_DIR_SHALLOW_BUNDLE_NO\=/Resources
+    export __ARCHS__\=arm64\ x86_64
+    export __DIAGNOSE_DEPRECATED_ARCHS\=YES
+    export __DIAGNOSE_INVALID_DEPLOYMENT_TARGET_AS_ERROR\=YES
+    export __IS_NOT_MACOS\=YES
+    export __IS_NOT_MACOS_macosx\=NO
+    export __IS_NOT_SIMULATOR\=NO
+    export __IS_NOT_SIMULATOR_simulator\=NO
+    export __ORIGINAL_SDK_DEFINED_LLVM_TARGET_TRIPLE_SYS\=ios
+    export arch\=undefined_arch
+    export variant\=normal
+    /usr/bin/sandbox-exec -D SCRIPT_INPUT_FILE_0\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Frameworks/MobileVLCKit.framework/MobileVLCKit -D SCRIPT_INPUT_FILE_1\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/MobileVLCKit.framework.dSYM/Contents/Resources/DWARF/MobileVLCKit -D SCRIPT_INPUT_FILE_2\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Script-3BD6878CCC01257E98E319FF.sh -D SCRIPT_INPUT_ANCESTOR_0\=/ -D SCRIPT_INPUT_ANCESTOR_1\=/tmp -D SCRIPT_INPUT_ANCESTOR_2\=/tmp/Glide151 -D SCRIPT_INPUT_ANCESTOR_3\=/tmp/Glide151/DerivedData -D SCRIPT_INPUT_ANCESTOR_4\=/tmp/Glide151/DerivedData/Build -D SCRIPT_INPUT_ANCESTOR_5\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex -D SCRIPT_INPUT_ANCESTOR_6\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build -D SCRIPT_INPUT_ANCESTOR_7\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator -D SCRIPT_INPUT_ANCESTOR_8\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build -D SCRIPT_INPUT_ANCESTOR_9\=/tmp/Glide151/DerivedData/Build/Products -D SCRIPT_INPUT_ANCESTOR_10\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -D SCRIPT_INPUT_ANCESTOR_11\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app -D SCRIPT_INPUT_ANCESTOR_12\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Frameworks -D SCRIPT_INPUT_ANCESTOR_13\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Frameworks/MobileVLCKit.framework -D SCRIPT_INPUT_ANCESTOR_14\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/MobileVLCKit.framework.dSYM -D SCRIPT_INPUT_ANCESTOR_15\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/MobileVLCKit.framework.dSYM/Contents -D SCRIPT_INPUT_ANCESTOR_16\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/MobileVLCKit.framework.dSYM/Contents/Resources -D SCRIPT_INPUT_ANCESTOR_17\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/MobileVLCKit.framework.dSYM/Contents/Resources/DWARF -D SRCROOT\=/Users/songpeng/code/github/tools/Glide -D PROJECT_DIR\=/Users/songpeng/code/github/tools/Glide -D OBJROOT\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex -D SYMROOT\=/tmp/Glide151/DerivedData/Build/Products -D DSTROOT\=/tmp/Glide.dst -D SHARED_PRECOMPS_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/PrecompiledHeaders -D CACHE_ROOT\=/var/folders/fs/s4nwlcbs4wv2j7q7fwxk1z3r0000gn/C/com.apple.DeveloperTools/27.0-27A266a/Xcode -D CONFIGURATION_BUILD_DIR\=/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -D CONFIGURATION_TEMP_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator -D LOCROOT\=/Users/songpeng/code/github/tools/Glide -D LOCSYMROOT\=/Users/songpeng/code/github/tools/Glide -D INDEX_PRECOMPS_DIR\=/tmp/Glide151/DerivedData/Index.noindex/PrecompiledHeaders -D INDEX_DATA_STORE_DIR\=/tmp/Glide151/DerivedData/Index.noindex/DataStore -D TEMP_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build -D TARGET_TEMP_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build -D DERIVED_FILE_DIR\=/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/DerivedSources -f /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/b668e2539296825f9071475ee6891143.sb /bin/sh -c /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Script-3BD6878CCC01257E98E319FF.sh
+
+GenerateDSYMFile /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app.dSYM /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Glide.debug.dylib (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    export PATH\=/Applications/Xcode.app/Contents/SharedFrameworks/SwiftBuild.framework/Versions/A/PlugIns/SWBBuildService.bundle/Contents/PlugIns/SWBUniversalPlatformPlugin.bundle/Contents/Frameworks/SWBUniversalPlatform.framework/Resources:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/local/bin:/Users/songpeng/.npm/_npx/99336612077b7094/node_modules/.bin:/Users/songpeng/code/github/tools/Glide/node_modules/.bin:/Users/songpeng/code/github/tools/node_modules/.bin:/Users/songpeng/code/github/node_modules/.bin:/Users/songpeng/code/node_modules/.bin:/Users/songpeng/node_modules/.bin:/Users/node_modules/.bin:/node_modules/.bin:/Users/songpeng/.vmr/versions/node_versions/node-24.6.0/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/Users/songpeng/.codex/tmp/arg0-macos/codex-arg0LNlnZR:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/songpeng/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/opt/homebrew/opt/ruby/bin:/Users/songpeng/.codebuddy/bin:/Users/songpeng/.local/bin:/Users/songpeng/.bun/bin:/Users/songpeng/.antigravity/antigravity/bin:/Users/songpeng/.vmr/versions/node_versions/node/bin:/Users/songpeng/.vmr:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/Users/songpeng/code/ios/flutter/bin:/Applications/极空间.app/Contents/Resources/app.asar.unpacked/bin/platform-tools:/Users/songpeng/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Glide.debug.dylib -o /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app.dSYM
+
+ExtractAppIntentsMetadata (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name Glide --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk --xcode-version 27A266a --platform-family iOS --deployment-target 17.0 --bundle-identifier com.songpeng.glide.compatibilityqa --output /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app --target-triple arm64-apple-ios17.0-simulator --binary-file /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Glide --dependency-file /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide_dependency_info.dat --stringsdata-file /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.SwiftFileList --metadata-file-list /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide.DependencyMetadataFileList --static-metadata-file-list /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Glide.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/Objects-normal/arm64/Glide.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-10-20 11:24:51.978 appintentsmetadataprocessor[99026:44180972] Starting appintentsmetadataprocessor export
+2026-10-20 11:24:51.995 appintentsmetadataprocessor[99026:44180972] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+CopySwiftLibs /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Glide.debug.dylib --scan-folder /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Frameworks --scan-folder /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/PlugIns --scan-folder /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/SystemExtensions --scan-folder /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Extensions --scan-folder /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/QuartzCore.framework --scan-folder /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/CoreText.framework --scan-folder /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/AVFoundation.framework --scan-folder /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Security.framework --scan-folder /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/CFNetwork.framework --scan-folder /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/AudioToolbox.framework --scan-folder /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/OpenGLES.framework --scan-folder /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/CoreGraphics.framework --scan-folder /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/VideoToolbox.framework --scan-folder /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/CoreMedia.framework --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/Glide.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+CodeSign /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Glide.debug.dylib (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/Glide.debug.dylib
+
+CodeSign /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/__preview.dylib (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/__preview.dylib
+/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app/__preview.dylib: replacing existing signature
+
+CodeSign /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app
+
+Validate /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app (in target 'Glide' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-validationUtility /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/Glide.app -shallow-bundle -infoplist-subpath Info.plist
+
+SwiftDriverJobDiscovery normal arm64 Compiling GlideUITests.swift (in target 'GlideUITests' from project 'Glide')
+
+SwiftDriver\ Compilation GlideUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'GlideUITests' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name GlideUITests -O @/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests.SwiftFileList -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /tmp/Glide151/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -swift-version 5 -I /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/Glide151/DerivedData/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/Glide151/DerivedData/ModuleCache.noindex -sdk-module-cache-path /tmp/Glide151/DerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/Glide151/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests-generated-files.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests-own-target-headers.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests-project-headers.hmap -Xcc -I/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/include -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/DerivedSources/arm64 -Xcc -I/tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests-Swift.h -working-directory /Users/songpeng/code/github/tools/Glide -experimental-emit-module-separately -disable-cmo
+
+Ld /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest/GlideUITests normal (in target 'GlideUITests' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -Os -Xlinker -no_warn_duplicate_libraries -L/tmp/Glide151/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/CompatibilityQA-iphonesimulator -L/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -L/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/tmp/Glide151/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/CompatibilityQA-iphonesimulator -F/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -filelist /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests_lto.o -rdynamic -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests.swiftmodule -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests.xctest-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests.xctest-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest/GlideUITests
+
+GenerateDSYMFile /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest.dSYM /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest/GlideUITests (in target 'GlideUITests' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    export PATH\=/Applications/Xcode.app/Contents/SharedFrameworks/SwiftBuild.framework/Versions/A/PlugIns/SWBBuildService.bundle/Contents/PlugIns/SWBUniversalPlatformPlugin.bundle/Contents/Frameworks/SWBUniversalPlatform.framework/Resources:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/local/bin:/Users/songpeng/.npm/_npx/99336612077b7094/node_modules/.bin:/Users/songpeng/code/github/tools/Glide/node_modules/.bin:/Users/songpeng/code/github/tools/node_modules/.bin:/Users/songpeng/code/github/node_modules/.bin:/Users/songpeng/code/node_modules/.bin:/Users/songpeng/node_modules/.bin:/Users/node_modules/.bin:/node_modules/.bin:/Users/songpeng/.vmr/versions/node_versions/node-24.6.0/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/Users/songpeng/.codex/tmp/arg0-macos/codex-arg0LNlnZR:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/songpeng/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/opt/homebrew/opt/ruby/bin:/Users/songpeng/.codebuddy/bin:/Users/songpeng/.local/bin:/Users/songpeng/.bun/bin:/Users/songpeng/.antigravity/antigravity/bin:/Users/songpeng/.vmr/versions/node_versions/node/bin:/Users/songpeng/.vmr:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/Users/songpeng/code/ios/flutter/bin:/Applications/极空间.app/Contents/Resources/app.asar.unpacked/bin/platform-tools:/Users/songpeng/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest/GlideUITests -o /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest.dSYM
+
+ExtractAppIntentsMetadata (in target 'GlideUITests' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name GlideUITests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk --xcode-version 27A266a --platform-family iOS --deployment-target 17.0 --bundle-identifier com.songpeng.glide.compatibilityqa.uitests --output /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest --target-triple arm64-apple-ios17.0-simulator --binary-file /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest/GlideUITests --dependency-file /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests_dependency_info.dat --stringsdata-file /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests.SwiftFileList --metadata-file-list /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests.DependencyMetadataFileList --static-metadata-file-list /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/GlideUITests.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/Objects-normal/arm64/GlideUITests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-10-20 11:24:59.526 appintentsmetadataprocessor[99152:44181484] Starting appintentsmetadataprocessor export
+2026-10-20 11:24:59.544 appintentsmetadataprocessor[99152:44181484] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+CopySwiftLibs /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest (in target 'GlideUITests' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest/GlideUITests --scan-folder /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest/Frameworks --scan-folder /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest/PlugIns --scan-folder /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest/SystemExtensions --scan-folder /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/Glide151/DerivedData/Build/Intermediates.noindex/Glide.build/CompatibilityQA-iphonesimulator/GlideUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+CodeSign /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest (in target 'GlideUITests' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app/PlugIns/GlideUITests.xctest
+
+CodeSign /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app (in target 'GlideUITests' from project 'Glide')
+    cd /Users/songpeng/code/github/tools/Glide
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app
+/tmp/Glide151/DerivedData/Build/Products/CompatibilityQA-iphonesimulator/GlideUITests-Runner.app: replacing existing signature
+
+PruneExplicitPrecompiledModules /tmp/Glide151/DerivedData/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/Glide151/DerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/Glide151/DerivedData/SDKExplicitPrecompiledModules
+
+** TEST BUILD SUCCEEDED **
+
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -testProductsPath /Users/songpeng/Library/Developer/XcodeBuildMCP/workspaces/Glide-c699267400c0/test-products/test_sim_2026-10-20T03-24-40-187Z_pid66807_f0141c93.xctestproducts -destination "platform=iOS Simulator,id=A517192E-7F4D-4ED6-9ADF-8E7E513C6913" -collect-test-diagnostics never -jobs 2 -parallel-testing-enabled NO "-only-testing:GlideUITests/GlideUITests/testLinkPlaybackSkipMemoryAndCRUD" "-only-testing:GlideUITests/GlideUITests/testLinkSkipProductionProbe" "-only-testing:GlideUITests/GlideUITests/testNativeTrackSelection" -resultBundlePath /Users/songpeng/Library/Developer/XcodeBuildMCP/workspaces/Glide-c699267400c0/result-bundles/test_sim_2026-10-20T03-24-40-187Z_pid66807_be6212dc.xcresult test-without-building
+
+Writing result bundle at path:
+	/Users/songpeng/Library/Developer/XcodeBuildMCP/workspaces/Glide-c699267400c0/result-bundles/test_sim_2026-10-20T03-24-40-187Z_pid66807_be6212dc.xcresult
+
+2026-10-20 11:25:08.581305+0800 GlideUITests-Runner[99241:44182128] [Default] Running tests...
+2026-10-20 11:25:08.671526+0800 GlideUITests-Runner[99241:44182128] [UIKit App Config] Update the Info.plist: Launch screens will soon be required.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-20 11:25:09.984.
+Test Suite 'GlideUITests.xctest' started at 2026-10-20 11:25:09.989.
+Test Suite 'GlideUITests' started at 2026-10-20 11:25:09.989.
+Test Case '-[GlideUITests.GlideUITests testLinkPlaybackSkipMemoryAndCRUD]' started.
+    t =     0.00s Start Test at 2026-10-20 11:25:09.990
+    t =     0.15s Set Up
+    t =     0.15s Open com.songpeng.glide.compatibilityqa
+    t =     0.15s     Launch com.songpeng.glide.compatibilityqa
+2026-10-20 11:25:10.819 xcodebuild[99181:44181567] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-20 11:25:10.820 xcodebuild[99181:44181567] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     4.88s         Setting up automation session
+    t =     7.30s         Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    10.96s Waiting 10.0s for "links.open" Button to exist
+    t =    11.99s     Checking `Expect predicate `existsNoRetry == 1` for object "links.open" Button`
+    t =    12.00s         Checking existence of `"links.open" Button`
+    t =    12.49s Press "links.open" Button[0.50, 0.50] for 0.2 seconds
+    t =    12.49s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    12.50s     Find the "links.open" Button
+    t =    12.58s     Check for interrupting elements affecting "links.open" Button
+    t =    12.80s         Wait for com.apple.springboard to idle
+    t =    12.97s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    12.97s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    12.98s     Synthesize event
+    t =    12.98s         Find the "links.open" Button
+    t =    13.04s         Find the "links.open" Button
+    t =    13.09s         Find the "links.open" Button
+    t =    13.60s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    14.39s Waiting 3.0s for "links.add" Button to exist
+    t =    15.43s     Checking `Expect predicate `existsNoRetry == 1` for object "links.add" Button`
+    t =    15.46s         Checking existence of `"links.add" Button`
+    t =    15.75s Press "links.add" Button[0.50, 0.50] for 0.2 seconds
+    t =    15.75s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    15.76s     Find the "links.add" Button
+    t =    15.83s     Check for interrupting elements affecting "links.add" Button
+    t =    16.08s         Wait for com.apple.springboard to idle
+    t =    16.18s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    16.19s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    16.20s     Synthesize event
+    t =    16.20s         Find the "links.add" Button
+    t =    16.29s         Find the "links.add" Button
+    t =    16.36s         Find the "links.add" Button
+    t =    16.89s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    17.30s Waiting 5.0s for "links.name" TextField to exist
+    t =    18.33s     Checking `Expect predicate `existsNoRetry == 1` for object "links.name" TextField`
+    t =    18.33s         Checking existence of `"links.name" TextField`
+    t =    19.23s Press "links.name" TextField[0.50, 0.50] for 0.2 seconds
+    t =    19.23s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    19.24s     Find the "links.name" TextField
+    t =    19.33s     Check for interrupting elements affecting "links.name" TextField
+    t =    19.42s         Wait for com.apple.springboard to idle
+    t =    19.44s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    19.45s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    19.45s     Synthesize event
+    t =    19.45s         Find the "links.name" TextField
+    t =    19.52s         Find the "links.name" TextField
+    t =    19.60s         Find the "links.name" TextField
+    t =    20.12s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    21.32s Type '1.6 UI 57ECC6' into "links.name" TextField
+    t =    21.32s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    21.66s     Find the "links.name" TextField
+    t =    21.90s     Check for interrupting elements affecting "links.name" TextField
+    t =    21.98s         Wait for com.apple.springboard to idle
+    t =    22.02s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    22.03s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    22.03s     Synthesize event
+    t =    22.45s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    22.46s Press "links.address" Any[0.50, 0.50] for 0.2 seconds
+    t =    22.46s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    22.46s     Find the "links.address" Any
+    t =    22.57s     Check for interrupting elements affecting "links.address" TextField
+    t =    22.67s         Wait for com.apple.springboard to idle
+    t =    22.70s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    22.70s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    22.71s     Synthesize event
+    t =    22.71s         Find the "links.address" TextField
+    t =    22.82s         Find the "links.address" TextField
+    t =    22.94s         Find the "links.address" TextField
+    t =    23.49s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    23.96s Type 'file:///private/mo...' into "links.address" TextField
+    t =    23.96s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    23.97s     Find the "links.address" TextField
+    t =    24.10s     Check for interrupting elements affecting "links.address" TextField
+    t =    24.19s         Wait for com.apple.springboard to idle
+    t =    24.23s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    24.23s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    24.24s     Synthesize event
+    t =    24.86s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    24.86s Press "links.save" Button[0.50, 0.50] for 0.2 seconds
+    t =    24.86s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    24.86s     Find the "links.save" Button
+    t =    24.96s     Check for interrupting elements affecting "links.save" Button
+    t =    25.04s         Wait for com.apple.springboard to idle
+    t =    25.08s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    25.08s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    25.08s     Synthesize event
+    t =    25.09s         Find the "links.save" Button
+    t =    25.19s         Find the "links.save" Button
+    t =    25.28s         Find the "links.save" Button
+    t =    25.83s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    26.82s Waiting 5.0s for "links.error" StaticText to exist
+    t =    27.85s     Checking `Expect predicate `existsNoRetry == 1` for object "links.error" StaticText`
+    t =    27.86s         Checking existence of `"links.error" StaticText`
+    t =    28.08s Press "links.address" TextField[0.50, 0.50] for 0.2 seconds
+    t =    28.08s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    28.08s     Find the "links.address" TextField
+    t =    28.18s     Check for interrupting elements affecting "links.address" TextField
+    t =    28.45s         Wait for com.apple.springboard to idle
+    t =    28.56s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    28.56s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    28.58s     Synthesize event
+    t =    28.58s         Find the "links.address" TextField
+    t =    28.69s         Find the "links.address" TextField
+    t =    28.79s         Find the "links.address" TextField
+    t =    29.34s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    29.35s Type '...' into "links.address" TextField
+    t =    29.35s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    29.35s     Find the "links.address" TextField
+    t =    29.46s     Check for interrupting elements affecting "links.address" TextField
+    t =    29.55s         Wait for com.apple.springboard to idle
+    t =    29.58s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    29.58s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    29.59s     Synthesize event
+    t =    31.28s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    31.29s Press "links.save" Button[0.50, 0.50] for 0.2 seconds
+    t =    31.29s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    31.29s     Find the "links.save" Button
+    t =    31.44s     Check for interrupting elements affecting "links.save" Button
+    t =    31.54s         Wait for com.apple.springboard to idle
+    t =    31.58s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    31.58s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    31.59s     Synthesize event
+    t =    31.59s         Find the "links.save" Button
+    t =    31.69s         Find the "links.save" Button
+    t =    31.82s         Find the "links.save" Button
+    t =    32.39s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    33.55s Waiting 5.0s for Button (First Match) to exist
+    t =    34.57s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    34.58s         Checking existence of `Button (First Match)`
+    t =    34.86s Find the Button (First Match)
+    t =    35.05s Waiting 10.0s for "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button to exist
+    t =    36.07s     Checking `Expect predicate `existsNoRetry == 1` for object "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button`
+    t =    36.07s         Checking existence of `"links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button`
+    t =    36.23s Tap "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button
+    t =    36.23s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    36.23s     Find the "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button
+    t =    36.33s     Check for interrupting elements affecting "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button
+    t =    36.55s         Wait for com.apple.springboard to idle
+    t =    36.65s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    36.65s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    36.67s     Synthesize event
+    t =    37.02s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    39.01s Checking `Expect predicate `label CONTAINS "已显示画面"` for object "player.canvas" Other`
+    t =    39.01s     Find the "player.canvas" Other
+    t =    39.20s Checking existence of `"暂停" Button`
+    t =    39.29s Tap "暂停" Button
+    t =    39.29s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    39.30s     Find the "暂停" Button
+    t =    39.40s     Check for interrupting elements affecting "pause.fill" Button
+    t =    39.50s         Wait for com.apple.springboard to idle
+    t =    39.53s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    39.53s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    39.53s     Synthesize event
+    t =    39.85s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    39.85s Tap "播放设置" Button
+    t =    39.85s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    39.86s     Find the "播放设置" Button
+    t =    39.99s     Check for interrupting elements affecting "ellipsis" Button
+    t =    40.09s         Wait for com.apple.springboard to idle
+    t =    40.11s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    40.11s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    40.12s     Synthesize event
+    t =    40.42s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    41.10s Waiting 3.0s for "player.settings.list" CollectionView to exist
+    t =    42.13s     Checking `Expect predicate `existsNoRetry == 1` for object "player.settings.list" CollectionView`
+    t =    42.14s         Checking existence of `"player.settings.list" CollectionView`
+    t =    42.39s Find the "player.skip.settings" Button
+    t =    42.58s Find the "player.skip.settings" Button
+    t =    42.72s Press "player.skip.settings" Button for 0.1 seconds
+    t =    42.72s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    42.73s     Find the "player.skip.settings" Button
+    t =    42.86s     Check for interrupting elements affecting "player.skip.settings" Button
+    t =    43.13s         Wait for com.apple.springboard to idle
+    t =    43.25s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    43.26s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    43.27s     Synthesize event
+    t =    43.65s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    45.22s Waiting 3.0s for "skip.intro" TextField to exist
+    t =    46.24s     Checking `Expect predicate `existsNoRetry == 1` for object "skip.intro" TextField`
+    t =    46.25s         Checking existence of `"skip.intro" TextField`
+    t =    46.52s Checking existence of `"skip.intro" TextField`
+    t =    46.64s Press "skip.intro" TextField[0.98, 0.50] for 0.2 seconds
+    t =    46.64s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    46.64s     Find the "skip.intro" TextField
+    t =    46.75s     Check for interrupting elements affecting "skip.intro" TextField
+    t =    47.07s         Wait for com.apple.springboard to idle
+    t =    47.17s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    47.17s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    47.18s     Synthesize event
+    t =    47.18s         Find the "skip.intro" TextField
+    t =    47.32s         Find the "skip.intro" TextField
+    t =    47.44s         Find the "skip.intro" TextField
+    t =    48.02s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    48.78s Type '13' into "skip.intro" TextField
+    t =    48.78s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    49.21s     Find the "skip.intro" TextField
+    t =    49.43s     Check for interrupting elements affecting "skip.intro" TextField
+    t =    49.56s         Wait for com.apple.springboard to idle
+    t =    49.60s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    49.60s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    49.61s     Synthesize event
+    t =    50.01s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    50.14s Find the "skip.intro" TextField
+    t =    50.32s Find the "skip.save" Button
+    t =    50.46s Press "skip.save" Button[0.50, 0.50] for 0.2 seconds
+    t =    50.46s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    50.47s     Find the "skip.save" Button
+    t =    50.61s     Check for interrupting elements affecting "skip.save" Button
+    t =    50.78s         Wait for com.apple.springboard to idle
+    t =    50.81s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    50.82s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    50.82s     Synthesize event
+    t =    50.82s         Find the "skip.save" Button
+    t =    50.99s         Find the "skip.save" Button
+    t =    51.15s         Find the "skip.save" Button
+    t =    51.74s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    52.20s Waiting 2.0s for "无法保存规则" Alert to exist
+    t =    53.22s     Checking `Expect predicate `existsNoRetry == 1` for object "无法保存规则" Alert`
+    t =    53.24s         Checking existence of `"无法保存规则" Alert`
+    t =    53.49s         Capturing element debug description
+    t =    54.20s     Checking `Expect predicate `existsNoRetry == 1` for object "无法保存规则" Alert`
+    t =    54.21s         Checking existence of `"无法保存规则" Alert`
+    t =    54.35s         Capturing element debug description
+    t =    54.37s     Checking existence of `"无法保存规则" Alert`
+    t =    54.51s Collecting debug information to assist test failure triage
+    t =    54.51s     Requesting snapshot of accessibility hierarchy for app with pid 99309
+    t =    55.86s Press "skip.save" Button[0.50, 0.50] for 0.2 seconds
+    t =    55.86s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    55.87s     Find the "skip.save" Button
+    t =    56.03s     Check for interrupting elements affecting "skip.save" Button
+    t =    56.26s         Wait for com.apple.springboard to idle
+    t =    56.38s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    56.38s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    56.39s     Synthesize event
+    t =    56.42s         Find the "skip.save" Button
+    t =    56.56s         Find the "skip.save" Button
+    t =    56.71s         Find the "skip.save" Button
+    t =    57.31s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    58.71s Waiting 2.0s for "无法保存规则" Alert to exist
+    t =    59.72s     Checking `Expect predicate `existsNoRetry == 1` for object "无法保存规则" Alert`
+    t =    59.73s         Checking existence of `"无法保存规则" Alert`
+    t =    59.98s Waiting 5.0s for "无法保存规则" Alert to exist
+    t =    61.03s     Checking `Expect predicate `existsNoRetry == 1` for object "无法保存规则" Alert`
+    t =    61.04s         Checking existence of `"无法保存规则" Alert`
+    t =    61.25s Checking existence of `StaticText (First Match)`
+    t =    61.38s Press "知道了" Button for 0.2 seconds
+    t =    61.38s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    61.39s     Find the "知道了" Button
+    t =    61.52s     Check for interrupting elements affecting "知道了" Button
+    t =    61.81s         Wait for com.apple.springboard to idle
+    t =    61.96s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    61.97s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    61.98s     Synthesize event
+    t =    62.50s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    64.95s Checking `Expect predicate `exists == 0` for object "无法保存规则" Alert`
+    t =    64.96s     Checking existence of `"无法保存规则" Alert`
+    t =    65.36s Checking existence of `"无法保存规则" Alert`
+    t =    65.50s Press "skip.intro" TextField[0.98, 0.50] for 0.2 seconds
+    t =    65.50s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    65.50s     Find the "skip.intro" TextField
+    t =    65.63s     Check for interrupting elements affecting "skip.intro" TextField
+    t =    65.88s         Wait for com.apple.springboard to idle
+    t =    66.00s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    66.00s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    66.02s     Synthesize event
+    t =    66.05s         Find the "skip.intro" TextField
+    t =    66.20s         Find the "skip.intro" TextField
+    t =    66.34s         Find the "skip.intro" TextField
+    t =    66.95s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    67.42s Type '4' into "skip.intro" TextField
+    t =    67.42s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    67.95s     Find the "skip.intro" TextField
+    t =    68.18s     Check for interrupting elements affecting "skip.intro" TextField
+    t =    68.32s         Wait for com.apple.springboard to idle
+    t =    68.50s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    68.51s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    68.76s     Synthesize event
+    t =    69.25s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    69.82s Find the "skip.intro" TextField
+    t =    70.22s Find the "skip.intro" TextField
+    t =    70.41s Press "skip.save" Button[0.50, 0.50] for 0.2 seconds
+    t =    70.41s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    70.41s     Find the "skip.save" Button
+    t =    70.61s     Check for interrupting elements affecting "skip.save" Button
+    t =    71.12s         Wait for com.apple.springboard to idle
+    t =    71.30s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    71.30s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    71.33s     Synthesize event
+    t =    71.39s         Find the "skip.save" Button
+    t =    71.67s         Find the "skip.save" Button
+    t =    71.94s         Find the "skip.save" Button
+    t =    72.81s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    77.82s Waiting 5.0s for "player.settings.list" CollectionView to exist
+    t =    78.90s     Checking `Expect predicate `existsNoRetry == 1` for object "player.settings.list" CollectionView`
+    t =    78.93s         Checking existence of `"player.settings.list" CollectionView`
+    t =    80.36s Tap "player.settings.done" Button
+    t =    80.36s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    80.38s     Find the "player.settings.done" Button
+    t =    80.85s     Check for interrupting elements affecting "player.settings.done" Button
+    t =    81.60s         Wait for com.apple.springboard to idle
+    t =    82.14s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    82.14s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    82.20s     Synthesize event
+    t =    82.84s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    83.87s Waiting 5.0s for "player.seekBar" Any to exist
+    t =    84.89s     Checking `Expect predicate `existsNoRetry == 1` for object "player.seekBar" Any`
+    t =    84.90s         Checking existence of `"player.seekBar" Any`
+    t =    85.21s Find the "player.seekBar" Any
+    t =    85.35s Press "player.seekBar" Other[0.15, 0.50] for 0.1 seconds, then drag to "player.seekBar" Other[0.06, 0.50] with velocity of 250.00 pixels per second, and then hold for 3.0 seconds 
+    t =    85.35s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    85.35s     Find the "player.seekBar" Other
+    t =    85.43s     Check for interrupting elements affecting "player.seekBar" Other
+    t =    85.94s         Wait for com.apple.springboard to idle
+    t =    86.11s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    86.11s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    86.14s     Synthesize event
+    t =    86.20s         Find the "player.seekBar" Other
+    t =    86.32s         Find the "player.seekBar" Other
+    t =    86.44s         Find the "player.seekBar" Other
+    t =    86.56s         Find the "player.seekBar" Other
+    t =    86.68s         Find the "player.seekBar" Other
+    t =    90.60s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    91.71s Checking `Expect predicate `exists == 1 AND enabled == 1` for object "player.skip.action" Button`
+    t =    91.73s     Checking existence of `"player.skip.action" Button`
+    t =    92.31s     Find the "player.skip.action" Button
+    t =    92.44s Tap "player.skip.action" Button
+    t =    92.44s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    92.45s     Find the "player.skip.action" Button
+    t =    92.55s     Check for interrupting elements affecting "player.skip.action" Button
+    t =    92.91s         Wait for com.apple.springboard to idle
+    t =    93.05s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    93.06s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    93.07s     Synthesize event
+    t =    93.50s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    94.54s Checking `Expect predicate `label >= "00:03" AND label <= "00:05"` for object "player.elapsed" StaticText`
+    t =    94.54s     Find the "player.elapsed" StaticText
+    t =    94.69s     Find the "player.elapsed" StaticText
+    t =    94.80s Checking existence of `"播放" Button`
+    t =    94.90s Find the Target Application 'com.songpeng.glide.compatibilityqa'
+    t =    95.51s Added attachment named '1.6 manual skip preserves pause'
+    t =    95.51s Tap "返回片库" Button
+    t =    95.51s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    95.52s     Find the "返回片库" Button
+    t =    95.62s     Check for interrupting elements affecting "chevron.down" Button
+    t =    95.87s         Wait for com.apple.springboard to idle
+    t =    95.99s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    95.99s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    96.01s     Synthesize event
+    t =    96.37s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    96.90s Terminate com.songpeng.glide.compatibilityqa:99309
+    t =    98.04s Open com.songpeng.glide.compatibilityqa
+    t =    98.05s     Launch com.songpeng.glide.compatibilityqa
+2026-10-20 11:26:48.080 xcodebuild[99181:44181567] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-20 11:26:48.082 xcodebuild[99181:44181567] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    98.74s         Setting up automation session
+    t =   104.56s         Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   112.67s Waiting 10.0s for "links.open" Button to exist
+    t =   113.70s     Checking `Expect predicate `existsNoRetry == 1` for object "links.open" Button`
+    t =   113.71s         Checking existence of `"links.open" Button`
+    t =   115.21s Press "links.open" Button[0.50, 0.50] for 0.2 seconds
+    t =   115.21s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   115.22s     Find the "links.open" Button
+    t =   115.31s     Check for interrupting elements affecting "links.open" Button
+    t =   115.53s         Wait for com.apple.springboard to idle
+    t =   115.67s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   115.68s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   115.70s     Synthesize event
+    t =   115.70s         Find the "links.open" Button
+    t =   115.75s         Find the "links.open" Button
+    t =   115.82s         Find the "links.open" Button
+    t =   116.36s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   117.67s Waiting 3.0s for "links.add" Button to exist
+    t =   118.72s     Checking `Expect predicate `existsNoRetry == 1` for object "links.add" Button`
+    t =   118.73s         Checking existence of `"links.add" Button`
+    t =   118.91s Waiting 10.0s for "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button to exist
+    t =   119.97s     Checking `Expect predicate `existsNoRetry == 1` for object "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button`
+    t =   120.07s         Checking existence of `"links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button`
+    t =   120.53s Tap "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button
+    t =   120.53s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   120.54s     Find the "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button
+    t =   120.63s     Check for interrupting elements affecting "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button
+    t =   120.96s         Wait for com.apple.springboard to idle
+    t =   121.10s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   121.10s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   121.11s     Synthesize event
+    t =   121.49s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   124.56s Checking `Expect predicate `label CONTAINS "已显示画面"` for object "player.canvas" Other`
+    t =   124.57s     Find the "player.canvas" Other
+    t =   125.21s     Capturing element debug description
+    t =   125.48s         Requesting snapshot of accessibility hierarchy for app with pid 416
+    t =   126.22s         Find: Descendants matching type Other
+    t =   126.22s         Find: Elements matching predicate '"player.canvas" IN identifiers'
+    t =   126.24s         Requesting snapshot of accessibility hierarchy for app with pid 416
+    t =   126.39s         Find: Descendants matching type Other
+    t =   126.39s         Requesting snapshot of accessibility hierarchy for app with pid 416
+    t =   128.61s Checking `Expect predicate `label CONTAINS "已显示画面"` for object "player.canvas" Other`
+    t =   128.63s     Find the "player.canvas" Other
+    t =   129.54s Checking existence of `"暂停" Button`
+    t =   129.68s Tap "暂停" Button
+    t =   129.69s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   129.70s     Find the "暂停" Button
+    t =   130.05s     Check for interrupting elements affecting "pause.fill" Button
+    t =   134.19s         Wait for com.apple.springboard to idle
+    t =   134.75s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   134.76s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   136.43s     Synthesize event
+    t =   136.99s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   137.98s Tap "播放设置" Button
+    t =   137.98s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   138.03s     Find the "播放设置" Button
+    t =   138.29s     Check for interrupting elements affecting "ellipsis" Button
+    t =   138.68s         Wait for com.apple.springboard to idle
+    t =   138.81s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   138.81s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   138.83s     Synthesize event
+    t =   139.16s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   140.35s Waiting 3.0s for "player.settings.list" CollectionView to exist
+    t =   141.40s     Checking `Expect predicate `existsNoRetry == 1` for object "player.settings.list" CollectionView`
+    t =   141.45s         Checking existence of `"player.settings.list" CollectionView`
+    t =   142.42s Find the "player.skip.settings" Button
+    t =   142.78s Find the "player.skip.settings" Button
+    t =   142.94s Press "player.skip.settings" Button for 0.1 seconds
+    t =   142.94s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   142.95s     Find the "player.skip.settings" Button
+    t =   143.13s     Check for interrupting elements affecting "player.skip.settings" Button
+    t =   143.51s         Wait for com.apple.springboard to idle
+    t =   143.71s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   143.71s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   143.75s     Synthesize event
+    t =   144.23s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   146.90s Waiting 3.0s for "skip.intro" TextField to exist
+    t =   147.93s     Checking `Expect predicate `existsNoRetry == 1` for object "skip.intro" TextField`
+    t =   147.94s         Checking existence of `"skip.intro" TextField`
+    t =   148.61s Checking existence of `"skip.intro" TextField`
+    t =   148.81s Find the "skip.intro" TextField
+    t =   148.93s Find the Target Application 'com.songpeng.glide.compatibilityqa'
+    t =   149.44s Added attachment named '1.6 skip rule restored'
+    t =   149.44s Find the "skip.clear" Button
+    t =   150.65s     Find the "skip.clear" Button (retry 1)
+    t =   151.85s     Find the "skip.clear" Button (retry 2)
+    t =   152.05s Swipe up CollectionView (First Match)
+    t =   152.05s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   152.06s     Find the CollectionView (First Match)
+    t =   152.54s     Check for interrupting elements affecting CollectionView
+    t =   153.04s         Wait for com.apple.springboard to idle
+    t =   153.26s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   153.26s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   153.28s     Synthesize event
+    t =   153.90s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   155.38s Find the "skip.clear" Button
+    t =   155.70s Find the "skip.clear" Button
+    t =   155.84s Press "skip.clear" Button[0.50, 0.50] for 0.2 seconds
+    t =   155.84s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   155.84s     Find the "skip.clear" Button
+    t =   155.96s     Check for interrupting elements affecting "skip.clear" Button
+    t =   156.19s         Wait for com.apple.springboard to idle
+    t =   156.34s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   156.34s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   156.36s     Synthesize event
+    t =   156.36s         Find the "skip.clear" Button
+    t =   156.49s         Find the "skip.clear" Button
+    t =   156.61s         Find the "skip.clear" Button
+    t =   157.21s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   157.87s Waiting 5.0s for "player.settings.done" Button to exist
+    t =   158.88s     Checking `Expect predicate `existsNoRetry == 1` for object "player.settings.done" Button`
+    t =   158.90s         Checking existence of `"player.settings.done" Button`
+    t =   159.09s Tap "player.settings.done" Button
+    t =   159.09s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   159.10s     Find the "player.settings.done" Button
+    t =   159.24s     Check for interrupting elements affecting "player.settings.done" Button
+    t =   159.53s         Wait for com.apple.springboard to idle
+    t =   159.69s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   159.70s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   159.72s     Synthesize event
+    t =   160.08s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   161.24s Tap "返回片库" Button
+    t =   161.24s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   161.42s     Find the "返回片库" Button
+    t =   161.95s     Check for interrupting elements affecting "chevron.down" Button
+    t =   162.50s         Wait for com.apple.springboard to idle
+    t =   162.65s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   162.66s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   162.67s     Synthesize event
+    t =   163.02s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   163.79s Swipe left "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button
+    t =   163.79s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   164.04s     Find the "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button
+    t =   164.57s     Check for interrupting elements affecting "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button
+    t =   165.72s         Wait for com.apple.springboard to idle
+    t =   165.94s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   165.94s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   165.96s     Synthesize event
+    t =   166.54s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   166.58s Waiting 5.0s for "编辑" Button to exist
+    t =   167.62s     Checking `Expect predicate `existsNoRetry == 1` for object "编辑" Button`
+    t =   167.65s         Checking existence of `"编辑" Button`
+    t =   167.89s Press "编辑" Button[0.50, 0.50] for 0.2 seconds
+    t =   167.89s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   167.90s     Find the "编辑" Button
+    t =   167.98s     Check for interrupting elements affecting "编辑" Button
+    t =   168.22s         Wait for com.apple.springboard to idle
+    t =   168.34s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   168.34s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   168.35s     Synthesize event
+    t =   168.35s         Find the "编辑" Button
+    t =   168.44s         Find the "编辑" Button
+    t =   168.52s         Find the "编辑" Button
+    t =   169.08s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   170.75s Waiting 5.0s for "links.name" TextField to exist
+    t =   171.80s     Checking `Expect predicate `existsNoRetry == 1` for object "links.name" TextField`
+    t =   171.82s         Checking existence of `"links.name" TextField`
+    t =   172.96s Press "links.name" TextField[0.50, 0.50] for 0.2 seconds
+    t =   172.98s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   173.00s     Find the "links.name" TextField
+    t =   173.13s     Check for interrupting elements affecting "links.name" TextField
+    t =   173.44s         Wait for com.apple.springboard to idle
+    t =   173.57s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   173.58s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   173.61s     Synthesize event
+    t =   173.62s         Find the "links.name" TextField
+    t =   173.73s         Find the "links.name" TextField
+    t =   173.81s         Find the "links.name" TextField
+    t =   174.38s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   176.41s Type ' 已编辑' into "links.name" TextField
+    t =   176.41s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   176.77s     Find the "links.name" TextField
+    t =   177.04s     Check for interrupting elements affecting "links.name" TextField
+    t =   177.30s         Wait for com.apple.springboard to idle
+    t =   177.42s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   177.42s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   177.43s     Synthesize event
+    t =   177.70s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   177.71s Press "links.save" Button[0.50, 0.50] for 0.2 seconds
+    t =   177.71s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   177.71s     Find the "links.save" Button
+    t =   177.80s     Check for interrupting elements affecting "links.save" Button
+    t =   177.88s         Wait for com.apple.springboard to idle
+    t =   177.91s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   177.91s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   177.91s     Synthesize event
+    t =   177.92s         Find the "links.save" Button
+    t =   178.03s         Find the "links.save" Button
+    t =   178.14s         Find the "links.save" Button
+    t =   178.69s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   180.90s Checking `Expect predicate `label CONTAINS "已编辑"` for object "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button`
+    t =   180.91s     Find the "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button
+    t =   181.17s Find the Target Application 'com.songpeng.glide.compatibilityqa'
+    t =   181.46s Added attachment named '1.6 saved links'
+    t =   181.46s Swipe left "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button
+    t =   181.46s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   181.47s     Find the "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button
+    t =   181.54s     Check for interrupting elements affecting "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button
+    t =   181.70s         Wait for com.apple.springboard to idle
+    t =   181.81s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   181.81s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   181.88s     Synthesize event
+    t =   182.48s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   183.20s Waiting 5.0s for "删除" Button to exist
+    t =   184.23s     Checking `Expect predicate `existsNoRetry == 1` for object "删除" Button`
+    t =   184.24s         Checking existence of `"删除" Button`
+    t =   184.48s Press "删除" Button[0.50, 0.50] for 0.2 seconds
+    t =   184.48s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   184.49s     Find the "删除" Button
+    t =   184.58s     Check for interrupting elements affecting "删除" Button
+    t =   184.77s         Wait for com.apple.springboard to idle
+    t =   184.89s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   184.90s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =   184.93s     Synthesize event
+    t =   184.93s         Find the "删除" Button
+    t =   185.04s         Find the "删除" Button
+    t =   185.17s         Find the "删除" Button
+    t =   185.75s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =   187.60s Checking `Expect predicate `exists == 0` for object "links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button`
+    t =   187.61s     Checking existence of `"links.video.C3496034-61CC-4410-B895-278DA6FC0AF9" Button`
+    t =   187.77s Tear Down
+Test Case '-[GlideUITests.GlideUITests testLinkPlaybackSkipMemoryAndCRUD]' passed (188.953 seconds).
+Test Case '-[GlideUITests.GlideUITests testLinkSkipProductionProbe]' started.
+    t =     0.00s Start Test at 2026-10-20 11:28:18.946
+    t =     0.08s Set Up
+    t =     0.09s Open com.songpeng.glide.compatibilityqa
+    t =     0.09s     Launch com.songpeng.glide.compatibilityqa
+    t =     0.09s         Terminate com.songpeng.glide.compatibilityqa:416
+2026-10-20 11:28:20.065 xcodebuild[99181:44181567] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-20 11:28:20.065 xcodebuild[99181:44181567] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.55s         Setting up automation session
+    t =     4.08s         Wait for com.songpeng.glide.compatibilityqa to idle
+    t =     7.76s Checking `Expect predicate `label == "链接与跳过验证通过" OR label == "链接与跳过验证未完成"` for object "link.probe.status" StaticText`
+    t =     7.77s     Find the "link.probe.status" StaticText
+    t =     7.90s     Find the "link.probe.status" StaticText
+    t =     7.91s     Capturing element debug description
+    t =     7.97s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =     7.98s         Find: Descendants matching type StaticText
+    t =     7.98s         Find: Elements matching predicate '"link.probe.status" IN identifiers'
+    t =     7.98s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =     7.99s         Find: Descendants matching type StaticText
+    t =     8.00s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =     8.78s Checking `Expect predicate `label == "链接与跳过验证通过" OR label == "链接与跳过验证未完成"` for object "link.probe.status" StaticText`
+    t =     8.78s     Find the "link.probe.status" StaticText
+    t =     8.81s     Find the "link.probe.status" StaticText
+    t =     8.81s     Capturing element debug description
+    t =     8.86s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =     8.87s         Find: Descendants matching type StaticText
+    t =     8.87s         Find: Elements matching predicate '"link.probe.status" IN identifiers'
+    t =     8.87s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =     8.88s         Find: Descendants matching type StaticText
+    t =     8.88s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =     9.81s Checking `Expect predicate `label == "链接与跳过验证通过" OR label == "链接与跳过验证未完成"` for object "link.probe.status" StaticText`
+    t =     9.81s     Find the "link.probe.status" StaticText
+    t =     9.84s     Find the "link.probe.status" StaticText
+    t =     9.87s     Capturing element debug description
+    t =     9.92s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =     9.92s         Find: Descendants matching type StaticText
+    t =     9.92s         Find: Elements matching predicate '"link.probe.status" IN identifiers'
+    t =     9.93s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =     9.93s         Find: Descendants matching type StaticText
+    t =     9.93s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =    10.77s Checking `Expect predicate `label == "链接与跳过验证通过" OR label == "链接与跳过验证未完成"` for object "link.probe.status" StaticText`
+    t =    10.77s     Find the "link.probe.status" StaticText
+    t =    10.80s     Find the "link.probe.status" StaticText
+    t =    10.81s     Capturing element debug description
+    t =    10.86s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =    10.87s         Find: Descendants matching type StaticText
+    t =    10.87s         Find: Elements matching predicate '"link.probe.status" IN identifiers'
+    t =    10.87s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =    10.88s         Find: Descendants matching type StaticText
+    t =    10.88s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =    11.75s Checking `Expect predicate `label == "链接与跳过验证通过" OR label == "链接与跳过验证未完成"` for object "link.probe.status" StaticText`
+    t =    11.75s     Find the "link.probe.status" StaticText
+    t =    11.78s     Find the "link.probe.status" StaticText
+    t =    11.79s     Capturing element debug description
+    t =    11.83s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =    11.84s         Find: Descendants matching type StaticText
+    t =    11.84s         Find: Elements matching predicate '"link.probe.status" IN identifiers'
+    t =    11.84s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =    11.85s         Find: Descendants matching type StaticText
+    t =    11.85s         Requesting snapshot of accessibility hierarchy for app with pid 1323
+    t =    12.83s Checking `Expect predicate `label == "链接与跳过验证通过" OR label == "链接与跳过验证未完成"` for object "link.probe.status" StaticText`
+    t =    12.83s     Find the "link.probe.status" StaticText
+    t =    12.86s Find the "link.probe.status" StaticText
+    t =    12.88s Find the Target Application 'com.songpeng.glide.compatibilityqa'
+    t =    13.52s Added attachment named '1.6 production probe'
+    t =    13.52s Terminate com.songpeng.glide.compatibilityqa:1323
+    t =    14.61s Open com.songpeng.glide.compatibilityqa
+    t =    14.61s     Launch com.songpeng.glide.compatibilityqa
+2026-10-20 11:28:33.757 xcodebuild[99181:44181567] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-20 11:28:33.760 xcodebuild[99181:44181567] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    16.73s         Setting up automation session
+    t =    19.26s         Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    22.30s Waiting 10.0s for "links.open" Button to exist
+    t =    23.31s     Checking `Expect predicate `existsNoRetry == 1` for object "links.open" Button`
+    t =    23.31s         Checking existence of `"links.open" Button`
+    t =    23.55s Press "links.open" Button[0.50, 0.50] for 0.2 seconds
+    t =    23.55s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    23.55s     Find the "links.open" Button
+    t =    23.61s     Check for interrupting elements affecting "links.open" Button
+    t =    23.76s         Wait for com.apple.springboard to idle
+    t =    23.85s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    23.85s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    23.87s     Synthesize event
+    t =    23.87s         Find the "links.open" Button
+    t =    23.92s         Find the "links.open" Button
+    t =    23.98s         Find the "links.open" Button
+    t =    24.48s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    24.98s Waiting 3.0s for "links.add" Button to exist
+    t =    26.01s     Checking `Expect predicate `existsNoRetry == 1` for object "links.add" Button`
+    t =    26.02s         Checking existence of `"links.add" Button`
+    t =    26.12s Waiting 5.0s for Button (First Match) to exist
+    t =    27.13s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    27.13s         Checking existence of `Button (First Match)`
+    t =    27.30s Press Button (First Match) for 1.0 seconds
+    t =    27.30s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    27.31s     Find the Button (First Match)
+    t =    27.48s     Check for interrupting elements affecting "links.video.6E0797D0-EFF7-4084-BEAA-5190533BA038" Button
+    t =    27.54s         Wait for com.apple.springboard to idle
+    t =    27.57s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    27.57s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    27.57s     Synthesize event
+    t =    28.81s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    29.54s Waiting 5.0s for "编辑链接" Button to exist
+    t =    30.55s     Checking `Expect predicate `existsNoRetry == 1` for object "编辑链接" Button`
+    t =    30.55s         Checking existence of `"编辑链接" Button`
+    t =    30.69s Press "编辑链接" Button[0.50, 0.50] for 0.2 seconds
+    t =    30.69s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    30.69s     Find the "编辑链接" Button
+    t =    30.77s     Check for interrupting elements affecting "pencil" Button
+    t =    30.87s         Wait for com.apple.springboard to idle
+    t =    30.93s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    30.93s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    30.93s     Synthesize event
+    t =    30.94s         Find the "pencil" Button
+    t =    31.03s         Find the "pencil" Button
+    t =    31.12s         Find the "pencil" Button
+    t =    31.64s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    33.02s Waiting 10.0s for "links.name" TextField to exist
+    t =    34.07s     Checking `Expect predicate `existsNoRetry == 1` for object "links.name" TextField`
+    t =    34.08s         Checking existence of `"links.name" TextField`
+    t =    34.30s Find the "links.name" TextField
+    t =    34.37s Find the Target Application 'com.songpeng.glide.compatibilityqa'
+    t =    34.64s Added attachment named '1.6 context menu editor'
+    t =    34.64s Tap "取消" Button
+    t =    34.64s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    34.64s     Find the "取消" Button
+    t =    34.72s     Check for interrupting elements affecting "取消" Button
+    t =    34.84s         Wait for com.apple.springboard to idle
+    t =    34.92s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    34.93s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    34.93s     Synthesize event
+    t =    35.23s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    35.86s Tear Down
+Test Case '-[GlideUITests.GlideUITests testLinkSkipProductionProbe]' passed (36.504 seconds).
+Test Case '-[GlideUITests.GlideUITests testNativeTrackSelection]' started.
+    t =     0.00s Start Test at 2026-10-20 11:28:55.453
+    t =     0.07s Set Up
+    t =     0.07s Open com.songpeng.glide.compatibilityqa
+    t =     0.08s     Launch com.songpeng.glide.compatibilityqa
+    t =     0.08s         Terminate com.songpeng.glide.compatibilityqa:1542
+2026-10-20 11:28:56.556 xcodebuild[99181:44181567] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-20 11:28:56.557 xcodebuild[99181:44181567] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.53s         Setting up automation session
+    t =     3.17s         Wait for com.songpeng.glide.compatibilityqa to idle
+    t =     6.89s Waiting 20.0s for Button (First Match) to exist
+    t =     7.92s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     7.92s         Checking existence of `Button (First Match)`
+    t =     8.23s Find the Button (First Match)
+    t =     8.45s Press "video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:08-multi-track.mp4" Button[0.50, 0.35] for 0.2 seconds
+    t =     8.45s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =     8.46s     Find the "video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:08-multi-track.mp4" Button
+    t =     8.55s     Check for interrupting elements affecting "video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:08-multi-track.mp4" Button
+    t =     8.71s         Wait for com.apple.springboard to idle
+    t =     8.83s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =     8.83s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =     8.84s     Synthesize event
+    t =     8.84s         Find the "video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:08-multi-track.mp4" Button
+    t =     8.97s         Find the "video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:08-multi-track.mp4" Button
+    t =     9.06s         Find the "video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:08-multi-track.mp4" Button
+    t =     9.62s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    10.32s Waiting 3.0s for "player.canvas" Other to exist
+    t =    11.37s     Checking `Expect predicate `existsNoRetry == 1` for object "player.canvas" Other`
+    t =    11.41s         Checking existence of `"player.canvas" Other`
+    t =    12.85s Checking `Expect predicate `label CONTAINS "已显示画面"` for object "player.canvas" Other`
+    t =    12.85s     Find the "player.canvas" Other
+    t =    12.93s Checking existence of `"暂停" Button`
+    t =    12.99s Tap "播放设置" Button
+    t =    12.99s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    12.99s     Find the "播放设置" Button
+    t =    13.07s     Check for interrupting elements affecting "ellipsis" Button
+    t =    13.29s         Wait for com.apple.springboard to idle
+    t =    13.37s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    13.38s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    13.39s     Synthesize event
+    t =    13.72s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    14.57s Find the "player.audio.menu" Button
+    t =    14.82s Find the "player.audio.menu" Button
+    t =    14.97s Find the "player.audio.menu" Button
+    t =    15.10s Find the "player.settings.list" CollectionView
+    t =    15.20s Find the "player.audio.menu" Button
+    t =    15.30s Find the "player.audio.menu" Button
+    t =    15.40s Press "player.audio.menu" Button for 0.2 seconds
+    t =    15.40s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    15.41s     Find the "player.audio.menu" Button
+    t =    15.51s     Check for interrupting elements affecting "player.audio.menu" Button
+    t =    15.62s         Wait for com.apple.springboard to idle
+    t =    15.66s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    15.66s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    15.66s     Synthesize event
+    t =    16.11s     Wait for com.songpeng.glide.compatibilityqa to idle
+<unknown>:0: warning: -[GlideUITests.GlideUITests testNativeTrackSelection] : Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead.
+    t =    17.90s Waiting 5.0s for "player.audio.audio-1" Button to exist
+    t =    18.94s     Checking `Expect predicate `existsNoRetry == 1` for object "player.audio.audio-1" Button`
+    t =    18.95s         Checking existence of `"player.audio.audio-1" Button`
+    t =    19.32s Tap "player.audio.audio-1" Button
+    t =    19.32s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    19.33s     Find the "player.audio.audio-1" Button
+    t =    19.44s     Check for interrupting elements affecting "player.audio.audio-1" Button
+    t =    19.73s         Wait for com.apple.springboard to idle
+    t =    19.85s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    19.85s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    19.86s     Synthesize event
+    t =    20.19s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    21.62s Find the "player.audio.menu" Button
+    t =    21.92s Find the "player.settings.list" CollectionView
+    t =    22.03s Find the "player.audio.menu" Button
+    t =    22.14s Find the "player.audio.menu" Button
+    t =    22.24s Press "player.audio.menu" Button for 0.2 seconds
+    t =    22.24s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    22.24s     Find the "player.audio.menu" Button
+    t =    22.34s     Check for interrupting elements affecting "player.audio.menu" Button
+    t =    22.42s         Wait for com.apple.springboard to idle
+    t =    22.45s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    22.45s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    22.46s     Synthesize event
+    t =    22.90s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    24.36s Waiting 5.0s for "player.audio.audio-1" Button to exist
+    t =    25.37s     Checking `Expect predicate `existsNoRetry == 1` for object "player.audio.audio-1" Button`
+    t =    25.39s         Checking existence of `"player.audio.audio-1" Button`
+    t =    25.51s Find the "player.audio.audio-1" Button
+    t =    25.63s Tap "player.audio.audio-1" Button
+    t =    25.63s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    25.63s     Find the "player.audio.audio-1" Button
+    t =    25.74s     Check for interrupting elements affecting "player.audio.audio-1" Button
+    t =    25.83s         Wait for com.apple.springboard to idle
+    t =    25.87s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    25.87s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    25.88s     Synthesize event
+    t =    26.19s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    27.32s Find the "player.subtitle.menu" Button
+    t =    27.55s Press "player.settings.list" CollectionView[0.98, 0.85] for 0.0 seconds, then drag to "player.settings.list" CollectionView[0.98, 0.30] with velocity of 750.00 pixels per second, and then hold for 0.0 seconds 
+    t =    27.55s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    27.55s     Find the "player.settings.list" CollectionView
+    t =    27.68s     Check for interrupting elements affecting "player.settings.list" CollectionView
+    t =    28.01s         Wait for com.apple.springboard to idle
+    t =    28.11s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    28.12s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    28.13s     Synthesize event
+    t =    28.13s         Find the "player.settings.list" CollectionView
+    t =    28.24s         Find the "player.settings.list" CollectionView
+    t =    28.35s         Find the "player.settings.list" CollectionView
+    t =    28.45s         Find the "player.settings.list" CollectionView
+    t =    28.55s         Find the "player.settings.list" CollectionView
+    t =    29.16s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    30.09s Find the "player.subtitle.menu" Button
+    t =    30.22s Find the "player.settings.list" CollectionView
+    t =    30.31s Find the "player.subtitle.menu" Button
+    t =    30.42s Find the "player.subtitle.menu" Button
+    t =    30.52s Press "player.subtitle.menu" Button for 0.2 seconds
+    t =    30.52s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    30.52s     Find the "player.subtitle.menu" Button
+    t =    30.62s     Check for interrupting elements affecting "player.subtitle.menu" Button
+    t =    30.70s         Wait for com.apple.springboard to idle
+    t =    30.73s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    30.74s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    30.74s     Synthesize event
+    t =    31.19s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    32.47s Waiting 5.0s for "player.subtitle.subtitle-0" Button to exist
+    t =    33.49s     Checking `Expect predicate `existsNoRetry == 1` for object "player.subtitle.subtitle-0" Button`
+    t =    33.52s         Checking existence of `"player.subtitle.subtitle-0" Button`
+    t =    33.66s Tap "player.subtitle.subtitle-0" Button
+    t =    33.67s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    33.67s     Find the "player.subtitle.subtitle-0" Button
+    t =    33.77s     Check for interrupting elements affecting "player.subtitle.subtitle-0" Button
+    t =    33.87s         Wait for com.apple.springboard to idle
+    t =    33.89s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    33.90s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    33.90s     Synthesize event
+    t =    34.21s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    35.98s Find the "player.subtitle.menu" Button
+    t =    36.26s Find the "player.settings.list" CollectionView
+    t =    36.36s Find the "player.subtitle.menu" Button
+    t =    36.46s Find the "player.subtitle.menu" Button
+    t =    36.57s Press "player.subtitle.menu" Button for 0.2 seconds
+    t =    36.57s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    36.57s     Find the "player.subtitle.menu" Button
+    t =    36.68s     Check for interrupting elements affecting "player.subtitle.menu" Button
+    t =    36.77s         Wait for com.apple.springboard to idle
+    t =    36.80s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    36.80s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    36.80s     Synthesize event
+    t =    37.26s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    38.39s Waiting 5.0s for "player.subtitle.subtitle-0" Button to exist
+    t =    39.40s     Checking `Expect predicate `existsNoRetry == 1` for object "player.subtitle.subtitle-0" Button`
+    t =    39.42s         Checking existence of `"player.subtitle.subtitle-0" Button`
+    t =    39.55s Find the "player.subtitle.subtitle-0" Button
+    t =    39.65s Tap Button (First Match)
+    t =    39.65s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    39.65s     Find the Button (First Match)
+    t =    39.73s     Check for interrupting elements affecting "关闭字幕" Button
+    t =    39.83s         Wait for com.apple.springboard to idle
+    t =    39.86s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    39.86s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    39.87s     Synthesize event
+    t =    40.19s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    41.85s Find the "player.subtitle.menu" Button
+    t =    41.99s Find the "player.settings.list" CollectionView
+    t =    42.09s Find the "player.subtitle.menu" Button
+    t =    42.19s Find the "player.subtitle.menu" Button
+    t =    42.30s Press "player.subtitle.menu" Button for 0.2 seconds
+    t =    42.30s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    42.31s     Find the "player.subtitle.menu" Button
+    t =    42.41s     Check for interrupting elements affecting "player.subtitle.menu" Button
+    t =    42.50s         Wait for com.apple.springboard to idle
+    t =    42.54s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    42.54s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    42.55s     Synthesize event
+    t =    43.00s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    44.18s Waiting 5.0s for "player.subtitle.subtitle-0" Button to exist
+    t =    45.22s     Checking `Expect predicate `existsNoRetry == 1` for object "player.subtitle.subtitle-0" Button`
+    t =    45.23s         Checking existence of `"player.subtitle.subtitle-0" Button`
+    t =    45.35s Find the "player.subtitle.subtitle-0" Button
+    t =    45.45s Tap Button (First Match)
+    t =    45.45s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    45.45s     Find the Button (First Match)
+    t =    45.51s     Check for interrupting elements affecting "关闭字幕 ✓" Button
+    t =    45.60s         Wait for com.apple.springboard to idle
+    t =    45.62s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    45.62s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    45.63s     Synthesize event
+    t =    45.92s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    47.35s Find the Target Application 'com.songpeng.glide.compatibilityqa'
+    t =    47.69s Added attachment named 'Native track selection'
+    t =    47.69s Find the "视频信息" Button
+    t =    47.82s Tap "视频信息" Button
+    t =    47.82s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    47.83s     Find the "视频信息" Button
+    t =    47.93s     Check for interrupting elements affecting "视频信息" Button
+    t =    48.02s         Wait for com.apple.springboard to idle
+    t =    48.05s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    48.05s Ignoring failure to get hierarchy for remote element in process 85820 (Error getting main window kAXErrorServerNotFound)
+    t =    48.06s     Synthesize event
+    t =    48.35s     Wait for com.songpeng.glide.compatibilityqa to idle
+    t =    48.62s Waiting 8.0s for "player.info.list" CollectionView to exist
+    t =    49.67s     Checking `Expect predicate `existsNoRetry == 1` for object "player.info.list" CollectionView`
+    t =    49.68s         Checking existence of `"player.info.list" CollectionView`
+    t =    49.97s Find the "player.info.container" Any
+    t =    50.56s Find the "player.info.container" StaticText
+    t =    51.11s Find the Target Application 'com.songpeng.glide.compatibilityqa'
+    t =    51.37s Added attachment named 'Native format information'
+    t =    51.38s Tear Down
+Test Case '-[GlideUITests.GlideUITests testNativeTrackSelection]' passed (51.859 seconds).
+Test Suite 'GlideUITests' passed at 2026-10-20 11:29:47.311.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 277.315 (277.322) seconds
+Test Suite 'GlideUITests.xctest' passed at 2026-10-20 11:29:47.314.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 277.315 (277.325) seconds
+Test Suite 'Selected tests' passed at 2026-10-20 11:29:47.319.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 277.315 (277.335) seconds
+2026-10-20 11:29:47.792 xcodebuild[99181:44181567] [MT] IDETestOperationsObserverDebug: 285.155 elapsed -- Testing started completed.
+2026-10-20 11:29:47.792 xcodebuild[99181:44181567] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-20 11:29:47.792 xcodebuild[99181:44181567] [MT] IDETestOperationsObserverDebug: 285.155 sec, +285.155 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/songpeng/Library/Developer/XcodeBuildMCP/workspaces/Glide-c699267400c0/result-bundles/test_sim_2026-10-20T03-24-40-187Z_pid66807_be6212dc.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

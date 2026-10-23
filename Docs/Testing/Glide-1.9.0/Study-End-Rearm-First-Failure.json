@@ -1,0 +1,82 @@
+{
+  "checks" : [
+    "avPlayer:subtitle-navigation-includes-positive-delay-and-pause",
+    "avPlayer:sentence-replay-stops-at-shifted-end",
+    "avPlayer:three-ab-repeats-at-double-speed-no-next-video",
+    "avPlayer:pause-freezes-loop",
+    "avPlayer:outside-seek-exits-loop-preserving-pause",
+    "avPlayer:invalid-b-rejected-and-inside-seek-retains-loop",
+    "avPlayer:same-video-engine-switch-preserves-loop-and-pause",
+    "avPlayer:tail-loop-overrides-auto-outro-and-next",
+    "avPlayer:video-switch-clears-range-and-count"
+  ],
+  "clock" : {
+    "actual" : 2,
+    "controllerTime" : 2,
+    "duration" : 12,
+    "phase" : "paused",
+    "requested" : false,
+    "seeking" : false
+  },
+  "device" : "iPad",
+  "duration" : 12,
+  "error" : "内核不一致",
+  "events" : [
+    "attempt_automatic",
+    "engine_avplayer",
+    "resource_ready_local",
+    "first_frame"
+  ],
+  "os" : "26.3.1",
+  "passed" : false,
+  "playing" : false,
+  "requestedPlaying" : false,
+  "samples" : [
+    {
+      "actual" : 0.75,
+      "completed" : 0,
+      "engine" : "avPlayer",
+      "loops" : 0,
+      "name" : "delay-aware-navigation",
+      "playing" : false,
+      "rate" : 1,
+      "requestedPlaying" : false,
+      "target" : 0.75
+    },
+    {
+      "actual" : 5.0129072920000004,
+      "completed" : 0,
+      "engine" : "avPlayer",
+      "loops" : 0,
+      "name" : "sentence-stopped",
+      "playing" : false,
+      "rate" : 1,
+      "requestedPlaying" : false,
+      "target" : 4.75
+    },
+    {
+      "actual" : 2.0010661660000002,
+      "completed" : 0,
+      "engine" : "avPlayer",
+      "loops" : 3,
+      "name" : "three-repeat-boundaries",
+      "playing" : true,
+      "rate" : 2,
+      "requestedPlaying" : true
+    },
+    {
+      "actual" : 10.007760959000001,
+      "completed" : 0,
+      "engine" : "avPlayer",
+      "loops" : 2,
+      "name" : "tail-loop-priority",
+      "playing" : true,
+      "rate" : 1,
+      "requestedPlaying" : true
+    }
+  ],
+  "scope" : "Real local AVPlayer\/VLC with production subtitle navigation, sentence replay and A-B loop controller; authored media; no decoder substitution",
+  "stage" : "字幕导航验证未完成",
+  "timestamp" : "2026-10-20T10:09:52Z",
+  "version" : "1.9.0 (1)"
+}

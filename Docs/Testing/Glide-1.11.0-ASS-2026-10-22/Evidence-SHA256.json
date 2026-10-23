@@ -1,0 +1,22 @@
+{
+  "ASS-UI-Summary.json": "e26580e6a06dd3698396c7ef767300439310480573640be293502420a7a096d7",
+  "ASS-iPhone-Final.json": "fabe31af8bbdd6bedb818e41d46e2a19d841f7eb2c7e59758b5c49fc8280571a",
+  "Archive-Symbols.json": "9a3f3ab0ccde7f1460d65eee8797c71b1e72a3029ea069c947de9307749702c9",
+  "Build-Manifest.json": "db9ad2ac1a22d160a2a1c54f046e44d3b7881f69fb08eb47fa018ad84c21df13",
+  "Logs/ASS-UI.log": "3fe0d700ff2f63629b504d6ebb513b34baca17ba240d8dedfaacddc8f5ebaa25",
+  "Logs/Core-Tests.log": "9b9848cac1719563c72b0f2f486bfafa25b448c1938a47d681a5c67676e5d589",
+  "Logs/Device-Final-Build.log": "0747dedbef974579d4abc687e3ca9e19b8d2f2b4d675762c07a548da8071d2e7",
+  "Logs/Device-Install.log": "9772821cc07560ea6a47d6626bf619b3f6ccde606697febe2fc5ee64b17fa530",
+  "Logs/Device-Normal-Launch.log": "c50d8e63c32bf9c83239f525b7635740b0745d18ce3c71a5447d2ea0b15ec13c",
+  "Logs/Device-Probe-Final-Copy.log": "af31a128694a6204893b5ead4d3a805bc5a83f8a101c24d541d1748fb3b128a7",
+  "Logs/Device-Probe-Launch.log": "a6f29fba9b279470414e7a88e0ec45e5b7e056feb2f4cea2a4363cb14c9653f8",
+  "Logs/Device-Probe-Unlocked-Launch.log": "c50d8e63c32bf9c83239f525b7635740b0745d18ce3c71a5447d2ea0b15ec13c",
+  "Logs/Release-Archive.log": "b2f0844c24aad63bef180734f721dd05f8b7a743696df57303b7b3a7b1003b97",
+  "README.md": "8ef20ebe5953b7b96cf3c2faa8bb0013ee0bc8db37197440ab010b293a85c2c5",
+  "Release-Preflight.txt": "15244bbeb7c53d2270b4beb1b5e852bf73401c5295d856f432079ac4e5d5fd77",
+  "Release-Signature.txt": "c92cc450443aba29d22c5f29c6f82dc1f3164aad0159239c7fdca930629d0d19",
+  "Screenshots/Native-ASS-Text.png": "fe06d2d2d505eb9af5f03952d1eefa0425104a5984de92cc85d0a69dcd2bcb65",
+  "Screenshots/VLC-ASS-Text.png": "56d461cc24c63f1fdbd0c310a536893241f92b965672266a9719e212251efe86",
+  "Source-Snapshot.json": "e50de67f325f2c6ed271d20f6ff7cad2b0df5aeb47746ab324265684591bf6a5",
+  "Validation.json": "b249fa7eb25d938272d1a66eab440f87f3a7ea9c4064def4d00559af186bcf09"
+}

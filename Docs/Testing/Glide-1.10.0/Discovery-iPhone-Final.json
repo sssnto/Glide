@@ -1,0 +1,24 @@
+{
+  "checks" : [
+    "resolver:authored-bundle-videos-with-real-duration",
+    "time:known-duration-candidates-and-explanations",
+    "time:remaining-duration-preserves-resume",
+    "store:channel-survives-reload",
+    "channel:alternates-stories-with-numeric-episode-order-and-dedup",
+    "channel:preparation-does-not-count-as-playback",
+    "player:actual-end-of-queue-after-three-videos",
+    "player:all-three-native-first-frames-recorded",
+    "player:automatic-advance-follows-channel-order",
+    "store:actual-first-frame-history-survives-reload",
+    "store:editing-preserves-channel-identity",
+    "store:remove-channel-keeps-source-media"
+  ],
+  "error" : "",
+  "expectedChecks" : 12,
+  "passed" : true,
+  "scope" : "Authored bundle videos; production scope resolver, planners, isolated recoverable channel store and actual PlayerView\/AVPlayer automatic queue; no personal servers or watch progress",
+  "stage" : "私人频道与时间选片验证通过",
+  "system" : "27.0",
+  "timestamp" : "2026-10-22T08:52:37Z",
+  "version" : "1.10.0 (1)"
+}

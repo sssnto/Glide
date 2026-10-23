@@ -1,0 +1,272 @@
+[
+  {
+    "xcresult": "/tmp/Glide190/UI-Study-First.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 2,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertTrue failed",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testSubtitleStudyNavigationStylesAndLoopUI()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testSubtitleStudyNavigationStylesAndLoopUI",
+        "testName": "testSubtitleStudyNavigationStylesAndLoopUI()"
+      },
+      {
+        "failureText": "XCTAssertEqual failed: (\"字幕导航验证未完成\") is not equal to (\"字幕导航验证通过\")",
+        "targetName": "GlideUITests",
+        "testIdentifier": 2,
+        "testIdentifierString": "GlideUITests/testSubtitleStudyProductionProbe()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testSubtitleStudyProductionProbe",
+        "testName": "testSubtitleStudyProductionProbe()"
+      }
+    ],
+    "runtimeWarnings": [],
+    "note": "Outlined text accessibility grouped into Other; VLC tail loop did not complete."
+  },
+  {
+    "xcresult": "/tmp/Glide190/UI-Study-Second.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 2,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "Failed to tap \"loop.clear\" Button: No matches found for Elements matching predicate '\"loop.clear\" IN identifiers' from input {(\n    Button, label: 'Sheet Grabber', value: Half screen,\n    Button, identifier: 'chevron.down', label: '返回片库',\n    Button, identifier: 'lock.open', label: '锁定触控',\n    Button, identifier: 'ellipsis', label: '播放设置',\n    Button, identifier: 'player.loop.clear', label: '退出',\n    Button, identifier: 'backward.end.fill', label: '上一个视频',\n    Button, identifier: 'gobackward.10', label: '快退 10 秒',\n    Button, identifier: 'pause.fill', label: '暂停',\n    Button, identifier: 'goforward.10', label: '快进 10 秒',\n    Button, identifier: 'forward.end.fill', label: '下一个视频', Disabled,\n    Button, identifier: 'player.mode', label: '顺序播放',\n    Button, identifier: 'player.quick.speed', label: '播放速度',\n    Button, identifier: 'player.quick.audio', label: '音轨', value: 无可切换音轨, Disabled,\n    Button, identifier: 'player.quick.subtitle', label: '字幕', value: paired.zh-Hans.srt,\n    Button, identifier: 'player.rotate', label: '切换横屏',\n    Button,\n    Button, Disabled,\n    Button,\n    Button, identifier: 'BackButton', label: '字幕控制',\n    Button, label: 'Hide Sidebar',\n    Button, identifier: 'links.open', label: '链接与 STRM',\n    Button, identifier: 'pins.open', label: '固定目录',\n    Button, identifier: 'sources.open', label: '双字幕原创验证',\n    Button, identifier: 'directory.refresh', label: '刷新本目录',\n    Button, label: '媒体', Selected,\n    Button, label: '目录',\n    Button, identifier: 'directory.pin', label: '固定此目录',\n    Button, identifier: 'library.scope', label: '浏览范围：包含子目录',\n    Button, identifier: 'library.sort', label: '视频排序：名称升序',\n    Button, identifier: 'heart', label: '只看收藏',\n    Button, identifier: 'directory.play', label: '播放全部',\n    Button,\n    Button,\n    Button, identifier: 'list.number', label: '顺序播放', Selected,\n    Button, identifier: 'shuffle', label: '随机播放',\n    Button, identifier: 'video.BE42D4C6-AD9C-4993-9691-B11E27860ED4:local:manual.mp4', label: '视频, manual.mp4, 双字幕原创验证',\n    Button, identifier: 'video.BE42D4C6-AD9C-4993-9691-B11E27860ED4:local:other/paired.mp4', label: '视频, paired.mp4, 双字幕原创验证',\n    Button, identifier: 'video.BE42D4C6-AD9C-4993-9691-B11E27860ED4:local:paired.mp4', label: '视频, paired.mp4, 双字幕原创验证',\n    Button, identifier: 'loop.replaySentence', label: '重播当前主字幕句',\n    Button, identifier: 'loop.markA', label: '当前位置设为 A',\n    Button, identifier: 'loop.markB', label: '当前位置设为 B 并开始循环',\n    Button, label: '快退 5 秒',\n    Button, label: '暂停',\n    Button, label: '快进 5 秒'\n)}\nPossibly caused by runtime issues:\nAutomation type mismatch: computed Button from legacy attributes vs PopUpButton from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 14;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 1108101562369;\n}\nAutomation type mismatch: computed Button from legacy attributes vs PopUpButton from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 14;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 1108101562625;\n}\nSee test report attachments for more detail.",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testSubtitleStudyNavigationStylesAndLoopUI()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testSubtitleStudyNavigationStylesAndLoopUI",
+        "testName": "testSubtitleStudyNavigationStylesAndLoopUI()"
+      },
+      {
+        "failureText": "XCTAssertEqual failed: (\"字幕导航验证未完成\") is not equal to (\"字幕导航验证通过\")",
+        "targetName": "GlideUITests",
+        "testIdentifier": 2,
+        "testIdentifierString": "GlideUITests/testSubtitleStudyProductionProbe()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testSubtitleStudyProductionProbe",
+        "testName": "testSubtitleStudyProductionProbe()"
+      }
+    ],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "Transcript, styles and loop activation worked; exit was offscreen; tail still failed."
+  },
+  {
+    "xcresult": "/tmp/Glide190/UI-Study-Third-Retry.xcresult",
+    "result": "Failed",
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertEqual failed: (\"字幕导航验证未完成\") is not equal to (\"字幕导航验证通过\")",
+        "targetName": "GlideUITests",
+        "testIdentifier": 2,
+        "testIdentifierString": "GlideUITests/testSubtitleStudyProductionProbe()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testSubtitleStudyProductionProbe",
+        "testName": "testSubtitleStudyProductionProbe()"
+      }
+    ],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "Full normal UI passed after Canvas outline and fixed bottom exit; tail remained paused near EOF."
+  },
+  {
+    "xcresult": "/tmp/Glide190/UI-Study-End-Rearm.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertEqual failed: (\"字幕导航验证未完成\") is not equal to (\"字幕导航验证通过\")",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testSubtitleStudyProductionProbe()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testSubtitleStudyProductionProbe",
+        "testName": "testSubtitleStudyProductionProbe()"
+      }
+    ],
+    "runtimeWarnings": [],
+    "note": "New same-video engine-switch check passed for native; probe reused an explicit engine override for the next engine, an invalid setup."
+  },
+  {
+    "xcresult": "/tmp/Glide190/UI-Study-End-Rearm-Second.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertEqual failed: (\"字幕导航验证未完成\") is not equal to (\"字幕导航验证通过\")",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testSubtitleStudyProductionProbe()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testSubtitleStudyProductionProbe",
+        "testName": "testSubtitleStudyProductionProbe()"
+      }
+    ],
+    "runtimeWarnings": [],
+    "note": "Per-engine controller isolation corrected; native manual seek after looping remained pending despite actual clock reaching target."
+  },
+  {
+    "xcresult": "/tmp/Glide190/UI-Study-Seek-Ordering.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertEqual failed: (\"字幕导航验证未完成\") is not equal to (\"字幕导航验证通过\")",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testSubtitleStudyProductionProbe()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testSubtitleStudyProductionProbe",
+        "testName": "testSubtitleStudyProductionProbe()"
+      }
+    ],
+    "runtimeWarnings": [],
+    "note": "Native cancellation reordered; VLC tail seek stopped with a truthful failure message."
+  },
+  {
+    "xcresult": "/tmp/Glide190/UI-Study-Counter-Reset.xcresult",
+    "result": "Failed",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "XCTAssertEqual failed: (\"字幕导航验证未完成\") is not equal to (\"字幕导航验证通过\")",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testSubtitleStudyProductionProbe()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testSubtitleStudyProductionProbe",
+        "testName": "testSubtitleStudyProductionProbe()"
+      }
+    ],
+    "runtimeWarnings": [],
+    "note": "Counter-reset-aware frame guard trial still did not finish tail; retained as failure."
+  },
+  {
+    "xcresult": "/tmp/Glide190/UI-Study-EOF-Reopen.xcresult",
+    "result": "Passed",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "testFailures": [],
+    "runtimeWarnings": [],
+    "note": "First full 19-check pass with real playback, same-video switch retention, EOF reopen and no decoder substitution."
+  },
+  {
+    "xcresult": "/tmp/Glide190/UI-Playback-Final.xcresult",
+    "result": "Failed",
+    "passed": 3,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "Failed to get matching snapshot: No matches found for Elements matching predicate '\"player.engine.compatibility\" IN identifiers' from input {(\n    Button, label: 'Sheet Grabber', value: Half screen,\n    Button, identifier: 'chevron.down', label: '返回片库',\n    Button, identifier: 'lock.open', label: '锁定触控',\n    Button, identifier: 'ellipsis', label: '播放设置',\n    Button, identifier: 'backward.end.fill', label: '上一个视频',\n    Button, identifier: 'gobackward.10', label: '快退 10 秒',\n    Button, identifier: 'play.fill', label: '播放',\n    Button, identifier: 'goforward.10', label: '快进 10 秒',\n    Button, identifier: 'forward.end.fill', label: '下一个视频', Disabled,\n    Button, identifier: 'player.mode', label: '顺序播放',\n    Button, identifier: 'player.quick.speed', label: '播放速度',\n    Button, identifier: 'player.quick.audio', label: '音轨', value: Track 1 - [English],\n    Button, identifier: 'player.quick.subtitle', label: '字幕', value: 关闭,\n    Button, identifier: 'player.rotate', label: '切换横屏',\n    Button,\n    Button,\n    Button,\n    Button, label: 'Hide Sidebar',\n    Button, identifier: 'player.settings.done', label: '完成',\n    Button, identifier: 'links.open', label: '链接与 STRM',\n    Button, identifier: 'pins.open', label: '固定目录',\n    Button, identifier: 'sources.open', label: 'FormatFixtures',\n    Button, identifier: 'directory.refresh', label: '刷新本目录',\n    Button, label: '媒体', Selected,\n    Button, label: '目录',\n    Button, identifier: 'directory.pin', label: '固定此目录',\n    Button, identifier: 'library.scope', label: '浏览范围：包含子目录',\n    Button, identifier: 'library.sort', label: '视频排序：名称升序',\n    Button, identifier: 'heart', label: '只看收藏',\n    Button, identifier: 'directory.play', label: '播放全部',\n    Button,\n    Button,\n    Button, identifier: 'list.number', label: '顺序播放', Selected,\n    Button, identifier: 'shuffle', label: '随机播放',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:01-h264-aac.mp4', label: '视频, 01-h264-aac.mp4, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:02-hevc-aac.mp4', label: '视频, 02-hevc-aac.mp4, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:03-h264-aac.mkv', label: '视频, 03-h264-aac.mkv, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:04-mpeg4-mp3.avi', label: '视频, 04-mpeg4-mp3.avi, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:05-renamed-mkv.mp4', label: '视频, 05-renamed-mkv.mp4, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:06-truncated.mp4', label: '视频, 06-truncated.mp4, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:07-audio-only.mp4', label: '视频, 07-audio-only.mp4, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:08-multi-track.mp4', label: '视频, 08-multi-track.mp4, FormatFixtures',\n    Button, identifier: 'video.32607B13-DE8D-4F05-B2B1-3C262CAC60A0:local:11-hd-dual-ass.mkv', label: '视频, 11-hd-dual-ass.mkv, FormatFixtures',\n    Button, identifier: 'player.loop.open', label: '单句重播与 A–B 循环',\n    Button, label: '视频信息',\n    Button, identifier: 'player.diagnostic', label: '播放诊断',\n    Button, identifier: 'player.skip.settings', label: '片头片尾',\n    Button, identifier: 'player.speed.menu', label: '播放速度, 1×',\n    Button, identifier: 'player.audio.menu', label: '音轨, Track 1 - [English]',\n    Button, identifier: 'player.subtitle.menu', label: '字幕, 关闭',\n    Button, label: '播放顺序, 顺序播放',\n    Button, identifier: 'player.engine.native', label: '系统播放',\n    Button,\n    Button,\n    Button,\n    Button\n)}\nPossibly caused by runtime issues:\nAutomation type mismatch: computed Button from legacy attributes vs PopUpButton from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 14;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 1108101562369;\n}\nSee test report attachments for more detail.",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "CompatibilityPlaybackUITests/testCompatibility1080pSeekAndPause()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/CompatibilityPlaybackUITests/testCompatibility1080pSeekAndPause",
+        "testName": "testCompatibility1080pSeekAndPause()"
+      }
+    ],
+    "runtimeWarnings": [],
+    "note": "19 study checks, 18 dual checks and 14 Emby checks passed; 1080p playback/seek passed but hidden settings option was not scrolled into view."
+  },
+  {
+    "xcresult": "/tmp/Glide190/UI-Controls-Final.xcresult",
+    "result": "Failed",
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0,
+    "testFailures": [
+      {
+        "failureText": "Failed to get matching snapshot: No matches found for Elements matching predicate '\"subtitles.secondary.candidates\" IN identifiers' from input {(\n    Button, label: 'Sheet Grabber', value: Half screen,\n    Button, identifier: 'chevron.down', label: '返回片库',\n    Button, identifier: 'lock.open', label: '锁定触控',\n    Button, identifier: 'ellipsis', label: '播放设置',\n    Button, identifier: 'backward.end.fill', label: '上一个视频',\n    Button, identifier: 'gobackward.10', label: '快退 10 秒',\n    Button, identifier: 'play.fill', label: '播放',\n    Button, identifier: 'goforward.10', label: '快进 10 秒',\n    Button, identifier: 'forward.end.fill', label: '下一个视频', Disabled,\n    Button, identifier: 'player.mode', label: '顺序播放',\n    Button, identifier: 'player.quick.speed', label: '播放速度',\n    Button, identifier: 'player.quick.audio', label: '音轨', value: 无可切换音轨, Disabled,\n    Button, identifier: 'player.quick.subtitle', label: '字幕', value: paired.zh-Hans.srt,\n    Button, identifier: 'player.rotate', label: '切换横屏',\n    Button,\n    Button, Disabled,\n    Button,\n    Button, label: 'Hide Sidebar',\n    Button, identifier: 'subtitles.done', label: '完成',\n    Button, identifier: 'links.open', label: '链接与 STRM',\n    Button, identifier: 'pins.open', label: '固定目录',\n    Button, identifier: 'sources.open', label: '双字幕原创验证',\n    Button, identifier: 'directory.refresh', label: '刷新本目录',\n    Button, label: '媒体', Selected,\n    Button, label: '目录',\n    Button, identifier: 'directory.pin', label: '固定此目录',\n    Button, identifier: 'library.scope', label: '浏览范围：包含子目录',\n    Button, identifier: 'library.sort', label: '视频排序：名称升序',\n    Button, identifier: 'heart', label: '只看收藏',\n    Button, identifier: 'directory.play', label: '播放全部',\n    Button,\n    Button,\n    Button, identifier: 'list.number', label: '顺序播放', Selected,\n    Button, identifier: 'shuffle', label: '随机播放',\n    Button, identifier: 'video.BE42D4C6-AD9C-4993-9691-B11E27860ED4:local:manual.mp4', label: '视频, manual.mp4, 双字幕原创验证',\n    Button, identifier: 'video.BE42D4C6-AD9C-4993-9691-B11E27860ED4:local:other/paired.mp4', label: '视频, paired.mp4, 双字幕原创验证',\n    Button, identifier: 'video.BE42D4C6-AD9C-4993-9691-B11E27860ED4:local:paired.mp4', label: '视频, paired.mp4, 双字幕原创验证',\n    Button, identifier: 'subtitles.transcript.open', label: '字幕全文与台词定位',\n    Button, identifier: 'subtitles.loop.open', label: '单句重播与 A–B 循环',\n    Button, identifier: 'subtitles.appearance.open', label: '字幕样式与预览',\n    Button, identifier: 'subtitles.primary.import', label: '导入主字幕…',\n    Button, identifier: 'subtitles.primary.candidates', label: '选择同目录字幕',\n    Button, identifier: 'subtitles.primary.resetDelay', label: '偏移归零', Disabled,\n    Button, identifier: 'subtitles.primary.delay-Decrement', label: '时间偏移：0.0 秒, Decrement', value: 0,\n    Button, identifier: 'subtitles.primary.delay-Increment', label: '时间偏移：0.0 秒, Increment', value: 0\n)}\nPossibly caused by runtime issues:\nAutomation type mismatch: computed Button from legacy attributes vs PopUpButton from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 14;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 1108101562369;\n}\nAutomation type mismatch: computed Button from legacy attributes vs PopUpButton from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 14;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 1108101562625;\n}\nSee test report attachments for more detail.",
+        "targetName": "GlideUITests",
+        "testIdentifier": 1,
+        "testIdentifierString": "GlideUITests/testDualSubtitleControlsOffsetsAndRestart()",
+        "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDualSubtitleControlsOffsetsAndRestart",
+        "testName": "testDualSubtitleControlsOffsetsAndRestart()"
+      }
+    ],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      },
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "New normal UI including size persistence passed; old helper queried frame of a lazily unloaded secondary row and failed."
+  },
+  {
+    "xcresult": "/tmp/Glide190/UI-Controls-Verified.xcresult",
+    "result": "Passed",
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "testFailures": [],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      },
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "Final source normal UI batch: 1080p VLC, legacy dual subtitle controls/OCR/restart/import cancellation, new transcript/styles/loop UI all passed."
+  },
+  {
+    "xcresult": "/tmp/Glide190/UI-Production-Verified.xcresult",
+    "result": "Passed",
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "testFailures": [],
+    "runtimeWarnings": [],
+    "note": "Same frozen source production batch: 19 study checks, 18 dual subtitle checks, 14 Emby checks all passed, no skips."
+  },
+  {
+    "xcresult": "/tmp/Glide190/UI-Native-State-2026-10-21.xcresult",
+    "result": "Passed",
+    "passed": 3,
+    "failed": 0,
+    "skipped": 1,
+    "testFailures": [],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ],
+    "note": "Post physical EOF fix. Study UI, real study production and real dual production passed. 1080p skipped because GLIDE_FORMAT_FIXTURES was omitted from the test runner; retained as a skip, not counted as a pass."
+  },
+  {
+    "xcresult": "/tmp/Glide190/UI-1080p-Final-2026-10-21.xcresult",
+    "result": "Passed",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "testFailures": [],
+    "runtimeWarnings": [],
+    "note": "Same frozen source, GLIDE_FORMAT_FIXTURES=1 restored. 1080p actual VLC seek/resume/pause and engine confirmation passed, no skip."
+  }
+]

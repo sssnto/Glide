@@ -1,0 +1,19 @@
+{
+  "result": "Failed",
+  "totalTestCount": 2,
+  "passedTests": 1,
+  "failedTests": 1,
+  "skippedTests": 0,
+  "startTime": 1792579380.424,
+  "finishTime": 1792579607.51,
+  "testFailures": [
+    {
+      "failureText": "XCTAssertTrue failed",
+      "targetName": "GlideUITests",
+      "testIdentifier": 1,
+      "testIdentifierString": "GlideUITests/testNativeAppearanceAndLibraryNavigation()",
+      "testIdentifierURL": "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testNativeAppearanceAndLibraryNavigation",
+      "testName": "testNativeAppearanceAndLibraryNavigation()"
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "version": "1.11.0",
+  "build": "4",
+  "timestamp": "2026-10-23T01:21:09.677333+00:00",
+  "core": {
+    "passed": 208,
+    "swiftTesting": 201,
+    "xctest": 7,
+    "report": "Logs/Core-Font-Aliases.log"
+  },
+  "device": {
+    "installed": true,
+    "productionChecksPassed": 13,
+    "authoredRenderChecksPassed": 14,
+    "system": "27.0.1",
+    "timestamp": "2026-10-23T01:02:14Z",
+    "report": "ASS-iPhone-Build4-Final.json",
+    "missingFontCount": 0,
+    "matchedProvidedFontCount": 1,
+    "subtitleMemoryRestored": true,
+    "normalLaunchRestored": true,
+    "homeVisuallyConfirmed": true
+  },
+  "font": {
+    "provenance": "Fonts/WenQuanYi-Provenance.json",
+    "importedToPrivateAppDirectory": true,
+    "bundledInApp": false,
+    "registeredSystemWide": false,
+    "sha256": "e4bca8df123ce01b104780f576ea1a58b9a5ff1662a91124b6d3180cb6c88212"
+  },
+  "ui": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "engines": [
+      "avPlayer",
+      "vlc"
+    ],
+    "report": "UI-Acceptance-Summary.json",
+    "historicalFailures": [
+      "UI-First-Failure.json",
+      "UI-Second-Failure.json",
+      "UI-Menu-Failure.json"
+    ],
+    "runtimeWarnings": [
+      {
+        "issueType": "Runtime Warning",
+        "message": "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+      }
+    ]
+  },
+  "release": {
+    "archive": "/tmp/Glide1110-ASSStyle/Device-2026-10-23/Glide-1.11.0-4.xcarchive",
+    "compiled": true,
+    "signatureVerified": true,
+    "dsymVerified": true,
+    "preflightPassed": true,
+    "uploaded": false
+  },
+  "sourceSnapshot": "Source-Snapshot.json",
+  "sourceInputCount": 140,
+  "previousUserChangesPreserved": true,
+  "evidenceSHA256": {
+    "ASS-iPhone-Build3-Before-Font.json": "67067f3a1ccd81c19cdb952de09f7bd093ea2de64126e37371910f83123c19c2",
+    "ASS-iPhone-Build3-With-Font.json": "7b7240c6cfd0c8310286de28d5ab5075d9aab3c0bf1638402e52eb7839be140d",
+    "ASS-iPhone-Build4-Final.json": "26b9ce118f23bc33c1a6581647fb0aa9c42d61a59364c46bde53de9d87508bb3",
+    "Archive-Symbols.json": "fc32e2dba1a402d46c95999d82a437431bf1897d40640cb4cca27ea9e49ba076",
+    "Fonts/Alias-Validation.log": "a5b80d1d2217c8ee546a1d1f287a11a8ad5857abb045a8ee442e6d1fe1df7b8f",
+    "Fonts/WenQuanYi-AUTHORS.txt": "e980452a04c9e9dd7d6f0d8f72dd4c960f312207d64b849b73347beb02b9c3fa",
+    "Fonts/WenQuanYi-Apache-2.0.txt": "1c19d8eb506a0e9d501d882fc9fe94eca99bc7b2f69f5e64fa79b7ec48cee54d",
+    "Fonts/WenQuanYi-Provenance.json": "845cddf9c7eaf08061260f3050070207b3a701ca2bc718a028e2689dcc65ec9c",
+    "Logs/Build3-Install.log": "3b9b8baa6d338d1a3826296a403fad7b05dfa3a80736e13b4a7a603ea18db104",
+    "Logs/Build3-Launch-With-Font.log": "c50d8e63c32bf9c83239f525b7635740b0745d18ce3c71a5447d2ea0b15ec13c",
+    "Logs/Build4-Device-Build.log": "3a5f9bcdfe016632ca5cbe6a46a66e55c2d4a0b90ac74c22fbe5e4359a75b0e1",
+    "Logs/Build4-Install.log": "f547ac74235b2391c0a60382d15dd28ebd35021e20a5dd35e016881ed79b41ec",
+    "Logs/Build4-Launch.log": "c50d8e63c32bf9c83239f525b7635740b0745d18ce3c71a5447d2ea0b15ec13c",
+    "Logs/Build4-Normal-Restore.log": "c50d8e63c32bf9c83239f525b7635740b0745d18ce3c71a5447d2ea0b15ec13c",
+    "Logs/Core-Font-Aliases.log": "de1b6f26e59a1d2dbc89b1a70ab759b198f824e84b37a085eb8e9ed1aa6914cc",
+    "Logs/Font-Import.log": "d343d777d19898df87922758c93ab1c5e897741509c7e0294d7f32096746c40c",
+    "Logs/Font-License-Copy.log": "37b69cf87c71ecf6de09de25daf0ce4b25900c5544dee767348a14ef7d562fe8",
+    "Logs/Initial-Install-Unpaired.log": "9bc69fd3eefe02e893bb07463ec3d893061e6556ea0a9a18271770272879a80e",
+    "Logs/Pair.log": "1969532d1f6b4c99b05ae02c75feb1870dd9a00ee3e98db6aa8371d773bd1d78",
+    "Logs/Release-Archive.log": "c84bab77e9683a9ac6e31e711cac3f3164f5979dc8684d042b00df932112c8ea",
+    "Logs/UI-Acceptance.log": "497fbfdce7e1d36d1125204e8cb20e320e5e951cce0587abe9af77ca8ee8bfd9",
+    "README.md": "8cec386622a224f0d31ba3d813606d99ddaca07fa053e7453950c9c66a06c4cf",
+    "Release-Preflight.txt": "36b39ae3bdf730299fe3449a16549b71a0a2267b7d42341754f8adab0c0f30a0",
+    "Release-Signature.txt": "cf69dbb0b7873b817eac20037752f65b6f538fd6e2d515cf4e5391e0113b47d6",
+    "Screenshots/Native-ASS-Colours.png": "b7b701b5d9e27aa40f4c9c1e480e331f409e2a0ce7c8ced59418254607db38d2",
+    "Screenshots/Native-ASS-Motion.png": "40828986b047864ac5282f88b5a48f51bf7b4ad365032d5a7c2a03218b591acf",
+    "Screenshots/VLC-ASS-Colours.png": "627859e69696f4c50839015f998d497d639aee706e9091189ba107b3e6738204",
+    "Screenshots/VLC-ASS-Motion.png": "1e8c81f90cf22409dc359a4083d7b93cba416db877f7c9ae475902b306bfb782",
+    "Source-Snapshot.json": "fd8f7c863f3cba2c5cc7bdba782903e403dac1b9ae5d62b3d507d44c91320297",
+    "UI-Acceptance-Summary.json": "9ca30eeb563eba80e38a6cc46cf8f2c7b771f5549e35bc94e03804acb7f16362",
+    "UI-First-Failure.json": "a6bfeba1625d7ddd539c139f092edbddd0dd7b02b7dffd852cee6a2705452693",
+    "UI-Menu-Failure.json": "7d7e176527aec9934aa0bb66840721cea735d0bf5e1a92f533231e05c39c8823",
+    "UI-Second-Failure.json": "8bb7f904632c16eaab7fe832303dc720326b6b40259ce09395765fac8f503cbf"
+  }
+}

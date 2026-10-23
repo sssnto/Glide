@@ -1,0 +1,2 @@
+/tmp/Glide1110/Glide-1.11.0.xcarchive/Products/Applications/Glide.app: CSSMERR_TP_NOT_TRUSTED
+In architecture: arm64

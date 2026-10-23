@@ -1,17 +1,26 @@
 import SwiftUI
 
+enum GlideAppearance: String, CaseIterable, Identifiable {
+    case system, light, dark
+    var id: String { rawValue }
+    var title: String { switch self { case .system: "跟随系统"; case .light: "浅色"; case .dark: "深色" } }
+    var colorScheme: ColorScheme? { switch self { case .system: nil; case .light: .light; case .dark: .dark } }
+}
+
 enum GlideTheme {
-    // Neutral surfaces keep artwork and the primary playback action in focus.
-    static let text = Color(red: 0.93, green: 0.94, blue: 0.95)
-    static let background = Color(red: 0.043, green: 0.051, blue: 0.063)
-    static let panel = Color(red: 0.082, green: 0.094, blue: 0.110)
+    // System semantic colors follow appearance and increased-contrast settings.
+    static let text = Color.primary
+    static let background = Color(uiColor: .systemGroupedBackground)
+    static let panel = Color(uiColor: .secondarySystemGroupedBackground)
     static let surface = panel
-    static let raised = Color(red: 0.122, green: 0.137, blue: 0.157)
-    static let subtle = Color(red: 0.55, green: 0.59, blue: 0.63)
-    static let muted = Color(red: 0.65, green: 0.69, blue: 0.73)
-    static let separator = Color(red: 0.18, green: 0.20, blue: 0.23)
-    static let outline = Color.white.opacity(0.08)
-    static let accent = Color(red: 0.70, green: 0.86, blue: 0.78)
+    static let raised = Color(uiColor: .tertiarySystemGroupedBackground)
+    static let subtle = Color(uiColor: .tertiaryLabel)
+    static let muted = Color.secondary
+    static let separator = Color(uiColor: .separator)
+    static let outline = Color(uiColor: .separator).opacity(0.45)
+    static let accent = Color.blue
+    static let onAccent = Color.white
+    static let playbackControl = Color.white
 
     enum Typography {
         static let pageTitle: Font = .system(.title2, design: .default, weight: .bold)
@@ -198,8 +207,8 @@ struct RoundControl: View {
             Image(systemName: symbol).font(.system(size: prominent && !compact ? 22 : 18, weight: .medium))
                 .frame(width: prominent && !compact ? 60 : GlideTheme.Layout.touchTarget,
                        height: prominent && !compact ? 60 : GlideTheme.Layout.touchTarget)
-                .foregroundStyle(prominent ? GlideTheme.background : GlideTheme.text)
-                .background(prominent ? GlideTheme.accent : GlideTheme.raised, in: Circle())
+                .foregroundStyle(prominent ? Color.black : GlideTheme.text)
+                .background(prominent ? GlideTheme.playbackControl : GlideTheme.raised, in: Circle())
                 .contentShape(Circle())
         }.accessibilityLabel(label).buttonStyle(.plain)
     }
@@ -313,7 +322,8 @@ private struct FolderPreviewArtwork: View {
                 }
                 return
             }
-            guard let entries = try? await MediaClient.shared.webDAV(server: server, directory: directory.url), !Task.isCancelled else { return }
+            guard let provider = try? SourceProviders.directories(for: server.kind),
+                  let entries = try? await provider.entries(server: server, directory: directory.url), !Task.isCancelled else { return }
             let pictures = entries.filter {
                 !$0.isDirectory && DirectoryScope.contains(root: directory.url, child: $0.url)
                     && $0.url.query == nil && $0.url.fragment == nil

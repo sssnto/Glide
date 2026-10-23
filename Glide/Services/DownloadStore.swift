@@ -47,14 +47,14 @@ final class DownloadStore: NSObject, URLSessionDownloadDelegate {
         guard !entries.contains(where: { $0.id == video.id && ["等待下载", "下载中", "已暂停", "校验中", "已完成"].contains($0.state) }) else { return }
         guard let source = item.MediaSources?.first, sourceID == nil || sourceID == source.Id else { throw MediaError.message("离线下载暂支持默认媒体版本。") }
         let ext = source.Container?.lowercased() ?? ""
-        guard ["mp4", "mov", "m4v"].contains(ext) else { throw MediaError.message("离线播放暂支持 MP4 / MOV / M4V 原文件。此版本请在线使用 Jellyfin 转码。") }
+        guard ["mp4", "mov", "m4v"].contains(ext) else { throw MediaError.message("离线播放暂支持 MP4 / MOV / M4V 原文件。请在线使用媒体服务器转码。") }
         guard let token = Credentials.read(server.id), let remoteID = video.remoteID else { throw MediaError.message("请重新登录。") }
         let available = (try? FileManager.default.attributesOfFileSystem(forPath: Self.directory.path)[.systemFreeSize] as? NSNumber)?.int64Value ?? Int64.max
         let allocated = entries.filter { $0.id != video.id }.reduce(Int64(0)) { $0 + ($1.expectedBytes ?? 0) }
         guard allocated + (source.Size ?? 0) <= PlaybackPreferences.downloadLimit else { throw MediaError.message("超过离线容量预算，请清理下载或在设置中调整。") }
         guard available > (source.Size ?? 0) + 200 * 1024 * 1024 else { throw MediaError.message("设备剩余空间不足，请先清理存储。") }
         var request = URLRequest(url: ServerURL.endpoint(server.address, "Items/\(remoteID)/Download"))
-        request.setValue(MediaClient.shared.authorization(token), forHTTPHeaderField: "Authorization")
+        request.setValue(MediaClient.shared.authorization(token, server: server), forHTTPHeaderField: "Authorization")
         request.allowsCellularAccess = !PlaybackPreferences.downloadWiFiOnly
         request.allowsExpensiveNetworkAccess = !PlaybackPreferences.downloadWiFiOnly
         let filename = UUID().uuidString + "." + ext
@@ -104,7 +104,7 @@ final class DownloadStore: NSObject, URLSessionDownloadDelegate {
             entries[index].state = "下载失败"; entries[index].message = "请先重新登录此媒体来源。"; persist(); return
         }
         var request = URLRequest(url: ServerURL.endpoint(server.address, "Items/\(remoteID)/Download"))
-        request.setValue(MediaClient.shared.authorization(token), forHTTPHeaderField: "Authorization")
+        request.setValue(MediaClient.shared.authorization(token, server: server), forHTTPHeaderField: "Authorization")
         request.allowsCellularAccess = !PlaybackPreferences.downloadWiFiOnly
         request.allowsExpensiveNetworkAccess = !PlaybackPreferences.downloadWiFiOnly
         // Give retries a new identity so late callbacks cannot overwrite the new transfer.

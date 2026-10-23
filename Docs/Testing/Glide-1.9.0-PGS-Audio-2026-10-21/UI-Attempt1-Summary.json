@@ -1,0 +1,59 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "A517192E-7F4D-4ED6-9ADF-8E7E513C6913",
+        "deviceName" : "Glide App Store iPad",
+        "modelName" : "iPad Pro (12.9-inch) (6th generation)",
+        "osBuildNumber" : "23D8133",
+        "osVersion" : "26.3.1",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 1,
+      "passedTests" : 1,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "GlideCompatibilityQA · Built with macOS 27.0.1",
+  "expectedFailures" : 0,
+  "failedTests" : 1,
+  "finishTime" : 1792572580.812,
+  "passedTests" : 1,
+  "result" : "Failed",
+  "runtimeWarnings" : [
+    {
+      "issueType" : "Runtime Warning",
+      "message" : "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+    },
+    {
+      "issueType" : "Runtime Warning",
+      "message" : "Adding '_UIReparentingView' as a subview of UIHostingController.view is not supported and may result in a broken view hierarchy. Add your view above UIHostingController.view in a common superview or insert it into your SwiftUI content in a UIViewRepresentable instead."
+    }
+  ],
+  "skippedTests" : 0,
+  "startTime" : 1792572454.468,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "Failed to tap \"player.subtitle.off\" Button: No matches found for Elements matching predicate '\"player.subtitle.off\" IN identifiers' from input {(\n    Button, identifier: 'chevron.down', label: '返回片库',\n    Button, identifier: 'lock.open', label: '锁定触控',\n    Button, identifier: 'ellipsis', label: '播放设置',\n    Button, identifier: 'backward.end.fill', label: '上一个视频', Disabled,\n    Button, identifier: 'gobackward.10', label: '快退 10 秒',\n    Button, identifier: 'play.fill', label: '播放',\n    Button, identifier: 'goforward.10', label: '快进 10 秒',\n    Button, identifier: 'forward.end.fill', label: '下一个视频', Disabled,\n    Button, identifier: 'player.quick.speed', label: '播放速度',\n    Button, identifier: 'player.quick.audio', label: '音轨', value: 2 条 · English 440 Hz,\n    Button, identifier: 'player.quick.subtitle', label: '字幕', value: English fixture su...,\n    Button, identifier: 'player.rotate', label: '切换横屏',\n    Button,\n    Button,\n    Button,\n    Button, identifier: 'BackButton', label: 'Fixture Movies',\n    Button, label: 'Hide Sidebar',\n    Button, identifier: 'arrow.down.circle', label: '离线下载',\n    Button, identifier: 'detail.play', label: '继续观看',\n    Button, label: '从头播放',\n    Button, identifier: 'detail.favorite', label: '收藏',\n    Button, identifier: 'detail.download', label: '下载原文件',\n    Button, identifier: 'detail.more', label: '更多作品操作',\n    Button, identifier: 'detail.audio', label: '音轨, 自动 · 英语 · AAC',\n    Button, identifier: 'detail.subtitle', label: '字幕, 自动 · 中文 · SRT',\n    Button,\n    Button, identifier: 'facet.Genres:Adventure', label: 'Adventure',\n    Button, identifier: 'facet.Tags:精彩 & 推荐', label: '# 精彩 & 推荐',\n    Button, identifier: 'person.person-a', label: 'Fixture Person，Lead，查看相关媒体',\n    Button, identifier: 'person.person-b', label: 'Fixture Person，导演，查看相关媒体',\n    Button, identifier: 'similar.series', label: '★ 8.4, Fixture Show, 2026'\n)}\nPossibly caused by runtime issues:\nAutomation type mismatch: computed Button from legacy attributes vs PopUpButton from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 14;\n    \"XC_kAXXCAttributeElementBaseType\" = UIResponder;\n    \"XC_kAXXCAttributeElementType\" = \"SwiftUI.AccessibilityNode\";\n    \"XC_kAXXCAttributeTraits\" = 1108101562369;\n}\nSee test report attachments for more detail.",
+      "targetName" : "GlideUITests",
+      "testIdentifier" : 2,
+      "testIdentifierString" : "GlideUITests/testJellyfinServerSubtitleMenuSwitchOffAndReenable()",
+      "testIdentifierURL" : "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testJellyfinServerSubtitleMenuSwitchOffAndReenable",
+      "testName" : "testJellyfinServerSubtitleMenuSwitchOffAndReenable()"
+    }
+  ],
+  "title" : "Test - GlideCompatibilityQA",
+  "topInsights" : [
+
+  ],
+  "totalTestCount" : 2
+}

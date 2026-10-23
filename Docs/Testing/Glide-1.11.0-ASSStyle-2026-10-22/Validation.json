@@ -1,0 +1,46 @@
+{
+  "version": "1.11.0",
+  "build": "3",
+  "timestamp": "2026-10-22T11:11:00.931459+00:00",
+  "core": {
+    "passed": 206,
+    "swiftTesting": 199,
+    "xctest": 7
+  },
+  "render": {
+    "passed": 14,
+    "report": "ASS-Style-Simulator-Final.json"
+  },
+  "ui": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "engines": [
+      "avPlayer",
+      "vlc"
+    ],
+    "report": "Style-UI-Acceptance-Summary.json"
+  },
+  "plainTextRegression": {
+    "passed": true,
+    "report": "Style-UI-Regression-History.json",
+    "note": "History contains a separate no-audio start-paused style-fixture failure, later isolated with authored H264/AAC fixture."
+  },
+  "release": {
+    "archive": "/tmp/Glide1110-ASSStyle/Glide-1.11.0-3-ASS.xcarchive",
+    "compiled": true,
+    "signatureVerified": true,
+    "dsymVerified": true,
+    "preflightPassed": true,
+    "uploaded": false
+  },
+  "device": {
+    "status": "awaiting_connection",
+    "installed": false,
+    "actualEpisodeStyleVerified": false,
+    "error": "CoreDevice 4016; device unavailable",
+    "report": "Logs/Device-Install-Unavailable.log"
+  },
+  "sourceSnapshot": "Source-Snapshot.json",
+  "previousUserChangesPreserved": true
+}
