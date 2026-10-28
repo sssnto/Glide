@@ -1,0 +1,102 @@
+{
+  "preparedAt": "2026-10-23T10:32:07.557416+08:00",
+  "sourceCommit": "c35bee1505c21be877b90bf3462b6f6ae2316cdb",
+  "version": "1.11.0",
+  "build": "4",
+  "validatedAppInputCount": 140,
+  "appSourcesChanged": false,
+  "currentPublicStore": {
+    "trackName": "Glide",
+    "version": "1.4.0",
+    "minimumOsVersion": "17.0",
+    "trackViewUrl": "https://apps.apple.com/cn/app/glide/id6814679647?uo=4",
+    "currentVersionReleaseDate": "2026-10-17T14:11:26Z"
+  },
+  "fieldChecks": {
+    "name": {
+      "length": 11,
+      "limit": 30,
+      "unit": "characters",
+      "passed": true
+    },
+    "subtitle": {
+      "length": 16,
+      "limit": 30,
+      "unit": "characters",
+      "passed": true
+    },
+    "promotional-text": {
+      "length": 98,
+      "limit": 170,
+      "unit": "characters",
+      "passed": true
+    },
+    "release-notes": {
+      "length": 598,
+      "limit": 4000,
+      "unit": "characters",
+      "passed": true
+    },
+    "description": {
+      "length": 1216,
+      "limit": 4000,
+      "unit": "characters",
+      "passed": true
+    },
+    "keywords": {
+      "length": 99,
+      "limit": 100,
+      "unit": "UTF-8 bytes",
+      "passed": true
+    },
+    "review-notes": {
+      "length": 3020,
+      "limit": 4000,
+      "unit": "UTF-8 bytes",
+      "passed": true
+    }
+  },
+  "allFieldChecksPassed": true,
+  "screenshotsStatus": "copy_and_capture_brief_only_not_final_assets",
+  "appStoreConnectChanged": false,
+  "buildUploaded": false,
+  "submittedForReview": false,
+  "websiteStatusChanged": false,
+  "sources": [
+    "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information/",
+    "https://developer.apple.com/help/app-store-connect/reference/app-information/app-information/",
+    "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/"
+  ],
+  "filesSHA256": {
+    "README.md": "c021f821ca92fa305a04816f5a824cef9f8e7a3308867cff8869cd6ca30faa83",
+    "metadata-zh-Hans.json": "50f418219dd191c5c2680925c18c8d3d0411830bb2cbb50fb1d5dc26c7ffa65b",
+    "review-notes-en.txt": "6e6c15b7f341b4c2b125604a96bf14926cb6317b48f9d2ec058a78f6efd30663",
+    "screenshot-brief.md": "8a99f88d66106448aa2b48c3439677b1d3079b1e2b1493b423d875929616de4c",
+    "zh-Hans/announcement.txt": "a0d54d2c74eb17f6fc2e94e5161b13e267d41bacf1aaeaddfa52c5c9b498aa83",
+    "zh-Hans/description.txt": "0c48734e64ca512d99ec2f7d93d0db2a95063023c6c8bf475332b6bb3735e690",
+    "zh-Hans/keywords.txt": "686bce3f12377b1f8e73fd3d978cfb492afd1d0aad367627fbe21232b5e48e4d",
+    "zh-Hans/name.txt": "f2caef819c196557f1bdba78a00e56d5e2fbc2cdd8fb91741f6063244964ad26",
+    "zh-Hans/promotional-text.txt": "45f42ee6cc2b7e2c2d28665fa640e80dcf2c900d45ef4f137ad53ecbba1c4982",
+    "zh-Hans/release-notes.txt": "25e805e8e734aa0c00808bb8113a1719e20f21d2f63bc3aee4fe5236c2df0ed9",
+    "zh-Hans/subtitle.txt": "437e8411978c68f0c7afbf6400874b75fb83e69ee92285d7a878bf9fc8198a9d",
+    "zh-Hans/testflight-what-to-test.txt": "d8682733dbd097bdae19c8f71b143f8aba493a0daff433b90e4f039efe0c4451"
+  },
+  "publicURLs": [
+    {
+      "url": "https://glide.sssnto.cn/",
+      "status": 200,
+      "bytes": 16291
+    },
+    {
+      "url": "https://glide.sssnto.cn/support.html",
+      "status": 200,
+      "bytes": 8367
+    },
+    {
+      "url": "https://glide.sssnto.cn/privacy.html",
+      "status": 200,
+      "bytes": 6490
+    }
+  ],
+  "publicURLsPassed": true
+}

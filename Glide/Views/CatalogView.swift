@@ -77,6 +77,9 @@ struct CatalogView: View {
                 .background(GlideTheme.background).navigationTitle(folder.name).navigationBarTitleDisplayMode(.inline)
                 .searchable(text: $query, prompt: shows ? "搜索节目" : "搜索电影")
                 .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        NavigationLink { UnifiedLibraryView(library: library) } label: { Label("搜索全部片库", systemImage: "magnifyingglass") }
+                    }
                     ToolbarItem(placement: .topBarLeading) { Button { Task { await library.jump(to: 0) } } label: { Label("媒体库", systemImage: "chevron.left") }.accessibilityIdentifier("catalog.back") }
                 }
                 .refreshable { await load(reset: true, refresh: true) }
@@ -507,7 +510,7 @@ private struct CatalogFactStrip: View {
     }
 }
 
-private enum CatalogMediaPresentation {
+enum CatalogMediaPresentation {
     static func resolution(_ stream: CatalogItem.Stream) -> String? {
         guard let width = stream.Width, let height = stream.Height, width > 0, height > 0 else { return nil }
         let longEdge = max(width, height), shortEdge = min(width, height)
@@ -533,7 +536,7 @@ private enum CatalogMediaPresentation {
                 source.Size.flatMap { $0 > 0 ? ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) : nil }]
             .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
     }
-    static func fields(_ source: CatalogItem.Source) -> [CatalogTechnicalField] {
+    fileprivate static func fields(_ source: CatalogItem.Source) -> [CatalogTechnicalField] {
         var fields: [CatalogTechnicalField] = []
         if let video = source.MediaStreams?.first(where: { $0.Type == "Video" }) {
             if let width = video.Width, let height = video.Height, width > 0, height > 0 { fields.append(.init(label: "分辨率", value: "\(width) × \(height)")) }

@@ -1,0 +1,16 @@
+{
+  "checks" : [
+    "same-file-two-ranges-and-cross-file-collection",
+    "collection-cursor-restores-after-store-reopen",
+    "native-actually-decodes-selected-range",
+    "native-stops-at-clip-end-without-full-video-completion"
+  ],
+  "failure" : "验证失败：backward-seek-clamped-to-start",
+  "measurements" : {
+    "nativeEndActual" : 2.8420000000000001
+  },
+  "originalMaterialOnly" : true,
+  "passed" : false,
+  "timestamp" : "2026-10-26T05:45:27Z",
+  "version" : "1.14.0 (1)"
+}

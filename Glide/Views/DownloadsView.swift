@@ -4,13 +4,33 @@ struct DownloadsView: View {
     var library: LibraryStore
     @State private var downloads = DownloadStore.shared
     @State private var selection: PlaySelection?
-    private let groups = ["可播放", "进行中", "需处理"]
+    @State private var trips = OfflineTripStore.shared
+    @State private var creatingTrip = false
+    @State private var message: String?
+    private let groups = ["已下载", "进行中", "需处理"]
     private func group(_ entry: OfflineDownload) -> String {
-        entry.state == "已完成" ? "可播放" : ["等待下载", "下载中", "校验中"].contains(entry.state) ? "进行中" : "需处理"
+        entry.state == "已完成" ? "已下载" : ["准备资料", "等待下载", "下载中", "校验中"].contains(entry.state) ? "进行中" : "需处理"
     }
     var body: some View {
         let grouped = Dictionary(grouping: downloads.entries, by: group)
         List {
+            Section {
+                Button { creatingTrip = true } label: {
+                    Label("创建行程包", systemImage: "suitcase.rolling")
+                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                        .contentShape(Rectangle())
+                }.accessibilityIdentifier("trip.create")
+                ForEach(trips.trips.sorted { $0.createdAt > $1.createdAt }) { trip in
+                    NavigationLink { OfflineTripDetail(library: library, tripID: trip.id) } label: {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(trip.name).font(.headline)
+                            Text("\(trip.videoIDs.count) 个视频 · \(trip.targetSeconds.mediaTime) 行程").font(.caption).foregroundStyle(.secondary)
+                        }.padding(.vertical, 4)
+                    }.accessibilityIdentifier("trip.open." + trip.id.uuidString)
+                }
+            } header: { Text("随身片库") } footer: { Text("按时间和容量准备片库，出发前确认离线可用。") }
+            if let message { Text(message).foregroundStyle(.orange) }
+            if let error = downloads.storageError ?? trips.message { Text(error).foregroundStyle(.orange) }
             Section {
                 HStack(alignment: .firstTextBaseline) {
                     Label("设备存储", systemImage: "internaldrive").font(GlideTheme.Typography.secondary)
@@ -20,7 +40,7 @@ struct DownloadsView: View {
                 }
             }.listRowBackground(Color.clear)
             if downloads.entries.isEmpty {
-                ContentUnavailableView("还没有离线影片", systemImage: "arrow.down.circle", description: Text("打开电影或单集详情，选择下载原文件。"))
+                ContentUnavailableView("还没有离线影片", systemImage: "arrow.down.circle", description: Text("创建行程包，或打开电影、单集详情下载原文件。"))
                     .listRowBackground(Color.clear)
             }
             ForEach(groups, id: \.self) { title in
@@ -30,11 +50,12 @@ struct DownloadsView: View {
                 }
             }
             Section {
-                DisclosureGroup("离线播放说明") { Text("支持系统可播放的 MP4 / MOV / M4V 原文件。强制退出可能中断后台任务；重新打开可重试。已完成文件独立保存，移除来源时可选择保留。")
+                DisclosureGroup("离线播放说明") { Text("支持 MP4 / MOV / M4V / MKV 原文件，MKV 使用兼容播放。下载完成后可在行程包中进行出画面与资料检查；实际编码仍需设备支持。强制退出可能中断后台任务，重新打开可重试。")
                     .font(.footnote).foregroundStyle(GlideTheme.muted) }
             }.listRowBackground(Color.clear)
         }.scrollContentBackground(.hidden).background(GlideTheme.background)
-            .font(GlideTheme.Typography.body).navigationTitle("离线下载").navigationBarTitleDisplayMode(.inline).task { await downloads.reconcile() }
+            .font(GlideTheme.Typography.body).navigationTitle("随身片库").navigationBarTitleDisplayMode(.inline).task { await downloads.reconcile() }
+            .sheet(isPresented: $creatingTrip) { OfflineTripComposer(library: library) }
             .fullScreenCover(item: $selection) { item in
                 PlayerView(library: library, queue: item.queue, scopeName: item.scopeName, cinematic: true)
             }
@@ -67,8 +88,9 @@ struct DownloadsView: View {
                 if let message = entry.message { Text(message).font(.caption).foregroundStyle(.orange) }
                 if let url = downloads.localURL(videoID: entry.id) {
                     Button {
-                        var video = entry.video; video.url = url
-                        selection = PlaySelection(queue: PlaybackQueue(videos: [video], mode: .sequential), scopeName: "离线播放")
+                        _ = url
+                        do { selection = PlaySelection(queue: PlaybackQueue(videos: [try downloads.offlineVideo(entry.id)], mode: .sequential), scopeName: "离线播放") }
+                        catch { message = error.localizedDescription }
                     } label: { Label("离线播放", systemImage: "play.fill") }
                         .frame(minHeight: 44).accessibilityIdentifier("offline.play." + (entry.video.remoteID ?? entry.id))
                 }
@@ -89,7 +111,7 @@ private struct OfflineDownloadArtwork: View {
         ZStack {
             GlideTheme.background
             if let image { Image(uiImage: image).resizable().scaledToFit() }
-            else { VideoArtwork(video: video) }
+            else { Image(systemName: "film").foregroundStyle(.secondary) }
         }.task(id: data) {
             image = nil
             guard let data else { return }

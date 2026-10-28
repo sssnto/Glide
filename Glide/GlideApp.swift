@@ -15,7 +15,10 @@ struct GlideApp: App {
                     if ProcessInfo.processInfo.arguments.contains("--glide-ui-audit") { UIApplication.shared.isIdleTimerDisabled = true }
                 }
                 .task {
-                    if ProcessInfo.processInfo.arguments.contains("--glide-link-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-discovery-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-map-fixture") { library.showDemo() }
+                    if ProcessInfo.processInfo.arguments.contains("--glide-link-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-discovery-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-map-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-trip-fixture") { library.showDemo() }
+                    if ProcessInfo.processInfo.arguments.contains("--glide-trip-fixture"), ProcessInfo.processInfo.arguments.contains("--glide-trip-reset-demo-progress") {
+                        for index in 0..<3 { library.positions.removeValue(forKey: "demo-\(index)") }
+                    }
                     if ProcessInfo.processInfo.arguments.contains("--glide-dual-subtitle-fixture") {
                         do { try await DualSubtitleFixtures.prepare(library) }
                         catch { library.error = "双字幕验证准备失败：" + error.localizedDescription }
@@ -44,7 +47,13 @@ struct GlideApp: App {
     }
     @ViewBuilder private var root: some View {
 #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("--glide-map-probe") {
+        if ProcessInfo.processInfo.arguments.contains("--glide-clip-fixture") {
+            ClipQAView(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-unified-fixture") {
+            UnifiedLibraryQAView(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-trip-fixture"), ProcessInfo.processInfo.arguments.contains("--glide-trip-probe") {
+            OfflineTripQAProbe(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-map-probe") {
             VideoNavigationQAProbe(library: library)
         } else if ProcessInfo.processInfo.arguments.contains("--glide-discovery-probe") {
             DiscoveryQAProbe(library: library)

@@ -45,7 +45,7 @@ extension MediaClient {
         let revision: String
         var sourceID: String?
         if resource.url.isFileURL {
-            kind = video.demoIndex != nil ? .demo : video.remoteID != nil ? .offline : .local
+            kind = video.demoIndex != nil ? .demo : video.remoteID != nil || video.offlineOnly == true ? .offline : .local
             let values = try resource.url.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
             guard let size = values.fileSize, let modified = values.contentModificationDate else { throw MediaError.message("无法读取本地文件版本。") }
             revision = digest("\(size):\(modified.timeIntervalSince1970)")
@@ -73,8 +73,9 @@ extension MediaClient {
                   let version = http.value(forHTTPHeaderField: "ETag") ?? http.value(forHTTPHeaderField: "Last-Modified") else { throw MediaError.message("来源未提供文件版本信息，暂时无法保存可恢复的时刻。") }
             revision = digest("\(resource.url.path):\(version):\(http.value(forHTTPHeaderField: "Content-Length") ?? "")")
         } else { throw MediaError.message("此链接没有稳定的文件版本，暂时无法收藏时刻。") }
-        if video.sourceID != nil, server == nil { throw MediaError.message("视频来源已移除，请重新连接。") }
-        return MomentReference(kind: kind, videoID: video.id, sourceID: video.sourceID, accountID: server?.userID ?? server?.username ?? "demo", mediaSourceID: sourceID, revision: revision)
+        if video.sourceID != nil, server == nil, video.offlineOnly != true { throw MediaError.message("视频来源已移除，请重新连接。") }
+        let savedAccount = video.offlineOnly == true ? DownloadStore.shared.entries.first(where: { $0.id == video.id })?.originAccountID : nil
+        return MomentReference(kind: kind, videoID: video.id, sourceID: video.sourceID, accountID: savedAccount ?? server?.userID ?? server?.username ?? "demo", mediaSourceID: sourceID, revision: revision, sourceBinding: video.offlineOnly == true ? nil : server.map { digest($0.address.absoluteString + ":" + $0.kind.rawValue) })
     }
     static func storedVideo(_ video: Video, library: LibraryStore) throws -> Video {
         var saved = PersonalVideo(video: video).video
@@ -89,10 +90,15 @@ extension MediaClient {
     static func resolve(_ moment: MediaMoment, library: LibraryStore) throws -> Video {
         _ = try moment.validated()
         var video = moment.video
-        if let index = video.demoIndex, moment.reference.kind == .demo {
+        if moment.reference.kind == .offline {
+            return try DownloadStore.shared.offlineVideo(video.id)
+        } else if let index = video.demoIndex, moment.reference.kind == .demo {
             video.url = Bundle.main.url(forResource: "demo\(index)", withExtension: "mp4")
         } else {
             guard let server = library.servers.first(where: { moment.reference.matches($0) }) else { throw MediaError.message("原来源已移除或账号已变化，请重新连接原账号。") }
+            if let binding = moment.reference.sourceBinding, binding != digest(server.address.absoluteString + ":" + server.kind.rawValue) {
+                throw MediaError.message("原来源地址已变化，请确认原文件后重新收藏。")
+            }
             if server.kind == .smb || server.kind == .webDAV {
                 guard let relative = video.localRelativePath else { throw MediaError.message("无法恢复原文件位置。") }
                 let scope = DiscoveryScope(kind: .video, sourceID: server.id, accountID: moment.reference.accountID, key: relative, name: video.title)
@@ -102,7 +108,8 @@ extension MediaClient {
         return video
     }
     static func verify(_ expected: MomentReference, video: Video, library: LibraryStore, resource: PlaybackResource) async throws {
-        let actual = try await reference(video: video, library: library, resource: resource)
+        var actual = try await reference(video: video, library: library, resource: resource)
+        if expected.sourceBinding == nil { actual.sourceBinding = nil } // Preserve bookmarks saved before source-address binding was introduced.
         guard actual == expected else { throw MediaError.message("原文件版本已变化，已停止打开此时刻。请从片库确认视频后重新收藏。") }
     }
 }
@@ -170,6 +177,7 @@ struct ContentMapFrame { var image: UIImage; var time: Double }
                     values.append(NavigationChapter(id: "local-\(index)", name: name ?? "章节 \(index + 1)", time: group.timeRange.start.seconds))
                 }
                 chapters = NavigationChapter.normalized(values, duration: duration)
+                if video.offlineOnly == true, chapters.isEmpty { chapters = DownloadStore.shared.entries.first(where: { $0.id == video.id })?.chapters ?? [] }
             } else if let server = library.servers.first(where: { $0.id == video.sourceID }), server.kind.isCatalogSource {
                 self.server = server; remoteID = video.remoteID
                 metadata = try await MediaClient.shared.navigationMetadata(video: video, server: server)

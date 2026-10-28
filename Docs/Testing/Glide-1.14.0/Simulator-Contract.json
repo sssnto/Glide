@@ -1,0 +1,32 @@
+{
+  "checks" : [
+    "same-file-two-ranges-and-cross-file-collection",
+    "collection-cursor-restores-after-store-reopen",
+    "native-actually-decodes-selected-range",
+    "native-stops-at-clip-end-without-full-video-completion",
+    "backward-seek-clamped-to-start",
+    "forward-seek-clamped-to-end",
+    "clip-blocks-loop-and-intro-outro-skips",
+    "same-file-second-range-decodes-at-own-start",
+    "cross-file-next-range-actually-decodes",
+    "double-speed-keeps-range-boundary",
+    "compatibility-engine-stops-at-range-boundary",
+    "offline-clip-decodes-with-origin-server-absent",
+    "offline-clip-keeps-range-boundary",
+    "changed-file-rejected-before-first-frame",
+    "clip-playback-never-mutates-full-video-progress",
+    "deleting-clip-retains-original-video",
+    "deleting-collection-retains-clips",
+    "corrupted-primary-recovers-previous-snapshot",
+    "isolated-qa-storage-no-private-media"
+  ],
+  "failure" : "",
+  "measurements" : {
+    "nativeEndActual" : 3,
+    "vlcEndActual" : 2.8719999999999999
+  },
+  "originalMaterialOnly" : true,
+  "passed" : true,
+  "timestamp" : "2026-10-26T07:04:14Z",
+  "version" : "1.14.0 (1)"
+}

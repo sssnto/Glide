@@ -12,7 +12,7 @@ enum LibraryExperience {
 }
 
 /// Jellyfin metadata is optional: untagged titles remain browsable and playable.
-struct CatalogItem: Codable, Identifiable, Equatable {
+struct CatalogItem: Codable, Identifiable, Equatable, Sendable {
     var Id: String
     var Name: String
     var `Type`: String?
@@ -32,8 +32,9 @@ struct CatalogItem: Codable, Identifiable, Equatable {
     var People: [Person]?
     var MediaSources: [Source]?
     var UserData: Progress?
+    var ProviderIds: [String: String]? = nil
     var id: String { Id }
-    struct Person: Codable, Equatable {
+    struct Person: Codable, Equatable, Sendable {
         var Name: String
         var `Type`: String?
         var Role: String?
@@ -52,21 +53,21 @@ struct CatalogItem: Codable, Identifiable, Equatable {
             }
         }
     }
-    struct Progress: Codable, Equatable { var PlaybackPositionTicks: Int64?; var LastPlayedDate: String?; var Played: Bool? }
-    struct Source: Codable, Identifiable, Equatable {
+    struct Progress: Codable, Equatable, Sendable { var PlaybackPositionTicks: Int64?; var LastPlayedDate: String?; var Played: Bool? }
+    struct Source: Codable, Identifiable, Equatable, Sendable {
         var Id: String; var Name: String?; var Container: String?; var Size: Int64?; var MediaStreams: [Stream]?
         var Path: String?
         var MediaAttachments: [Attachment]?
         var id: String { Id }
     }
-    struct Attachment: Codable, Equatable {
+    struct Attachment: Codable, Equatable, Sendable {
         var Index: Int; var FileName: String?; var MimeType: String?; var Codec: String?
         var isFont: Bool {
             let ext = ((FileName ?? "") as NSString).pathExtension.lowercased()
             return ["ttf", "otf", "ttc", "woff", "woff2"].contains(ext) || ["ttf", "otf"].contains(Codec?.lowercased() ?? "") || (MimeType?.lowercased().contains("font") == true)
         }
     }
-    struct Stream: Codable, Identifiable, Equatable {
+    struct Stream: Codable, Identifiable, Equatable, Sendable {
         var Index: Int; var `Type`: String; var DisplayTitle: String?; var Language: String?; var Codec: String?; var IsDefault: Bool?; var IsForced: Bool?; var Width: Int?; var Height: Int?; var BitDepth: Int?; var Profile: String?; var Level: Double?; var CodecTag: String?
         var VideoRangeType: String?; var DvProfile: Int?
         var ColorTransfer: String?; var ColorPrimaries: String?; var ColorSpace: String?

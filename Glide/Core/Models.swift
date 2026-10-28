@@ -52,6 +52,8 @@ struct Video: Identifiable, Equatable, Codable, Sendable {
     /// Relative to the authorized source, independent of a changing sandbox/root URL.
     var localRelativePath: String? = nil
     var streamLinkID: UUID? = nil
+    /// A deliberate local-only session. Never negotiate, prefetch, or recover online.
+    var offlineOnly: Bool? = nil
 }
 
 struct DAVEntry: Identifiable, Equatable, Sendable {

@@ -89,6 +89,30 @@ struct PGSSubtitleFrame {
         return switch choice { case .sidecar(let name, _), .imported(_, let name, _): name; default: nil }
     }
     func waitUntilPrepared() async { await discoveryTask?.value }
+    func installOffline(_ asset: OfflineSubtitleAsset, filename: String, videoID: String) async throws {
+        let token = generation
+        await discoveryTask?.value
+        guard !Task.isCancelled, token == generation, video?.id == videoID else { return }
+        // Honor subsequent local-only choices, including an explicit off selection.
+        guard choice == nil else { return }
+        if asset.disabled { selectEmbedded(nil, engine: .avPlayer); return }
+        guard let file = asset.file else { return }
+        let data = try OfflineCompanions.read(file, filename: filename, limit: file.hasSuffix(".sup") ? PGSSubtitle.maximumBytes : SubtitleDocument.maximumBytes)
+        if file.hasSuffix(".sup") {
+            let work = Task.detached { try PGSSubtitle.parse(data) }
+            let bitmap = try await work.value
+            guard !Task.isCancelled, token == generation, video?.id == videoID else { return }
+            clearBitmap(); self.bitmap = bitmap; serverName = asset.name; delay = asset.delay; onSelection?(); return
+        }
+        let document = try await SubtitleSource.document(data)
+        let fonts = try asset.fonts.map { try OfflineCompanions.read($0, filename: filename, limit: ASSFontStore.maximumBytes) }
+        guard !Task.isCancelled, token == generation, video?.id == videoID else { return }
+        clearBitmap(); cues = document.cues
+        if var ass = document.ass { ass.fonts = fonts; self.ass = ass }
+        serverName = asset.name; delay = asset.delay
+        // The pack owns this asset. Keep choice in-memory rather than a second mutable copy.
+        onSelection?()
+    }
     func installServerText(_ values: [SubtitleCue], name: String, track: SubtitleServerTrack, videoID: String) async -> Bool {
         let token = generation
         await discoveryTask?.value

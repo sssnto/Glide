@@ -133,6 +133,7 @@ import UIKit
     }
     func load(_ resource: PlaybackResource, preload: (any PlaybackPreload)?, options configuration: PlaybackEngineOptions) async throws {
         stop()
+        player.isMuted = configuration.muted
         defer { withExtendedLifetime(resource) {} }
         let token = lifetime.load
         self.resource = resource
@@ -210,6 +211,9 @@ import UIKit
         if !playing { cancelRebuffer() }
         if playing && !rebuffering { player.rate = rate }
         else if playing { primeRebuffer() }
+    }
+    func setPlaybackEnd(_ time: Double?) {
+        player.currentItem?.forwardPlaybackEndTime = time.map { CMTime(seconds: $0, preferredTimescale: 600) } ?? .invalid
     }
     func setForwardBuffer(_ seconds: Double) { player.currentItem?.preferredForwardBufferDuration = seconds }
     func cancelPendingSeeks() { cancelRebuffer(); isSeeking = false; lifetime.cancelSeek(); player.currentItem?.cancelPendingSeeks() }

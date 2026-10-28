@@ -3,12 +3,25 @@ import Foundation
 /// Completed transfers stay in durable storage, with the container extension intact.
 struct OfflineMediaFiles: Sendable {
     let directory: URL
+    /// Reserve full outstanding files conservatively: URLSession's temporary
+    /// partial files are not guaranteed to be queryable by the app.
+    static func canReserve(bytes: Int64, availableBytes: Int64, reservations: [Int64], safetyMargin: Int64 = 200 * 1024 * 1024) -> Bool {
+        guard bytes > 0, safetyMargin >= 0, availableBytes >= safetyMargin else { return false }
+        var remaining = availableBytes - safetyMargin
+        for value in reservations {
+            guard value >= 0, value <= remaining else { return false }
+            remaining -= value
+        }
+        return bytes <= remaining
+    }
+    static func validFilename(_ filename: String) -> Bool {
+        !filename.isEmpty && !filename.hasPrefix(".") && !filename.contains("\\") && filename == (filename as NSString).lastPathComponent && ["mp4", "mov", "m4v", "mkv"].contains((filename as NSString).pathExtension.lowercased())
+    }
     func fileURL(_ filename: String) -> URL { directory.appendingPathComponent(filename) }
     func pendingURL(_ filename: String) -> URL { directory.appendingPathComponent("Pending", isDirectory: true).appendingPathComponent(filename) }
 
     func stage(_ temporary: URL, filename: String) throws {
-        guard filename == (filename as NSString).lastPathComponent,
-              ["mp4", "mov", "m4v"].contains((filename as NSString).pathExtension.lowercased()) else {
+        guard Self.validFilename(filename) else {
             throw MediaError.message("下载文件名无效，请重试下载。")
         }
         let target = pendingURL(filename)

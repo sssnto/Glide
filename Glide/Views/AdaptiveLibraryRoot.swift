@@ -50,6 +50,7 @@ struct AdaptiveLibraryRoot: View {
             .tint(GlideTheme.accent)
             #if DEBUG
             .onAppear {
+                if ProcessInfo.processInfo.arguments.contains("--glide-trip-fixture") { phoneTab = .downloads }
                 if ProcessInfo.processInfo.arguments.contains("--glide-link-fixture") { phoneTab = .library }
                 guard ProcessInfo.processInfo.arguments.contains("--glide-ui-audit") else { return }
                 phoneTab = .library

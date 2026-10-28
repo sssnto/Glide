@@ -136,6 +136,21 @@
 		6EA3A554DCE34F78378A984A /* Glide/Views/VideoNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58C7FC486F289745F920B5F8 /* Glide/Views/VideoNavigationView.swift */; };
 		BBCC2D5B36F122FD6D32C910 /* Glide/Views/MomentLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C3E2E65F5C40120E6F8210 /* Glide/Views/MomentLibraryView.swift */; };
 		D2A71CDBA3666AF2D323EC98 /* Glide/Services/VideoNavigationQAProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4EBC183219CC1C98AD64EE; };
+		01D8DB8001BED0212F6EEAF0 /* Glide/Core/OfflineTrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A786AAB3B84C95A0D948BE7; };
+		F9B8B81F8B8FCD6DC72F5169 /* Glide/Services/OfflineCompanions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D307A812F9A64847A3124FFC; };
+		9C94B721AB3E3847F3C99E91 /* Glide/Services/OfflineTripStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13076C6AB0AEE820796A9228; };
+		6E515E350ECDF3E869267AFB /* Glide/Views/OfflineTripComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F29A47BEA2D8EDEE3FE172; };
+		3541F95EB48C9FF14512DBC8 /* Glide/Views/OfflineTripDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0CB08AF61D8FA03D490CD5; };
+		DBB32032A4CB496AFF5CB8BB = {isa = PBXBuildFile; fileRef = 9AFF8069AAD29F6DD70966EF; };
+		A1233C0338B410050F131B8B = {isa = PBXBuildFile; fileRef = 50AAA6B7AFDF8585C360BE6B; };
+		74C756E791E49377BFA70714 = {isa = PBXBuildFile; fileRef = 39B9B9587816B4D5C2281143; };
+		C12EE787B7B145F5DBDC36FC = {isa = PBXBuildFile; fileRef = 44DBE171A00E58D4DA7A211E; };
+484238C40B721399FD990642 = {isa = PBXBuildFile; fileRef = E4342FE99D422BE14E12D2D0; };
+		EFC591199F119273718EF848 = {isa = PBXBuildFile; fileRef = DCA85C9F83062760EB37D6E4; };
+		81807138C71C40B53B2D249A = {isa = PBXBuildFile; fileRef = 65142DEADA8A3665F22933FE; };
+		2E8DB8428B56B3F580361DF9 = {isa = PBXBuildFile; fileRef = 4E67B0ED50C6C6EFE99670AF; };
+		67505334AC52DD518062605F = {isa = PBXBuildFile; fileRef = 8578B6522F09556CEB28A9D3; };
+F6B35DCE242EAE4871EA4946 = {isa = PBXBuildFile; fileRef = 53DC1E75C16C6DEFB0D793F8; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -294,6 +309,21 @@
 		58C7FC486F289745F920B5F8 /* Glide/Views/VideoNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Views/VideoNavigationView.swift"; sourceTree = SOURCE_ROOT; };
 		12C3E2E65F5C40120E6F8210 /* Glide/Views/MomentLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Views/MomentLibraryView.swift"; sourceTree = SOURCE_ROOT; };
 		CE4EBC183219CC1C98AD64EE /* Glide/Services/VideoNavigationQAProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Services/VideoNavigationQAProbe.swift"; sourceTree = SOURCE_ROOT; };
+		3A786AAB3B84C95A0D948BE7 /* Glide/Core/OfflineTrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Core/OfflineTrip.swift"; sourceTree = SOURCE_ROOT; };
+		D307A812F9A64847A3124FFC /* Glide/Services/OfflineCompanions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Services/OfflineCompanions.swift"; sourceTree = SOURCE_ROOT; };
+		13076C6AB0AEE820796A9228 /* Glide/Services/OfflineTripStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Services/OfflineTripStore.swift"; sourceTree = SOURCE_ROOT; };
+		C0F29A47BEA2D8EDEE3FE172 /* Glide/Views/OfflineTripComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Views/OfflineTripComposer.swift"; sourceTree = SOURCE_ROOT; };
+		0C0CB08AF61D8FA03D490CD5 /* Glide/Views/OfflineTripDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Views/OfflineTripDetail.swift"; sourceTree = SOURCE_ROOT; };
+		9AFF8069AAD29F6DD70966EF = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Services/OfflineTripQAProbe.swift"; sourceTree = SOURCE_ROOT; };
+		50AAA6B7AFDF8585C360BE6B = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Core/UnifiedLibrary.swift"; sourceTree = SOURCE_ROOT; };
+		39B9B9587816B4D5C2281143 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Services/UnifiedLibraryService.swift"; sourceTree = SOURCE_ROOT; };
+		44DBE171A00E58D4DA7A211E = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Views/UnifiedLibraryView.swift"; sourceTree = SOURCE_ROOT; };
+E4342FE99D422BE14E12D2D0 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Services/UnifiedLibraryQAProbe.swift"; sourceTree = SOURCE_ROOT; };
+		DCA85C9F83062760EB37D6E4 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Core/MediaClip.swift"; sourceTree = SOURCE_ROOT; };
+		65142DEADA8A3665F22933FE = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Services/ClipStore.swift"; sourceTree = SOURCE_ROOT; };
+		4E67B0ED50C6C6EFE99670AF = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Views/ClipLibraryView.swift"; sourceTree = SOURCE_ROOT; };
+		8578B6522F09556CEB28A9D3 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Views/ClipEditorView.swift"; sourceTree = SOURCE_ROOT; };
+53DC1E75C16C6DEFB0D793F8 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glide/Services/ClipQAProbe.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -372,6 +402,16 @@
 				2582C0EE99F293CECA7AB18C /* Glide/Services/AuthenticatedAsset.swift */,
 				A83C8CAF5402899506703BAB /* Glide/Services/Credentials.swift */,
 				33D56677C14AD04DA50C0819 /* Glide/Services/DownloadStore.swift */,
+				50AAA6B7AFDF8585C360BE6B,
+				39B9B9587816B4D5C2281143,
+				44DBE171A00E58D4DA7A211E,
+				E4342FE99D422BE14E12D2D0,
+				9AFF8069AAD29F6DD70966EF,
+				0C0CB08AF61D8FA03D490CD5 /* Glide/Views/OfflineTripDetail.swift */,
+				C0F29A47BEA2D8EDEE3FE172 /* Glide/Views/OfflineTripComposer.swift */,
+				13076C6AB0AEE820796A9228 /* Glide/Services/OfflineTripStore.swift */,
+				D307A812F9A64847A3124FFC /* Glide/Services/OfflineCompanions.swift */,
+				3A786AAB3B84C95A0D948BE7 /* Glide/Core/OfflineTrip.swift */,
 				E2DC07DC259F668E7E0F8E3B /* Glide/Services/MediaCache.swift */,
 				DC19A9EB591ABBA8F31195AD /* Glide/Services/MediaClient.swift */,
 				EE933493E88C858BF979BEAC /* Glide/Services/PictureInPicture.swift */,
@@ -455,6 +495,11 @@
 				6E2E8DBEBE9C0224C15DE393 /* Glide/Services/VideoNavigationService.swift */,
 				D21E3B7D9C3D002246E6F9AC /* Glide/Services/MomentStore.swift */,
 				4142F531DF98AB5FB5033558 /* Glide/Core/VideoNavigation.swift */,
+53DC1E75C16C6DEFB0D793F8,
+				8578B6522F09556CEB28A9D3,
+				4E67B0ED50C6C6EFE99670AF,
+				65142DEADA8A3665F22933FE,
+				DCA85C9F83062760EB37D6E4,
 			);
 			sourceTree = "<group>";
 		};
@@ -626,6 +671,11 @@
 				9E4E21EEBA0142667775F2D7 /* Glide/Services/VideoNavigationService.swift in Sources */,
 				7F9519955CE50C96A000EB2E /* Glide/Services/MomentStore.swift in Sources */,
 				B3A27E7804C193FD546ED34F /* Glide/Core/VideoNavigation.swift in Sources */,
+F6B35DCE242EAE4871EA4946,
+				67505334AC52DD518062605F,
+				2E8DB8428B56B3F580361DF9,
+				81807138C71C40B53B2D249A,
+				EFC591199F119273718EF848,
 				7E6F03B313155F4748F1F27A /* Glide/Core/ContinuousWatching.swift in Sources */,
 				D0F03F881DBA0E00A2A6E674 /* Glide/Services/PlaybackWarmup.swift in Sources */,
 				42DA54F46A80294808323793 /* Glide/Core/BrowseOptions.swift in Sources */,
@@ -653,6 +703,16 @@
 				C06FA6D1EF7B50D89D4ECC20 /* Glide/Services/AuthenticatedAsset.swift in Sources */,
 				1FEB8F2EE75759F0D9E53BF6 /* Glide/Services/Credentials.swift in Sources */,
 				B935CAA552CE93C03DB41AB4 /* Glide/Services/DownloadStore.swift in Sources */,
+				A1233C0338B410050F131B8B,
+				74C756E791E49377BFA70714,
+				C12EE787B7B145F5DBDC36FC,
+				484238C40B721399FD990642,
+				DBB32032A4CB496AFF5CB8BB,
+				3541F95EB48C9FF14512DBC8 /* Glide/Views/OfflineTripDetail.swift in Sources */,
+				6E515E350ECDF3E869267AFB /* Glide/Views/OfflineTripComposer.swift in Sources */,
+				9C94B721AB3E3847F3C99E91 /* Glide/Services/OfflineTripStore.swift in Sources */,
+				F9B8B81F8B8FCD6DC72F5169 /* Glide/Services/OfflineCompanions.swift in Sources */,
+				01D8DB8001BED0212F6EEAF0 /* Glide/Core/OfflineTrip.swift in Sources */,
 				92218786482824D018E47683 /* Glide/Services/MediaCache.swift in Sources */,
 				EA39442CFC0047DC9AD726B0 /* Glide/Services/MediaClient.swift in Sources */,
 				0985974D58797C1B6724B772 /* Glide/Services/PictureInPicture.swift in Sources */,
@@ -744,7 +804,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FR9RTRV9BC;
 				GENERATE_INFOPLIST_FILE = NO;
 				GLIDE_DISPLAY_NAME = "Glide 兼容验证";
@@ -757,7 +817,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.11.0;
+				MARKETING_VERSION = 1.14.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -794,7 +854,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FR9RTRV9BC;
 				GENERATE_INFOPLIST_FILE = NO;
 				GLIDE_DISPLAY_NAME = Glide;
@@ -807,7 +867,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.11.0;
+				MARKETING_VERSION = 1.14.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -829,7 +889,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FR9RTRV9BC;
 				GENERATE_INFOPLIST_FILE = NO;
 				GLIDE_DISPLAY_NAME = Glide;
@@ -842,7 +902,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.11.0;
+				MARKETING_VERSION = 1.14.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

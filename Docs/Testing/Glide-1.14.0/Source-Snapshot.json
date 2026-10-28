@@ -1,0 +1,711 @@
+{
+  "version": "1.14.0 (1)",
+  "createdAt": "2026-10-26T07:20:45.223756+00:00",
+  "baseCommit": "30e536b6e518790a871dde4fa666254fb255cd1e",
+  "files": [
+    {
+      "path": "Glide.xcodeproj/project.pbxproj",
+      "sha256": "1fe4b9159129f309f9edaeaa2c1b8a89f172d73ac2feba0dcc38d14634c09e7b"
+    },
+    {
+      "path": "Glide.xcodeproj/project.xcworkspace/contents.xcworkspacedata",
+      "sha256": "4c66d2753087badd9e6c4e6d2092926b873049a0a62734f7afabd48100985eb5"
+    },
+    {
+      "path": "Glide.xcodeproj/xcshareddata/xcschemes/Glide.xcscheme",
+      "sha256": "174757643a1746478c66ae40217c55cb25b518862fb722a9121be695b1f42d45"
+    },
+    {
+      "path": "Glide.xcodeproj/xcshareddata/xcschemes/GlideCompatibilityQA.xcscheme",
+      "sha256": "48f5b08c3956674b9c6b85c3ca197517ddd964b728b3bdc9714a04102a83cc13"
+    },
+    {
+      "path": "Glide/Assets.xcassets/AppIcon.appiconset/AppIcon.png",
+      "sha256": "02396552e8a4af724ec24221ddd7b1a1bf3e339f01dc98f051679938a8804cd5"
+    },
+    {
+      "path": "Glide/Assets.xcassets/AppIcon.appiconset/Contents.json",
+      "sha256": "1b2cc6b6e1ad340faeaae5f07d292eb20c7a22c9995ac8795ea6aa604efa491d"
+    },
+    {
+      "path": "Glide/Assets.xcassets/Contents.json",
+      "sha256": "e8e8ef4b27126d62305af321d12a6e64b866ca0b160f0f83efae90111f0ee576"
+    },
+    {
+      "path": "Glide/Core/ASSDocument.swift",
+      "sha256": "12b72c7ad6f9642ef6e9050cd72c1872583e38db04b7252ec024e8fde3754284"
+    },
+    {
+      "path": "Glide/Core/BrowseOptions.swift",
+      "sha256": "f941fbdcea90509cff131aa8dbb284406ad1602fa457f9c1b47964e0e48b8f1d"
+    },
+    {
+      "path": "Glide/Core/CatalogMedia.swift",
+      "sha256": "d62d4ac5e3778b096e36df93fb178ff95c470f4a73a2284fbe921e02433aba5e"
+    },
+    {
+      "path": "Glide/Core/CatalogSeekRecovery.swift",
+      "sha256": "615817de21fa87678bee21eb248bd392a3528899216d56d90809a687b47303dd"
+    },
+    {
+      "path": "Glide/Core/CatalogSort.swift",
+      "sha256": "534f447a6eb4c2f3a10c4e3df42b924e4676bd7a7671cde069c032c5ae3f7726"
+    },
+    {
+      "path": "Glide/Core/ContinuousWatching.swift",
+      "sha256": "1f40c5b8d6e4becc3571d86b53355e5908295aacc29b6fa045328749d0f5df35"
+    },
+    {
+      "path": "Glide/Core/FontNameTable.swift",
+      "sha256": "6048f14e5d7fe0588d2c0ec3f3ad1c041ea825f3540ed77e41b16891a2ba2584"
+    },
+    {
+      "path": "Glide/Core/LibrarySnapshot.swift",
+      "sha256": "79e2adb55f48fcee066bce8d5da7a363d7641dfc0cc141abc8718f7c80347698"
+    },
+    {
+      "path": "Glide/Core/MediaClip.swift",
+      "sha256": "0e6fa6878797a8609c1e901da13c9371ceb1aa45d48a763bc53e3177e94f0392"
+    },
+    {
+      "path": "Glide/Core/MediaServerAPI.swift",
+      "sha256": "65cca72de5b996f50fc0687a797e5b7e23fb5489437e280e6e078860386e064c"
+    },
+    {
+      "path": "Glide/Core/MediaSource.swift",
+      "sha256": "5eb388287f1b2860e3f1d4d584c88a49fd3c7e3cc8f0ed2ade33237989af813e"
+    },
+    {
+      "path": "Glide/Core/Models.swift",
+      "sha256": "9551dff567d8019e714dfc5ab854aad1825ef834d35087a3a38ac63274fbcd9b"
+    },
+    {
+      "path": "Glide/Core/OfflineMediaFiles.swift",
+      "sha256": "f2a7df33e81770ce8abe507b506e5e58e961a182d7f43c6e94f21bf12e7412e1"
+    },
+    {
+      "path": "Glide/Core/OfflineTrip.swift",
+      "sha256": "7a52a7fa114ec887e4a85f13e60c68be672024c78a764ac0db6a13d79079f751"
+    },
+    {
+      "path": "Glide/Core/PGSSubtitle.swift",
+      "sha256": "2cc21e68c755e9b7b8375180669c7711435a68694bb17377a70f1cbec7df652a"
+    },
+    {
+      "path": "Glide/Core/PersonalVideo.swift",
+      "sha256": "c45b51f0a0ed9ffb7b6cfdfb319095a08c5194e43c6bc30ef50066efa49a20c9"
+    },
+    {
+      "path": "Glide/Core/PlaybackEngineModels.swift",
+      "sha256": "80a60f316c14a68636be9dd680e5f3b097075a6c107ea371b3ccd2832572ef46"
+    },
+    {
+      "path": "Glide/Core/PlaybackIntelligence.swift",
+      "sha256": "88c691fd8c9218bbdbbf365d2225489a14135f41cbe1376432a91d2aff74d977"
+    },
+    {
+      "path": "Glide/Core/PlaybackLoop.swift",
+      "sha256": "ed7b7b72c0aa2e5905a39fbb49c76157432842e6ba376be2455ab8c111224ecc"
+    },
+    {
+      "path": "Glide/Core/PlaybackQuality.swift",
+      "sha256": "2b4b99afd582119fa8429157d3b842a96443e7e1ba6f2d7c16ee966554c458f1"
+    },
+    {
+      "path": "Glide/Core/PlaybackQueue.swift",
+      "sha256": "c5e83b45c7d5a8c5e17be7c77b7312b5b8b63b48e5e00f9589f5a9731dda5e37"
+    },
+    {
+      "path": "Glide/Core/PlaybackSkip.swift",
+      "sha256": "7091c5e5188131041ac5ef02327054bee78bf8c95ec797999e1d5bf7e55fc9b7"
+    },
+    {
+      "path": "Glide/Core/RecoverableStore.swift",
+      "sha256": "52070cf1c8e80020d1f77c381cb104418dde8f9b7cb9fa4a6917216d2a29cbb1"
+    },
+    {
+      "path": "Glide/Core/SMBReadStall.swift",
+      "sha256": "ab5c73f6ffb33cc18cabb6e9c1202d604bbe852e0f7a3fae97a53848603dc10a"
+    },
+    {
+      "path": "Glide/Core/SMBSource.swift",
+      "sha256": "6e10928a9b333031b0c2eaf125c611f4b6b8b29bbfcd55d4a32da0de472b7d6d"
+    },
+    {
+      "path": "Glide/Core/StreamLink.swift",
+      "sha256": "2fd3b2a08774a72485bd5308d72db12daad0cdcecc9bc2a7992d9ec333cf2aaf"
+    },
+    {
+      "path": "Glide/Core/SubtitleAppearance.swift",
+      "sha256": "84982d0c6515426f8b63aad4517291dbc2667f44fda6026242b7a0b6957d1d4e"
+    },
+    {
+      "path": "Glide/Core/SubtitleCue.swift",
+      "sha256": "323f2b0547dfcdd447c0de6affb665785bdc5c9b98d484816816b93672ed1d8b"
+    },
+    {
+      "path": "Glide/Core/SubtitleMemoryStore.swift",
+      "sha256": "91121b919004eb240862a9c25eb07f31e8ff54a30dc96b0e9de238259a8bd2de"
+    },
+    {
+      "path": "Glide/Core/SubtitleSelection.swift",
+      "sha256": "b89a5284565c1742742ad64ac3e7c97563022933cc7f61e6e5a05822a9b0fea9"
+    },
+    {
+      "path": "Glide/Core/UnifiedLibrary.swift",
+      "sha256": "cb6d41aed8385d66388dbf4552a62444f2e67d6bc2dae8f4daae9f1e26709348"
+    },
+    {
+      "path": "Glide/Core/VideoNavigation.swift",
+      "sha256": "13285b6b8edccf25b05521afe845ecea51155185f94ff1236cc997c5a6eeb845"
+    },
+    {
+      "path": "Glide/Core/ViewingDiscovery.swift",
+      "sha256": "3a566676ceb38f9acedde52a172535b57b59380bf934eae91ae9c25dc591f260"
+    },
+    {
+      "path": "Glide/GlideApp.swift",
+      "sha256": "9b26cca7cdafc4a2d6473f52c489fd4f7210e17663eb66318eb0e122648020d5"
+    },
+    {
+      "path": "Glide/Info.plist",
+      "sha256": "358915245e4914befa538937aeaefbfe0cb460b70724d80f5aba0312b5ca4f31"
+    },
+    {
+      "path": "Glide/LibraryStore.swift",
+      "sha256": "993154cc88bf334218118043e6b813cba718a69feda9f3e4a16315f2921641fd"
+    },
+    {
+      "path": "Glide/Resources/MobileVLCKit-LGPL-2.1.txt",
+      "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551"
+    },
+    {
+      "path": "Glide/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "adcad50819cd44bf1d33083867d114af6fd4f880e18b2982c7f26b25bf28b569"
+    },
+    {
+      "path": "Glide/Resources/SubtitleFont-OFL.txt",
+      "sha256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2"
+    },
+    {
+      "path": "Glide/Resources/SubtitleFonts/GlideSubtitleFallback.otf",
+      "sha256": "785120c69135f725fef742270b6ed988aef2b3e345ab466783c519de3b7d1f8c"
+    },
+    {
+      "path": "Glide/Resources/ThirdPartyNotices.txt",
+      "sha256": "0af12b16fc4a9d1ce4630a7912bdb05acd2e69dacce6171ab6c6cf280aaf16a1"
+    },
+    {
+      "path": "Glide/Resources/ass-style-qa.mp4",
+      "sha256": "f6a9b2a736cfa98a240c571db63ce8ef9baa0874a556fc813ae7baa731ad1c46"
+    },
+    {
+      "path": "Glide/Resources/demo0.mp4",
+      "sha256": "3c01e7d06cb6f710eef97c7c01a1da224b36579ea0eb17d47093049003a9a8b4"
+    },
+    {
+      "path": "Glide/Resources/demo1.mp4",
+      "sha256": "5e91dd2b3430bacf146a35c882c175b6e8969c8e62ed8325ff329b0a8e1757e3"
+    },
+    {
+      "path": "Glide/Resources/demo2.mp4",
+      "sha256": "921e99e61d79947469af4564bdb1699782b8a946de053b0ffa212efcf9773064"
+    },
+    {
+      "path": "Glide/Services/ASSSubtitle.swift",
+      "sha256": "9578db71b2acc0e0a57af96e5b5e44d263155c8606afa3823e68b418c2f0c94b"
+    },
+    {
+      "path": "Glide/Services/AuthenticatedAsset.swift",
+      "sha256": "04e3b4a4744fc81e7a1d5eb0963338efcb4fcf5e450320f49b28ff70c5785cfb"
+    },
+    {
+      "path": "Glide/Services/ClipQAProbe.swift",
+      "sha256": "b1532f580155c60c5f8e505d813b20306b595d64a3e4038fd31c47ce0b92ebea"
+    },
+    {
+      "path": "Glide/Services/ClipStore.swift",
+      "sha256": "47c201011cece9337524183d158f63cd63ac77a120e53006f94958286b8c67b7"
+    },
+    {
+      "path": "Glide/Services/Compatibility/CompatibilityQAProbe.swift",
+      "sha256": "46e45d0691dbf61d0212cc420b11655b22151dd5646fd76bf8987a51b58059c2"
+    },
+    {
+      "path": "Glide/Services/Compatibility/GlideASSRenderer.h",
+      "sha256": "17536b1e830f563c950f0b3cf85f5563640911045a5410705c7c92361c247e9e"
+    },
+    {
+      "path": "Glide/Services/Compatibility/GlideASSRenderer.m",
+      "sha256": "54017bb74245db3ce069960b8214f17d4320d420a16fba9c5fb18a8460fb5e76"
+    },
+    {
+      "path": "Glide/Services/Compatibility/VLCClockPlayer.h",
+      "sha256": "028738839bbf3fc8adad38cc2390709ef56c4c8d52df5d59ab1e3c592880196f"
+    },
+    {
+      "path": "Glide/Services/Compatibility/VLCClockPlayer.m",
+      "sha256": "eeee898465c0a76de61e6f5be3ddae7179576fa87df43f597555f5296ddadf57"
+    },
+    {
+      "path": "Glide/Services/Compatibility/VLCPlaybackEngine.swift",
+      "sha256": "509f745ce2af43ee67fb8bf10bd5e79c356c19b3c2cd0382d1cd4231ff8de90b"
+    },
+    {
+      "path": "Glide/Services/Compatibility/Vendor/libass/ass.h",
+      "sha256": "c322bb1f03dfe3a2bdbcd61002ff92684cd6f6ef593bc4a9dbca13f79f9c6ba2"
+    },
+    {
+      "path": "Glide/Services/Compatibility/Vendor/libass/ass_types.h",
+      "sha256": "b2f06eaaba5d80b3a23fb08726f1152f12a0f583346ad0086a80ebbdb4c48cf8"
+    },
+    {
+      "path": "Glide/Services/Credentials.swift",
+      "sha256": "26ceb5a6833e3355a7fd9d1c1fe060fd4d9dd06c6142aa454334b5f95941e669"
+    },
+    {
+      "path": "Glide/Services/DiscoveryQAProbe.swift",
+      "sha256": "0780d01df0ccb6529db3b2b54e15520cd7c6c255ab9e6ee762200d8d0a93e659"
+    },
+    {
+      "path": "Glide/Services/DiscoveryStore.swift",
+      "sha256": "ee7c5304f809701cc853edc4ffdfbfa8a7844f26a808b91a0ffaee114db8e8d2"
+    },
+    {
+      "path": "Glide/Services/DownloadStore.swift",
+      "sha256": "4eeb407b8de198d12b7e7a68d2704d931b7555295b6577cf46697d28d0ddbc58"
+    },
+    {
+      "path": "Glide/Services/DualSubtitleQAProbe.swift",
+      "sha256": "6d4b79aed8789fe3408913774e3d15c6f1e6b9301917a19f4dc41e3efeda1c96"
+    },
+    {
+      "path": "Glide/Services/EmbyQAProbe.swift",
+      "sha256": "340cc1342bae6325f32a82b7dc3fd79828efe58305cc67a3dfd7652c8d200a68"
+    },
+    {
+      "path": "Glide/Services/JellyfinPlaybackQAProbe.swift",
+      "sha256": "e9e7a308c83ac9e41f31a9ed865a3ecef6e893506b493d08280c209df2ce3e20"
+    },
+    {
+      "path": "Glide/Services/LinkSkipQAProbe.swift",
+      "sha256": "83c68fb9d873ebb01ba84f702312f49dc2840dc48afc3fd324031f445561cdc3"
+    },
+    {
+      "path": "Glide/Services/LocalMediaStore.swift",
+      "sha256": "fb40db7ef95955e22a87ba35de7125714b2a270bc287145ef36e07ca3773ef3e"
+    },
+    {
+      "path": "Glide/Services/MediaCache.swift",
+      "sha256": "0d34122a269550e4f23b5883c34e779b909e5eda187397f7ae0434d869af852f"
+    },
+    {
+      "path": "Glide/Services/MediaClient.swift",
+      "sha256": "c389841299b6015d0aae39830a96e47b4f0816f4030d0eb8c13792da711bbc1b"
+    },
+    {
+      "path": "Glide/Services/MomentStore.swift",
+      "sha256": "b00308d80d05d46dcb161e79905eab751fe4ac46cb2f659c2c4153814e0bbc23"
+    },
+    {
+      "path": "Glide/Services/NativePlaybackEngine.swift",
+      "sha256": "a5b1a12592add90e52b8f9766dbf438da7efd18b9732acdc1d0057f05fd64092"
+    },
+    {
+      "path": "Glide/Services/NetworkBufferQAProbe.swift",
+      "sha256": "e382368eaa699b7bc2cf5711b5434cfc764c1567c9b66e9ab0ada3225f4592ed"
+    },
+    {
+      "path": "Glide/Services/OfflineCompanions.swift",
+      "sha256": "00f4bccbf99ed463fa56468b1d1e8d695f53861492a477de98ee5571343fc74e"
+    },
+    {
+      "path": "Glide/Services/OfflineTripQAProbe.swift",
+      "sha256": "f0333b36eb16d17ab057d1d703b0f0c3e41a2ac307140932108a8334b7f299f3"
+    },
+    {
+      "path": "Glide/Services/OfflineTripStore.swift",
+      "sha256": "3744dd19a5bc4d80989fc911959c663e2339d5081632df1b763e6bb3848ad9bb"
+    },
+    {
+      "path": "Glide/Services/PictureInPicture.swift",
+      "sha256": "791579653f4e7f6541b3c44ad747defd0466af2cdd48a5a9e6613be5bbf964e3"
+    },
+    {
+      "path": "Glide/Services/PlaybackAudioSession.swift",
+      "sha256": "825202db6edd50b0f40ed5fa42e7f8dceb1b018d157ffe99888810d2e5ecd887"
+    },
+    {
+      "path": "Glide/Services/PlaybackController.swift",
+      "sha256": "0c602d7e5727c635bb9eca0bfa47bbdbf624eff2f6a79e307dd02918ab1da8c8"
+    },
+    {
+      "path": "Glide/Services/PlaybackEngine.swift",
+      "sha256": "25887f3914d3420b53c31b7150da3fc0b14c503d896cb2f982adbadda135a6c4"
+    },
+    {
+      "path": "Glide/Services/PlaybackPreferences.swift",
+      "sha256": "06a6bae307a8ba662f714079015ca50a20465758558ef73badff757a673da9e7"
+    },
+    {
+      "path": "Glide/Services/PlaybackResource.swift",
+      "sha256": "1147d02600430ab12bcfb1a6d142ef4192ba00b4914eb3e430b52e765fd76cf6"
+    },
+    {
+      "path": "Glide/Services/PlaybackSkipSession.swift",
+      "sha256": "10eadde2ac6ab17e04490894ecba68329f5ebc7a298aa93f3d1b986e614e8319"
+    },
+    {
+      "path": "Glide/Services/PlaybackWarmup.swift",
+      "sha256": "b095b9e7e6607a775ec53852cda0c1d2b81b8b678a7de74b0b82e9156aa23286"
+    },
+    {
+      "path": "Glide/Services/ProStore.swift",
+      "sha256": "87e9414aa2fee2805fa2ca5c2d7e5ddd343faddeb384d7ad0e68e7bc060dd496"
+    },
+    {
+      "path": "Glide/Services/SMB/GlideSMBSession.h",
+      "sha256": "dfdea06cddebb99fe517fba56a96535a138042af9a832cb1d6ea49ab5fd9e666"
+    },
+    {
+      "path": "Glide/Services/SMB/GlideSMBSession.m",
+      "sha256": "5d10bfbd22afe78b71e188dada45d527f6bc624d80138da155f7e0581fcd8bba"
+    },
+    {
+      "path": "Glide/Services/SMB/SMBQAProbe.swift",
+      "sha256": "c2da91f977b98d3b41d9f856ed6ded259d6b453ad5a51c0146d9763de9c53924"
+    },
+    {
+      "path": "Glide/Services/SMB/SMBSourceProvider.swift",
+      "sha256": "536ca1d3f9fe74402b5bb326b9425b9255dad43def3a299adeec3ec274b865c5"
+    },
+    {
+      "path": "Glide/Services/SMB/Vendor/COPYING",
+      "sha256": "749c710c2b3d5c95906c785f28af9abbe4ce909311e72eb72eee5c6873e2fa6f"
+    },
+    {
+      "path": "Glide/Services/SMB/Vendor/smb2/libsmb2-dcerpc-srvsvc.h",
+      "sha256": "cfb99b38adbf98ad75a385853d9352e663c6e340f918432ccf0377e4cf1a26df"
+    },
+    {
+      "path": "Glide/Services/SMB/Vendor/smb2/libsmb2.h",
+      "sha256": "abfe115a23a1448dd78d0bc89652be64d925e17a6e3c15a824316963fd3c5943"
+    },
+    {
+      "path": "Glide/Services/SMB/Vendor/smb2/smb2-errors.h",
+      "sha256": "fd107270a4358f1decb8ac57ee784ad846b5a57d9e9f9063bf278af264f99fb1"
+    },
+    {
+      "path": "Glide/Services/SMB/Vendor/smb2/smb2.h",
+      "sha256": "5389471ea3224b9d5774458665edde20e67bb4acc62678d921a5d0b03c3bb71d"
+    },
+    {
+      "path": "Glide/Services/ScreenRotation.swift",
+      "sha256": "5fc9f6e232963637f533a8bada8fab41f4db02558355aa70836d437c7d2dc1dd"
+    },
+    {
+      "path": "Glide/Services/SourceProvider.swift",
+      "sha256": "31f698980defb4a3f3ee73be494a0e0b2940af8de988a7324d381da29882f78c"
+    },
+    {
+      "path": "Glide/Services/StreamLinkStore.swift",
+      "sha256": "f461688f74ec46fe8fac5729f206d9c9c004ff51aba0a584f942944de982d2fd"
+    },
+    {
+      "path": "Glide/Services/SubtitleQAProbe.swift",
+      "sha256": "48c3a6f1a56ba8195fb40b5009662783f449d1505fdaf068ff8d580d4a63554b"
+    },
+    {
+      "path": "Glide/Services/SubtitleSession.swift",
+      "sha256": "ff42b45eb7151010cc775f149f3826bf3a1043218bc8ec079f3effad210ba981"
+    },
+    {
+      "path": "Glide/Services/SubtitleSource.swift",
+      "sha256": "424131fd3fc29302171e4e29b577e38773ab1113922193830728c936a723367c"
+    },
+    {
+      "path": "Glide/Services/SubtitleStudyQAProbe.swift",
+      "sha256": "559277cfa85ecf114e73e59c3c4ad7c7022ed6ded71e604a08ff76472e1fffc0"
+    },
+    {
+      "path": "Glide/Services/UnifiedLibraryQAProbe.swift",
+      "sha256": "b340fc086385b483f021985a070b33bcb6bf6f062693e0ac5b16285c6bc74b2e"
+    },
+    {
+      "path": "Glide/Services/UnifiedLibraryService.swift",
+      "sha256": "c9cf3bccbf9edef71af308b994bb90371bfb18e0a3a78c1678db5648c6782aa2"
+    },
+    {
+      "path": "Glide/Services/VideoNavigationQAProbe.swift",
+      "sha256": "e176f5d3cc34064d4cf94e21566fc405418d88a3a087630530dc57f84189d0eb"
+    },
+    {
+      "path": "Glide/Services/VideoNavigationService.swift",
+      "sha256": "c8b7bc8a1873a68df36e85670783362ac92bf1223e2fdf57f7470ade709a9b12"
+    },
+    {
+      "path": "Glide/Views/ASSCanvasView.swift",
+      "sha256": "7fc2b6d5b4ac433d35ae2a2cfe51426c6f6b2c810491e309dd865026c72a02c5"
+    },
+    {
+      "path": "Glide/Views/AdaptiveLibraryRoot.swift",
+      "sha256": "7f781de2bc7ed4d03ed8ce56e7eca0418720c74a22c173697df9065554ef0761"
+    },
+    {
+      "path": "Glide/Views/CatalogView.swift",
+      "sha256": "b665a89d0646f01a68ad1e0c3f3ad6e8187f169edc25fc2affbcc5d83eab3f82"
+    },
+    {
+      "path": "Glide/Views/ClipEditorView.swift",
+      "sha256": "cac33be859e197a22089d643b8ddf04fba1ad783404e44510cfd2c8a36149430"
+    },
+    {
+      "path": "Glide/Views/ClipLibraryView.swift",
+      "sha256": "9f853e3cff02d269ca05bc201ea9289617a77bd5f944055f035e94931c74f1e9"
+    },
+    {
+      "path": "Glide/Views/DiscoveryHomeView.swift",
+      "sha256": "94c32132828848f8086012ae9c7d87ae13507b77ea4206c7075769172983aaa1"
+    },
+    {
+      "path": "Glide/Views/DiscoveryScopePicker.swift",
+      "sha256": "24d9fc44427b6a64c758d790bebc23ef0dd8b770c0858ce847c876f1ff172edd"
+    },
+    {
+      "path": "Glide/Views/DownloadsView.swift",
+      "sha256": "6802cccb0629120d3232ec3367b608fb14529cf3ec3f8e9c3df7b567a7ef958a"
+    },
+    {
+      "path": "Glide/Views/EpisodePickerView.swift",
+      "sha256": "f9113599a418162389f15332d044a3a98c8591cda2ce76d90b3a1b2798d204d8"
+    },
+    {
+      "path": "Glide/Views/LibraryView.swift",
+      "sha256": "5a496b1feff708605ae0fa16c3d3531891c474054d08745a19504d5b2edd27ba"
+    },
+    {
+      "path": "Glide/Views/MomentLibraryView.swift",
+      "sha256": "f6fe67e6f8afb9d8a6a354b85012e7c197574bc6be121817f5bae7504ce5b664"
+    },
+    {
+      "path": "Glide/Views/OfflineTripComposer.swift",
+      "sha256": "5f72e8c661da2486a286be2afcb4a03955bd16f24c2d6bc89ecb09ded88137fd"
+    },
+    {
+      "path": "Glide/Views/OfflineTripDetail.swift",
+      "sha256": "0d022685b01101e25f73958c26de0ebd327ab4e8cef51903d482ba14d3f65267"
+    },
+    {
+      "path": "Glide/Views/PersonMediaView.swift",
+      "sha256": "ed3aa802acb766fb9d86a3cc02437f2cbe079bb320ed83f6b8c81b811ceefd71"
+    },
+    {
+      "path": "Glide/Views/PersonalLibraryView.swift",
+      "sha256": "dd4c2807b480d7faffe52be34d59966a45409111f9bbe81107c1049f3d9b8ae0"
+    },
+    {
+      "path": "Glide/Views/PinnedDirectoriesView.swift",
+      "sha256": "9977a6b497bb7abb1605f1124f2563c882b04cdfa4f440f4d744903408c8d0ee"
+    },
+    {
+      "path": "Glide/Views/PlaybackLoopView.swift",
+      "sha256": "f63b5fd110ed9e8f314b3d02d26eaed7d23a4a4dd7fc0cab385b3c3569dfa2f6"
+    },
+    {
+      "path": "Glide/Views/PlaybackSkipSettings.swift",
+      "sha256": "fbacec2c65317508d9efef898a1fe6eb4ae3a3b2638a3396286a27c1bec81cc7"
+    },
+    {
+      "path": "Glide/Views/PlayerView.swift",
+      "sha256": "cf53476e81df431e55322ed5c86a0434f0c8eaa4951a4e5cb45ea8cbe0e71a67"
+    },
+    {
+      "path": "Glide/Views/PrivacySupportView.swift",
+      "sha256": "a865c1930c3d271a9b8e0b127ab7926be7346b0d3b500e27d50033b76fc8ee53"
+    },
+    {
+      "path": "Glide/Views/ProView.swift",
+      "sha256": "4cb15cdad12b20a33009e0e58c8240745ce7990b4f653de11309af2a032c40d3"
+    },
+    {
+      "path": "Glide/Views/SettingsView.swift",
+      "sha256": "3673e4c34f425759dfefa8329b585bdf90f49fe768534c59a04abac20f28f468"
+    },
+    {
+      "path": "Glide/Views/SourcesView.swift",
+      "sha256": "9f1509dfbc748fe2ead08e4aae0ea258b34791c2332f2e8c502fbbf0ae4b8f28"
+    },
+    {
+      "path": "Glide/Views/StreamLinksView.swift",
+      "sha256": "632480e0b811f178771a5def3b5a0a3256143c96d879c89b87d70449142eba4a"
+    },
+    {
+      "path": "Glide/Views/SubtitleAppearanceView.swift",
+      "sha256": "aa3e87cfe8a40471d134f05627b8b0983379283f572d28daea077ddff9aeb139"
+    },
+    {
+      "path": "Glide/Views/SubtitleControlsView.swift",
+      "sha256": "d2c70e944178f31ed1ebc0571c7594242a8356e989e77be51ff0289918b6df65"
+    },
+    {
+      "path": "Glide/Views/SubtitleTranscriptView.swift",
+      "sha256": "e9d1344ffbb3b52db57fa1e8244c1c274289dddc5234871750da6f44cfbdf70f"
+    },
+    {
+      "path": "Glide/Views/Theme.swift",
+      "sha256": "ad3835320499961b2404c6f403f7bf0e112a49346cd2c4cc91781ac4344d907b"
+    },
+    {
+      "path": "Glide/Views/TimePickView.swift",
+      "sha256": "4fb4398b880436537f5834459c8f8eb96c34fa4e3d54715d4e643098cd4960fd"
+    },
+    {
+      "path": "Glide/Views/TimelinePreview.swift",
+      "sha256": "fa4f2bd128c9b87d620260fc61b9a656d8266419112e5618cdfd6ecaefd73044"
+    },
+    {
+      "path": "Glide/Views/TrackChoicesView.swift",
+      "sha256": "beeeb6632d346b9be993bbe62778c4ecd9954a2371abc6048f66d885e1c06dd0"
+    },
+    {
+      "path": "Glide/Views/UnifiedLibraryView.swift",
+      "sha256": "af2285cfab189d58e32869ca8e6e3c6d97ef73237f1e631d6f508e24a3b577e2"
+    },
+    {
+      "path": "Glide/Views/VideoNavigationView.swift",
+      "sha256": "f64ce825704d7aafb160a1670ba9eb77903f5912d38a55b6859e39e066d286a7"
+    },
+    {
+      "path": "Glide/Views/VideoSurface.swift",
+      "sha256": "4d39ab32a734e9cee1ea53ea165b16d1e2aefb14d32a997c6316e7ef1ada504c"
+    },
+    {
+      "path": "Package.swift",
+      "sha256": "e966f1396cc6c102c72eb7a02c64822ed6904f08205bf3e7ef58547cef6239bb"
+    },
+    {
+      "path": "Scripts/unified_library_fixture_server.py",
+      "sha256": "93a0ff0f233f7d8a74476570cec1ca4e39e9797436be7355bfa654e1f27a81d0"
+    },
+    {
+      "path": "Tests/ASSDocumentTests.swift",
+      "sha256": "bbdd521f827dd3b8f0ecc129151d4919eb6df7dad10dfb946ee604f94595c9a2"
+    },
+    {
+      "path": "Tests/BrowseOptionsTests.swift",
+      "sha256": "f7a0823c74dfb616fad2907e3221480825740715b04c7fd313bc28e330e64460"
+    },
+    {
+      "path": "Tests/CatalogMediaTests.swift",
+      "sha256": "3709107afa36db7f0c391428d91b93f95a1efb4282e633fef90262fcefbbe318"
+    },
+    {
+      "path": "Tests/CatalogSortTests.swift",
+      "sha256": "114a7bd724fa9e10a4a1c7816d30e79f52cbdfaab83049da1dccc472cb30cd39"
+    },
+    {
+      "path": "Tests/ContinuousWatchingTests.swift",
+      "sha256": "574a4698089b6fc8f176bd62d0a799d6c1c415ff2b187d712fc4d97edb02e23b"
+    },
+    {
+      "path": "Tests/CoreTests.swift",
+      "sha256": "e6062468af3e3113c0dbb06178a7f616a8629b136b70efb02733ff0ceb77deb7"
+    },
+    {
+      "path": "Tests/DualSubtitleTests.swift",
+      "sha256": "f486dca1716e2f7b175a494775c4af4d9bf6e1f9f1972f1ad3247dce53d54fed"
+    },
+    {
+      "path": "Tests/FontNameTableTests.swift",
+      "sha256": "583cdee6e46e0d7f0ff815509cdbe27208a4d92b709895ddceb5e65349abd29c"
+    },
+    {
+      "path": "Tests/LinkSkipTests.swift",
+      "sha256": "bdf9974d72f41095624c25b19c95871c8d2ace568881f48fa687e781616d5e14"
+    },
+    {
+      "path": "Tests/MediaClipTests.swift",
+      "sha256": "5ee5ca53e9cc3763d4478c9c43cb6f08318ec0309319b0cea0fcb85419f13489"
+    },
+    {
+      "path": "Tests/MediaServerAPITests.swift",
+      "sha256": "e22154da6d92da7f310925bd72290d478bebab98e175ac232357a18e3bdd08b3"
+    },
+    {
+      "path": "Tests/MediaSourceTests.swift",
+      "sha256": "e7c3ec565259082a2fa04216aef36cd86a14d89c9870ced73f1053f992a67f66"
+    },
+    {
+      "path": "Tests/OfflineMediaFilesTests.swift",
+      "sha256": "aaa5f4924e710497be9d957b6dfc2e375cb42864192b7e379a4cd0ea085731f5"
+    },
+    {
+      "path": "Tests/OfflineTripTests.swift",
+      "sha256": "bf04cea510896266abc2e7dd2e95d3857968ed4e3468657b21f67f246bf55413"
+    },
+    {
+      "path": "Tests/PGSSubtitleTests.swift",
+      "sha256": "eb9b8e44a113dd3a6c41b24315b220ff6ed556020dcb7319ef6f64b9cc569b33"
+    },
+    {
+      "path": "Tests/PersonMediaTests.swift",
+      "sha256": "58b25c9726e5a86cc29a8132770910a25ca1871dd54e2864e030af43922eaf77"
+    },
+    {
+      "path": "Tests/PersonalVideoTests.swift",
+      "sha256": "375e80365c637fd102c39177ae4ee34d42e6b867370c0dd357789608e647cdb0"
+    },
+    {
+      "path": "Tests/PlaybackEngineModelsTests.swift",
+      "sha256": "205272568229ccc1de85c45f86e9aa7d76ef6d731a819af836ae26912746def1"
+    },
+    {
+      "path": "Tests/PlaybackIntelligenceTests.swift",
+      "sha256": "5c1b6a81246e1a968b661d7c23b97dc673ae5c7d02dcd4b36bef93d40a905b9f"
+    },
+    {
+      "path": "Tests/PlaybackLoopTests.swift",
+      "sha256": "fb466fc6fff418e9ce0f8241ead1fe0f73153bedbd7e95537f739e8167585e76"
+    },
+    {
+      "path": "Tests/PlaybackQualityTests.swift",
+      "sha256": "5d8c29850be8964af7d63e352b633b72a1b5dafc8176604e0548022b08c32a05"
+    },
+    {
+      "path": "Tests/PlaybackQueueTests.swift",
+      "sha256": "8a18119b0df27c1484dadd756eb5287e1e5817f686447450fa0c58a702159ffd"
+    },
+    {
+      "path": "Tests/SMBReadStallTests.swift",
+      "sha256": "e80a2569dd6f51427af6128fed03e43659cd79e28eb77676a5da84e7b2993f08"
+    },
+    {
+      "path": "Tests/SMBSourceTests.swift",
+      "sha256": "3d5e65f2352a3ac870330ebaf13a2883f89ec6b041b88f85f02b475888f3c6f2"
+    },
+    {
+      "path": "Tests/SubtitleSelectionTests.swift",
+      "sha256": "39cca476d159baea17883c1ef96abd633c1a1cf85900f77065fa4aeaf67482f3"
+    },
+    {
+      "path": "Tests/UnifiedLibraryTests.swift",
+      "sha256": "417b8d599d23e63f967eba05889050bbcb1f2ee27067caf68b77345969de66ee"
+    },
+    {
+      "path": "Tests/VideoNavigationTests.swift",
+      "sha256": "acff5868793823d5c7c927c87cb22ab467717ffcad7b67d74c99b8838951bb67"
+    },
+    {
+      "path": "Tests/ViewingDiscoveryTests.swift",
+      "sha256": "21d5aaec11a9c5e7803a966b0acb9464fb412a152faa975957ff0790d13c5034"
+    },
+    {
+      "path": "UITests/CompatibilityPlaybackUITests.swift",
+      "sha256": "36da8057ddf98f70a88f82115d35a04ff1ba4b2c402fb701651787a3daa10b9e"
+    },
+    {
+      "path": "UITests/GlideUITests.swift",
+      "sha256": "03ab1efef63618f4de5e4ccd1b665a84c3ed4d4e0f591b643945d81e8701c7ce"
+    }
+  ]
+}

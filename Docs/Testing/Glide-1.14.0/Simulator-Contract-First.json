@@ -1,0 +1,23 @@
+{
+  "checks" : [
+    "same-file-two-ranges-and-cross-file-collection",
+    "collection-cursor-restores-after-store-reopen",
+    "native-actually-decodes-selected-range",
+    "native-stops-at-clip-end-without-full-video-completion",
+    "backward-seek-clamped-to-start",
+    "forward-seek-clamped-to-end",
+    "clip-blocks-loop-and-intro-outro-skips",
+    "same-file-second-range-decodes-at-own-start",
+    "cross-file-next-range-actually-decodes",
+    "double-speed-keeps-range-boundary"
+  ],
+  "failure" : "验证失败：compatibility-engine-stops-at-range-boundary",
+  "measurements" : {
+    "nativeEndActual" : 3,
+    "vlcEndActual" : 3.6520000000000001
+  },
+  "originalMaterialOnly" : true,
+  "passed" : false,
+  "timestamp" : "2026-10-26T05:39:26Z",
+  "version" : "1.14.0 (1)"
+}

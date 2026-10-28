@@ -64,9 +64,16 @@ final class LibraryStore {
     private(set) var episodeCatalog: [String: [Video]] = [:]
     private var snapshotStore: RecoverableStore<LibrarySnapshot> {
         let root = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+#if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--glide-clip-fixture") { return RecoverableStore(file: root.appendingPathComponent("ClipsQA/library-v1.json")) }
+        if ProcessInfo.processInfo.arguments.contains("--glide-unified-fixture") { return RecoverableStore(file: root.appendingPathComponent("UnifiedLibraryQA/library-v1.json")) }
+#endif
         return RecoverableStore(file: root.appendingPathComponent("LibraryState/library-v1.json"))
     }
     init() {
+#if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--glide-unified-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-clip-fixture") { return }
+#endif
         if let data = UserDefaults.standard.data(forKey: "directoryPreferences.v1") { directoryPreferences = (try? JSONDecoder().decode([String: BrowseOptions].self, from: data)) ?? [:] }
         if let data = UserDefaults.standard.data(forKey: "folderSortPreferences.v1") { folderSortPreferences = (try? JSONDecoder().decode([String: FolderSort].self, from: data)) ?? [:] }
         if let data = UserDefaults.standard.data(forKey: "directoryBookmarks.v1") { bookmarks = (try? JSONDecoder().decode([DirectoryBookmark].self, from: data)) ?? [] }

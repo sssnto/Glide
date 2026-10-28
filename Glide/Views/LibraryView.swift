@@ -9,7 +9,7 @@ struct PlaySelection: Identifiable {
 }
 
 enum LibrarySheet: String, Identifiable {
-    case sources, help, personal, pins, downloads, settings, links
+    case sources, help, personal, pins, downloads, settings, links, unified
     var id: String { rawValue }
 }
 
@@ -98,6 +98,7 @@ struct LibraryView: View {
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
+                            Button { sheet = .unified } label: { Label("搜索全部片库", systemImage: "magnifyingglass") }
                             Button { sheet = .links } label: { Label("链接与 STRM", systemImage: "link") }.accessibilityIdentifier("links.open")
                             Button { sheet = .pins } label: { Label("固定目录", systemImage: "pin") }.accessibilityIdentifier("pins.open")
                         } label: { Label("更多", systemImage: "ellipsis.circle") }
@@ -258,6 +259,7 @@ struct LibraryView: View {
             }
         }) { destination in
             switch destination {
+            case .unified: NavigationStack { UnifiedLibraryView(library: library).toolbar { ToolbarItem(placement: .cancellationAction) { Button("完成") { sheet = nil } } } }
             case .links: NavigationStack { StreamLinksView(library: library).toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { sheet = nil } } } }
             case .sources: SourcesView(library: library)
             case .downloads: NavigationStack { DownloadsView(library: library).toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { sheet = nil } } } }

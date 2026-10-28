@@ -12,6 +12,9 @@ import AVFoundation
     init(file: URL? = nil) {
         var defaultFile = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("Discovery/discovery-v1.json")
 #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--glide-unified-fixture") {
+            defaultFile = defaultFile.deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("UnifiedLibraryQA/discovery-v1.json")
+        }
         if ProcessInfo.processInfo.arguments.contains("--glide-discovery-fixture") {
             defaultFile = defaultFile.deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("DiscoveryUIQA/discovery-v1.json")
             if ProcessInfo.processInfo.arguments.contains("--glide-discovery-reset") {

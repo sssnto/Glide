@@ -3,6 +3,136 @@ import UIKit
 import Vision
 
 extension GlideUITests {
+    @MainActor private func unifiedApp(probe: Bool = false) throws -> XCUIApplication {
+        guard ProcessInfo.processInfo.environment["GLIDE_UNIFIED_FIXTURE"] == "1" else { throw XCTSkip("Original unified-library fixture only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-unified-fixture", "-controlsDelay", "120"] + (probe ? ["--glide-unified-probe"] : [])
+        app.launch(); return app
+    }
+    @MainActor private func unifiedSearch(_ text: String, app: XCUIApplication) {
+        let field = app.searchFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: 15)); field.tap(); field.typeText(text)
+        if app.keyboards.buttons["Search"].exists { app.keyboards.buttons["Search"].tap() }
+        else if app.keyboards.buttons["搜索"].exists { app.keyboards.buttons["搜索"].tap() }
+    }
+    @MainActor private func unifiedTap(_ button: XCUIElement, app: XCUIApplication) {
+        _ = button.waitForExistence(timeout: 3)
+        for _ in 0..<6 { if button.exists && button.isHittable { break }; app.swipeUp() }
+        XCTAssertTrue(button.waitForExistence(timeout: 5))
+        XCTAssertTrue(button.isHittable); button.tap()
+    }
+    @MainActor func testUnifiedLibraryProductionContractProbe() throws {
+        let app = try unifiedApp(probe: true), state = app.staticTexts["unified.probe.status"]
+        XCTAssertTrue(state.waitForExistence(timeout: 15))
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label == %@ OR label == %@", "验证通过", "验证失败"), object: state)], timeout: 160), .completed)
+        XCTAssertEqual(state.label, "验证通过", app.debugDescription)
+        let shot = XCTAttachment(screenshot: app.screenshot()); shot.name = "Unified Production Contract"; shot.lifetime = .keepAlways; add(shot)
+    }
+    @MainActor func testUnifiedLibrarySearchVersionsPlaybackAndRestart() async throws {
+        let app = try unifiedApp(); unifiedSearch("原创海岸", app: app)
+        let work = app.buttons["unified.work.Movie:tmdb:113001"]
+        unifiedTap(work, app: app)
+        let version = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND identifier ENDSWITH %@", "unified.variant.", ":v2")).firstMatch
+        unifiedTap(version, app: app)
+        XCTAssertTrue(version.isSelected)
+        let shot = XCTAttachment(screenshot: app.screenshot()); shot.name = "Unified Work and Versions"; shot.lifetime = .keepAlways; add(shot)
+        unifiedTap(app.buttons["unified.play"], app: app)
+        let canvas = app.otherElements["player.canvas"]
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "已显示画面"), object: canvas)], timeout: 25), .completed)
+        let played = XCTAttachment(screenshot: app.screenshot()); played.name = "Selected Version Actual Frame"; played.lifetime = .keepAlways; add(played)
+        app.buttons["返回作品"].tap(); app.terminate(); app.launch()
+        unifiedSearch("原创海岸", app: app); unifiedTap(work, app: app)
+        XCTAssertTrue(version.waitForExistence(timeout: 15))
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "selected == true"), object: version)], timeout: 10), .completed)
+        _ = try await URLSession.shared.data(from: URL(string: "http://127.0.0.1:8813/control/remove-v2")!)
+        app.terminate(); app.launch(); unifiedSearch("原创海岸", app: app); unifiedTap(work, app: app)
+        let warning = app.staticTexts["unified.error"]
+        XCTAssertTrue(warning.waitForExistence(timeout: 15))
+        XCTAssertFalse(app.buttons["unified.play"].isEnabled, "A missing remembered version must require explicit reselection")
+        _ = try await URLSession.shared.data(from: URL(string: "http://127.0.0.1:8813/control/reset")!)
+    }
+    @MainActor func testUnifiedLibraryActionsReuseChannelAndOfflineComposer() throws {
+        let app = try unifiedApp(); unifiedSearch("原创旅程", app: app)
+        unifiedTap(app.buttons["unified.work.Series:tmdb:113010"], app: app)
+        unifiedTap(app.buttons["unified.channel"], app: app)
+        unifiedTap(app.buttons["unified.channel.new"], app: app)
+        XCTAssertTrue(app.buttons["unified.trip"].waitForExistence(timeout: 10))
+        unifiedTap(app.buttons["unified.trip"], app: app)
+        let toggle = app.switches["trip.episodes"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 10))
+        toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+        XCTAssertEqual(toggle.value as? String, "1")
+        unifiedTap(app.buttons["trip.generate"], app: app)
+        let confirm = app.buttons["trip.confirm"]
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "enabled == true"), object: confirm)], timeout: 20), .completed)
+        let shot = XCTAttachment(screenshot: app.screenshot()); shot.name = "Search Result to Episode Trip"; shot.lifetime = .keepAlways; add(shot)
+        confirm.tap()
+        XCTAssertTrue(app.buttons["unified.play"].waitForExistence(timeout: 15))
+        unifiedTap(app.buttons["unified.play"], app: app)
+        XCTAssertTrue(app.buttons["episode.episode1"].waitForExistence(timeout: 15), app.debugDescription)
+    }
+}
+
+extension GlideUITests {
+    @MainActor func testOfflineTripContractProbe() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_TRIP_FIXTURE"] == "1" else { throw XCTSkip("Authored offline-trip acceptance only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-trip-fixture", "--glide-trip-probe", "-subtitlesOff", "NO", "-subtitleLanguage", "zh"]
+        app.launch()
+        let status = app.staticTexts["trip.probe.status"]
+        XCTAssertTrue(status.waitForExistence(timeout: 10))
+        let completion = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label == %@ OR label == %@", "验证通过", "验证失败"), object: status)
+        XCTAssertEqual(XCTWaiter.wait(for: [completion], timeout: 180), .completed)
+        XCTAssertEqual(status.label, "验证通过", app.debugDescription)
+        let shot = XCTAttachment(screenshot: app.screenshot()); shot.name = "Offline MP4 and MKV Contract Probe"; shot.lifetime = .keepAlways; add(shot)
+    }
+    @MainActor func testOfflineTripCreationInspectionRestartAndContinuousPlayback() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_TRIP_FIXTURE"] == "1" else { throw XCTSkip("Authored offline-trip acceptance only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-trip-fixture", "--glide-trip-reset-demo-progress", "-controlsDelay", "120"]
+        let tripName = "UI Train " + String(UUID().uuidString.prefix(6))
+        app.launch()
+        let create = app.buttons["trip.create"]
+        XCTAssertTrue(create.waitForExistence(timeout: 15))
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "hittable == true"), object: create)], timeout: 10), .completed)
+        create.tap()
+        let field = app.textFields["trip.name"]
+        XCTAssertTrue(field.waitForExistence(timeout: 10)); field.tap()
+        if !app.keyboards.firstMatch.waitForExistence(timeout: 3) { field.tap() }
+        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
+        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: (field.value as? String ?? "").count) + tripName)
+        if app.keyboards.buttons["Done"].exists { app.keyboards.buttons["Done"].tap() }
+        else if app.keyboards.buttons["完成"].exists { app.keyboards.buttons["完成"].tap() }
+        app.buttons["trip.generate"].tap()
+        let confirmation = app.buttons["trip.confirm"]
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "enabled == true"), object: confirmation)], timeout: 20), .completed)
+        let created = XCTAttachment(screenshot: app.screenshot()); created.name = "Trip Candidates and Budgets"; created.lifetime = .keepAlways; add(created)
+        confirmation.tap()
+        let row = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "trip.open.", tripName)).firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 15)); row.tap()
+        let check = app.buttons["trip.check"]
+        XCTAssertTrue(check.waitForExistence(timeout: 10))
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "enabled == true"), object: check)], timeout: 20), .completed)
+        check.tap()
+        let state = app.staticTexts["trip.check.state"]
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label == %@", "检查完成"), object: state)], timeout: 100), .completed)
+        XCTAssertEqual(app.staticTexts["trip.check.summary"].label, "已通过 3 / 3", app.debugDescription)
+        app.buttons["完成"].tap()
+        app.terminate(); app.launch()
+        XCTAssertTrue(row.waitForExistence(timeout: 15)); row.tap()
+        XCTAssertTrue(app.buttons["trip.play"].waitForExistence(timeout: 10)); app.buttons["trip.play"].tap()
+        let canvas = app.otherElements["player.canvas"]
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "已显示画面"), object: canvas)], timeout: 20), .completed)
+        app.buttons["下一个视频"].tap()
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@ AND label CONTAINS %@", "落日海岸", "已显示画面"), object: canvas)], timeout: 20), .completed)
+        let played = XCTAttachment(screenshot: app.screenshot()); played.name = "Offline Queue after Relaunch"; played.lifetime = .keepAlways; add(played)
+    }
+}
+
+extension GlideUITests {
     @MainActor private func discoveryApp(reset: Bool = true) throws -> XCUIApplication {
         guard ProcessInfo.processInfo.environment["GLIDE_DISCOVERY_FIXTURE"] == "1" else { throw XCTSkip("Authored discovery UI acceptance only") }
         continueAfterFailure = false
@@ -73,7 +203,7 @@ extension GlideUITests {
         XCTAssertTrue(app.buttons["discovery.scope.current"].waitForExistence(timeout: 5))
         app.buttons["discovery.scope.done"].tap()
         XCTAssertTrue(picks.firstMatch.waitForExistence(timeout: 5))
-        app.buttons["discovery.time.refresh"].tap()
+        unifiedTap(app.buttons["discovery.time.refresh"], app: app)
         XCTAssertTrue(app.staticTexts["符合条件的候选数量有限，已重新展示。"].waitForExistence(timeout: 5))
         let timeShot = XCTAttachment(screenshot: app.screenshot()); timeShot.name = "Time Recommendations"; timeShot.lifetime = .keepAlways; add(timeShot)
         picks.firstMatch.tap()
@@ -3188,5 +3318,121 @@ extension GlideUITests {
             expectRendered()
             app.buttons["返回片库"].tap(); app.terminate()
         }
+    }
+}
+
+
+extension GlideUITests {
+    @MainActor private func clipApp(reset: Bool = true, probe: Bool = false, paused: Bool = false) throws -> XCUIApplication {
+        guard ProcessInfo.processInfo.environment["GLIDE_CLIP_FIXTURE"] == "1" else { throw XCTSkip("Original clip fixture only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-clip-fixture", "-controlsDelay", "120", "-localPlaybackEngine", "avPlayer"] + (reset ? ["--glide-clip-reset"] : []) + (probe ? ["--glide-clip-probe"] : []) + (paused ? ["--glide-clip-start-paused"] : [])
+        app.launch(); return app
+    }
+    @MainActor private func clipShot(_ name: String, app: XCUIApplication) {
+        let shot = XCTAttachment(screenshot: app.screenshot()); shot.name = name; shot.lifetime = .keepAlways; add(shot)
+    }
+    @MainActor private func clipWaitLabel(_ element: XCUIElement, contains value: String, seconds: Double = 15) {
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", value), object: element)], timeout: seconds), .completed)
+    }
+    @MainActor func testClipProductionContractProbe() throws {
+        let app = try clipApp(probe: true), status = app.staticTexts["clips.probe.status"]
+        XCTAssertTrue(status.waitForExistence(timeout: 15))
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label == %@ OR label == %@", "验证通过", "验证失败"), object: status)], timeout: 120), .completed)
+        XCTAssertEqual(status.label, "验证通过", app.debugDescription)
+        clipShot("Clip Production Contract", app: app)
+    }
+    @MainActor func testClipCreatePreviewSaveAndRestart() throws {
+        let app = try clipApp(paused: true)
+        XCTAssertTrue(app.buttons["clips.demo"].waitForExistence(timeout: 15)); app.buttons["clips.demo"].tap()
+        clipWaitLabel(app.otherElements["player.canvas"], contains: "已显示画面", seconds: 25)
+        app.buttons["播放设置"].tap(); app.buttons["player.clip.create"].tap()
+        let name = app.textFields["clip.name"]
+        XCTAssertTrue(name.waitForExistence(timeout: 15)); name.tap(); name.typeText("日落片段")
+        if app.buttons["收起键盘"].exists { app.buttons["收起键盘"].tap() }
+        else { name.typeText("\n") }
+        let end = app.sliders["clip.endSlider"]
+        for _ in 0..<4 { if end.exists && end.isHittable { break }; app.swipeUp() }
+        XCTAssertTrue(end.waitForExistence(timeout: 5)); end.adjust(toNormalizedSliderPosition: 0.5)
+        unifiedTap(app.buttons["clip.preview"], app: app)
+        XCTAssertTrue(app.staticTexts["clip.range"].waitForExistence(timeout: 15))
+        clipWaitLabel(app.otherElements["player.canvas"].firstMatch, contains: "已显示画面", seconds: 15)
+        clipShot("Clip Range Preview", app: app)
+        app.buttons["clip.toggle"].tap()
+        XCTAssertTrue(app.staticTexts["预览完成"].waitForExistence(timeout: 20))
+        app.buttons["完成"].tap()
+        XCTAssertTrue(app.buttons["clip.save"].waitForExistence(timeout: 10)); app.buttons["clip.save"].tap()
+        XCTAssertTrue(app.buttons["返回片段集"].waitForExistence(timeout: 10)); app.buttons["返回片段集"].tap()
+        app.terminate(); app.launchArguments.removeAll { $0 == "--glide-clip-reset" }; app.launch()
+        let field = app.searchFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: 15)); field.tap(); field.typeText("日落片段")
+        XCTAssertTrue(app.staticTexts["日落片段"].waitForExistence(timeout: 10))
+        clipShot("Clip Saved after Relaunch", app: app)
+    }
+    @MainActor func testClipCollectionCursorAndFullVideoReturn() throws {
+        let app = try clipApp()
+        app.terminate(); app.launchArguments.append("--glide-clip-start-paused"); app.launch()
+        XCTAssertTrue(app.buttons["clips.collection.11400000-0000-0000-0000-000000000001"].waitForExistence(timeout: 15))
+        app.buttons["clips.collection.11400000-0000-0000-0000-000000000001"].tap()
+        XCTAssertTrue(app.buttons["clips.playCollection"].waitForExistence(timeout: 10)); app.buttons["clips.playCollection"].tap()
+        clipWaitLabel(app.otherElements["player.canvas"], contains: "已显示画面", seconds: 25)
+        // Pause the first range so the manual switch and saved cursor are observable.
+        if app.buttons["暂停"].exists { app.buttons["暂停"].tap() }
+        app.buttons["下一个片段"].tap()
+        clipWaitLabel(app.staticTexts["player.queuePosition"], contains: "片段 2 / 3")
+        clipWaitLabel(app.otherElements["player.canvas"], contains: "已显示画面", seconds: 20)
+        if app.buttons["暂停"].exists { app.buttons["暂停"].tap() }
+        clipShot("Clip Collection Second Range", app: app)
+        app.buttons["返回片段集"].tap()
+        app.terminate(); app.launchArguments.removeAll { $0 == "--glide-clip-reset" }; app.launch()
+        XCTAssertTrue(app.buttons["clips.collection.11400000-0000-0000-0000-000000000001"].waitForExistence(timeout: 15)); app.buttons["clips.collection.11400000-0000-0000-0000-000000000001"].tap()
+        XCTAssertTrue(app.buttons["接着刷"].waitForExistence(timeout: 10)); app.buttons["接着刷"].tap()
+        clipWaitLabel(app.staticTexts["player.queuePosition"], contains: "片段 2 / 3")
+        app.buttons["clip.fullVideo"].tap()
+        XCTAssertTrue(app.buttons["返回精彩片段"].waitForExistence(timeout: 15))
+        clipWaitLabel(app.otherElements["player.canvas"], contains: "已显示画面", seconds: 25)
+        XCTAssertFalse(app.staticTexts["clip.range"].exists)
+        app.buttons["返回精彩片段"].tap()
+        XCTAssertTrue(app.staticTexts["clip.range"].waitForExistence(timeout: 15))
+        clipShot("Full Video Returns to Clip", app: app)
+    }
+}
+
+
+extension GlideUITests {
+    @MainActor func testClipCollectionAutomaticallyFinishesAllRanges() throws {
+        let app = try clipApp()
+        let collection = app.buttons["clips.collection.11400000-0000-0000-0000-000000000001"]
+        XCTAssertTrue(collection.waitForExistence(timeout: 15)); collection.tap()
+        app.buttons["clips.playCollection"].tap()
+        XCTAssertTrue(app.staticTexts["合集已刷完"].waitForExistence(timeout: 25))
+        clipShot("Clip Collection Finished", app: app)
+        app.buttons["完成"].tap()
+        XCTAssertTrue(app.buttons["重新刷看"].waitForExistence(timeout: 10))
+    }
+    @MainActor func testClipCollectionCoverOrderRenameAndRemove() throws {
+        let app = try clipApp()
+        let collection = app.buttons["clips.collection.11400000-0000-0000-0000-000000000001"]
+        XCTAssertTrue(collection.waitForExistence(timeout: 15)); collection.tap()
+        let second = app.buttons["clips.entry.11400000-0000-0000-0000-000000000012"]
+        unifiedTap(second, app: app) // A direct row starts playback; return to exercise the row menu.
+        XCTAssertTrue(app.buttons["返回片段集"].waitForExistence(timeout: 10)); app.buttons["返回片段集"].tap()
+        second.press(forDuration: 1.1); app.buttons["设为合集封面"].tap()
+        XCTAssertEqual(second.value as? String, "合集封面")
+        second.press(forDuration: 1.1); app.buttons["上移"].tap()
+        let first = app.buttons["clips.entry.11400000-0000-0000-0000-000000000011"]
+        XCTAssertLessThan(second.frame.minY, first.frame.minY)
+        clipShot("Clip Collection Cover and Order", app: app)
+        app.buttons["合集选项"].tap(); app.buttons["重命名"].tap()
+        let field = app.alerts.textFields.firstMatch; XCTAssertTrue(field.waitForExistence(timeout: 5)); field.tap()
+        if let value = field.value as? String { field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: value.count)) }
+        field.typeText("旅行精选"); app.alerts.buttons["保存"].tap()
+        XCTAssertTrue(app.navigationBars["旅行精选"].waitForExistence(timeout: 10))
+        second.press(forDuration: 1.1); app.buttons["从合集中移除"].tap()
+        XCTAssertFalse(second.exists)
+        app.buttons["合集选项"].tap(); app.buttons["删除合集"].tap(); app.buttons["删除合集"].tap()
+        XCTAssertTrue(app.buttons["clips.item.11400000-0000-0000-0000-000000000012"].waitForExistence(timeout: 10))
+        XCTAssertFalse(collection.exists)
     }
 }

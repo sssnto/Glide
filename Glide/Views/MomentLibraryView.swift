@@ -6,6 +6,7 @@ struct MomentLibraryView: View {
     var library: LibraryStore
     var store = MomentStore.shared
     @State private var query = ""
+    @State private var clipDraft: MediaClip?
     @State private var editing: MediaMoment?
     @State private var playing: MomentPlayback?
     @State private var error: String?
@@ -37,14 +38,16 @@ struct MomentLibraryView: View {
                     }.padding(.vertical, 4).frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
                 }.buttonStyle(.plain).accessibilityIdentifier("moments.item." + moment.id.uuidString)
                     .contextMenu {
+                        Button("保存为片段", systemImage: "scissors") { clipDraft = MediaClip(moment: moment, end: min(moment.duration, moment.position + 15)) }
                         Button("重命名", systemImage: "pencil") { editing = moment }
                         Button("删除时刻", systemImage: "trash", role: .destructive) { remove(moment) }
                     }
-                    .swipeActions(edge: .trailing) { Button("删除", role: .destructive) { remove(moment) }; Button("重命名") { editing = moment }.tint(.blue) }
+                    .swipeActions(edge: .trailing) { Button("保存为片段") { clipDraft = MediaClip(moment: moment, end: min(moment.duration, moment.position + 15)) }.tint(.blue); Button("删除", role: .destructive) { remove(moment) }; Button("重命名") { editing = moment }.tint(.blue) }
             }.onDelete { indices in indices.map { entries[$0] }.forEach(remove) }
         }.navigationTitle("时刻收藏").navigationBarTitleDisplayMode(.inline)
             .searchable(text: $query, prompt: "搜索时刻名称或视频")
             .toolbar { EditButton().disabled(entries.isEmpty) }
+            .sheet(item: $clipDraft) { ClipEditorView(library: library, clip: $0) }
             .sheet(item: $editing) { moment in MomentEditorView(store: store, draft: moment) }
             .fullScreenCover(item: $playing) { selection in
                 PlayerView(library: library, queue: PlaybackQueue(videos: [selection.video], mode: .sequential), scopeName: "时刻收藏",

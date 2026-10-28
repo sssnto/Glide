@@ -32,6 +32,14 @@ struct DiscoveryHomeView: View {
         NavigationStack {
             List {
                 Section {
+                    NavigationLink { UnifiedLibraryView(library: library) } label: {
+                        Label("搜索全部片库", systemImage: "magnifyingglass").frame(minHeight: 44)
+                    }.accessibilityIdentifier("unified.open")
+                }
+                Section {
+                    NavigationLink { ClipLibraryView(library: library) } label: {
+                        Label("精彩片段集", systemImage: "scissors").frame(minHeight: 44)
+                    }.accessibilityIdentifier("clips.open")
                     NavigationLink { TimePickView(library: library, store: store) } label: {
                         Label {
                             VStack(alignment: .leading, spacing: 5) {

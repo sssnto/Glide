@@ -14,6 +14,7 @@ struct PersonalVideo: Codable, Identifiable, Equatable {
     }
     init(video: Video, lastPlayedAt: Date? = nil) {
         self.video = video
+        self.video.offlineOnly = nil // Session intent must not force future online history entries offline.
         self.lastPlayedAt = lastPlayedAt
         self.video.artwork = nil // Rebuild from the current server address when displaying.
         if video.remoteID != nil || video.demoIndex != nil || video.localRelativePath != nil { self.video.url = nil }

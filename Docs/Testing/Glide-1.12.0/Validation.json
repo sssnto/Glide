@@ -1,0 +1,72 @@
+{
+  "version": "1.12.0 (1)",
+  "date": "2026-10-23",
+  "status": "implemented-and-validated-with-documented-device-boundary",
+  "published": false,
+  "git": {
+    "committed": false,
+    "pushed": false,
+    "tagged": false
+  },
+  "core": {
+    "passed": 218,
+    "swiftTesting": 211,
+    "xctest": 7,
+    "newTripTests": 10,
+    "log": "Logs/Core-Tests.log"
+  },
+  "simulator": {
+    "device": "iPhone 17 Pro",
+    "os": "iOS 26.3",
+    "uiPassed": 2,
+    "uiFailed": 0,
+    "uiSkipped": 0,
+    "contractChecks": 37,
+    "resultBundle": "/tmp/Glide1120Offline-Accepted.xcresult",
+    "report": "Simulator-Contract.json",
+    "log": "Logs/UI-Final.log"
+  },
+  "physicalDevice": {
+    "device": "iPhone 13 Pro Max",
+    "os": "iOS 27.0.1",
+    "bundle": "com.songpeng.glide.nasqa",
+    "contractChecks": 36,
+    "report": "iPhone-Contract.json",
+    "userAirplaneMode": {
+      "result": "passed",
+      "source": "Direct user reply: 全部正常",
+      "coverage": [
+        "play",
+        "switch",
+        "resume",
+        "play-after-app-restart"
+      ],
+      "computerObservedRadioState": false
+    },
+    "closingChanges": [
+      "conservative queue-wide free-space reservation",
+      "preserve unavailable-episode barrier from resolver",
+      "full-row create-button hit area"
+    ],
+    "finalBuild": "passed",
+    "finalInstall": "passed",
+    "finalLaunch": "blocked-by-device-lock",
+    "finalDeviceReverification": false
+  },
+  "release": {
+    "archive": "/tmp/Glide1120-Final.xcarchive",
+    "archiveSucceeded": true,
+    "signatureVerified": true,
+    "dsymVerified": true,
+    "preflightPassed": true,
+    "appStoreUpload": false
+  },
+  "scopeBoundaries": [
+    "controlled Jellyfin/Emby contracts, not real server-version matrix",
+    "original media only in this iteration",
+    "no NAS downloads or automatic replenishment",
+    "no cross-device sync",
+    "not full-film decode or background-transfer endurance acceptance"
+  ],
+  "sourceSnapshot": "Source-Snapshot.json"
+}

@@ -1,0 +1,79 @@
+{
+  "version": "1.14.0 (1)",
+  "date": "2026-10-26",
+  "status": "implemented-and-development-acceptance-passed",
+  "published": false,
+  "git": {
+    "committed": false,
+    "pushed": false,
+    "tagged": false
+  },
+  "core": {
+    "passed": 234,
+    "swiftTesting": 227,
+    "xctest": 7,
+    "newMediaClipTests": 7,
+    "log": "Logs/Core-Tests.log"
+  },
+  "simulator": {
+    "device": "iPhone 17 Pro",
+    "os": "iOS 26.3",
+    "uiPassed": 6,
+    "uiFailed": 0,
+    "uiSkipped": 0,
+    "resultBundle": "/tmp/Glide1140-Verified.xcresult",
+    "log": "Logs/UI-Verified.log",
+    "contractChecks": 19,
+    "report": "Simulator-Contract.json",
+    "additionalCollectionManagement": {
+      "passed": 1,
+      "resultBundle": "/tmp/Glide1140-UI-Third.xcresult",
+      "log": "Logs/UI-Third.log",
+      "entireHistoricalBatchPassed": false
+    }
+  },
+  "physicalDevice": {
+    "device": "iPhone 13 Pro Max",
+    "os": "iOS 27.0.1",
+    "bundle": "com.songpeng.glide.nasqa",
+    "firstContractChecks": 19,
+    "firstPassed": true,
+    "firstReport": "iPhone-First-Contract.json",
+    "finalBuild": "passed",
+    "finalInstall": "passed",
+    "finalReport": "iPhone-Contract.json",
+    "privateMediaAccess": false,
+    "userAirplaneModeObserved": false,
+    "finalBuildLog": "Logs/iPhone-Ready-Build.log",
+    "finalInstallLog": "Logs/iPhone-Ready-Install.log",
+    "finalLaunch": "passed-after-user-reconnected-and-opened",
+    "staleReportRejected": true,
+    "staleTimestamp": "2026-10-26T06:23:49Z",
+    "experiencePageLaunch": "passed",
+    "manualAirplaneModeNotClaimed": true,
+    "finalLaunchLog": "Logs/iPhone-Final-Reconnected-Launch.log",
+    "contractChecks": 19,
+    "passed": true,
+    "timestamp": "2026-10-26T08:58:29Z",
+    "measurements": {
+      "nativeEndActual": 3,
+      "vlcEndActual": 2.935
+    },
+    "experiencePageLaunchLog": "Logs/iPhone-Final-Experience-Launch.log"
+  },
+  "release": {
+    "archive": "/tmp/Glide1140-Verified.xcarchive",
+    "archiveSucceeded": true,
+    "signatureVerified": true,
+    "dsymVerified": true,
+    "preflightPassed": true,
+    "appStoreUpload": false
+  },
+  "boundaries": [
+    "Original local/offline actual decode, not a real media-server/version/codec matrix",
+    "No measured network request count or user airplane-mode confirmation",
+    "Cross-file transition includes loading; no seamless or frame-exact editing claim",
+    "No clip video export, automatic editing or AI analysis"
+  ],
+  "sourceSnapshot": "Source-Snapshot.json"
+}

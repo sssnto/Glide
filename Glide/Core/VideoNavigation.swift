@@ -9,6 +9,7 @@ struct MomentReference: Codable, Equatable, Hashable, Sendable {
     var accountID: String
     var mediaSourceID: String?
     var revision: String
+    var sourceBinding: String? = nil
     func matches(_ server: MediaServer) -> Bool {
         sourceID == server.id && accountID == (server.userID ?? server.username)
     }
@@ -54,7 +55,7 @@ enum ContentMapPlan {
     }
 }
 
-struct NavigationChapter: Identifiable, Equatable, Sendable {
+struct NavigationChapter: Codable, Identifiable, Equatable, Sendable {
     var id: String
     var name: String
     var time: Double

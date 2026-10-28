@@ -96,6 +96,7 @@ import UIKit
     private var player: VLCMediaPlayer?
     private var clockPlayer: VLCClockPlayer?
     private var drawable: UIView?
+    private var clipEnd: Double?
     private var resource: PlaybackResource?
     private var lifetime = PlaybackEngineLifetime()
     private var polling: Task<Void, Never>?
@@ -184,7 +185,7 @@ import UIKit
         if resource.smb != nil { try await CompatibilityNetworkPath.shared.check(url: resource.url, allowsCellular: options.allowsCellular) }
         guard lifetime.accepts(token) else { throw CancellationError() }
         allowsCellular = options.allowsCellular
-        self.resource = resource
+        self.resource = resource; clipEnd = options.endTime
         guard let clockPlayer = VLCClockPlayer(library: library) else { throw MediaError.message("无法创建兼容播放器。") }
         self.clockPlayer = clockPlayer
         let player = clockPlayer.player
@@ -202,9 +203,11 @@ import UIKit
             media.addOption(":smb-domain=" + access.options.domain)
             media.addOption(":network-caching=1500")
         }
+        if let end = options.endTime, end.isFinite, end > 0 { media.addOption(":stop-time=\(end)") }
         media.addOption(":start-paused")
         player.media = media
         self.player = player
+        if options.muted { player.audio?.volume = 0 }
         if resource.smb != nil { headerRead = true }
         else { inspectionTask = Task { [weak self] in
             let hint = await Task.detached(priority: .utility) {
@@ -332,7 +335,7 @@ import UIKit
         // Observe the same native input as the clock rather than that cache.
         if clockPlayer?.hasEnded == true, !player.isPlaying, !ended {
             ended = true
-            if resource?.smb != nil, state.duration > 0, lastClock < state.duration - 1.5 {
+            if resource?.smb != nil, state.duration > 0, lastClock < (clipEnd ?? state.duration) - 1.5 {
                 failed = true
                 onEvent?(.failed(MediaError.message("SMB 读取提前中断。请检查网络后重试，将从中断位置继续。")))
             } else { onEvent?(.ended) }

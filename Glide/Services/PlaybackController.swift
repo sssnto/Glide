@@ -6,6 +6,7 @@ import UIKit
 final class PlaybackController {
     @ObservationIgnored private let warmup = PlaybackWarmup()
     func prepareNext(_ video: Video, library: LibraryStore) async {
+        guard video.offlineOnly != true, current?.offlineOnly != true else { warmup.cancel(); return }
         guard engine.descriptor.capabilities.contains(.preloading) else { return }
         await warmup.prepare(video, server: library.servers.first { $0.id == video.sourceID })
     }
@@ -20,6 +21,21 @@ final class PlaybackController {
     var localInspection: LocalMediaInspection?
     func previewFrame(at time: Double) async -> UIImage? { await engine.preview(at: time) }
     var pendingMomentReference: MomentReference?
+    var clip: MediaClip?
+    private(set) var clipCompletedCount = 0
+    private var clipEnded = false
+    private func handleClipBoundary(ended: Bool = false) -> Bool {
+        guard let clip else { return false }
+        guard !isSeeking, wantsPlayback else { return ended }
+        guard ended || engine.snapshot.time >= clip.end else { return false }
+        if ended, engine.snapshot.time < clip.end - 0.6 {
+            pause(); error = "视频提前结束，未能读到片段终点。请确认文件完整后重试。"; return true
+        }
+        guard !clipEnded else { return true }
+        clipEnded = true; pause(); time = clip.end
+        clipCompletedCount += 1
+        return true
+    }
     /// Only expose a displayed media position after any outstanding seek finishes.
     var navigationPosition: Double? {
         let position = engine.snapshot.time
@@ -104,6 +120,7 @@ final class PlaybackController {
     var syncError: String?
     var playbackNotice: String?
     var recordsProgress = true
+    var inspectionMode = false
     private var watchdog: Task<Void, Never>?
     var time: Double = 0
     var duration: Double = 0
@@ -111,7 +128,7 @@ final class PlaybackController {
     var rate: Float = 1
     var resource: PlaybackResource?
     var supportsTranscoding: Bool {
-        guard let current, current.remoteID != nil else { return false }
+        guard let current, current.offlineOnly != true, current.remoteID != nil else { return false }
         return library?.servers.first(where: { $0.id == current.sourceID })?.kind.isCatalogSource == true
     }
     var showsOriginalTransport: Bool {
@@ -135,7 +152,7 @@ final class PlaybackController {
     var canPlayOnline: Bool { supportsTranscoding && resource?.url.isFileURL == true && !pictureInPicture.active }
     var subtitleOptions: [PlaybackTrack] = []
     var audioOptions: [PlaybackTrack] = []
-    var supportsClientPGS: Bool { library?.servers.first(where: { $0.id == current?.sourceID })?.kind == .jellyfin }
+    var supportsClientPGS: Bool { current?.offlineOnly != true && library?.servers.first(where: { $0.id == current?.sourceID })?.kind == .jellyfin }
     var serverAudioOptions: [CatalogItem.Stream] { resource?.url.isFileURL == false ? resource?.serverAudioStreams ?? [] : [] }
     var selectedServerAudioIndex: Int? {
         resource?.serverAudioIndex ?? serverAudioOptions.first(where: { $0.IsDefault == true })?.Index ?? serverAudioOptions.first?.Index
@@ -256,14 +273,14 @@ final class PlaybackController {
     private(set) var loopStart: Double?
     private(set) var loopCount = 0
     var loopMessage: String?
-    var activeSkip: SkipSegment? { loop == nil ? skips.active(time: time, duration: duration) : nil }
+    var activeSkip: SkipSegment? { loop == nil && clip == nil ? skips.active(time: time, duration: duration) : nil }
     var isSeeking: Bool { pendingSeekTarget != nil || pendingStartPosition != nil }
     func markLoopStart() {
-        guard frameReady, !isSeeking, time.isFinite else { return }
+        guard clip == nil, frameReady, !isSeeking, time.isFinite else { return }
         loop = nil; loopStart = time; loopCount = 0; loopMessage = "已设置起点 A，再播放到终点设置 B。"
     }
     @discardableResult func setLoop(start: Double, end: Double, mode: PlaybackLoop.Mode = .repeating) -> Bool {
-        guard frameReady, !isSeeking, let selection = PlaybackLoop(start: start, end: end, duration: duration, mode: mode) else {
+        guard clip == nil, frameReady, !isSeeking, let selection = PlaybackLoop(start: start, end: end, duration: duration, mode: mode) else {
             loopMessage = "请选择至少 0.5 秒、位于视频内的区间。"; return false
         }
         loop = selection; loopStart = start; loopCount = 0; loopMessage = nil
@@ -361,7 +378,7 @@ final class PlaybackController {
             refreshBufferedRanges()
             refreshPlaybackDiagnostic(snapshot)
             markFirstFrameIfReady()
-            if handleLoopBoundary() { return }
+            if handleClipBoundary() || handleLoopBoundary() { return }
             if skips.rule.automatic, wantsPlayback, snapshot.phase == .playing, frameReady, !loading,
                pendingSeekTarget == nil, pendingStartPosition == nil, let segment = activeSkip { skip(segment) }
             if abs(time - lastReport) >= 10 { lastReport = time; save(); report("Progress") }
@@ -376,7 +393,7 @@ final class PlaybackController {
             startReadyItem(); markFirstFrameIfReady()
         case .frameReady: markFirstFrameIfReady()
         case .ended:
-            if !handleLoopBoundary(ended: true) { pause(); completedCount += 1 }
+            if !handleClipBoundary(ended: true) && !handleLoopBoundary(ended: true) { pause(); completedCount += 1 }
         case .failed(let failure):
             diagnostic.event("item_failed"); diagnosticError(failure)
             recoverOrFail(engine.descriptor.id == .vlc ? failure.localizedDescription : "当前文件无法播放，请检查网络、媒体格式或服务器转码状态。")
@@ -520,6 +537,13 @@ final class PlaybackController {
     }
     private func startReadyItem() {
         guard engine.snapshot.ready else { return }
+        if let clip {
+            let actualDuration = engine.snapshot.duration
+            guard actualDuration <= 0 || clip.end <= actualDuration + 0.1 else {
+                pause(); error = "视频时长已变化，无法播放原片段。请重新选择区间。"; return
+            }
+            engine.setPlaybackEnd(clip.end)
+        }
         if let position = pendingStartPosition {
             pendingStartPosition = nil
             performSeek(position, exact: true)
@@ -578,7 +602,7 @@ final class PlaybackController {
             else if let option = subtitleOptions.first(where: { !PlaybackPreferences.subtitleLanguage.isEmpty && LanguagePreference.normalized($0.language) == LanguagePreference.normalized(PlaybackPreferences.subtitleLanguage) && (!PlaybackPreferences.forcedOnly || $0.forced) }) { selectSubtitle(option) }
           } else if tracks.subtitleIndex == -1 { selectSubtitle(nil) }
         }
-        if secondarySubtitles.hasASS || subtitles.hasASS || !secondarySubtitles.cues.isEmpty || !subtitles.cues.isEmpty, engine.snapshot.hasItem {
+        if secondarySubtitles.hasBitmap || subtitles.hasBitmap || secondarySubtitles.hasASS || subtitles.hasASS || !secondarySubtitles.cues.isEmpty || !subtitles.cues.isEmpty, engine.snapshot.hasItem {
             if engine.selectedSubtitleID != nil { engine.selectTrack(nil, kind: .subtitle) }
             selectedSubtitle = nil
             return
@@ -598,10 +622,11 @@ final class PlaybackController {
         let sameVideo = recovering && current?.id == video.id
         let retainedLoop = sameVideo ? loop : nil, retainedStart = sameVideo ? loopStart : nil
         let retainedLoopCount = sameVideo ? loopCount : 0
-        let server = library.servers.first { $0.id == video.sourceID }
+        let server = video.offlineOnly == true ? nil : library.servers.first { $0.id == video.sourceID }
         let prepared = !recovering && engine.descriptor.capabilities.contains(.preloading) && !tracks.requiresServerSelection ? warmup.take(video, server: server) : nil
         stop()
         loop = retainedLoop; loopStart = retainedStart; loopCount = retainedLoopCount
+        let recordsProgress = clip == nil && recordsProgress
         self.recordsProgress = recordsProgress
         if !sameVideo {
             catalogSeekRecovery = CatalogSeekRecovery(); forceOriginalForSeek = false; originalReadyForSeekRecovery = false
@@ -614,6 +639,7 @@ final class PlaybackController {
             sessionStarted = Date()
             if learnedRoute { diagnostic.event("route_learned_hd1080") }
         }
+        if clip?.moment.reference.kind == .catalog { bypassLocalFile = true }
         let requestedQuality = forceOriginalForSeek ? PlaybackQuality.original : AutomaticPlaybackPolicy.quality(at: recoveryStep)
         forceOriginalForSeek = false
         trackPreferencesApplied = false
@@ -643,10 +669,11 @@ final class PlaybackController {
         subtitleCatalogTask = subtitleCatalog
         subtitles.prepare(video: video, server: server, sharedCatalog: subtitleCatalog)
         secondarySubtitles.prepare(video: video, server: server, sharedCatalog: subtitleCatalog)
-        skips.prepare(video: video, server: server, preservingSession: sameVideo)
+        if clip == nil { skips.prepare(video: video, server: server, preservingSession: sameVideo) }
         let requestedResume = resumeAt ?? (recordsProgress ? library.resumePosition(video) : 0)
-        let resume = requestedResume.isFinite ? max(0, requestedResume) : 0
-        if resumeAt != nil ? resume > 0 : WatchProgress.canResume(position: resume, duration: video.duration) {
+        let resume = clip?.resume(requestedResume) ?? (requestedResume.isFinite ? max(0, requestedResume) : 0)
+        clipEnded = false
+        if clip != nil || (resumeAt != nil ? resume > 0 : WatchProgress.canResume(position: resume, duration: video.duration)) {
             pendingStartPosition = resume
         }
         time = resume; duration = video.duration; lastReport = resume; wantsPlayback = autoplay
@@ -759,7 +786,12 @@ final class PlaybackController {
                 self.state("准备画面")
                 var selectedQuality = requestedQuality
                 var resource: PlaybackResource
-                if !bypassLocalFile, let local = DownloadStore.shared.localURL(videoID: video.id) { resource = PlaybackResource(url: local, delivery: .local) }
+                if video.offlineOnly == true {
+                    resource = try DownloadStore.shared.offlineResource(video)
+                    try await DownloadStore.shared.installOfflineSubtitles(video: video, primary: subtitles, secondary: secondarySubtitles)
+                    diagnostic.event("offline_only")
+                }
+                else if !bypassLocalFile, DownloadStore.shared.canReuse(videoID: video.id, sourceID: tracks.mediaSourceID), let local = DownloadStore.shared.localURL(videoID: video.id) { resource = PlaybackResource(url: local, delivery: .local) }
                 else if let prepared, requestedQuality == .automatic { resource = prepared.resource; diagnostic.event("warmup_hit") }
                 else { resource = try await MediaClient.shared.playback(video: video, server: server, quality: requestedQuality, tracks: tracks) }
                 if !Task.isCancelled, token == generation, server?.kind.isCatalogSource == true, requestedQuality == .automatic,
@@ -793,7 +825,7 @@ final class PlaybackController {
                     }
                     return
                 }
-                if let expected = pendingMomentReference {
+                if let expected = clip?.moment.reference ?? pendingMomentReference {
                     guard expected.videoID == video.id else { throw MediaError.message("时刻对应的视频已变化。") }
                     do { try await MomentResolver.verify(expected, video: video, library: library, resource: resource) }
                     catch {
@@ -821,7 +853,8 @@ final class PlaybackController {
                 diagnostic.serverSubtitleIndex = subtitleQuery.last { $0.name.lowercased() == "subtitlestreamindex" }?.value.flatMap(Int.init)
                 diagnostic.preferredTextSubtitle = resource.preferredTextSubtitle
                 diagnostic.directStreamFlag = resource.supportsDirectStream
-                let selectedEngine = PlaybackEngineSelection.resolve(preferred: localEngineOverride ?? PlaybackPreferences.localEngine,
+                let offlineEngine: PlaybackEngineID? = video.offlineOnly == true && resource.url.pathExtension.lowercased() == "mkv" ? .vlc : nil
+                let selectedEngine = PlaybackEngineSelection.resolve(preferred: localEngineOverride ?? offlineEngine ?? PlaybackPreferences.localEngine,
                     localFile: resource.url.isFileURL, hasHeaders: !resource.headers.isEmpty, smb: resource.smb != nil)
                 installEngine(selectedEngine)
                 diagnostic.event("engine_" + engine.descriptor.id.rawValue.lowercased())
@@ -858,7 +891,8 @@ final class PlaybackController {
                     subtitleScale: PlaybackPreferences.subtitleScale, forwardBuffer: buffer,
                     peakBitrate: selectedQuality == .hd1080 ? 8_000_000 : selectedQuality == .hd720 ? 3_000_000 : 0,
                     inspectWideColor: resource.isTranscoding && NativeColorPolicy.isHDR(range: resource.videoStream?.VideoRangeType, transfer: resource.videoStream?.ColorTransfer))
-                try await engine.load(resource, preload: selectedQuality == .automatic && engine.descriptor.capabilities.contains(.preloading) ? prepared : nil, options: options)
+                var loadOptions = options; loadOptions.muted = inspectionMode; loadOptions.endTime = clip?.end
+                try await engine.load(resource, preload: selectedQuality == .automatic && engine.descriptor.capabilities.contains(.preloading) ? prepared : nil, options: loadOptions)
                 guard !Task.isCancelled, token == generation else { return }
                 refreshTrackOptions()
             } catch {
@@ -914,7 +948,8 @@ final class PlaybackController {
     func play() {
         guard error == nil else { return }
         wantsPlayback = true
-        if duration > 0, time >= duration - 0.3 { seek(0) }
+        if let clip, clipEnded || time >= clip.end - 0.05 { seek(clip.moment.position) }
+        else if duration > 0, time >= duration - 0.3 { seek(0) }
         startReadyItem(); report("Progress")
     }
     func pause() {
@@ -924,15 +959,16 @@ final class PlaybackController {
     }
     func toggle() { wantsPlayback ? pause() : play() }
     func seek(_ seconds: Double) {
-        let target = max(0, min(seconds, duration > 0 ? duration : seconds))
+        let bounded = clip.map { max($0.moment.position, min(seconds, $0.end - 0.05)) } ?? seconds
+        let target = max(0, min(bounded, duration > 0 ? duration : bounded))
         guard target.isFinite, engine.snapshot.hasItem else { return }
         if let loop, !loop.contains(target) { clearLoop(); loopMessage = "已移出区间，循环已退出。" }
         if !engine.snapshot.ready {
             pendingStartPosition = target; time = target
             return
         }
-        pendingStartPosition = nil
-        performSeek(target, exact: false)
+        pendingStartPosition = nil; clipEnded = false
+        performSeek(target, exact: clip != nil)
     }
     private func performSeek(_ target: Double, exact: Bool, looping: Bool = false) {
         guard engine.snapshot.hasItem else { return }
@@ -972,6 +1008,9 @@ final class PlaybackController {
                     self.playbackNotice = "原画兼容流定位有偏差，正在用原文件恢复该位置。"
                     self.open(video, library: library, resumeAt: target, autoplay: autoplay, recovering: true, recordsProgress: self.recordsProgress)
                     return
+                }
+                if let clip = self.clip, !finished || !actual.isFinite || actual < clip.moment.position - 0.25 || actual >= clip.end {
+                    self.pause(); self.error = "未能准确定位到片段区间，已暂停。请重试或观看完整视频。"; return
                 }
                 if self.wantsPlayback { self.engine.play(rate: self.rate) }
                 self.markFirstFrameIfReady()
@@ -1041,7 +1080,7 @@ final class PlaybackController {
         subtitleOptions = []; audioOptions = []; selectedSubtitle = nil; selectedAudio = nil
     }
     func close() {
-        stop()
+        stop(); clip = nil
         PlaybackAudioSession.release(owner: audioSessionOwner)
     }
     deinit {

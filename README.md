@@ -1,6 +1,12 @@
 # Glide · 随手一刷
 
-本轮新增内容地图、章节导航与时刻收藏，见 [1.11.0 功能范围](Docs/Glide-1.11.0-Product-Plan-2026-10-22.md)、[验收记录](Docs/Testing/Glide-1.11.0/README.md)和[发布说明](Docs/Glide-1.11.0-Release-Notes.md)。构建 3 接入 libass 原样字幕绘制，保留原脚本、字体、颜色、定位与特效，并支持字体附件与字体导入，见[原样渲染开发验收](Docs/Testing/Glide-1.11.0-ASSStyle-2026-10-22/README.md)。构建 4 修正字体中文别名识别，补入实片缺失的官方原字体，已在用户 iPhone 复核实际字体选择、原始颜色、布局与字幕切换，见[最终真机记录](Docs/Testing/Glide-1.11.0-ASSFont-2026-10-23/README.md)。构建 2 的文字回退修复保留[历史实片记录](Docs/Testing/Glide-1.11.0-ASS-2026-10-22/README.md)。
+当前开发版本 **1.14.0（1）「精彩片段集」**：收藏视频起止区间，跨视频组合与连续刷看，合集排序／封面／独立进度及完整视频往返。见 [1.14.0 范围](Docs/Glide-1.14.0-Product-Plan-2026-10-26.md)与[验收记录](Docs/Testing/Glide-1.14.0/README.md)。商店和官网仍对应已发布的 1.11.0。
+
+1.13.0（1）「统一片库」**：跨 Jellyfin／Emby、本地视频与已下载内容搜索，可靠作品标识聚合，来源与版本选择及记忆，复用私人频道和离线行程。见 [1.13.0 范围](Docs/Glide-1.13.0-Product-Plan-2026-10-26.md)、[验收记录](Docs/Testing/Glide-1.13.0/README.md)和[发布说明草稿](Docs/Glide-1.13.0-Release-Notes.md)。商店和官网仍对应已发布的 1.11.0。
+
+1.12.0「离线随身片库」增加按时间和容量准备行程、连续剧 3／5 集打包、配套资源与实际试播检查，支持断网播放、切集、续播和 MKV 兼容播放。见 [范围](Docs/Glide-1.12.0-Product-Plan-2026-10-23.md)与[验收记录](Docs/Testing/Glide-1.12.0/README.md)。
+
+1.11.0 新增内容地图、章节导航与时刻收藏，见 [功能范围](Docs/Glide-1.11.0-Product-Plan-2026-10-22.md)及[验收记录](Docs/Testing/Glide-1.11.0/README.md)。其构建 3 接入 libass 原样字幕绘制，构建 4 修正中文字体别名识别，并在用户 iPhone 复核原字体、颜色、布局和字幕切换，见[最终真机记录](Docs/Testing/Glide-1.11.0-ASSFont-2026-10-23/README.md)。
 
 独立的 iPhone / iPad 原生视频播放器，支持本地视频、授权目录、Jellyfin、Emby 与 NAS SMB／WebDAV。1.11.0 已发布，包含同名外挂字幕、HTTP(S)／STRM 链接、片头片尾规则、两路外部字幕、原生首页、私人频道、按时间选片、内容地图、章节导航与时刻收藏。SwiftUI + AVFoundation / AVKit / MobileVLCKit，iOS 17+。
 
@@ -10,7 +16,7 @@
 
 仓库包含原生应用、Xcode 工程、核心与界面测试、演示素材、设计原型、产品规划、架构说明、测试计划和支持网站源码。`Docs/` 与 `Design/` 保留各阶段记录，历史版本的描述不代表当前功能；当前行为以本页与最新测试计划为准。编译缓存、签名文件和发布安装包不纳入版本控制。
 
-用户已于 2026-10-23 确认商店版本 **1.11.0** 发布，本地项目版本为 **1.11.0（4）**；最新功能见 [1.11.0 计划](Docs/Glide-1.11.0-Product-Plan-2026-10-22.md)及[实际验收](Docs/Testing/Glide-1.11.0/README.md)；字幕／循环验收见 [1.9.0 记录](Docs/Testing/Glide-1.9.0/README.md)，Jellyfin 4K HDR 与文字字幕修复见[构建 2 记录](Docs/Testing/Glide-1.9.0-Jellyfin-2026-10-21/README.md)，播放中多字幕选择修复见[构建 3 记录](Docs/Testing/Glide-1.9.0-Subtitle-Switch-2026-10-21/README.md)，PGS 客户端显示与播放中音轨切换见[构建 4 记录](Docs/Testing/Glide-1.9.0-PGS-Audio-2026-10-21/README.md)，服务器既有边界见 [1.7.0 记录](Docs/Testing/Glide-1.7.0/README.md)。1.4.0 带来紧凑片库、结构化媒体信息、底部播放快捷操作和竖版家庭视频预览；进入媒体库或文件夹默认展示媒体。[设计规则](Docs/Glide-1.4.0-Design.md)、[开发验证与边界](Docs/Testing/Glide-1.4.0-UI-Validation.md)、[发布材料](Docs/Publishing/1.4.0/README.md)。
+用户已于 2026-10-23 确认商店版本 **1.11.0** 发布，本地项目版本为 **1.14.0（1）**，尚未上传商店；字幕／循环验收见 [1.9.0 记录](Docs/Testing/Glide-1.9.0/README.md)，Jellyfin 4K HDR 与文字字幕修复见[构建 2 记录](Docs/Testing/Glide-1.9.0-Jellyfin-2026-10-21/README.md)，播放中多字幕选择修复见[构建 3 记录](Docs/Testing/Glide-1.9.0-Subtitle-Switch-2026-10-21/README.md)，PGS 客户端显示与播放中音轨切换见[构建 4 记录](Docs/Testing/Glide-1.9.0-PGS-Audio-2026-10-21/README.md)，服务器既有边界见 [1.7.0 记录](Docs/Testing/Glide-1.7.0/README.md)。1.4.0 带来紧凑片库、结构化媒体信息、底部播放快捷操作和竖版家庭视频预览；进入媒体库或文件夹默认展示媒体。[设计规则](Docs/Glide-1.4.0-Design.md)、[开发验证与边界](Docs/Testing/Glide-1.4.0-UI-Validation.md)、[发布材料](Docs/Publishing/1.4.0/README.md)。
 此前 1.2.0 已加入批量文件导入、授权目录、本地封面与时间轴预览、导入副本删除和可恢复快照。[1.2.0 规格](Docs/Glide-1.2.0-Functional-Spec.md)、[开发验证](Docs/Testing/Glide-1.2.0-本地来源验证-2026-10-15.md)。完整长期目标见 [SenPlayer 对齐路线](Docs/SenPlayer-Capability-Parity-Roadmap-2026-10-15.md)，10 月 15 日的 53 项历史核查见 [实施后差距复核](Docs/SenPlayer-Gap-Review-2026-10-15.md)；M0／M1／M2 尚未整体完成。NAS 基础能力见 [1.5.0 计划与验收](Docs/Glide-1.5.0-Product-Plan-2026-10-19.md)；字幕增量见 [1.5.1 字幕计划](Docs/Glide-1.5.1-Product-Plan-2026-10-20.md)、[验收记录](Docs/Testing/Glide-1.5.1/README.md)和[发布说明](Docs/Glide-1.5.1-Release-Notes.md)。
 
 [兼容内核独立验证程序](Experiments/CompatibilityPlayer/README.md)与主应用共用固定的 MobileVLCKit 3.7.3 和适配器。独立实验的历史结果保留在 Docs/Testing，当前主应用与真机证据见 1.3.0 验证报告。
@@ -63,7 +69,7 @@ SMB 使用已验证的 VLC 兼容播放入口，按需读取并支持定位；�
 
 Jellyfin 的 ASS／SSA 使用原始 `.ass` 数据及当前媒体版本字体附件，不再以 SRT 转换结果作为画面。外挂与手动导入也支持 UTF-8 ASS／SSA。libass 绘制字体、颜色、描边、阴影、定位、绘图、淡入淡出、移动、旋转、裁剪、变换与卡拉 OK；原脚本保留，全文使用独立正文索引。
 
-优先使用字幕内字体、视频字体附件和系统字体；原字体未提供时提示替代，可在“字幕控制 → 导入字幕字体”导入 TTF／OTF／TTC。普通字幕外观设置不覆盖 ASS。字幕脚本上限 2 MB，单个字体 20 MB、字体总量 64 MB；ASS 仅叠加在应用内视频画面，不包含 PiP／AirPlay 字幕输出。新增代码和原创验证已完成，实体机更新与指定剧集复核待设备重新连接。见[结果与边界](Docs/Testing/Glide-1.11.0-ASSStyle-2026-10-22/README.md)。
+优先使用字幕内字体、视频字体附件和系统字体；原字体未提供时提示替代，可在“字幕控制 → 导入字幕字体”导入 TTF／OTF／TTC。普通字幕外观设置不覆盖 ASS。字幕脚本上限 2 MB，单个字体 20 MB、字体总量 64 MB；ASS 仅叠加在应用内视频画面，不包含 PiP／AirPlay 字幕输出。指定剧集已完成原字体真机复核，见[最终记录](Docs/Testing/Glide-1.11.0-ASSFont-2026-10-23/README.md)。
 
 ### NAS · WebDAV
 
@@ -91,7 +97,7 @@ WebDAV 直连受 AVFoundation 格式支持限制，优先使用 MP4 / M4V / MOV�
 
 ### Emby（1.7.0 开发版本）
 
-媒体来源 → 添加媒体源 → Emby，填写服务器地址、用户名与密码。支持路径前缀，例如 /emby。浏览电影、节目／季／集、家庭视频目录，使用范围搜索、分页、收藏、原文件播放、服务器 HLS 与观看进度同步；复用默认媒体版本的 MP4／MOV／M4V 原文件下载和手动字幕、节目跳过规则。
+媒体来源 → 添加媒体源 → Emby，填写服务器地址、用户名与密码。支持路径前缀，例如 /emby。浏览电影、节目／季／集、家庭视频目录，使用范围搜索、分页、收藏、原文件播放、服务器 HLS 与观看进度同步；复用默认媒体版本的 MP4／MOV／M4V／MKV 原文件下载和手动字幕、节目跳过规则。
 
 Emby HLS 出现超出容差的定位偏差时，若同一原文件此前已成功出画面且不依赖服务器选轨，可自动切回原文件恢复位置。测试期间的长 GOP 偏差与新建媒体记录复测结果分别保留，不承诺所有服务端索引与影片组合均适用。服务端与设备实测范围、Plex／飞牛等后续边界见 [1.7.0 计划](Docs/Glide-1.7.0-Product-Plan-2026-10-20.md)、[验收](Docs/Testing/Glide-1.7.0/README.md)和[发布材料](Docs/Glide-1.7.0-Release-Notes.md)。
 
@@ -109,7 +115,7 @@ Emby HLS 出现超出容差的定位偏差时，若同一原文件此前已成�
 
 播放器下方的「横屏／竖屏」按钮可直接切换显示方向，也支持设备自动旋转。离开播放器时恢复进入前的屏幕方向。
 
-Jellyfin 播放会先尝试原画；遇到解码失败或持续缓冲时自动恢复，并在必要时使用最高 1080p 或 720p 的 H.264/AAC 转码。恢复保留当前播放时间和播放／暂停意图。服务器必须允许转码并配置可用的 FFmpeg；WebDAV 没有服务器转码兜底；Jellyfin 下载文件若无法由系统播放，会尝试联网获取兼容流，离线时需要系统兼容的文件。底座选型见 [原生播放器方案](Docs/Player-Engine-Decision.md)。
+Jellyfin 在线播放会先尝试原画；遇到解码失败或持续缓冲时自动恢复，并在必要时使用最高 1080p 或 720p 的 H.264/AAC 转码。恢复保留当前播放时间和播放／暂停意图。服务器必须允许转码并配置可用的 FFmpeg；WebDAV 没有服务器转码兜底。从随身片库进入的播放只读本机副本，禁止联网转码与在线恢复，MKV 默认使用兼容内核。底座选型见 [原生播放器方案](Docs/Player-Engine-Decision.md)。
 
 首帧后的普通缓冲恢复会保留当前流，不因已结束的长缓冲或多次短缓冲立即转码。持续停止播放至少 45 秒且当前位置的连续可用缓存至少 20 秒未增长时才触发缓冲恢复；缓存仍增长时延长等待，最长连续停止 90 秒后恢复。播放重新开始、暂停及定位期间清除本次卡顿观察；真正的解码失败、黑屏和色彩不兼容仍保留自动恢复。
 
@@ -195,7 +201,7 @@ Jellyfin 的 `movies` 媒体库显示电影海报墙，点进详情可查看简�
 - 详情中的声音/字幕显示单行摘要，点击后在独立列表中查看完整名称并选择，避免长名称挤压重叠。单集使用横向剧照；人员作品页查询电影和节目入口，不平铺单集。
 - 元数据缓存 15 分钟，海报磁盘缓存 7 天，合并重复请求；缓存按服务器和账号隔离，总磁盘上限 256 MB。下拉刷新重新请求元数据；删除来源时清理缓存。海报由服务器提供，缺图显示占位。
 - 自动播放尊重 AVPlayer 缓冲等待；黑屏、失败或持续缓冲时有界地尝试兼容流、1080p 与 720p 转码，仍失败则显示错误。设备支持的 HEVC/AV1 硬解能力参与协商，不能保证所有设备都能硬解所有 4K/HDR/Dolby Vision 文件。
-- 影视详情可下载默认版本的 MP4/MOV/M4V 原文件，底部“下载”管理进度、删除并本地播放。系统后台 URLSession 负责传输，Background Tasks 维护任务状态；系统调度和用户强制退出会影响后台任务。支持暂停／继续有效后台任务，失效任务会提示重新下载；尚不支持 MKV 离线解码、转码 HLS 离线打包和非默认版本下载。
+- 影视详情可下载默认版本的 MP4／MOV／M4V／MKV 原文件，底部“离线”管理进度、删除并本地播放。1.12.0 新增行程包、双预算、连续剧打包、配套资料与实际试播检查；MKV 默认使用兼容内核。系统后台 URLSession 负责传输，Background Tasks 维护任务状态；系统调度和用户强制退出会影响后台任务。支持暂停／继续有效后台任务，失效任务会提示重新下载；尚不支持转码 HLS 离线打包和非默认版本下载。
 
 
 ### 标签与相似推荐

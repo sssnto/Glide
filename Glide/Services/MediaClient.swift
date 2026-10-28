@@ -51,8 +51,12 @@ final class MediaClient {
         default: throw MediaError.message("服务器请求失败（HTTP \(response.statusCode)）。")
         }
     }
-    private func subtitleData(_ url: URL, authorization: String, maximumBytes: Int = SubtitleDocument.maximumBytes) async throws -> Data {
+    private func subtitleData(_ url: URL, authorization: String, maximumBytes: Int = SubtitleDocument.maximumBytes, offlineDownload: Bool = false) async throws -> Data {
         var request = URLRequest(url: url)
+        if offlineDownload {
+            let allows = await !PlaybackPreferences.downloadWiFiOnly
+            request.allowsCellularAccess = allows; request.allowsExpensiveNetworkAccess = allows
+        }
         request.setValue(authorization, forHTTPHeaderField: "Authorization")
         let (bytes, response) = try await session.bytes(for: request)
         defer { bytes.task.cancel() }
@@ -68,13 +72,13 @@ final class MediaClient {
         }
         return data
     }
-    func serverSubtitle(video: Video, server: MediaServer, sourceID: String, stream: CatalogItem.Stream) async throws -> [SubtitleCue] {
-        guard server.kind == .jellyfin, let item = video.remoteID, let token = Credentials.read(server.id),
+    func serverSubtitle(video: Video, server: MediaServer, sourceID: String, stream: CatalogItem.Stream, offlineDownload: Bool = false) async throws -> [SubtitleCue] {
+        guard server.kind.isCatalogSource, let item = video.remoteID, let token = Credentials.read(server.id),
               stream.Type == "Subtitle", CatalogSubtitlePolicy.textCodecs.contains(stream.Codec?.lowercased() ?? "") else {
             throw MediaError.message("此字幕需要服务器处理。")
         }
         let endpoint = ServerURL.endpoint(server.address, "Videos/\(item)/\(sourceID)/Subtitles/\(stream.Index)/Stream.srt")
-        let bytes = try await subtitleData(endpoint, authorization: authorization(token, server: server))
+        let bytes = try await subtitleData(endpoint, authorization: authorization(token, server: server), offlineDownload: offlineDownload)
         let cues = try await SubtitleSource.document(bytes, assText: ["ass", "ssa"].contains(stream.Codec?.lowercased() ?? "")).cues
 #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--glide-ass-investigation") {
@@ -93,12 +97,12 @@ final class MediaClient {
 #endif
         return cues
     }
-    func serverASSSubtitle(video: Video, server: MediaServer, sourceID: String, stream: CatalogItem.Stream, attachments: [CatalogItem.Attachment]? = nil) async throws -> ASSSubtitle {
-        guard server.kind == .jellyfin, let item = video.remoteID, let token = Credentials.read(server.id),
+    func serverASSSubtitle(video: Video, server: MediaServer, sourceID: String, stream: CatalogItem.Stream, attachments: [CatalogItem.Attachment]? = nil, offlineDownload: Bool = false) async throws -> ASSSubtitle {
+        guard server.kind.isCatalogSource, let item = video.remoteID, let token = Credentials.read(server.id),
               stream.Type == "Subtitle", ["ass", "ssa"].contains(stream.Codec?.lowercased() ?? "") else { throw MediaError.message("无法读取原始 ASS 字幕。") }
         let auth = authorization(token, server: server)
         let endpoint = ServerURL.endpoint(server.address, "Videos/\(item)/\(sourceID)/Subtitles/\(stream.Index)/Stream.ass", query: ["CopyTimestamps": "true"])
-        let data = try await subtitleData(endpoint, authorization: auth)
+        let data = try await subtitleData(endpoint, authorization: auth, offlineDownload: offlineDownload)
         let work = Task.detached(priority: .userInitiated) { try ASSDocument.parse(data) }
         let document = try await withTaskCancellationHandler { try await work.value } onCancel: { work.cancel() }
         let available: [CatalogItem.Attachment]
@@ -112,7 +116,7 @@ final class MediaClient {
                 let url = ServerURL.endpoint(server.address, "Videos/\(item)/\(sourceID)/Attachments/\(attachment.Index)")
                 let remaining = ASSFontStore.maximumTotal - total
                 guard remaining > 0 else { failedFonts += 1; break }
-                let bytes = try await subtitleData(url, authorization: auth, maximumBytes: min(remaining, ASSFontStore.maximumBytes))
+                let bytes = try await subtitleData(url, authorization: auth, maximumBytes: min(remaining, ASSFontStore.maximumBytes), offlineDownload: offlineDownload)
                 guard total + bytes.count <= ASSFontStore.maximumTotal, ASSFontStore.valid(bytes) else { failedFonts += 1; continue }
                 total += bytes.count; fonts.append(bytes)
             } catch is CancellationError { throw CancellationError() }
@@ -132,6 +136,15 @@ final class MediaClient {
         let data = try await subtitleData(endpoint, authorization: authorization(token, server: server), maximumBytes: PGSSubtitle.maximumBytes)
         let work = Task.detached(priority: .userInitiated) { try PGSSubtitle.parse(data) }
         return try await withTaskCancellationHandler { try await work.value } onCancel: { work.cancel() }
+    }
+    func offlineBitmapData(video: Video, server: MediaServer, sourceID: String, stream: CatalogItem.Stream) async throws -> Data {
+        guard server.kind == .jellyfin, let item = video.remoteID, let token = Credentials.read(server.id),
+              CatalogSubtitlePolicy.pgsCodecs.contains(stream.Codec?.lowercased() ?? "") else { throw MediaError.message("此来源未提供可提取的离线 PGS 字幕。") }
+        let endpoint = ServerURL.endpoint(server.address, "Videos/\(item)/\(sourceID)/Subtitles/\(stream.Index)/Stream.pgssub", query: ["CopyTimestamps": "true"])
+        let data = try await subtitleData(endpoint, authorization: authorization(token, server: server), maximumBytes: PGSSubtitle.maximumBytes, offlineDownload: true)
+        let work = Task.detached { try PGSSubtitle.parse(data) }
+        _ = try await work.value
+        return data
     }
     func signIn(server: MediaServer, password: String) async throws -> (String, String) {
         struct User: Decodable { let Id: String }

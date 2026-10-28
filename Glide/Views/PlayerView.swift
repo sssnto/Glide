@@ -17,10 +17,21 @@ struct PlayerView: View {
     var onFirstFrame: ((Video) -> Void)? = nil
     var onQueueFinished: (() -> Void)? = nil
     var returnLabel = "返回片库"
+    var clip: MediaClip? = nil
+    var clipPosition = ""
+    var clipCanGoBack = false
+    var clipCanGoForward = false
+    var onClipMove: ((Int) -> Void)? = nil
+    var onClipCompleted: (() -> Void)? = nil
+    var onClipProgress: ((Double) -> Void)? = nil
+    var onFullVideo: ((Double) -> Void)? = nil
+    var onExit: (() -> Void)? = nil
     @State private var notifiedStarts = Set<String>()
     private var isCinema: Bool { cinematic || ["Movie", "Episode"].contains(current.mediaType ?? "") }
     private var recordsProgress: Bool {
+        if clip != nil { return false }
 #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--glide-unified-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-clip-fixture") { return false }
         if ProcessInfo.processInfo.arguments.contains("--glide-ui-audit") || ProcessInfo.processInfo.arguments.contains("--glide-discovery-probe") || ProcessInfo.processInfo.arguments.contains("--glide-map-probe") || ProcessInfo.processInfo.arguments.contains("--glide-map-fixture") { return false }
 #endif
         return isCinema || library.servers.first(where: { $0.id == current.sourceID })?.remembersPlayback == true
@@ -41,11 +52,15 @@ struct PlayerView: View {
     @State private var hideTask: Task<Void, Never>?
     @State private var suppressTapUntil = Date.distantPast
     @State private var settingsOpen = false
-    private enum SettingsAction { case diagnostic, videoInfo, subtitleImport, subtitleControls, navigation, moment }
+    private enum SettingsAction { case diagnostic, videoInfo, subtitleImport, subtitleControls, navigation, moment, clip }
     @State private var pendingSettingsAction: SettingsAction?
     @State private var navigationSelection: VideoNavigationPresentation?
     @State private var navigationWasPlaying = false
     @State private var navigationTarget: Double?
+    @State private var clipDraft: MediaClip?
+    @State private var clipWasPlaying = false
+    @State private var clipPreparing = false
+    @State private var clipError: String?
     @State private var diagnosticOpen = false
     @State private var videoInfoOpen = false
     @State private var skipSettingsOpen = false
@@ -94,7 +109,7 @@ struct PlayerView: View {
                 Color.black.ignoresSafeArea()
                 VideoSurface(presentation: playback.presentation, onLayer: { playback.attachLayer($0) }, identity: current.id, title: current.title,
                     frameReady: playback.frameReady, locked: locked, filled: filled,
-                    onSwipe: { if channelMode || !isCinema || isEpisode { move($0) } },
+                    onSwipe: { if clip != nil || channelMode || !isCinema || isEpisode { move($0) } },
                     onToggle: { playback.toggle(); scheduleHideAfterInteraction() }, onSeek: {
                         // SpatialTapGesture can also complete when a long press is released.
                         suppressTapUntil = Date().addingTimeInterval(0.5)
@@ -104,7 +119,7 @@ struct PlayerView: View {
                     subtitleClock: { playback.subtitleRenderTime }, subtitleVideoMatrix: playback.subtitleVideoMatrix, subtitleSourceSize: playback.subtitleVideoSize)
                     .ignoresSafeArea()
                 if !playback.frameReady && playback.error == nil {
-                    if let server = library.servers.first(where: { $0.id == current.sourceID }), server.kind.isCatalogSource, let id = current.remoteID {
+                    if current.offlineOnly != true, let server = library.servers.first(where: { $0.id == current.sourceID }), server.kind.isCatalogSource, let id = current.remoteID {
                         CatalogArtwork(item: CatalogItem(Id: id, Name: current.title, Type: current.mediaType), server: server, contentMode: .fit).opacity(0.45).allowsHitTesting(false)
                     } else { VideoArtwork(video: current, contentMode: .fit).opacity(0.45).allowsHitTesting(false) }
                 }
@@ -152,7 +167,7 @@ struct PlayerView: View {
                             }.buttonStyle(.bordered).accessibilityIdentifier("player.switchAfterFailure")
                         }
                         HStack {
-                            Button("返回片库") { dismiss() }
+                            Button("返回片库") { exitPlayer() }
                             Spacer()
                             Button("播放诊断") { diagnosticOpen = true }
                             Button("重试") { playback.retry() }.buttonStyle(.borderedProminent).tint(GlideTheme.accent).foregroundStyle(GlideTheme.onAccent)
@@ -160,6 +175,7 @@ struct PlayerView: View {
                     }.padding(26).frame(maxWidth: 370).background(GlideTheme.panel, in: RoundedRectangle(cornerRadius: 24)).padding(24)
                 }
             }
+            .accessibilityHidden(clipDraft != nil || clipPreparing)
             .onPreferenceChange(PlayerControlsHeightKey.self) { value in
                 if abs(bottomControlsHeight - value) > 0.5 { bottomControlsHeight = value }
             }
@@ -183,10 +199,12 @@ struct PlayerView: View {
         .onAppear {
             initialOrientation = ScreenRotation.activeScene?.interfaceOrientation
             UIApplication.shared.isIdleTimerDisabled = true
+            playback.clip = clip
             playback.tracks = initialTracks
             playback.pendingMomentReference = initialMoment?.reference
             var autoplay = true
 #if DEBUG
+            if clip != nil, ProcessInfo.processInfo.arguments.contains("--glide-clip-start-paused") { autoplay = false }
             if ProcessInfo.processInfo.arguments.contains("--glide-dual-subtitle-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-format-fixtures") || ProcessInfo.processInfo.arguments.contains("--glide-subtitle-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-subtitle-smb-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-smb-fixture") {
                 autoplay = !UserDefaults.standard.bool(forKey: "glideQAStartPaused")
             }
@@ -195,13 +213,14 @@ struct PlayerView: View {
         }
         .onDisappear {
             scrubTarget = nil
+            if clip != nil { onClipProgress?(playback.time) }
             playback.pictureInPicture.stop(); playback.close(); hudTask?.cancel(); hideTask?.cancel(); subtitlePresentationTask?.cancel()
             UIApplication.shared.isIdleTimerDisabled = false
             if manuallyRotated, let initialOrientation { ScreenRotation.request(ScreenRotation.mask(for: initialOrientation)) { _ in } }
         }
         .task(id: queueReload) { await expandQueue() }
         .task(id: warmupKey) {
-            guard playback.frameReady, !playback.loading, playback.isPlaying,
+            guard clip == nil, playback.frameReady, !playback.loading, playback.isPlaying,
                   playback.rate == 1, scenePhase == .active, let nextVideo else { playback.cancelWarmup(); return }
             try? await Task.sleep(for: .seconds(1))
             guard !Task.isCancelled else { return }
@@ -228,6 +247,7 @@ struct PlayerView: View {
             switch action {
             case .navigation: presentNavigation()
             case .moment: presentNavigation(createMoment: true)
+            case .clip: presentClip()
             case .diagnostic: diagnosticOpen = true
             case .videoInfo: videoInfoOpen = true
             case .subtitleImport: beginSubtitleImport()
@@ -248,7 +268,7 @@ struct PlayerView: View {
         }
         .task(id: videoInfoOpen ? current.id : "") {
             pathCopied = false
-            guard videoInfoOpen, let server = library.servers.first(where: { $0.id == current.sourceID }),
+            guard current.offlineOnly != true, videoInfoOpen, let server = library.servers.first(where: { $0.id == current.sourceID }),
                   server.kind.isCatalogSource, let id = current.remoteID else { videoDetail = nil; return }
             videoDetail = nil
             let detail = try? await MediaClient.shared.catalogDetail(server: server, id: id)
@@ -259,6 +279,14 @@ struct PlayerView: View {
         .onChange(of: episodesOpen) { _, open in if open { hideTask?.cancel() } else { scheduleHide() } }
         .onChange(of: scenePhase) { _, phase in if phase == .background && !playback.pictureInPicture.active && !playback.externalPlaybackActive { playback.pause(); controls = true } }
         .onChange(of: playback.isPlaying) { _, playing in if playing { scheduleHide() } else if !playback.loading { controls = true } }
+        .sheet(item: $clipDraft, onDismiss: {
+            if clipWasPlaying { playback.play() }; clipWasPlaying = false; scheduleHide()
+        }) { draft in ClipEditorView(library: library, clip: draft) }
+        .alert("无法收藏片段", isPresented: Binding(get: { clipError != nil }, set: { if !$0 { clipError = nil } })) {
+            Button("好") { clipError = nil }
+        } message: { Text(clipError ?? "") }
+        .onChange(of: Int(playback.time / 2)) { _, _ in if clip != nil { onClipProgress?(playback.time) } }
+        .onChange(of: playback.clipCompletedCount) { _, _ in if clip != nil { onClipCompleted?() } }
         .onChange(of: playback.completedCount) { _, _ in if scenePhase == .active { advance(1, automatic: true) } }
         .onChange(of: playback.frameReady) { _, ready in
 #if DEBUG
@@ -276,11 +304,11 @@ struct PlayerView: View {
     }
     private var topBar: some View {
         HStack(spacing: 10) {
-            RoundControl(symbol: "chevron.down", label: returnLabel) { dismiss() }
+            RoundControl(symbol: "chevron.down", label: returnLabel) { exitPlayer() }
             VStack(alignment: .leading, spacing: 3) {
                 Text(current.title).font(GlideTheme.Typography.itemTitle).lineLimit(1).foregroundStyle(.white)
-                Text((isEpisode && !episodePosition.isEmpty ? episodePosition + " · " : "") + "\(queue.index + 1) / \(queue.ordered.count)" + (queueLoading ? (isEpisode ? " · 正在加载剧集" : " · 正在补全目录") : ""))
-                    .font(.caption2).monospacedDigit().foregroundStyle(.white.opacity(0.58))
+                Text(clip != nil ? clipPosition : (isEpisode && !episodePosition.isEmpty ? episodePosition + " · " : "") + "\(queue.index + 1) / \(queue.ordered.count)" + (queueLoading ? (isEpisode ? " · 正在加载剧集" : " · 正在补全目录") : ""))
+                    .font(.caption2).monospacedDigit().foregroundStyle(.white.opacity(0.58)).accessibilityIdentifier("player.queuePosition")
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             RoundControl(symbol: "rectangle.split.3x3", label: "画面与时刻") { presentNavigation() }
@@ -290,6 +318,21 @@ struct PlayerView: View {
             RoundControl(symbol: "ellipsis", label: "播放设置") {
                 quickMenuHolding = false; hideTask?.cancel(); settingsOpen = true
             }
+        }
+    }
+    private func exitPlayer() { if let onExit { onExit() } else { dismiss() } }
+    private func presentClip() {
+        guard let position = playback.navigationPosition, let resource = playback.resource else { return }
+        clipWasPlaying = playback.isPlaybackRequested; playback.pause(); hideTask?.cancel(); clipPreparing = true
+        Task { @MainActor in
+            defer { clipPreparing = false }
+            do {
+                let reference = try await MomentResolver.reference(video: current, library: library, resource: resource)
+                let video = try MomentResolver.storedVideo(current, library: library)
+                guard !Task.isCancelled, playback.current?.id == video.id else { return }
+                let start = min(position, max(0, playback.duration - 0.5))
+                clipDraft = MediaClip(moment: MediaMoment(video: video, reference: reference, position: start, duration: playback.duration, name: ""), end: min(playback.duration, start + 15))
+            } catch { clipError = error.localizedDescription; if clipWasPlaying { playback.play() }; clipWasPlaying = false }
         }
     }
     private func presentNavigation(createMoment: Bool = false) {
@@ -310,9 +353,11 @@ struct PlayerView: View {
                 Section {
                     Button("内容地图与章节", systemImage: "rectangle.split.3x3") { pendingSettingsAction = .navigation; settingsOpen = false }
                         .disabled(playback.navigationPosition == nil).accessibilityIdentifier("player.map.open")
+                    Button("收藏精彩片段", systemImage: "scissors") { pendingSettingsAction = .clip; settingsOpen = false }
+                        .disabled(playback.navigationPosition == nil || clipPreparing).accessibilityIdentifier("player.clip.create")
                     Button("收藏当前时刻", systemImage: "bookmark") { pendingSettingsAction = .moment; settingsOpen = false }
                         .disabled(playback.navigationPosition == nil).accessibilityIdentifier("player.moment.create")
-                    NavigationLink { PlaybackLoopView(playback: playback) } label: { Label("单句重播与 A–B 循环", systemImage: "repeat") }.accessibilityIdentifier("player.loop.open")
+                    NavigationLink { PlaybackLoopView(playback: playback) } label: { Label("单句重播与 A–B 循环", systemImage: "repeat") }.disabled(clip != nil).accessibilityIdentifier("player.loop.open")
                     HStack(spacing: 12) {
                         Button { pendingSettingsAction = .videoInfo; settingsOpen = false } label: {
                             Label("视频信息", systemImage: "info.circle")
@@ -631,6 +676,9 @@ struct PlayerView: View {
     }
     private func bottomControls(compact: Bool) -> some View {
         VStack(alignment: .leading, spacing: compact ? 0 : 8) {
+            if let clip {
+                Text("片段 " + clip.moment.position.mediaTime + "–" + clip.end.mediaTime).font(.caption).monospacedDigit().foregroundStyle(.white.opacity(0.75)).accessibilityIdentifier("clip.range")
+            }
             PlayerLoopStatus(playback: playback)
             PlayerTimeline(playback: playback, identity: current.id, scrubTarget: $scrubTarget,
                            onScrubStart: { quickMenuHolding = false; hideTask?.cancel() }, onScrubEnd: scheduleHideAfterInteraction)
@@ -663,6 +711,8 @@ struct PlayerView: View {
         }
     }
     private func expandQueue() async {
+        guard clip == nil else { queueExpansionComplete = true; return }
+        if current.offlineOnly == true { queueExpansionComplete = true; return }
         if channelMode { queueExpansionComplete = true; return }
         guard !queueExpansionComplete else { return }
         let expandsEpisodes = isEpisode && queue.source.count == 1 && loadFullQueue == nil
@@ -704,18 +754,23 @@ struct PlayerView: View {
     }
     private func transportControls(compact: Bool) -> some View {
         HStack(spacing: compact ? 4 : 12) {
-            RoundControl(symbol: "backward.end.fill", label: !channelMode && isEpisode ? "上一集" : "上一个视频") { move(-1) }
-                .disabled(!queue.canGoBack).opacity(queue.canGoBack ? 1 : 0.3)
+            RoundControl(symbol: "backward.end.fill", label: clip != nil ? "上一个片段" : !channelMode && isEpisode ? "上一集" : "上一个视频") { move(-1) }
+                .disabled(clip != nil ? !clipCanGoBack : !queue.canGoBack).opacity((clip != nil ? clipCanGoBack : queue.canGoBack) ? 1 : 0.3)
             RoundControl(symbol: "gobackward.10", label: "快退 \(Int(PlaybackPreferences.seekInterval)) 秒") { playback.seek(playback.time - PlaybackPreferences.seekInterval); scheduleHideAfterInteraction() }
             RoundControl(symbol: playback.isPlaybackRequested ? "pause.fill" : "play.fill", label: playback.isPlaybackRequested ? "暂停" : "播放", prominent: true, compact: compact) { playback.toggle(); scheduleHideAfterInteraction() }
+                .accessibilityIdentifier(clip != nil ? "clip.toggle" : "player.toggle")
             RoundControl(symbol: "goforward.10", label: "快进 \(Int(PlaybackPreferences.seekInterval)) 秒") { playback.seek(playback.time + PlaybackPreferences.seekInterval); scheduleHideAfterInteraction() }
-            RoundControl(symbol: "forward.end.fill", label: !channelMode && isEpisode ? "下一集" : "下一个视频") { move(1) }
-                .disabled(!queue.canGoForward).opacity(queue.canGoForward ? 1 : 0.3)
+            RoundControl(symbol: "forward.end.fill", label: clip != nil ? "下一个片段" : !channelMode && isEpisode ? "下一集" : "下一个视频") { move(1) }
+                .disabled(clip != nil ? !clipCanGoForward : !queue.canGoForward).opacity((clip != nil ? clipCanGoForward : queue.canGoForward) ? 1 : 0.3)
         }
     }
     private func playbackActions(compact: Bool) -> some View {
         HStack(spacing: compact ? 4 : 8) {
-            if isEpisode {
+            if clip != nil, onFullVideo != nil {
+                Button { playback.pause(); onFullVideo?(playback.time) } label: {
+                    PlayerQuickActionLabel(title: "观看完整视频", symbol: "play.rectangle")
+                }.accessibilityIdentifier("clip.fullVideo")
+            } else if isEpisode {
                 Button { quickMenuHolding = false; hideTask?.cancel(); episodesOpen = true } label: {
                     PlayerQuickActionLabel(title: "选集", symbol: "list.bullet.rectangle")
                 }.accessibilityIdentifier("player.episodes")
@@ -767,6 +822,7 @@ struct PlayerView: View {
     }
     private func advance(_ delta: Int, automatic: Bool) {
         guard automatic || !locked else { return }
+        if clip != nil { if automatic { onClipCompleted?() } else { onClipMove?(delta) }; return }
         if !automatic { pendingAutomaticAdvance = false }
         guard queue.move(delta) else {
             if automatic && channelMode { onQueueFinished?() }
@@ -817,10 +873,10 @@ struct PlayerView: View {
     }
     private func scheduleHide() {
         hideTask?.cancel()
-        guard !voiceOverEnabled, !quickMenuHolding, controls, scrubTarget == nil, !settingsOpen, !subtitleControlsOpen, !diagnosticOpen, !episodesOpen, !videoInfoOpen, navigationSelection == nil else { return }
+        guard !voiceOverEnabled, !quickMenuHolding, controls, scrubTarget == nil, !settingsOpen, !subtitleControlsOpen, !diagnosticOpen, !episodesOpen, !videoInfoOpen, navigationSelection == nil, clipDraft == nil, !clipPreparing else { return }
         hideTask = Task {
             try? await Task.sleep(for: .seconds(PlaybackPreferences.controlsDelay))
-            guard !Task.isCancelled, !voiceOverEnabled, !quickMenuHolding, scrubTarget == nil, !settingsOpen, !subtitleControlsOpen, !diagnosticOpen, !episodesOpen, !videoInfoOpen, navigationSelection == nil, playback.error == nil, playback.isPlaying else { return }
+            guard !Task.isCancelled, !voiceOverEnabled, !quickMenuHolding, scrubTarget == nil, !settingsOpen, !subtitleControlsOpen, !diagnosticOpen, !episodesOpen, !videoInfoOpen, navigationSelection == nil, clipDraft == nil, !clipPreparing, playback.error == nil, playback.isPlaying else { return }
             withAnimation { controls = false }
         }
     }
@@ -912,22 +968,31 @@ private struct PlayerTimeline: View {
         if resource.url.isFileURL { return "离线播放" }
         return playback.loading ? "正在缓冲" : resource.delivery.title
     }
+    private var lowerBound: Double { playback.clip?.moment.position ?? 0 }
+    private var visibleDuration: Double { playback.clip?.length ?? playback.duration }
+    private var visibleRanges: [BufferedRange] {
+        guard playback.clip != nil else { return playback.bufferedRanges }
+        return playback.bufferedRanges.compactMap { range in
+            let start = max(0, range.start - lowerBound), end = min(visibleDuration, range.end - lowerBound)
+            return end > start ? BufferedRange(start: start, end: end) : nil
+        }
+    }
     var body: some View {
         VStack(spacing: 0) {
-            BufferedSeekBar(value: scrubTarget ?? playback.time,
-                            duration: playback.duration, ranges: playback.bufferedRanges,
+            BufferedSeekBar(value: max(0, (scrubTarget ?? playback.time) - lowerBound),
+                            duration: visibleDuration, ranges: visibleRanges,
                             onScrubStart: { onScrubStart(); scrubTarget = playback.time },
-                            onScrubChange: { scrubTarget = $0 },
-                            onScrubEnd: { target in scrubTarget = nil; playback.seek(target); onScrubEnd() })
+                            onScrubChange: { scrubTarget = $0 + lowerBound },
+                            onScrubEnd: { target in scrubTarget = nil; playback.seek(target + lowerBound); onScrubEnd() })
             HStack(spacing: 12) {
-                Text((scrubTarget ?? playback.time).mediaTime).accessibilityIdentifier("player.elapsed")
+                Text(max(0, (scrubTarget ?? playback.time) - lowerBound).mediaTime).accessibilityIdentifier("player.elapsed")
                 Spacer(minLength: 8)
                 Text(deliveryTitle).font(.caption2).lineLimit(1)
                     .foregroundStyle(.white.opacity(0.65))
                     .accessibilityIdentifier("player.delivery")
                     .accessibilityValue(playback.resource?.delivery.title ?? "连接中")
                 Spacer(minLength: 8)
-                Text(playback.duration.mediaTime).accessibilityLabel("总时长，" + playback.duration.mediaTime)
+                Text(visibleDuration.mediaTime).accessibilityLabel("总时长，" + visibleDuration.mediaTime)
             }
             .font(.system(.caption2, design: .monospaced)).monospacedDigit()
             .foregroundStyle(.white.opacity(0.68))

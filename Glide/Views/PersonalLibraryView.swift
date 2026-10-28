@@ -16,6 +16,9 @@ struct PersonalLibraryView: View {
         NavigationStack {
             List {
                 Section {
+                    NavigationLink { ClipLibraryView(library: library) } label: {
+                        Label("精彩片段集", systemImage: "scissors").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
+                    }.accessibilityIdentifier("personal.clips")
                     NavigationLink { MomentLibraryView(library: library) } label: {
                         Label("时刻收藏", systemImage: "bookmark")
                             .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())

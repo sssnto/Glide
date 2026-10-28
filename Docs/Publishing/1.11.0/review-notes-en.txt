@@ -1,0 +1,21 @@
+Glide is a video player for media that users own or are authorized to access. It does not provide a movie/TV catalog or host third-party media. No Glide account or purchase is needed to use bundled offline demos or import local files. There are no ads or in-app purchase screens in this build.
+
+This update covers the accumulated changes since public version 1.4.0: Emby and SMB connections, private channels, time-based selection, content maps, saved moments, native appearance, subtitle controls and playback improvements.
+
+Review without a media server:
+These steps use iPhone labels; iPad provides equivalent destinations in the sidebar.
+1. Launch Glide and open the Library tab (片库). The bundled offline demo library (离线演示片库) is available through the media-source control. It contains original demo videos, not licensed movies or TV episodes.
+2. Play a demo, tap the picture to reveal controls, then try seeking, speed, vertical video switching and orientation. Local files can use system or compatibility playback in playback settings (播放设置).
+3. In the player, open Frames and Moments (画面与时刻). Browse the content map, inspect a time range and tap a thumbnail to play from it. Save the current position, then find it under My > Saved Moments (我的 > 时刻收藏).
+4. On Home (首页), create a private channel (新建频道), select the original demo videos as its content, save it and preview the planned queue before playback. A channel organizes the user's existing media; it is not an IPTV or live-streaming service.
+5. On Home, open Pick Something for Me (给我选一部), choose a time and content range, and inspect candidates and their reasons. Selection requires reliable duration metadata.
+6. From media sources, Import Video Files (导入视频文件) copies selected files; Add Local Folder (添加本地目录) retains read-only directory authorization. Subtitle controls support user-provided SRT/VTT/ASS/SSA files and font imports. Bundled demos do not require external subtitles.
+
+Optional remote sources:
+Jellyfin, Emby, SMB and WebDAV require a reachable user-configured server and its credentials. Local network permission is used for selected LAN servers. Media-server progress may synchronize with that server. HTTP(S) video links and single-address STRM files are also supported; no built-in server credentials or content subscriptions are supplied.
+
+Scope:
+Content maps use system-decodable local/offline files or existing Jellyfin Trickplay images. Other sources offer chapters/moments where supported. Original ASS fonts must be present in media attachments or imported by the user. Jellyfin PGS depends on server extraction. App-rendered external subtitles are not included in PiP/AirPlay. Actual formats and server processing depend on the device and media. Glide does not include Plex, cloud-drive integrations, automatic scene/character recognition or online subtitle search.
+
+Support: 133317737@qq.com
+Privacy: https://glide.sssnto.cn/privacy.html

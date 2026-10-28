@@ -15,6 +15,8 @@ struct PlaybackEngineOptions {
     var forwardBuffer: Double
     var peakBitrate: Double = 0
     var inspectWideColor = false
+    var muted = false
+    var endTime: Double? = nil
 }
 
 struct PlaybackOutputEvidence {
@@ -50,6 +52,7 @@ enum PlaybackEngineEvent {
     func setRate(_ rate: Float, playing: Bool)
     func seek(to: Double, tolerance: Double, completion: @escaping (Bool, Double) -> Void)
     func cancelPendingSeeks()
+    func setPlaybackEnd(_ time: Double?)
     func setForwardBuffer(_ seconds: Double)
     func selectTrack(_ id: String?, kind: PlaybackTrack.Kind)
     func inspectOutput()
@@ -57,4 +60,7 @@ enum PlaybackEngineEvent {
     func stop()
 }
 
-@MainActor extension PlaybackEngine { var subtitleClock: Double? { snapshot.time } }
+@MainActor extension PlaybackEngine {
+    var subtitleClock: Double? { snapshot.time }
+    func setPlaybackEnd(_ time: Double?) {}
+}

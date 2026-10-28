@@ -1,0 +1,83 @@
+{
+  "version": "1.13.0 (1)",
+  "date": "2026-10-26",
+  "status": "implemented-and-development-acceptance-passed",
+  "published": false,
+  "git": {
+    "committed": false,
+    "pushed": false,
+    "tagged": false
+  },
+  "core": {
+    "passed": 227,
+    "swiftTesting": 220,
+    "xctest": 7,
+    "newUnifiedLibraryTests": 9,
+    "log": "Logs/Core-Tests.log"
+  },
+  "simulator": {
+    "device": "iPhone 17 Pro",
+    "os": "iOS 26.3",
+    "uiPassed": 5,
+    "uiFailed": 0,
+    "uiSkipped": 0,
+    "contractChecks": 25,
+    "resultBundle": "/tmp/Glide1130-Final-Acceptance.xcresult",
+    "report": "Simulator-Contract.json",
+    "log": "Logs/UI-Final.log",
+    "additionalEpisodeToggleAssertion": {
+      "passed": 1,
+      "resultBundle": "/tmp/Glide1130-Episode-Toggle.xcresult",
+      "log": "Logs/UI-Episode-Toggle.log",
+      "applicationSourceChanged": false
+    }
+  },
+  "physicalDevice": {
+    "device": "iPhone 13 Pro Max",
+    "os": "iOS 27.0.1",
+    "bundle": "com.songpeng.glide.nasqa",
+    "contractChecks": 25,
+    "passed": true,
+    "timestamp": "2026-10-26T03:22:34Z",
+    "report": "iPhone-Contract.json",
+    "finalBuild": "passed",
+    "finalInstall": "passed",
+    "finalLaunch": "passed-after-user-unlocked",
+    "normalModeRestore": "device-control-connection-timed-out-after-passing-report-copied",
+    "normalModeRecovery": "Force-quit QA app and open its icon; no reinstall needed",
+    "privateServerAccess": false,
+    "airplaneModeObserved": false
+  },
+  "release": {
+    "archive": "/tmp/Glide1130-Accepted.xcarchive",
+    "archiveSucceeded": true,
+    "signatureVerified": true,
+    "dsymVerified": true,
+    "preflightPassed": true,
+    "appStoreUpload": false
+  },
+  "performance": {
+    "coreMetadataCount": 10000,
+    "debugMacTestApproximateSeconds": 0.55,
+    "iphoneScrollingFPSMeasured": false,
+    "simulatorScrollSpotCheck": {
+      "metadataCount": 10000,
+      "displayedWorks": 10004,
+      "gestures": 3,
+      "passed": true,
+      "fpsMeasured": false,
+      "isolatedCacheRestored": true,
+      "evidence": "Large-Library-Scroll.json",
+      "screenshot": "Screenshots/Large-Library-Scroll.png"
+    }
+  },
+  "boundaries": [
+    "Jellyfin/Emby authenticated authored contract, not a real server-version matrix",
+    "no NAS indexing or external metadata scraping",
+    "no Plex/feiniu or cross-device sync",
+    "provider priority matching only; no title-based guess merge",
+    "channels and trips use selected source default files",
+    "not all-codec or full-film decode acceptance"
+  ],
+  "sourceSnapshot": "Source-Snapshot.json"
+}
