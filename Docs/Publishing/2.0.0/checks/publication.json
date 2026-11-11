@@ -4,13 +4,26 @@
     "repository": "https://github.com/sssnto/glide-privacy",
     "commit": "3097f5b7b92dca02c568bf303f184ad779a7d32a",
     "url": "https://glide.sssnto.cn/",
-    "appVersionLabel": "2.0.0 preview; App Store currently 1.15.0"
+    "appVersionLabel": "2.0.0 preview; App Store currently 1.15.0",
+    "verifiedFiles": 26,
+    "checks": [
+      "GitHub Pages built for expected commit",
+      "26 public file byte/SHA-256 matches",
+      "desktop and phone visual/layout checks"
+    ]
   },
   "plugin": {
     "repository": "https://github.com/sssnto/GlideToolkit",
     "commit": "6f8389997015eadba0a0d213746ee80928b8a02e",
     "tag": "v1.1.1",
-    "catalog": "https://raw.githubusercontent.com/sssnto/GlideToolkit/main/manifest.json"
+    "catalog": "https://raw.githubusercontent.com/sssnto/GlideToolkit/main/manifest.json",
+    "ci": "https://github.com/sssnto/GlideToolkit/actions/runs/43009304089"
   },
-  "appStoreAction": "Not submitted or published by this task"
+  "appStoreAction": "Not submitted or published by this task",
+  "app": {
+    "repository": "https://github.com/sssnto/Glide",
+    "commit": "91d42082b2c2227b2c265b50fe75781cf1c02000",
+    "version": "2.0.0",
+    "build": "1"
+  }
 }

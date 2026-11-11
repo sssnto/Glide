@@ -1,0 +1,190 @@
+{
+  "site": "https://glide.sssnto.cn/",
+  "timestamp": "2026-11-11T11:19:29.760431+00:00",
+  "passed": true,
+  "files": [
+    {
+      "file": ".nojekyll",
+      "status": 200,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matchesSource": true
+    },
+    {
+      "file": "404.html",
+      "status": 200,
+      "bytes": 778,
+      "sha256": "e53198964f7fb91976b2549f568b1b3c8b05ac198dd39f631ec094bc2fc5d7c8",
+      "matchesSource": true
+    },
+    {
+      "file": "CNAME",
+      "status": 200,
+      "bytes": 16,
+      "sha256": "5156e1ebce2915fad74d50454806de83533d883ee2f29bb1acf3f2a52304d14f",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/alpine.jpg",
+      "status": 200,
+      "bytes": 385062,
+      "sha256": "817a6db7684772791195f14756fde06cd9af4818120a8b27625f66f49055414a",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/app-icon.png",
+      "status": 200,
+      "bytes": 60630,
+      "sha256": "1c890c2966278c979ef1dd8ed3fccfba14becd602374f0f0f11caafe8c8cce0b",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/channel.png",
+      "status": 200,
+      "bytes": 290019,
+      "sha256": "f22294bea7ba1a948d6c82017f0170fbcebd55900e63fc28466ad7dd310bba81",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/coast.jpg",
+      "status": 200,
+      "bytes": 548480,
+      "sha256": "a27cfe8099c5fafa242fa2fceb96368584c57d24ee8891e28dd47350e7f330f4",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/content-map.png",
+      "status": 200,
+      "bytes": 495943,
+      "sha256": "38bbb16cc41387ceaef85e352788e110030d5e5e9bd32b3122e1411fbf91fd4b",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/player.png",
+      "status": 200,
+      "bytes": 554665,
+      "sha256": "c70fea15b6f3042da18fb0dc9139c3e5c6bf0265e2ed2f7aa59d0d9baa6443e6",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/time-picks.png",
+      "status": 200,
+      "bytes": 502924,
+      "sha256": "82abd4465f9c3cfc70af0fdcca44be12ce6fc48410d205724b709c76b4bbfb0e",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/v2-collection.png",
+      "status": 200,
+      "bytes": 234988,
+      "sha256": "6bcd34507438a64c01bf9f7917fe507030386dbf980efa1ef270bb091ab5db32",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/v2-dark.png",
+      "status": 200,
+      "bytes": 697896,
+      "sha256": "bfa0cafece5b7e0800bf1d86fe4a4a76993e745d01542db456ebeb3f74f84932",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/v2-library.png",
+      "status": 200,
+      "bytes": 570895,
+      "sha256": "06a2d40fffe0c9373d41f4f88fd7b933481380ca74c22a54c41a75ab983479d7",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/v2-player.png",
+      "status": 200,
+      "bytes": 486114,
+      "sha256": "f6434fca53e4d73c3a7b6cb0dcfa23c07407e8e74c694825b3833f9749e25d84",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/v2-selection.png",
+      "status": 200,
+      "bytes": 675568,
+      "sha256": "55109afc589002318fd0a62e0d293626d3794e8ed82a63449f6c3a73f090b846",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/v2-tasks.png",
+      "status": 200,
+      "bytes": 196703,
+      "sha256": "fa48eec1812aabc7aeb92a5a95ce2d332a0cc848ed958c0c65e670bde5e0d63f",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/v2-watch.png",
+      "status": 200,
+      "bytes": 915612,
+      "sha256": "6892c9cf57cae3a29d4805a5f8dcc84160130ae60f9750dff0eb5edb77d83bab",
+      "matchesSource": true
+    },
+    {
+      "file": "icons.svg",
+      "status": 200,
+      "bytes": 2119,
+      "sha256": "3d62192a2deb607eeaa65e985f6f6329e5bb3233a766c92ca7b331b10cbcca0e",
+      "matchesSource": true
+    },
+    {
+      "file": "index.html",
+      "status": 200,
+      "bytes": 17902,
+      "sha256": "3fcb557e2e7cb8f6311edb6852e69308195686cadc66e1de2eff49830ec8055c",
+      "matchesSource": true
+    },
+    {
+      "file": "privacy.html",
+      "status": 200,
+      "bytes": 7392,
+      "sha256": "83068aff84036464111ab8e0ce5ce2c43640d0a569a1b491e4a3f40927697176",
+      "matchesSource": true
+    },
+    {
+      "file": "robots.txt",
+      "status": 200,
+      "bytes": 68,
+      "sha256": "add2147a66a985d8e3cbd097fd29bf6e1efe96791fda014f065558842c2eaefd",
+      "matchesSource": true
+    },
+    {
+      "file": "site.js",
+      "status": 200,
+      "bytes": 970,
+      "sha256": "63fc8defbf4d9e8737e33c8efda0c1cb76e51b14d10c8b9114d716dc1f7dae92",
+      "matchesSource": true
+    },
+    {
+      "file": "sitemap.xml",
+      "status": 200,
+      "bytes": 458,
+      "sha256": "e5e164acfb14275ca4a2db3ad14f14a1616e564e4ec319a3e99ec278759cc57b",
+      "matchesSource": true
+    },
+    {
+      "file": "style.css",
+      "status": 200,
+      "bytes": 26805,
+      "sha256": "aff1bde9d652ed5b7967be5784882d108632a933c90e4741d36412cdddadd18b",
+      "matchesSource": true
+    },
+    {
+      "file": "support.html",
+      "status": 200,
+      "bytes": 11721,
+      "sha256": "6fb5c45cd772b2ed9dc76816bff1fc23cc9b9347ff1fa4e7ee3d2b438b578845",
+      "matchesSource": true
+    },
+    {
+      "file": "updates.html",
+      "status": 200,
+      "bytes": 12332,
+      "sha256": "d1bd14396671458c003d68155ce8e6bf5f03d7489c63a9d2ce060766f72a96e5",
+      "matchesSource": true
+    }
+  ],
+  "scope": "Unversioned public URLs, bytes and SHA-256; does not render or interact with the site"
+}
