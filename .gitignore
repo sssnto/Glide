@@ -17,6 +17,11 @@ xcuserdata/
 .env
 .env.*
 !.env.example
+Server/**/bin/
+Server/**/obj/
+Server/artifacts/
 *.p12
 *.p8
 *.mobileprovision
+
+.codegraph/

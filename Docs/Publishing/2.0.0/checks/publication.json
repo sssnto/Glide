@@ -1,0 +1,16 @@
+{
+  "prepared": "2026-11-11T11:14:19.511449+00:00",
+  "website": {
+    "repository": "https://github.com/sssnto/glide-privacy",
+    "commit": "3097f5b7b92dca02c568bf303f184ad779a7d32a",
+    "url": "https://glide.sssnto.cn/",
+    "appVersionLabel": "2.0.0 preview; App Store currently 1.15.0"
+  },
+  "plugin": {
+    "repository": "https://github.com/sssnto/GlideToolkit",
+    "commit": "6f8389997015eadba0a0d213746ee80928b8a02e",
+    "tag": "v1.1.1",
+    "catalog": "https://raw.githubusercontent.com/sssnto/GlideToolkit/main/manifest.json"
+  },
+  "appStoreAction": "Not submitted or published by this task"
+}

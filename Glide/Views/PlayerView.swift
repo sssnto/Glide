@@ -31,7 +31,7 @@ struct PlayerView: View {
     private var recordsProgress: Bool {
         if clip != nil { return false }
 #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("--glide-unified-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-clip-fixture") { return false }
+        if ProcessInfo.processInfo.arguments.contains("--glide-unified-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-clip-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-duo-fixture") { return false }
         if ProcessInfo.processInfo.arguments.contains("--glide-ui-audit") || ProcessInfo.processInfo.arguments.contains("--glide-discovery-probe") || ProcessInfo.processInfo.arguments.contains("--glide-map-probe") || ProcessInfo.processInfo.arguments.contains("--glide-map-fixture") { return false }
 #endif
         return isCinema || library.servers.first(where: { $0.id == current.sourceID })?.remembersPlayback == true
@@ -43,6 +43,18 @@ struct PlayerView: View {
     @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var playback = PlaybackController()
+    @State private var interaction = VideoInteractionState()
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @State private var interfaceOrientation = UIInterfaceOrientation.unknown
+#if DEBUG
+    @State private var duoSession = UUID()
+    @State private var duoDisplaySize = CGSize.zero
+    @State private var duoConfigured = false
+    @State private var zoomProbeTask: Task<Void, Never>?
+    private func recordDuoEvidence() { DuoPlaybackEvidence.save(playback, session: duoSession, size: duoDisplaySize, expanded: expandedPlayer, interaction: interaction) }
+#endif
+    private var expandedPlayer: Bool { horizontalSizeClass == .regular && verticalSizeClass == .regular }
     @State private var controls = true
     @State private var quickMenuHolding = false
     @State private var locked = false
@@ -52,7 +64,28 @@ struct PlayerView: View {
     @State private var hideTask: Task<Void, Never>?
     @State private var suppressTapUntil = Date.distantPast
     @State private var settingsOpen = false
-    private enum SettingsAction { case diagnostic, videoInfo, subtitleImport, subtitleControls, navigation, moment, clip }
+    private enum SettingsAction { case diagnostic, videoInfo, subtitleImport, subtitleControls, navigation, moment, clip, rotation }
+    private struct RotationPlaybackContext {
+        let video: Video
+        let filename: String?
+        let position: Double
+        let wasPlaying: Bool
+        let tracks: TrackSelection
+        let rate: Float
+        let audioID: String?
+        let subtitleID: String?
+    }
+    @State private var rotationOpen = false
+    @State private var rotationTurn = VideoQuarterTurn.original
+    @State private var rotationSave = PlayerRotationSave()
+    @State private var rotationActiveTarget: PlayerRotationTarget?
+    @State private var rotationTask:Task<Void,Never>?
+    @State private var rotationContext: RotationPlaybackContext?
+    @State private var rotationClosedPlayback = false
+    @State private var rotationSaved = false
+    @State private var rotationRefreshNotice: String?
+    @State private var rotationResumeTask: Task<Void, Never>?
+    @State private var rotationTrackResume: RotationPlaybackContext?
     @State private var pendingSettingsAction: SettingsAction?
     @State private var navigationSelection: VideoNavigationPresentation?
     @State private var navigationWasPlaying = false
@@ -70,6 +103,7 @@ struct PlayerView: View {
     @State private var importingSubtitle = false
     private var subtitles: SubtitleSession { playback.subtitles }
     @State private var bottomControlsHeight: CGFloat = 0
+    @State private var topControlsHeight: CGFloat = 44
     @State private var subtitleControlsOpen = false
     @State private var subtitlePresentationTask: Task<Void, Never>?
     @State private var subtitleImportLane = SubtitleLane.primary
@@ -94,6 +128,17 @@ struct PlayerView: View {
         if let id = playback.resource?.mediaSourceID ?? playback.tracks.mediaSourceID { return videoDetail?.MediaSources?.first { $0.Id == id } }
         return videoDetail?.MediaSources?.first
     }
+    private var duoAccessibilityContext: String {
+#if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--glide-webdav-presentation-fixture") {
+            return ";opens=\(playback.openAttemptCount);layer=\(ObjectIdentifier(interaction.videoLayer));time=\(Int(playback.time));"
+        }
+        if ProcessInfo.processInfo.arguments.contains("--glide-duo-fixture") {
+            return ";session=\(duoSession.uuidString);layer=\(ObjectIdentifier(interaction.videoLayer));opens=\(playback.openAttemptCount);time=\(Int(playback.time));rate=\(playback.rate);audio=\(playback.selectedAudio?.id ?? "none");requested=\(playback.isPlaybackRequested);"
+        }
+#endif
+        return ""
+    }
     private var filePath: String? {
         if let url = playback.resource?.url, url.isFileURL { return MediaFilePath.display(url.absoluteString) }
         if let path = MediaFilePath.display(playback.resource?.sourcePath) { return path }
@@ -102,13 +147,196 @@ struct PlayerView: View {
         if current.remoteID == nil { return MediaFilePath.display((playback.resource?.url ?? current.url)?.absoluteString) }
         return nil
     }
+    private var adaptivePlayer: some View {
+        AdaptivePlayerLayout(expanded: expandedPlayer) {
+            GeometryReader { geometry in
+                playerCanvas(geometry, landscape: geometry.size.width > geometry.size.height)
+            }
+        } controls: {
+            expandedControlPanel
+        }
+    }
     var body: some View {
-        GeometryReader { geometry in
-            let landscape = geometry.size.width > geometry.size.height
+        NavigationStack {
+            VStack(spacing: 0) {
+                adaptivePlayer.frame(maxWidth: .infinity, maxHeight: .infinity).disabled(rotationSave.busy && !rotationSave.isServerJob)
+                rotationPanel
+            }.toolbar(.hidden, for: .navigationBar).background(Color.black)
+        }
+        .onGeometryChange(for: CGSize.self) { $0.size } action: { _ in
+            interfaceOrientation = ScreenRotation.activeScene?.interfaceOrientation ?? .unknown
+        }
+#if DEBUG
+        .onGeometryChange(for: CGSize.self) { $0.size } action: { value in duoDisplaySize = value; recordDuoEvidence() }
+        .onChange(of: Int(playback.time)) { _, _ in recordDuoEvidence() }
+        .onChange(of: playback.isPlaybackRequested) { _, _ in recordDuoEvidence() }
+        .onChange(of: playback.rate) { _, _ in recordDuoEvidence() }
+        .onChange(of: playback.selectedAudio) { _, _ in recordDuoEvidence() }
+        .onChange(of: controls) { _, value in DuoPlaybackEvidence.event("controls=\(value)", session: duoSession) }
+        .onChange(of: settingsOpen) { _, value in DuoPlaybackEvidence.event("settings=\(value)", session: duoSession) }
+#endif
+        .onChange(of: expandedPlayer) { _, _ in controls = true; hideTask?.cancel(); scheduleHide() }
+        .preferredColorScheme(.dark)
+        .statusBarHidden(!controls)
+        .persistentSystemOverlays(controls ? .visible : .hidden)
+        .onAppear {
+#if DEBUG
+            DuoPlaybackEvidence.event("appear", session: duoSession)
+#endif
+            initialOrientation = ScreenRotation.activeScene?.interfaceOrientation
+            interfaceOrientation = initialOrientation ?? .unknown
+            UIApplication.shared.isIdleTimerDisabled = true
+            playback.clip = clip
+            playback.tracks = initialTracks
+            playback.pendingMomentReference = initialMoment?.reference
+            var autoplay = true
+#if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--glide-webdav-presentation-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-jellyfin-rotation-fixture") { autoplay=false }
+            if clip != nil, ProcessInfo.processInfo.arguments.contains("--glide-clip-start-paused") { autoplay = false }
+            if ProcessInfo.processInfo.arguments.contains("--glide-dual-subtitle-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-format-fixtures") || ProcessInfo.processInfo.arguments.contains("--glide-subtitle-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-subtitle-smb-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-smb-fixture") {
+                autoplay = !UserDefaults.standard.bool(forKey: "glideQAStartPaused")
+            }
+#endif
+            playback.open(current, library: library, resumeAt: initialResumeAt, autoplay: autoplay, recordsProgress: recordsProgress); scheduleHide()
+        }
+        .onDisappear {
+            if rotationSave.isServerJob { rotationTask?.cancel();rotationContext=nil }
+            rotationResumeTask?.cancel()
+#if DEBUG
+            DuoPlaybackEvidence.event("disappear", session: duoSession)
+            zoomProbeTask?.cancel()
+#endif
+            scrubTarget = nil
+            if clip != nil { onClipProgress?(playback.time) }
+            playback.pictureInPicture.stop(); playback.close(); hudTask?.cancel(); hideTask?.cancel(); subtitlePresentationTask?.cancel()
+            UIApplication.shared.isIdleTimerDisabled = false
+            if manuallyRotated, let initialOrientation { ScreenRotation.request(ScreenRotation.mask(for: initialOrientation)) { _ in } }
+        }
+        .task(id: queueReload) { await expandQueue() }
+        .task(id: warmupKey) {
+            guard clip == nil, playback.frameReady, !playback.loading, playback.isPlaying,
+                  playback.rate == 1, scenePhase == .active, let nextVideo else { playback.cancelWarmup(); return }
+            try? await Task.sleep(for: .seconds(1))
+            guard !Task.isCancelled else { return }
+            await playback.prepareNext(nextVideo, library: library)
+        }
+        .fileImporter(isPresented: $importingSubtitle, allowedContentTypes: subtitleFileTypes, allowsMultipleSelection: false,
+                      onCompletion: handleSubtitleImport, onCancellation: finishSubtitleImport)
+        .onChange(of: current.id) { _, _ in
+            if rotationSave.isServerJob { rotationTask?.cancel();rotationContext=nil }
+            scrubTarget = nil; subtitlePresentationTask?.cancel()
+            rotationOpen = false; rotationTurn = .original; rotationActiveTarget=nil;rotationSave = PlayerRotationSave()
+        }
+        .sheet(item: $navigationSelection, onDismiss: finishNavigation) { selection in
+            VideoNavigationView(library: library, selection: selection, store: momentStore) { navigationTarget = $0 }
+        }
+        .sheet(isPresented: $diagnosticOpen, onDismiss: { scheduleHide() }) {
+            NavigationStack { DiagnosticView(diagnostic: playback.diagnostic).toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { diagnosticOpen = false } } } }
+        }
+        .sheet(isPresented: $videoInfoOpen, onDismiss: { scheduleHide() }) { videoInfoPanel }
+        .interactiveDismissDisabled(rotationSave.busy && !rotationSave.isServerJob)
+        .alert("视频方向已保存", isPresented: Binding(get: { rotationRefreshNotice != nil }, set: { if !$0 { rotationRefreshNotice = nil } })) {
+            Button("好") { rotationRefreshNotice = nil }
+        } message: { Text(rotationRefreshNotice ?? "") }
+        .sheet(isPresented: $settingsOpen, onDismiss: {
+            controls = true
+            suppressTapUntil = Date().addingTimeInterval(0.6)
+            skipSettingsOpen = false
+            let action = pendingSettingsAction; pendingSettingsAction = nil
+            switch action {
+            case .navigation: presentNavigation()
+            case .moment: presentNavigation(createMoment: true)
+            case .clip: presentClip()
+            case .rotation: presentRotation()
+            case .diagnostic: diagnosticOpen = true
+            case .videoInfo: videoInfoOpen = true
+            case .subtitleImport: beginSubtitleImport()
+            case .subtitleControls: subtitleControlsOpen = true
+            case nil: scheduleHide()
+            }
+        }) { settingsPanel }
+        .sheet(isPresented: $subtitleControlsOpen, onDismiss: {
+            if let lane = pendingSubtitleLane { pendingSubtitleLane = nil; beginSubtitleImport(lane, returnToControls: true) }
+            else { scheduleHide() }
+        }) {
+            SubtitleControlsView(playback: playback) { lane in pendingSubtitleLane = lane }
+        }
+        .sheet(isPresented: $episodesOpen, onDismiss: { scheduleHide() }) {
+            EpisodePickerView(videos: queue.source.filter { $0.mediaType == "Episode" }, currentID: current.id,
+                              loading: queueLoading, failed: queueLoadError,
+                              onRetry: { queueReload += 1 }, onSelect: selectEpisode)
+        }
+        .task(id: videoInfoOpen ? current.id : "") {
+            pathCopied = false
+            guard current.offlineOnly != true, videoInfoOpen, let server = library.servers.first(where: { $0.id == current.sourceID }),
+                  server.kind.isCatalogSource, let id = current.remoteID else { videoDetail = nil; return }
+            videoDetail = nil
+            let detail = try? await MediaClient.shared.catalogDetail(server: server, id: id)
+            guard !Task.isCancelled, current.remoteID == id else { return }
+            videoDetail = detail
+        }
+        .onChange(of: settingsOpen) { _, open in if open { controls = true; hideTask?.cancel() } else { scheduleHide() } }
+        .onChange(of: episodesOpen) { _, open in if open { hideTask?.cancel() } else { scheduleHide() } }
+        .onChange(of: scenePhase) { _, phase in if phase == .background && !playback.pictureInPicture.active && !playback.externalPlaybackActive { playback.pause(); controls = true } }
+        .onChange(of: playback.isPlaying) { _, playing in if playing { scheduleHide() } else if !playback.loading { controls = true } }
+        .sheet(item: $clipDraft, onDismiss: {
+            if clipWasPlaying { playback.play() }; clipWasPlaying = false; scheduleHide()
+        }) { draft in ClipEditorView(library: library, clip: draft) }
+        .alert("无法收藏片段", isPresented: Binding(get: { clipError != nil }, set: { if !$0 { clipError = nil } })) {
+            Button("好") { clipError = nil }
+        } message: { Text(clipError ?? "") }
+        .onChange(of: Int(playback.time / 2)) { _, _ in if clip != nil { onClipProgress?(playback.time) } }
+        .onChange(of: playback.clipCompletedCount) { _, _ in if clip != nil { onClipCompleted?() } }
+        .onChange(of: playback.completedCount) { _, _ in if scenePhase == .active { advance(1, automatic: true) } }
+        .onChange(of: playback.frameReady) { _, ready in
+            if ready,let context=rotationTrackResume,context.video.id==current.id {
+                if let id=context.audioID,let option=playback.audioOptions.first(where:{ $0.id==id }) { playback.selectAudio(option) }
+                playback.selectSubtitle(context.subtitleID.flatMap { id in playback.subtitleOptions.first { $0.id==id } })
+                rotationTrackResume=nil
+            }
+#if DEBUG
+            if ready, ProcessInfo.processInfo.arguments.contains("--glide-zoom-inapp-probe"), !duoConfigured {
+                duoConfigured = true
+                zoomProbeTask = Task { await VideoZoomPlaybackQA.run(playback: playback, interaction: interaction) }
+            }
+            if ready, ProcessInfo.processInfo.arguments.contains("--glide-duo-continuity"), !duoConfigured {
+                duoConfigured = true
+                playback.setRate(1.5)
+                if let audio = playback.audioOptions.last { playback.selectAudio(audio) }
+                if ProcessInfo.processInfo.arguments.contains("--glide-duo-paused") { playback.pause() }
+                recordDuoEvidence()
+            }
+#endif
+#if DEBUG
+            if (ProcessInfo.processInfo.arguments.contains("--glide-discovery-probe") || ProcessInfo.processInfo.arguments.contains("--glide-map-probe") || ProcessInfo.processInfo.arguments.contains("--glide-map-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-duo-fixture")), case .native(let player) = playback.presentation { player.isMuted = true }
+#endif
+            if ready, notifiedStarts.insert(current.id).inserted { onFirstFrame?(current) }
+        }
+        .onChange(of: playback.playbackNotice) { _, notice in
+            if notice != nil { controls = true; scheduleHide() }
+        }
+        .onChange(of: playback.error) { _, error in if error != nil { controls = true; hideTask?.cancel() } }
+        .onChange(of: voiceOverEnabled) { _, enabled in
+            if enabled { hideTask?.cancel(); controls = true } else { scheduleHide() }
+        }
+    }
+    private var subtitleFileTypes: [UTType] {
+        [.plainText] + ["srt", "vtt", "ass", "ssa"].map { UTType(filenameExtension: $0) ?? .plainText }
+    }
+    private func handleSubtitleImport(_ result: Result<[URL], Error>) {
+        if case .success(let urls) = result, let url = urls.first {
+            if subtitleImportVideoID == current.id {
+                let destination = subtitleImportLane == .primary ? subtitles : playback.secondarySubtitles
+                destination.importFile(url)
+            } else { subtitles.message = "视频已切换，请为当前视频重新选择字幕。" }
+        }
+        finishSubtitleImport()
+    }
+    private func playerCanvas(_ geometry: GeometryProxy, landscape: Bool) -> some View {
             ZStack {
                 Color.black.ignoresSafeArea()
                 VideoSurface(presentation: playback.presentation, onLayer: { playback.attachLayer($0) }, identity: current.id, title: current.title,
-                    frameReady: playback.frameReady, locked: locked, filled: filled,
+                    frameReady: playback.frameReady, locked: locked || rotationSave.busy, filled: filled,
                     onSwipe: { if clip != nil || channelMode || !isCinema || isEpisode { move($0) } },
                     onToggle: { playback.toggle(); scheduleHideAfterInteraction() }, onSeek: {
                         // SpatialTapGesture can also complete when a long press is released.
@@ -116,7 +344,7 @@ struct PlayerView: View {
                         playback.seek(playback.time + $0); scheduleHideAfterInteraction()
                     },
                     onSpeedPreset: { playback.setRate($0); scheduleHideAfterInteraction() }, onHUD: showHUD, subtitleSession: subtitles, secondarySubtitleSession: playback.secondarySubtitles,
-                    subtitleClock: { playback.subtitleRenderTime }, subtitleVideoMatrix: playback.subtitleVideoMatrix, subtitleSourceSize: playback.subtitleVideoSize)
+                    subtitleClock: { playback.subtitleRenderTime }, subtitleVideoMatrix: playback.subtitleVideoMatrix, subtitleSourceSize: playback.subtitleVideoSize, interactionState: interaction, evidenceContext: duoAccessibilityContext, quarterTurn: rotationTurn)
                     .ignoresSafeArea()
                 if !playback.frameReady && playback.error == nil {
                     if current.offlineOnly != true, let server = library.servers.first(where: { $0.id == current.sourceID }), server.kind.isCatalogSource, let id = current.remoteID {
@@ -128,17 +356,17 @@ struct PlayerView: View {
                 }
                 PlayerPGSOverlay(session: subtitles, filled: filled).ignoresSafeArea()
                 PlayerSubtitleOverlay(playback: playback, cues: subtitles.overlayCues, delay: subtitles.delay,
-                                      bottomInset: max(geometry.size.height * subtitleBottom / 100, controls && !locked ? bottomControlsHeight + 24 : 0), secondaryCues: playback.secondarySubtitles.overlayCues, secondaryDelay: playback.secondarySubtitles.delay)
-                if controls {
+                                      bottomInset: max(geometry.size.height * subtitleBottom / 100, controls && !locked && !expandedPlayer ? bottomControlsHeight + 24 : 0), secondaryCues: playback.secondarySubtitles.overlayCues, secondaryDelay: playback.secondarySubtitles.delay)
+                if controls && !expandedPlayer {
                     VStack {
                         if locked { HStack { Spacer(); RoundControl(symbol: "lock.fill", label: "解锁触控") { locked = false; scheduleHideAfterInteraction() } } }
-                        else { topBar }
+                        else { topBar.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { topControlsHeight = $0 } }
                         Spacer()
                         if !locked { bottomControls(compact: landscape) }
-                    }.padding(.horizontal, landscape ? 28 : 20).padding(.top, 4).padding(.bottom, 8)
-                    .transition(.opacity)
+                    }.padding(.horizontal, landscape ? 28 : 20).padding(.top, max(4, PlayerChromeInsets.read(geometry).top)).padding(.bottom, 8)
+                    .transition(.opacity).disabled(rotationSave.busy)
                 }
-                PlayerSkipControls(playback: playback, locked: locked, controls: controls, landscape: landscape) {
+                PlayerSkipControls(playback: playback, locked: locked, controls: controls && !expandedPlayer, landscape: landscape) {
                     suppressTapUntil = Date().addingTimeInterval(0.5)
                     scheduleHideAfterInteraction()
                 }
@@ -182,132 +410,56 @@ struct PlayerView: View {
             .simultaneousGesture(SpatialTapGesture().onEnded { touch in
                 // Keep the tap above the video renderer, including after the
                 // controls fade away. Buttons retain their own touch targets.
-                guard Date() >= suppressTapUntil else { return }
+                guard !expandedPlayer, !settingsOpen, !rotationOpen, !subtitleControlsOpen, !diagnosticOpen, !videoInfoOpen,
+                      !episodesOpen, navigationSelection == nil, clipDraft == nil, Date() >= suppressTapUntil else { return }
                 if !locked, playback.activeSkip != nil {
                     let inset = PlayerSkipControls.bottomInset(controls: controls, landscape: landscape)
                     // Ignore the skip controls' band regardless of gesture callback order.
                     if touch.location.y >= geometry.size.height - inset - 64,
                        touch.location.y <= geometry.size.height - inset + 16 { return }
                 }
-                if controls && (touch.location.y < 110 || touch.location.y > geometry.size.height - (landscape ? 150 : 230)) { return }
+                let headerEnd = max(4, PlayerChromeInsets.read(geometry).top) + max(44, topControlsHeight) + 16
+                let footerHeight = max(bottomControlsHeight + 16, landscape ? 150 : 230)
+                if controls && (touch.location.y < headerEnd || touch.location.y > geometry.size.height - footerHeight) { return }
                 toggleControls()
             })
-        }
-        .preferredColorScheme(.dark)
-        .statusBarHidden(!controls)
-        .persistentSystemOverlays(controls ? .visible : .hidden)
-        .onAppear {
-            initialOrientation = ScreenRotation.activeScene?.interfaceOrientation
-            UIApplication.shared.isIdleTimerDisabled = true
-            playback.clip = clip
-            playback.tracks = initialTracks
-            playback.pendingMomentReference = initialMoment?.reference
-            var autoplay = true
-#if DEBUG
-            if clip != nil, ProcessInfo.processInfo.arguments.contains("--glide-clip-start-paused") { autoplay = false }
-            if ProcessInfo.processInfo.arguments.contains("--glide-dual-subtitle-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-format-fixtures") || ProcessInfo.processInfo.arguments.contains("--glide-subtitle-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-subtitle-smb-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-smb-fixture") {
-                autoplay = !UserDefaults.standard.bool(forKey: "glideQAStartPaused")
-            }
-#endif
-            playback.open(current, library: library, resumeAt: initialResumeAt, autoplay: autoplay, recordsProgress: recordsProgress); scheduleHide()
-        }
-        .onDisappear {
-            scrubTarget = nil
-            if clip != nil { onClipProgress?(playback.time) }
-            playback.pictureInPicture.stop(); playback.close(); hudTask?.cancel(); hideTask?.cancel(); subtitlePresentationTask?.cancel()
-            UIApplication.shared.isIdleTimerDisabled = false
-            if manuallyRotated, let initialOrientation { ScreenRotation.request(ScreenRotation.mask(for: initialOrientation)) { _ in } }
-        }
-        .task(id: queueReload) { await expandQueue() }
-        .task(id: warmupKey) {
-            guard clip == nil, playback.frameReady, !playback.loading, playback.isPlaying,
-                  playback.rate == 1, scenePhase == .active, let nextVideo else { playback.cancelWarmup(); return }
-            try? await Task.sleep(for: .seconds(1))
-            guard !Task.isCancelled else { return }
-            await playback.prepareNext(nextVideo, library: library)
-        }
-        .fileImporter(isPresented: $importingSubtitle, allowedContentTypes: [.plainText, UTType(filenameExtension: "srt") ?? .plainText, UTType(filenameExtension: "vtt") ?? .plainText, UTType(filenameExtension: "ass") ?? .plainText, UTType(filenameExtension: "ssa") ?? .plainText], allowsMultipleSelection: false, onCompletion: { result in
-            if case .success(let urls) = result, let url = urls.first {
-                if subtitleImportVideoID == current.id { (subtitleImportLane == .primary ? subtitles : playback.secondarySubtitles).importFile(url) }
-                else { subtitles.message = "视频已切换，请为当前视频重新选择字幕。" }
-            }
-            finishSubtitleImport()
-        }, onCancellation: { finishSubtitleImport() })
-        .onChange(of: current.id) { _, _ in scrubTarget = nil; subtitlePresentationTask?.cancel() }
-        .sheet(item: $navigationSelection, onDismiss: finishNavigation) { selection in
-            VideoNavigationView(library: library, selection: selection, store: momentStore) { navigationTarget = $0 }
-        }
-        .sheet(isPresented: $diagnosticOpen, onDismiss: { scheduleHide() }) {
-            NavigationStack { DiagnosticView(diagnostic: playback.diagnostic).toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { diagnosticOpen = false } } } }
-        }
-        .sheet(isPresented: $videoInfoOpen, onDismiss: { scheduleHide() }) { videoInfoPanel }
-        .sheet(isPresented: $settingsOpen, onDismiss: {
-            skipSettingsOpen = false
-            let action = pendingSettingsAction; pendingSettingsAction = nil
-            switch action {
-            case .navigation: presentNavigation()
-            case .moment: presentNavigation(createMoment: true)
-            case .clip: presentClip()
-            case .diagnostic: diagnosticOpen = true
-            case .videoInfo: videoInfoOpen = true
-            case .subtitleImport: beginSubtitleImport()
-            case .subtitleControls: subtitleControlsOpen = true
-            case nil: scheduleHide()
-            }
-        }) { settingsPanel }
-        .sheet(isPresented: $subtitleControlsOpen, onDismiss: {
-            if let lane = pendingSubtitleLane { pendingSubtitleLane = nil; beginSubtitleImport(lane, returnToControls: true) }
-            else { scheduleHide() }
-        }) {
-            SubtitleControlsView(playback: playback) { lane in pendingSubtitleLane = lane }
-        }
-        .sheet(isPresented: $episodesOpen, onDismiss: { scheduleHide() }) {
-            EpisodePickerView(videos: queue.source.filter { $0.mediaType == "Episode" }, currentID: current.id,
-                              loading: queueLoading, failed: queueLoadError,
-                              onRetry: { queueReload += 1 }, onSelect: selectEpisode)
-        }
-        .task(id: videoInfoOpen ? current.id : "") {
-            pathCopied = false
-            guard current.offlineOnly != true, videoInfoOpen, let server = library.servers.first(where: { $0.id == current.sourceID }),
-                  server.kind.isCatalogSource, let id = current.remoteID else { videoDetail = nil; return }
-            videoDetail = nil
-            let detail = try? await MediaClient.shared.catalogDetail(server: server, id: id)
-            guard !Task.isCancelled, current.remoteID == id else { return }
-            videoDetail = detail
-        }
-        .onChange(of: settingsOpen) { _, open in if open { hideTask?.cancel() } else { scheduleHide() } }
-        .onChange(of: episodesOpen) { _, open in if open { hideTask?.cancel() } else { scheduleHide() } }
-        .onChange(of: scenePhase) { _, phase in if phase == .background && !playback.pictureInPicture.active && !playback.externalPlaybackActive { playback.pause(); controls = true } }
-        .onChange(of: playback.isPlaying) { _, playing in if playing { scheduleHide() } else if !playback.loading { controls = true } }
-        .sheet(item: $clipDraft, onDismiss: {
-            if clipWasPlaying { playback.play() }; clipWasPlaying = false; scheduleHide()
-        }) { draft in ClipEditorView(library: library, clip: draft) }
-        .alert("无法收藏片段", isPresented: Binding(get: { clipError != nil }, set: { if !$0 { clipError = nil } })) {
-            Button("好") { clipError = nil }
-        } message: { Text(clipError ?? "") }
-        .onChange(of: Int(playback.time / 2)) { _, _ in if clip != nil { onClipProgress?(playback.time) } }
-        .onChange(of: playback.clipCompletedCount) { _, _ in if clip != nil { onClipCompleted?() } }
-        .onChange(of: playback.completedCount) { _, _ in if scenePhase == .active { advance(1, automatic: true) } }
-        .onChange(of: playback.frameReady) { _, ready in
-#if DEBUG
-            if (ProcessInfo.processInfo.arguments.contains("--glide-discovery-probe") || ProcessInfo.processInfo.arguments.contains("--glide-map-probe") || ProcessInfo.processInfo.arguments.contains("--glide-map-fixture")), case .native(let player) = playback.presentation { player.isMuted = true }
-#endif
-            if ready, notifiedStarts.insert(current.id).inserted { onFirstFrame?(current) }
-        }
-        .onChange(of: playback.playbackNotice) { _, notice in
-            if notice != nil { controls = true; scheduleHide() }
-        }
-        .onChange(of: playback.error) { _, error in if error != nil { controls = true; hideTask?.cancel() } }
-        .onChange(of: voiceOverEnabled) { _, enabled in
-            if enabled { hideTask?.cancel(); controls = true } else { scheduleHide() }
-        }
+    }
+    private var expandedControlPanel: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                if locked {
+                    HStack { Text("已锁定触控").font(.headline); Spacer(); RoundControl(symbol: "lock.fill", label: "解锁触控") { locked = false } }
+                } else {
+                    topBar
+                    Text(clip?.moment.name ?? current.title).font(.headline).fixedSize(horizontal: false, vertical: true)
+                    bottomControls(compact: true)
+                    if queue.ordered.count > 1 {
+                        Divider()
+                        Text(isEpisode ? "选集" : "播放队列").font(.subheadline.weight(.semibold))
+                        ForEach(queue.ordered) { video in
+                            Button {
+                                guard video.id != current.id, queue.select(video.id) else { return }
+                                playCurrent(automatic: false)
+                            } label: {
+                                HStack(spacing: 10) {
+                                    Image(systemName: video.id == current.id ? "speaker.wave.2.fill" : "play.circle")
+                                    Text(video.title).font(.subheadline).lineLimit(2)
+                                    Spacer(minLength: 0)
+                                }.frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
+                            }.buttonStyle(.plain).accessibilityIdentifier("player.panel.item." + video.id)
+                                .accessibilityAddTraits(video.id == current.id ? .isSelected : [])
+                        }
+                    }
+                }
+            }.padding(16)
+        }.background(GlideTheme.panel).disabled(rotationSave.busy).accessibilityIdentifier("player.controlPanel")
     }
     private var topBar: some View {
         HStack(spacing: 10) {
             RoundControl(symbol: "chevron.down", label: returnLabel) { exitPlayer() }
             VStack(alignment: .leading, spacing: 3) {
-                Text(current.title).font(GlideTheme.Typography.itemTitle).lineLimit(1).foregroundStyle(.white)
-                Text(clip != nil ? clipPosition : (isEpisode && !episodePosition.isEmpty ? episodePosition + " · " : "") + "\(queue.index + 1) / \(queue.ordered.count)" + (queueLoading ? (isEpisode ? " · 正在加载剧集" : " · 正在补全目录") : ""))
+                Text(RecommendationMediaIdentity(current).title).font(GlideTheme.Typography.itemTitle).lineLimit(1).foregroundStyle(.white)
+                Text(playerIdentityDetail)
                     .font(.caption2).monospacedDigit().foregroundStyle(.white.opacity(0.58)).accessibilityIdentifier("player.queuePosition")
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -320,7 +472,13 @@ struct PlayerView: View {
             }
         }
     }
-    private func exitPlayer() { if let onExit { onExit() } else { dismiss() } }
+    private func exitPlayer() {
+        guard !rotationSave.busy || rotationSave.isServerJob else { return }
+#if DEBUG
+        DuoPlaybackEvidence.event("exit-request", session: duoSession)
+#endif
+        if let onExit { onExit() } else { dismiss() }
+    }
     private func presentClip() {
         guard let position = playback.navigationPosition, let resource = playback.resource else { return }
         clipWasPlaying = playback.isPlaybackRequested; playback.pause(); hideTask?.cancel(); clipPreparing = true
@@ -347,10 +505,83 @@ struct PlayerView: View {
         else if navigationWasPlaying { playback.play() }
         navigationTarget = nil; navigationWasPlaying = false; scheduleHide()
     }
+    @ViewBuilder private var rotationPanel: some View {
+        if rotationOpen, let target = rotationActiveTarget {
+            PlayerRotationControls(target: target, turn: $rotationTurn, save: rotationSave,
+                apply: { saveRotation(target) }, restore: { saveRotation(target, restoring: true) }, close: {
+                    rotationOpen = false; scheduleHide()
+                },leave:exitPlayer)
+        }
+    }
+    private var rotationTarget: PlayerRotationTarget? {
+        guard clip == nil, !playback.externalPlaybackActive, !playback.pictureInPicture.active else { return nil }
+        let server=library.servers.first { $0.id == current.sourceID }
+        if let target=WebDAVRotationTarget(video:current,server:server,playingURL:playback.resource?.url) { return .webDAV(target) }
+        if let target=JellyfinRotationTarget(video:current,server:server,resourceURL:playback.resource?.url,mediaSourceID:playback.resource?.mediaSourceID) { return .jellyfin(target) }
+        return nil
+    }
+    private func presentRotation() {
+        guard let target=rotationTarget else { return }
+        rotationActiveTarget=target
+        quickMenuHolding = false; hideTask?.cancel(); playback.cancelWarmup()
+        controls = true; rotationOpen = true
+    }
+    private func saveRotation(_ target: PlayerRotationTarget, restoring: Bool = false) {
+        guard !rotationSave.busy else { return }
+        rotationContext = RotationPlaybackContext(video: current, filename: target.fileName, position: playback.time,
+            wasPlaying: playback.isPlaybackRequested, tracks: playback.tracks, rate: playback.rate,audioID:playback.selectedAudio?.id,subtitleID:playback.selectedSubtitle?.id)
+        rotationClosedPlayback = false; rotationSaved = false
+        playback.pause()
+        let turn = rotationTurn
+        rotationTask=Task { @MainActor in
+            let willReplace = {
+                guard !rotationClosedPlayback else { return }
+                playback.pictureInPicture.stop(); playback.close(); rotationClosedPlayback = true
+            }
+            rotationSaved = restoring
+                ? await rotationSave.restore(target, willReplace: willReplace)
+                : await rotationSave.save(target, turn: turn, willReplace: willReplace)
+            guard !Task.isCancelled else { return };finishRotation()
+        }
+    }
+    private func finishRotation() {
+        guard let context = rotationContext else { return }
+        let closed = rotationClosedPlayback, saved = rotationSaved
+        rotationContext = nil; rotationClosedPlayback = false; rotationSaved = false
+        rotationResumeTask?.cancel()
+        rotationResumeTask = Task { @MainActor in
+            if closed, let server = library.servers.first(where: { $0.id == context.video.sourceID }) {
+                await MediaCache.shared.clear(server: server)
+                if saved {
+                    library.refreshArtworkAfterFileChange()
+                    if let id = context.video.remoteID { await library.rotationQueue.refreshItems(server, ids: [id]) }
+                }
+                if saved, server.kind.isCatalogSource, let id = context.video.remoteID {
+                    do { try await MediaClient.shared.refreshAfterFileChange(server: server, itemID: id) }
+                    catch { rotationRefreshNotice = "原文件已保存。媒体服务器未接受刷新请求，请在服务器中手动刷新此视频的资料；已有离线副本需重新下载。" }
+                }
+            }
+            guard !Task.isCancelled, current.id == context.video.id else { return }
+            if rotationSave.isServerJob,rotationSave.serverHasPending {
+                controls=true;return
+            }
+            if closed {
+                if saved { rotationTurn = .original }
+                rotationTrackResume=context
+                playback.clip = clip; playback.tracks = context.tracks; playback.setRate(context.rate)
+                playback.open(context.video, library: library, resumeAt: context.position, autoplay: context.wasPlaying, recordsProgress: recordsProgress)
+            } else if context.wasPlaying { playback.play() }
+            controls = true; scheduleHide()
+        }
+    }
     private var settingsPanel: some View {
         NavigationStack {
             Form {
                 Section {
+                    if rotationTarget != nil {
+                        Button("视频方向与保存", systemImage: "rotate.right") { presentRotation();settingsOpen = false }
+                            .accessibilityIdentifier("player.rotation")
+                    }
                     Button("内容地图与章节", systemImage: "rectangle.split.3x3") { pendingSettingsAction = .navigation; settingsOpen = false }
                         .disabled(playback.navigationPosition == nil).accessibilityIdentifier("player.map.open")
                     Button("收藏精彩片段", systemImage: "scissors") { pendingSettingsAction = .clip; settingsOpen = false }
@@ -427,14 +658,15 @@ struct PlayerView: View {
                             .accessibilityIdentifier("player.engine.native")
                         Button("兼容播放" + (playback.engineDescriptor.id == .vlc ? " ✓" : "")) { playback.switchEngine(to: .vlc) }
                             .accessibilityIdentifier("player.engine.compatibility")
-                    } header: { Text("本地播放器") } footer: {
-                        Text("切换后保留当前位置，选择会用于接下来的本地视频。")
+                    } header: { Text(playback.resource?.webDAV == true ? "WebDAV 播放器" : "本地播放器") } footer: {
+                        Text(playback.resource?.webDAV == true ? "切换后保留当前位置与播放状态，仅对当前视频生效。" : "切换后保留当前位置，选择会用于接下来的本地视频。")
                     }
                 }
                 if playback.engineDescriptor.capabilities.contains(.pictureInPicture) || playback.engineDescriptor.capabilities.contains(.externalPlayback) {
                     Section("播放设备") {
                         if playback.engineDescriptor.capabilities.contains(.pictureInPicture) {
                             Button("画中画", systemImage: "pip") { playback.pictureInPicture.toggle(); if playback.pictureInPicture.possible { settingsOpen = false } }
+                                .disabled(rotationTurn != .original)
                                 .accessibilityIdentifier("player.pip")
                             if let message = playback.pictureInPicture.message { Text(message).font(.caption).foregroundStyle(.secondary) }
                         }
@@ -442,7 +674,7 @@ struct PlayerView: View {
                             HStack {
                                 Label("AirPlay 播放设备", systemImage: "airplay.video")
                                 Spacer()
-                                AirPlayControl().frame(width: 44, height: 44)
+                                AirPlayControl().frame(width: 44, height: 44).disabled(rotationTurn != .original)
                             }
                         }
                     }
@@ -752,16 +984,28 @@ struct PlayerView: View {
         } catch is CancellationError { }
         catch { queueLoadError = true }
     }
+    private var playerIdentityDetail:String {
+        if clip != nil { return clipPosition }
+        var values:[String]=[]
+        if let episode=RecommendationMediaIdentity(current).episode { values.append(episode) }
+        if queue.ordered.count>1 { values.append("\(queue.index+1) / \(queue.ordered.count)") }
+        else if values.isEmpty,current.duration>0 { values.append(current.duration.mediaTime) }
+        if queueLoading { values.append(isEpisode ? "正在加载剧集":"正在补全目录") }
+        return values.joined(separator:" · ")
+    }
+    private var showsQueueTransport:Bool {
+        clip != nil ? (clipCanGoBack || clipCanGoForward) : (queue.source.count>1 || isEpisode || channelMode || loadFullQueue != nil)
+    }
     private func transportControls(compact: Bool) -> some View {
         HStack(spacing: compact ? 4 : 12) {
-            RoundControl(symbol: "backward.end.fill", label: clip != nil ? "上一个片段" : !channelMode && isEpisode ? "上一集" : "上一个视频") { move(-1) }
-                .disabled(clip != nil ? !clipCanGoBack : !queue.canGoBack).opacity((clip != nil ? clipCanGoBack : queue.canGoBack) ? 1 : 0.3)
+            if showsQueueTransport { RoundControl(symbol: "backward.end.fill", label: clip != nil ? "上一个片段" : !channelMode && isEpisode ? "上一集" : "上一个视频") { move(-1) }
+                .disabled(clip != nil ? !clipCanGoBack : !queue.canGoBack).opacity((clip != nil ? clipCanGoBack : queue.canGoBack) ? 1 : 0.3) }
             RoundControl(symbol: "gobackward.10", label: "快退 \(Int(PlaybackPreferences.seekInterval)) 秒") { playback.seek(playback.time - PlaybackPreferences.seekInterval); scheduleHideAfterInteraction() }
             RoundControl(symbol: playback.isPlaybackRequested ? "pause.fill" : "play.fill", label: playback.isPlaybackRequested ? "暂停" : "播放", prominent: true, compact: compact) { playback.toggle(); scheduleHideAfterInteraction() }
                 .accessibilityIdentifier(clip != nil ? "clip.toggle" : "player.toggle")
             RoundControl(symbol: "goforward.10", label: "快进 \(Int(PlaybackPreferences.seekInterval)) 秒") { playback.seek(playback.time + PlaybackPreferences.seekInterval); scheduleHideAfterInteraction() }
-            RoundControl(symbol: "forward.end.fill", label: clip != nil ? "下一个片段" : !channelMode && isEpisode ? "下一集" : "下一个视频") { move(1) }
-                .disabled(clip != nil ? !clipCanGoForward : !queue.canGoForward).opacity((clip != nil ? clipCanGoForward : queue.canGoForward) ? 1 : 0.3)
+            if showsQueueTransport { RoundControl(symbol: "forward.end.fill", label: clip != nil ? "下一个片段" : !channelMode && isEpisode ? "下一集" : "下一个视频") { move(1) }
+                .disabled(clip != nil ? !clipCanGoForward : !queue.canGoForward).opacity((clip != nil ? clipCanGoForward : queue.canGoForward) ? 1 : 0.3) }
         }
     }
     private func playbackActions(compact: Bool) -> some View {
@@ -796,11 +1040,11 @@ struct PlayerView: View {
                 .simultaneousGesture(TapGesture().onEnded { holdControlsForQuickMenu() })
             Button {
                 manuallyRotated = true
-                ScreenRotation.request(compact ? .portrait : .landscapeRight, onError: showHUD)
+                ScreenRotation.toggle(onError: showHUD)
                 scheduleHideAfterInteraction()
             } label: {
-                PlayerQuickActionLabel(title: compact ? "竖屏" : "横屏", symbol: "rotate.right")
-            }.accessibilityLabel(compact ? "切换竖屏" : "切换横屏").accessibilityIdentifier("player.rotate")
+                PlayerQuickActionLabel(title: interfaceOrientation.isLandscape ? "竖屏" : "横屏", symbol: "rotate.right")
+            }.accessibilityLabel(interfaceOrientation.isLandscape ? "切换竖屏" : "切换横屏").accessibilityIdentifier("player.rotate")
         }
         .buttonStyle(.plain)
         .foregroundStyle(.white.opacity(0.82))
@@ -821,6 +1065,7 @@ struct PlayerView: View {
         playCurrent(automatic: false)
     }
     private func advance(_ delta: Int, automatic: Bool) {
+        guard !rotationSave.busy else { return }
         guard automatic || !locked else { return }
         if clip != nil { if automatic { onClipCompleted?() } else { onClipMove?(delta) }; return }
         if !automatic { pendingAutomaticAdvance = false }
@@ -873,10 +1118,10 @@ struct PlayerView: View {
     }
     private func scheduleHide() {
         hideTask?.cancel()
-        guard !voiceOverEnabled, !quickMenuHolding, controls, scrubTarget == nil, !settingsOpen, !subtitleControlsOpen, !diagnosticOpen, !episodesOpen, !videoInfoOpen, navigationSelection == nil, clipDraft == nil, !clipPreparing else { return }
+        guard !expandedPlayer, !voiceOverEnabled, !quickMenuHolding, controls, scrubTarget == nil, !settingsOpen, !rotationOpen, !subtitleControlsOpen, !diagnosticOpen, !episodesOpen, !videoInfoOpen, navigationSelection == nil, clipDraft == nil, !clipPreparing else { return }
         hideTask = Task {
             try? await Task.sleep(for: .seconds(PlaybackPreferences.controlsDelay))
-            guard !Task.isCancelled, !voiceOverEnabled, !quickMenuHolding, scrubTarget == nil, !settingsOpen, !subtitleControlsOpen, !diagnosticOpen, !episodesOpen, !videoInfoOpen, navigationSelection == nil, clipDraft == nil, !clipPreparing, playback.error == nil, playback.isPlaying else { return }
+            guard !Task.isCancelled, !voiceOverEnabled, !quickMenuHolding, scrubTarget == nil, !settingsOpen, !rotationOpen, !subtitleControlsOpen, !diagnosticOpen, !episodesOpen, !videoInfoOpen, navigationSelection == nil, clipDraft == nil, !clipPreparing, playback.error == nil, playback.isPlaying else { return }
             withAnimation { controls = false }
         }
     }

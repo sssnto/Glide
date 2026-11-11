@@ -90,7 +90,8 @@ struct CatalogItem: Codable, Identifiable, Equatable, Sendable {
               duration: Double(RunTimeTicks ?? 0) / 10_000_000,
               resume: Double(UserData?.PlaybackPositionTicks ?? 0) / 10_000_000,
               mediaType: Type, seriesID: SeriesId, seriesTitle: SeriesName,
-              seasonNumber: ParentIndexNumber, episodeNumber: IndexNumber, isWatched: UserData?.Played)
+              seasonNumber: ParentIndexNumber, episodeNumber: IndexNumber, isWatched: UserData?.Played,
+              productionYear: ProductionYear, genres: Genres)
     }
     static func episodeOrder(_ items: [CatalogItem]) -> [CatalogItem] {
         items.sorted {

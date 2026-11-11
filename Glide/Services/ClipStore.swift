@@ -9,6 +9,7 @@ import Observation
     init(url: URL? = nil) {
         var folder = "Clips"
 #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--glide-duo-fixture") { folder = "DuoQA" }
         if ProcessInfo.processInfo.arguments.contains("--glide-clip-fixture") { folder = "ClipsQA" }
 #endif
         let path = url ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent(folder + "/clips-v1.json")

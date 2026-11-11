@@ -34,7 +34,7 @@ enum GlideTheme {
     }
 
     enum Layout {
-        static let pagePadding: CGFloat = 20
+        static let pagePadding: CGFloat = 16
         static let sectionSpacing: CGFloat = 24
         static let itemSpacing: CGFloat = 12
         static let cardRadius: CGFloat = 12
@@ -134,6 +134,14 @@ private struct ArtworkLoadKey: Hashable {
     var pixels: Int
 }
 
+private struct WebDAVArtworkRevisionKey: EnvironmentKey { static let defaultValue: UUID? = nil }
+extension EnvironmentValues {
+    var webDAVArtworkRevision: UUID? {
+        get { self[WebDAVArtworkRevisionKey.self] }
+        set { self[WebDAVArtworkRevisionKey.self] = newValue }
+    }
+}
+
 private enum ArtworkSize {
     static func pixels(_ size: CGSize, scale: CGFloat) -> Int {
         // Buckets avoid restarting image tasks for fractional layout changes.
@@ -147,13 +155,25 @@ private struct VideoImageCanvas: View {
     var video: Video
     var server: MediaServer?
     var contentMode: ContentMode
+    @Environment(\.rotationQueue) private var rotationQueue
     @Environment(\.displayScale) private var displayScale
+    @Environment(\.webDAVArtworkRevision) private var artworkRevision
     @State private var image: UIImage?
     @State private var loadedIdentity = ""
 
+    private var rotationState: RotationItemState? {
+        guard let server, server.kind == .jellyfin, let id = video.remoteID else { return nil }
+        return rotationQueue?.record(server: server, itemID: id).value
+    }
+    private var savedPreview: URL? {
+        guard let server, let id = video.remoteID else { return nil }
+        return rotationQueue?.previewURL(server: server, itemID: id, state: rotationState)
+    }
     private var identity: String {
-        [video.id, video.artwork?.absoluteString ?? "", video.localRelativePath ?? "",
-         server?.id.uuidString ?? "", server?.address.absoluteString ?? "", server?.userID ?? ""].joined(separator: "|")
+        [video.id, savedPreview?.absoluteString ?? "", video.artwork?.absoluteString ?? "", video.localRelativePath ?? "",video.url?.absoluteString ?? "",
+         video.fileModifiedAt.map { String($0.timeIntervalSince1970) } ?? "",
+         server?.id.uuidString ?? "", server?.address.absoluteString ?? "", server?.userID ?? "",server?.username ?? "",
+         server?.kind == .webDAV ? artworkRevision?.uuidString ?? "" : ""].joined(separator: "|")
     }
 
     var body: some View {
@@ -179,6 +199,9 @@ private struct VideoImageCanvas: View {
                 }
             }
             .clipped().allowsHitTesting(false)
+            .accessibilityElement(children:.ignore).accessibilityLabel("视频预览")
+            .accessibilityValue(image == nil ? "暂无缩略图" : "缩略图已显示")
+            .accessibilityIdentifier("video.preview."+video.id)
             .task(id: request) { await load(request) }
         }
     }
@@ -187,10 +210,17 @@ private struct VideoImageCanvas: View {
         guard !Task.isCancelled else { return }
         if loadedIdentity != request.identity { image = nil; loadedIdentity = request.identity }
         guard video.demoIndex == nil, let server else { return }
-        let loaded: UIImage?
+        var loaded: UIImage?
         if server.kind == .local { loaded = await LocalArtwork.image(video: video, server: server) }
+        else if let url = savedPreview {
+            loaded = try? await ArtworkCache.shared.image(server: server, url: url, pixels: request.pixels)
+            if loaded == nil, let fallback = video.artwork { loaded = try? await ArtworkCache.shared.image(server: server, url: fallback, pixels: request.pixels) }
+        }
         else if let url = video.artwork { loaded = try? await ArtworkCache.shared.image(server: server, url: url, pixels: request.pixels) }
         else { loaded = nil }
+        if loaded == nil,server.kind == .webDAV,video.offlineOnly != true,video.streamLinkID == nil,let file=video.url {
+            loaded=await WebDAVArtwork.image(server:server,file:file,modified:video.fileModifiedAt,pixels:request.pixels)
+        }
         guard !Task.isCancelled, loadedIdentity == request.identity else { return }
         image = loaded
     }
@@ -221,6 +251,7 @@ struct LibraryFolderTile: View {
     var server: MediaServer
     var folder: MediaFolder? = nil
     var directory: DAVEntry? = nil
+    var artworkRevision: UUID? = nil
     var isLibrary = false
     var action: () -> Void
     var body: some View {
@@ -239,7 +270,7 @@ struct LibraryFolderTile: View {
         }.buttonStyle(.plain).accessibilityLabel((isLibrary ? "媒体库，" : "目录，") + title)
     }
     private var artwork: some View {
-        FolderPreviewArtwork(server: server, folder: folder, directory: directory,
+        FolderPreviewArtwork(server: server, folder: folder, directory: directory, revision:artworkRevision,
                              preservesImageAspectRatio: !isLibrary || LibraryExperience(collectionType: folder?.collectionType) == .home)
             .clipShape(RoundedRectangle(cornerRadius: GlideTheme.Layout.cardRadius))
     }
@@ -266,6 +297,7 @@ private struct FolderPreviewArtwork: View {
     var server: MediaServer
     var folder: MediaFolder?
     var directory: DAVEntry?
+    var revision: UUID?
     var preservesImageAspectRatio: Bool
     @Environment(\.displayScale) private var displayScale
     @State private var image: UIImage?
@@ -273,7 +305,7 @@ private struct FolderPreviewArtwork: View {
     private var identity: String {
         [server.id.uuidString, server.address.absoluteString, server.userID ?? "",
          folder?.id ?? directory?.id ?? "", folder?.primaryImageTag ?? "",
-         directory?.modifiedAt.map { String($0.timeIntervalSince1970) } ?? ""].joined(separator: "|")
+         directory?.modifiedAt.map { String($0.timeIntervalSince1970) } ?? "",revision?.uuidString ?? ""].joined(separator: "|")
     }
     var body: some View {
         GeometryReader { geometry in
@@ -292,6 +324,9 @@ private struct FolderPreviewArtwork: View {
             .clipped().allowsHitTesting(false)
             .task(id: request) { await load(request) }
         }.aspectRatio(2.0 / 3.0, contentMode: .fit)
+            .accessibilityElement(children:.ignore).accessibilityLabel("目录封面")
+            .accessibilityValue(image == nil ? "暂无封面" : "封面已显示")
+            .accessibilityIdentifier("folder.preview."+(directory?.name ?? folder?.id ?? ""))
     }
     private func load(_ request: ArtworkLoadKey) async {
         guard !Task.isCancelled else { return }
@@ -311,6 +346,11 @@ private struct FolderPreviewArtwork: View {
                 if let loaded = try? await ArtworkCache.shared.image(server: server, url: url, pixels: request.pixels), !Task.isCancelled { image = loaded }
             }
         } else if let directory {
+            if server.kind == .webDAV {
+                let loaded=await WebDAVArtwork.folder(server:server,directory:directory,pixels:request.pixels)
+                if !Task.isCancelled,loadedIdentity==request.identity { image=loaded }
+                return
+            }
             if server.kind == .local {
                 if let entries = try? await SourceProviders.directories(for: .local).entries(server: server, directory: directory.url),
                    !Task.isCancelled,

@@ -5,6 +5,8 @@ struct CatalogView: View {
     var library: LibraryStore
     var server: MediaServer
     var folder: MediaFolder
+    @State private var rotationInline = RotationInlineSelection()
+    @State private var rotationQueueOpen = false
     @State private var items: [CatalogItem] = []
     @State private var loading = false
     @State private var error: String?
@@ -44,10 +46,19 @@ struct CatalogView: View {
                         .accessibilityIdentifier("catalog.sort")
                     }
                     if !loading && error == nil && items.isEmpty { ContentUnavailableView("没有匹配的作品", systemImage: "film") }
-                    LazyVGrid(columns: dynamicTypeSize.isAccessibilitySize ? [GridItem(.flexible())] : [GridItem(.adaptive(minimum: horizontalSizeClass == .compact ? 104 : 140), spacing: 12)], alignment: .leading, spacing: 18) {
+                    AdaptiveMediaGrid(minimum: horizontalSizeClass == .compact ? 104 : 140) {
                         ForEach(items) { item in
-                            NavigationLink { CatalogDetailView(library: library, server: server, initial: item) } label: {
-                                CatalogPosterCard(item: item, server: server)
+                            Group {
+                                if rotationInline.active {
+                                    let video=item.video(server:server)
+                                    Button { rotationInline.toggle(video) } label: {
+                                        CatalogPosterCard(item:item,server:server,videoPreview:true)
+                                            .overlay(alignment:.topTrailing) { RotationSelectionMark(selected:rotationInline.contains(video)) }
+                                    }.accessibilityValue(rotationInline.contains(video) ? "已选择":"未选择")
+                                        .accessibilityAddTraits(rotationInline.contains(video) ? .isSelected:[])
+                                } else {
+                                    NavigationLink { CatalogDetailView(library: library, server: server, initial: item) } label: { CatalogPosterCard(item: item, server: server) }
+                                }
                             }.buttonStyle(.plain).accessibilityIdentifier("catalog." + item.id).id(item.id)
                         }
                     }.scrollTargetLayout()
@@ -77,10 +88,29 @@ struct CatalogView: View {
                 .background(GlideTheme.background).navigationTitle(folder.name).navigationBarTitleDisplayMode(.inline)
                 .searchable(text: $query, prompt: shows ? "搜索节目" : "搜索电影")
                 .toolbar {
+                    ToolbarItem(placement:.topBarTrailing) {
+                        if server.kind == .jellyfin,!shows,!rotationInline.active {
+                            Button("选择") { rotationInline.begin() }.accessibilityLabel("选择视频以批量旋转").accessibilityIdentifier("rotation.inline.begin")
+                        }
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        if server.kind == .jellyfin {
+                            if rotationInline.active { Button("取消选择") { rotationInline.end() }.accessibilityIdentifier("rotation.inline.cancel") }
+                            else { Menu {
+                                if !shows { Button("批量旋转", systemImage: "checkmark.circle") { rotationInline.begin() } }
+                                Button("旋转任务", systemImage: "list.bullet.rectangle") { rotationQueueOpen = true }
+                            } label: { Label("旋转视频", systemImage: "ellipsis.circle") }.accessibilityIdentifier("rotation.batch.menu") }
+                        }
+                    }
                     ToolbarItem(placement: .topBarTrailing) {
                         NavigationLink { UnifiedLibraryView(library: library) } label: { Label("搜索全部片库", systemImage: "magnifyingglass") }
                     }
                     ToolbarItem(placement: .topBarLeading) { Button { Task { await library.jump(to: 0) } } label: { Label("媒体库", systemImage: "chevron.left") }.accessibilityIdentifier("catalog.back") }
+                }
+                .modifier(RotationStatusWatcher(store: library.rotationQueue, server: server, ids: shows ? [] : items.map(\.id)))
+                .modifier(RotationInlineControls(library:library,server:server,selection:rotationInline,loaded:items.map { $0.video(server:server) }))
+                .sheet(isPresented:$rotationQueueOpen) {
+                    NavigationStack { RotationQueueView(library:library,server:server).toolbar { ToolbarItem(placement:.confirmationAction) { Button("完成") { rotationQueueOpen=false } } } }
                 }
                 .refreshable { await load(reset: true, refresh: true) }
                 .task(id: requestKey) {
@@ -129,6 +159,7 @@ struct CatalogView: View {
 struct CatalogPosterCard: View {
     var item: CatalogItem
     var server: MediaServer
+    var videoPreview=false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @ScaledMetric(relativeTo: .subheadline) private var titleHeight = 36
     private var cardFacts: String {
@@ -146,7 +177,10 @@ struct CatalogPosterCard: View {
             .accessibilityElement(children: .combine)
     }
     private var artwork: some View {
-        CatalogArtwork(item: item, server: server, pixels: 420)
+        Group {
+            if videoPreview { VideoPreviewArtwork(video:item.video(server:server),server:server) }
+            else { CatalogArtwork(item: item, server: server, pixels: 420) }
+        }
             .overlay(alignment: .topTrailing) {
                 if item.UserData?.Played == true {
                     Image(systemName: "checkmark.circle.fill").font(.caption)
@@ -167,6 +201,7 @@ struct CatalogPosterCard: View {
         VStack(alignment: .leading, spacing: 5) {
             Text(item.Name).font(.subheadline.weight(.medium)).lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
                 .frame(minHeight: titleHeight, alignment: .topLeading)
+            VideoRotationStatus(server: server, itemID: item.id)
             if !cardFacts.isEmpty {
                 Text(cardFacts).font(.caption2).foregroundStyle(GlideTheme.muted).lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
             }
@@ -183,6 +218,7 @@ struct CatalogDetailView: View {
     var server: MediaServer
     var initial: CatalogItem
     @State private var detail: CatalogItem?
+    @State private var rotationInline = RotationInlineSelection()
     @State private var seasons: [CatalogItem] = []
     @State private var episodes: [CatalogItem] = []
     @State private var seasonID = ""
@@ -198,6 +234,7 @@ struct CatalogDetailView: View {
     @State private var trackSheet: TrackKind?
     @State private var downloadMessage: String?
     @State private var confirmingDownload = false
+    @Environment(\.layoutDirection) private var layoutDirection
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var overviewExpanded = false
@@ -219,23 +256,28 @@ struct CatalogDetailView: View {
                         Button("重试") { Task { await load() } }.frame(minHeight: 44)
                     }
                 }
-                if isSeries {
-                    seasonSection
-                } else {
-                    detailActions
-                    playbackOptions
-                    if let source { CatalogTechnicalSection(source: source) }
-                }
-                overviewSection
-                if !CatalogFacet.facets(item).isEmpty { facetSection }
-                if let people = item.People, !people.isEmpty {
-                    CastSection(library: library, server: server, people: people)
+                MediaDetailColumns(expanded: horizontalSizeClass == .regular && !dynamicTypeSize.isAccessibilitySize, direction: layoutDirection) {
+                    VStack(alignment: .leading, spacing: 20) {
+                        if isSeries { seasonSection }
+                        else {
+                            detailActions; playbackOptions
+                            if let source { CatalogTechnicalSection(source: source) }
+                        }
+                    }
+                    VStack(alignment: .leading, spacing: 20) {
+                        overviewSection
+                        if !CatalogFacet.facets(item).isEmpty { facetSection }
+                        if let people = item.People, !people.isEmpty { CastSection(library: library, server: server, people: people) }
+                    }
                 }
                 SimilarMediaSection(library: library, server: server, item: item)
             }.padding(.horizontal, 16).padding(.top, 16).padding(.bottom, 24)
                 .frame(maxWidth: 900).frame(maxWidth: .infinity)
         }.background(GlideTheme.background).navigationBarTitleDisplayMode(.inline)
-            .safeAreaInset(edge: .bottom, spacing: 0) { playbackBar }
+            .safeAreaInset(edge: .bottom, spacing: 0) { if !rotationInline.active { playbackBar } }
+            .modifier(RotationInlineControls(library:library,server:server,selection:rotationInline,loaded:episodes.map { $0.video(server:server) }))
+            .modifier(RotationStatusWatcher(store:library.rotationQueue,server:server,ids:episodes.map(\.id)))
+            .onChange(of:seasonID) { _,_ in rotationInline.end() }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink { DownloadsView(library: library) } label: { Image(systemName: "arrow.down.circle").frame(width: 44, height: 44) }
@@ -398,6 +440,10 @@ struct CatalogDetailView: View {
             HStack {
                 Text("剧集").font(GlideTheme.Typography.sectionTitle).accessibilityAddTraits(.isHeader)
                 Spacer()
+                if server.kind == .jellyfin,!episodes.isEmpty {
+                    Button(rotationInline.active ? "取消选择":"选择视频") { if rotationInline.active { rotationInline.end() } else { rotationInline.begin() } }
+                        .font(.caption).frame(minHeight:44).accessibilityIdentifier("rotation.episodes.select")
+                }
                 Picker("选择季", selection: $seasonID) { ForEach(seasons) { Text($0.IndexNumber == 0 ? "特别篇" : $0.Name).tag($0.id) } }
                     .pickerStyle(.menu).font(.subheadline).frame(minHeight: 44).accessibilityIdentifier("detail.season")
             }
@@ -410,9 +456,20 @@ struct CatalogDetailView: View {
             if !loadingEpisodes && episodeError == nil && !seasonID.isEmpty && episodes.isEmpty { Text("本季暂无可用剧集。").font(.subheadline).foregroundStyle(GlideTheme.muted) }
         }
         ForEach(episodes) { episode in
-            NavigationLink {
-                CatalogDetailView(library: library, server: server, initial: episode, episodeQueue: episodes)
-            } label: { CatalogEpisodeRow(item: episode, server: server) }
+            Group {
+                if rotationInline.active {
+                    let video=episode.video(server:server)
+                    Button { rotationInline.toggle(video) } label: {
+                        HStack(spacing:6) {
+                            RotationSelectionMark(selected:rotationInline.contains(video))
+                            CatalogEpisodeRow(item:episode,server:server)
+                        }
+                    }.accessibilityValue(rotationInline.contains(video) ? "已选择":"未选择")
+                } else {
+                    NavigationLink { CatalogDetailView(library:library,server:server,initial:episode,episodeQueue:episodes) }
+                    label: { CatalogEpisodeRow(item:episode,server:server) }
+                }
+            }
                 .buttonStyle(.plain).accessibilityIdentifier("episode." + episode.id)
         }
     }
@@ -597,6 +654,7 @@ private struct CatalogEpisodeRow: View {
                     if let ticks = item.RunTimeTicks, ticks > 0 { Text("\(ticks / 600_000_000) 分钟").font(.caption2).foregroundStyle(GlideTheme.muted) }
                 }
                 Text(item.Name).font(.subheadline.weight(.medium)).lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+                VideoRotationStatus(server: server, itemID: item.id)
                 if let overview = item.Overview, !overview.isEmpty { Text(overview).font(.caption).foregroundStyle(GlideTheme.muted).lineLimit(1) }
             }.frame(maxWidth: .infinity, alignment: .leading)
             Image(systemName: item.UserData?.Played == true ? "checkmark.circle.fill" : "chevron.right")
@@ -612,7 +670,12 @@ struct CatalogArtwork: View {
     var server: MediaServer
     var contentMode: ContentMode = .fill
     var pixels = 540
+    @Environment(\.rotationQueue) private var rotationQueue
     @State private var image: UIImage?
+    private var savedPreview: URL? {
+        guard ["Episode", "Video"].contains(item.Type), let rotationQueue else { return nil }
+        return rotationQueue.previewURL(server: server, itemID: item.id, state: rotationQueue.record(server: server, itemID: item.id).value)
+    }
     var body: some View {
         ZStack {
             GlideTheme.panel
@@ -620,11 +683,11 @@ struct CatalogArtwork: View {
                 Image(uiImage: image).resizable().aspectRatio(contentMode: contentMode).frame(width: proxy.size.width, height: proxy.size.height).clipped()
             }.allowsHitTesting(false) }
             else { Image(systemName: item.Type == "Person" ? "person.crop.rectangle" : item.Type == "Series" ? "tv" : "film").font(.largeTitle).foregroundStyle(GlideTheme.muted) }
-        }.clipped().task(id: server.id.uuidString + item.id + (item.ImageTags?["Primary"] ?? "") + String(pixels)) {
+        }.clipped().task(id: server.id.uuidString + item.id + (item.ImageTags?["Primary"] ?? "") + String(pixels) + (savedPreview?.absoluteString ?? "")) {
             image = nil
             var query = ["maxWidth": String(pixels), "quality": "85"]
             if let tag = item.ImageTags?["Primary"] { query["tag"] = tag }
-            let url = ServerURL.endpoint(server.address, "Items/\(item.id)/Images/Primary", query: query)
+            let url = savedPreview ?? ServerURL.endpoint(server.address, "Items/\(item.id)/Images/Primary", query: query)
             if let loaded = try? await ArtworkCache.shared.image(server: server, url: url, pixels: pixels), !Task.isCancelled { image = loaded }
         }
     }
@@ -647,7 +710,7 @@ struct FacetMediaView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 Text("同" + (facet.kind == .tag ? "标签" : "类型") + "作品 · 共 \(total) 部").font(.subheadline).foregroundStyle(GlideTheme.muted)
-                LazyVGrid(columns: dynamicTypeSize.isAccessibilitySize ? [GridItem(.flexible())] : [GridItem(.adaptive(minimum: horizontalSizeClass == .compact ? 104 : 140), spacing: 12)], spacing: 18) {
+                AdaptiveMediaGrid(minimum: horizontalSizeClass == .compact ? 104 : 140) {
                     ForEach(items) { item in
                         NavigationLink { CatalogDetailView(library: library, server: server, initial: item) } label: {
                             CatalogPosterCard(item: item, server: server)

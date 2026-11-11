@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "localDesktop": {
+    "viewport": [
+      1280,
+      900
+    ],
+    "horizontalOverflow": false,
+    "brokenVisibleImages": 0
+  },
+  "localPhone": {
+    "viewport": [
+      390,
+      844
+    ],
+    "horizontalOverflow": false,
+    "brokenVisibleImages": 0
+  },
+  "interactions": [
+    "four_feature_tabs",
+    "keyboard_Home",
+    "keyboard_ArrowRight",
+    "version_navigation",
+    "rotation_support_navigation",
+    "repository_install_help_expand"
+  ],
+  "scope": "Local browser layout and interaction checks; public deployment verified separately",
+  "timestamp": "2026-11-11T11:13:08.628979+00:00",
+  "public": {
+    "url": "https://glide.sssnto.cn/",
+    "desktop": [
+      1280,
+      900
+    ],
+    "phone": [
+      390,
+      844
+    ],
+    "horizontalOverflow": false,
+    "brokenVisibleImages": 0,
+    "screenshots": [
+      "website-live-desktop.jpg",
+      "website-live-phone.jpg"
+    ]
+  }
+}

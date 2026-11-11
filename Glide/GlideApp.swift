@@ -8,13 +8,20 @@ struct GlideApp: App {
     var body: some Scene {
         WindowGroup {
             root
+                .environment(\.webDAVArtworkRevision,library.artworkRevision)
+                .environment(\.rotationQueue,library.rotationQueue)
                 .preferredColorScheme((GlideAppearance(rawValue: appearance) ?? .system).colorScheme)
                 .tint(GlideTheme.accent)
                 #if DEBUG
                 .onAppear {
-                    if ProcessInfo.processInfo.arguments.contains("--glide-ui-audit") { UIApplication.shared.isIdleTimerDisabled = true }
+                    if ProcessInfo.processInfo.arguments.contains("--glide-ui-audit") || Bundle.main.bundleIdentifier == "com.songpeng.glide.rotationqa" { UIApplication.shared.isIdleTimerDisabled = true }
                 }
                 .task {
+                    if ProcessInfo.processInfo.arguments.contains("--glide-v2-preview"),Bundle.main.bundleIdentifier == "com.songpeng.glide.v2preview" {
+                        library.showDemo()
+                        if let video=library.videos.first { library.savePosition(video,time:4) }
+                        if let video=library.videos.dropFirst().first,!library.favorites.contains(video.id) { library.toggleFavorite(video) }
+                    }
                     if ProcessInfo.processInfo.arguments.contains("--glide-link-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-discovery-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-map-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-trip-fixture") { library.showDemo() }
                     if ProcessInfo.processInfo.arguments.contains("--glide-trip-fixture"), ProcessInfo.processInfo.arguments.contains("--glide-trip-reset-demo-progress") {
                         for index in 0..<3 { library.positions.removeValue(forKey: "demo-\(index)") }
@@ -47,7 +54,25 @@ struct GlideApp: App {
     }
     @ViewBuilder private var root: some View {
 #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("--glide-clip-fixture") {
+        if ProcessInfo.processInfo.arguments.contains("--glide-rotation-recovery-probe") || ProcessInfo.processInfo.arguments.contains("--glide-nas-rotation-acceptance") || ProcessInfo.processInfo.arguments.contains("--glide-nas-batch-rotation-acceptance") || ProcessInfo.processInfo.arguments.contains("--glide-nas-batch-readonly") {
+            JellyfinRotationRecoveryProbe(library:library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-jellyfin-rotation-fixture") {
+            JellyfinRotationQAView(library:library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-webdav-artwork-probe") || ProcessInfo.processInfo.arguments.contains("--glide-webdav-artwork-investigate") {
+            WebDAVArtworkQAProbe(library:library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-webdav-playback-probe") || ProcessInfo.processInfo.arguments.contains("--glide-webdav-playback-investigate") {
+            WebDAVPlaybackQAProbe(library:library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-webdav-presentation-fixture") {
+            WebDAVPresentationQAView(library:library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-directory-cache-probe") || ProcessInfo.processInfo.arguments.contains("--glide-directory-cache-live-probe") {
+            DirectoryCacheQAProbe(library:library,live:ProcessInfo.processInfo.arguments.contains("--glide-directory-cache-live-probe"))
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-rotation-qa") || Bundle.main.bundleIdentifier == "com.songpeng.glide.rotationqa" {
+            VideoRotationEditor(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-zoom-probe") {
+            VideoZoomQAProbe()
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-duo-fixture") {
+            DuoQAView(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-clip-fixture") {
             ClipQAView(library: library)
         } else if ProcessInfo.processInfo.arguments.contains("--glide-unified-fixture") {
             UnifiedLibraryQAView(library: library)

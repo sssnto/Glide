@@ -3,6 +3,7 @@ import Observation
 
 @MainActor @Observable
 final class LibraryStore {
+    let rotationQueue = RotationQueueStore()
     var servers: [MediaServer] = []
     var selectedID: UUID?
     var videos: [Video] = []
@@ -34,9 +35,13 @@ final class LibraryStore {
     var loading = false
     private(set) var scannedVideoCount = 0
     private(set) var scanStopped = false
+    private(set) var directoryScanDate: Date?
+    @ObservationIgnored private let directoryCache: DirectoryListingCache
+    @ObservationIgnored private var directoryScanTask: Task<Void,Never>?
     func cancelDirectoryScan() {
         guard selectedServer?.kind.isFileSource == true else { return }
-        loadID = UUID(); SMBSourceProvider.cancelBrowsing(); loading = false; scanStopped = true
+        directoryScanTask?.cancel();directoryScanTask=nil
+        loadID = UUID(); SMBSourceProvider.cancelBrowsing(); loading = false; scanStopped = true;contentsKey=nil
         remember(videos)
     }
     var error: String?
@@ -49,12 +54,15 @@ final class LibraryStore {
     var progressSnapshots: [String: ProgressSnapshot] = [:]
     var personalVideos: [String: PersonalVideo] = [:]
     var contentRevision: UUID { loadID }
+    private(set) var artworkRevision=UUID()
+    func refreshArtworkAfterFileChange() { artworkRevision=UUID();WebDAVArtwork.clearMisses() }
     var selectedServer: MediaServer? { servers.first { $0.id == selectedID } }
     private var loadID = UUID()
     private var loadingMore = false
     private struct BrowseSnapshot {
         var videos: [Video]; var folders: [MediaFolder]; var directories: [DAVEntry]
         var total: Int; var nextIndex: Int; var folderTotal: Int; var folderNextIndex: Int
+        var scanDate: Date?
     }
     @ObservationIgnored private var snapshots: [String: BrowseSnapshot] = [:]
     @ObservationIgnored private var snapshotOrder: [String] = []
@@ -65,14 +73,28 @@ final class LibraryStore {
     private var snapshotStore: RecoverableStore<LibrarySnapshot> {
         let root = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
 #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--glide-jellyfin-rotation-fixture") { return RecoverableStore(file:root.appendingPathComponent("JellyfinRotationQA/library-v1.json")) }
+        if ProcessInfo.processInfo.arguments.contains("--glide-webdav-artwork-probe") { return RecoverableStore(file:root.appendingPathComponent("WebDAVArtworkQA/library-v1.json")) }
+        if ProcessInfo.processInfo.arguments.contains("--glide-webdav-playback-probe") { return RecoverableStore(file:root.appendingPathComponent("WebDAVPlaybackQA/library-v1.json")) }
+        if ProcessInfo.processInfo.arguments.contains("--glide-webdav-presentation-fixture") { return RecoverableStore(file:root.appendingPathComponent("WebDAVPresentationQA/library-v1.json")) }
+        if ProcessInfo.processInfo.arguments.contains("--glide-directory-cache-probe") { return RecoverableStore(file:root.appendingPathComponent("DirectoryCacheQA/library-v1.json")) }
+        if ProcessInfo.processInfo.arguments.contains("--glide-rotation-fixture") { return RecoverableStore(file: root.appendingPathComponent("RotationQA/library-v1.json")) }
+        if ProcessInfo.processInfo.arguments.contains("--glide-duo-fixture") { return RecoverableStore(file: root.appendingPathComponent("DuoQA/library-v1.json")) }
         if ProcessInfo.processInfo.arguments.contains("--glide-clip-fixture") { return RecoverableStore(file: root.appendingPathComponent("ClipsQA/library-v1.json")) }
         if ProcessInfo.processInfo.arguments.contains("--glide-unified-fixture") { return RecoverableStore(file: root.appendingPathComponent("UnifiedLibraryQA/library-v1.json")) }
 #endif
         return RecoverableStore(file: root.appendingPathComponent("LibraryState/library-v1.json"))
     }
-    init() {
+    init(directoryCache: DirectoryListingCache? = nil) {
+        self.directoryCache=directoryCache ?? .shared
 #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("--glide-unified-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-clip-fixture") { return }
+        if ProcessInfo.processInfo.arguments.contains("--glide-jellyfin-rotation-fixture") { return }
+        if ProcessInfo.processInfo.arguments.contains("--glide-webdav-artwork-probe") { return }
+        if ProcessInfo.processInfo.arguments.contains("--glide-webdav-playback-probe") { return }
+        if ProcessInfo.processInfo.arguments.contains("--glide-webdav-presentation-fixture") { return }
+        if ProcessInfo.processInfo.arguments.contains("--glide-directory-cache-probe") { return }
+        if ProcessInfo.processInfo.arguments.contains("--glide-rotation-fixture") { return }
+        if ProcessInfo.processInfo.arguments.contains("--glide-unified-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-clip-fixture") || ProcessInfo.processInfo.arguments.contains("--glide-duo-fixture") { return }
 #endif
         if let data = UserDefaults.standard.data(forKey: "directoryPreferences.v1") { directoryPreferences = (try? JSONDecoder().decode([String: BrowseOptions].self, from: data)) ?? [:] }
         if let data = UserDefaults.standard.data(forKey: "folderSortPreferences.v1") { folderSortPreferences = (try? JSONDecoder().decode([String: FolderSort].self, from: data)) ?? [:] }
@@ -112,6 +134,7 @@ final class LibraryStore {
         else { restoreLocation(); restoreBrowseOptions() }
     }
     func showDemo() {
+        directoryScanTask?.cancel();directoryScanTask=nil;directoryScanDate=nil;contentsKey=nil
         SMBSourceProvider.cancelBrowsing()
         scannedVideoCount = 0; scanStopped = false
         browseOptions = BrowseOptions()
@@ -237,6 +260,7 @@ final class LibraryStore {
             error = "导入的视频保留在本机，可在视频列表中删除不需要的文件。"; return
         }
         DownloadStore.shared.removeServer(server.id, includingCompleted: includingDownloads)
+        Task { await directoryCache.remove(sourceID:server.id) }
         snapshots = snapshots.filter { !$0.key.hasPrefix(server.id.uuidString + ":") }
         browserPositions = browserPositions.filter { !$0.key.hasPrefix(server.id.uuidString + ":") }
         episodeCatalog = episodeCatalog.filter { !$0.key.hasPrefix(server.id.uuidString + ":") }
@@ -266,20 +290,46 @@ final class LibraryStore {
         if selectedID == server.id { showDemo() }
     }
     func select(_ id: UUID?) async {
+        if id != nil,id == selectedID { await loadIfNeeded();return }
         SMBSourceProvider.cancelBrowsing()
         guard let id else { showDemo(); return }
         retainContents()
         selectedID = id; path = []; jellyPath = []; clearContents()
         UserDefaults.standard.set(id.uuidString, forKey: "selectedServer")
         restoreLocation(); restoreBrowseOptions()
-        await reload()
+        await restoreOrReload()
+    }
+    func loadIfNeeded() async {
+        guard selectedID != nil else { return }
+        if loading { recordDirectoryEvent("scan-running");return }
+        if scanStopped || error != nil || contentsKey == snapshotKey { recordDirectoryEvent("already-loaded");return }
+        await restoreOrReload()
+    }
+    private func recordDirectoryEvent(_ event: String) {
+#if DEBUG
+        if let server=selectedServer,server.kind == .webDAV { DirectoryRequestQA.record(event,sourceID:server.id,videos:videos.count) }
+#endif
     }
     func reload(directory: URL? = nil) async {
+        guard selectedServer?.kind == .webDAV else { await performReload(directory:directory);return }
+        directoryScanTask?.cancel()
+        let task=Task { @MainActor in await self.performReload(directory:directory) }
+        directoryScanTask=task
+        await task.value
+    }
+    private func performReload(directory: URL? = nil) async {
+        retainContents()
         SMBSourceProvider.cancelBrowsing()
         scannedVideoCount = 0; scanStopped = false
         guard let server = selectedServer else { showDemo(); return }
         let retainedNext = contentsKey == snapshotKey ? nextIndex : 0
         let retainedFolderNext = contentsKey == snapshotKey ? folderNextIndex : 0
+        let rollback=snapshots[snapshotKey]
+        if server.kind == .webDAV {
+            snapshots=snapshots.filter { !$0.key.hasPrefix(server.id.uuidString+":") }
+            snapshotOrder.removeAll { $0.hasPrefix(server.id.uuidString+":") }
+        }
+        contentsKey=nil
         let generation = UUID(); loadID = generation; loading = true; error = nil; loadingMore = false
         let parentID = jellyPath.last?.id
         let options = browseOptions
@@ -333,29 +383,44 @@ final class LibraryStore {
                     }
                 }
                 let provider = try SourceProviders.directories(for: server.kind)
-                let entries = try await provider.entries(server: server, directory: directory ?? path.last)
+                let root = directory ?? path.last ?? server.address
+                let entries = try await provider.entries(server: server, directory: directory ?? path.last).filter { DirectoryScope.contains(root:root,child:$0.url) }
                 guard generation == loadID else { return }
                 directories = entries.filter(\.isDirectory)
-                let root = directory ?? path.last ?? server.address
+                var listings=[CachedDirectoryListing(directory:root,entries:entries,date:Date())]
                 let descendants = try await ScopedQueueCollector.webDAV(root: root, recursive: options.includesDescendants, fetch: { url in
                     guard generation == self.loadID else { throw CancellationError() }
                     if url == root { return entries }
-                    return try await provider.entries(server: server, directory: url)
+                    let child=try await provider.entries(server: server, directory: url).filter { DirectoryScope.contains(root:url,child:$0.url) }
+                    listings.append(CachedDirectoryListing(directory:url,entries:child,date:Date()))
+                    return child
                 }, progress: { count in
                     if generation == self.loadID { self.scannedVideoCount = count }
                 }, partial: { found in
                     guard generation == self.loadID else { return }
-                    self.videos = options.sort.sorted(found.compactMap { try? self.fileVideo($0, server: server) })
+                    self.videos = self.browseOptions.sort.sorted(found.compactMap { try? self.fileVideo($0, server: server) })
                     self.total = self.videos.count
                 })
                 guard generation == loadID else { return }
                 videos = try descendants.map { try fileVideo($0, server: server) }
-                videos = options.sort.sorted(videos)
+                videos = browseOptions.sort.sorted(videos)
                 total = videos.count
+                if server.kind == .webDAV {
+                    directoryScanDate=Date()
+                    try? await directoryCache.store(DirectoryCacheIdentity(server),root:root,recursive:options.includesDescendants,listings:listings)
+                    guard !Task.isCancelled,generation==loadID else { return }
+                }
             }
             contentsKey = snapshotKey
             remember(videos)
-        } catch { if generation == loadID && !(error is CancellationError) { self.error = error.localizedDescription } }
+            if server.kind == .webDAV { refreshArtworkAfterFileChange() }
+            recordDirectoryEvent("scan-complete")
+        } catch {
+            if generation == loadID && !(error is CancellationError) {
+                if let rollback { apply(rollback) ;contentsKey=snapshotKey }
+                self.error = error.localizedDescription
+            }
+        }
     }
     func enter(_ directory: URL) async { retainContents(); path.append(directory); saveLocation(); restoreBrowseOptions(); clearContents(); await restoreOrReload() }
     func enter(_ folder: MediaFolder) async {
@@ -392,25 +457,40 @@ final class LibraryStore {
         if let data = UserDefaults.standard.data(forKey: "davPath." + id.uuidString) { path = (try? JSONDecoder().decode([URL].self, from: data)) ?? [] }
     }
     private func retainContents() {
-        guard let key = contentsKey, !loading else { return }
+        guard let key = contentsKey, !loading,!scanStopped,error==nil else { return }
         // Preserve pagination cursors with their complete loaded pages. Truncating
         // arrays independently of a raw server cursor can silently skip videos.
         guard videos.count <= 1200, folders.count <= 1200, directories.count <= 1200 else { snapshots[key] = nil; return }
         snapshots[key] = BrowseSnapshot(videos: videos, folders: folders, directories: directories,
-                                        total: total, nextIndex: nextIndex, folderTotal: folderTotal, folderNextIndex: folderNextIndex)
+                                        total: total, nextIndex: nextIndex, folderTotal: folderTotal, folderNextIndex: folderNextIndex,scanDate:directoryScanDate)
         snapshotOrder.removeAll { $0 == key }; snapshotOrder.append(key)
         while snapshotOrder.count > 8 { snapshots.removeValue(forKey: snapshotOrder.removeFirst()) }
     }
     private func restoreOrReload() async {
         if let snapshot = snapshots[snapshotKey] {
             loadID = UUID(); loading = false; loadingMore = false
-            videos = snapshot.videos; folders = snapshot.folders; directories = snapshot.directories
-            total = snapshot.total; nextIndex = snapshot.nextIndex; folderTotal = snapshot.folderTotal; folderNextIndex = snapshot.folderNextIndex
-            contentsKey = snapshotKey; return
+            apply(snapshot);error=nil;scanStopped=false
+            contentsKey = snapshotKey;recordDirectoryEvent("memory-hit");return
+        }
+        if let server=selectedServer,server.kind == .webDAV {
+            let generation=UUID();loadID=generation
+            let key=snapshotKey
+            let cached=await directoryCache.scan(DirectoryCacheIdentity(server),directory:path.last ?? server.address,recursive:browseOptions.includesDescendants)
+            guard !Task.isCancelled,generation==loadID,key==snapshotKey else { return }
+            if let cached {
+                videos=browseOptions.sort.sorted(cached.videos.compactMap { try? fileVideo($0,server:server) })
+                directories=cached.directories;folders=[];total=videos.count;nextIndex=0;folderNextIndex=0;folderTotal=0
+                directoryScanDate=cached.date;scannedVideoCount=videos.count;scanStopped=false;loading=false;loadingMore=false;error=nil;contentsKey=key
+                recordDirectoryEvent("disk-hit");return
+            }
         }
         await reload()
     }
-    private func clearContents() { contentsKey = nil; loadID = UUID(); loading = false; videos = []; folders = []; directories = []; total = 0; nextIndex = 0; folderNextIndex = 0; folderTotal = 0; error = nil }
+    private func apply(_ snapshot: BrowseSnapshot) {
+        videos=snapshot.videos;folders=snapshot.folders;directories=snapshot.directories
+        total=snapshot.total;nextIndex=snapshot.nextIndex;folderTotal=snapshot.folderTotal;folderNextIndex=snapshot.folderNextIndex;directoryScanDate=snapshot.scanDate
+    }
+    private func clearContents() { directoryScanTask?.cancel();directoryScanTask=nil;contentsKey = nil; loadID = UUID(); loading = false; scanStopped=false;directoryScanDate=nil;videos = []; folders = []; directories = []; total = 0; nextIndex = 0; folderNextIndex = 0; folderTotal = 0; error = nil }
 
     func more() async {
         guard !loading, !loadingMore, hasMore, let server = selectedServer, server.kind.isCatalogSource else { return }
@@ -447,6 +527,16 @@ final class LibraryStore {
     func collectPlaybackVideos(search: String = "", progress: (Int) -> Void) async throws -> [Video] {
         guard let server = selectedServer else { return videos }
         let options = browseOptions
+        if server.kind == .webDAV {
+            let key=snapshotKey
+            if loading,let task=directoryScanTask { await task.value }
+            try Task.checkCancellation()
+            guard key==snapshotKey else { throw CancellationError() }
+            if contentsKey==key,!scanStopped { progress(videos.count);return options.sort.sorted(videos) }
+            if let cached=await directoryCache.scan(DirectoryCacheIdentity(server),directory:path.last ?? server.address,recursive:options.includesDescendants) {
+                let result=options.sort.sorted(try cached.videos.map { try fileVideo($0,server:server) });progress(result.count);return result
+            }
+        }
         if server.kind.isCatalogSource {
             guard let parentID = jellyPath.last?.id else { throw MediaError.message("请先选择一个媒体库或目录。") }
             return try await ScopedQueueCollector.pages(fetch: { start in
@@ -464,7 +554,7 @@ final class LibraryStore {
         let relative = server.kind == .local ? try LocalMediaIdentity.relativePath(root: server.address, file: entry.url) : nil
         return Video(id: relative.map { LocalMediaIdentity.id(sourceID: server.id, relativePath: $0) } ?? server.id.uuidString + entry.id,
                      title: entry.name, subtitle: server.name, sourceID: server.id, url: entry.url,
-                     artwork: entry.artwork, addedAt: entry.displayDate, localRelativePath: relative)
+                     artwork: entry.artwork, addedAt: entry.displayDate, localRelativePath: relative, fileModifiedAt: entry.modifiedAt)
     }
     private func localAncestors(_ relative: String, root: URL) -> [URL] {
         let parts = relative.split(separator: "/")
@@ -472,17 +562,27 @@ final class LibraryStore {
     }
     func setBrowseOptions(_ options: BrowseOptions) async {
         guard options != browseOptions else { return }
+        let onlySort=options.includesDescendants == browseOptions.includesDescendants
+        let loaded=contentsKey==snapshotKey
+        retainContents()
         browseOptions = options
         directoryPreferences[locationKey] = options
         persistDirectorySettings()
+        if selectedServer?.kind == .webDAV,onlySort {
+            videos=options.sort.sorted(videos)
+            if loaded { contentsKey=snapshotKey }
+            return
+        }
         clearContents()
-        await reload()
+        await restoreOrReload()
     }
     func setFolderSort(_ sort: FolderSort) async {
         guard sort != folderSort else { return }
+        let loaded=contentsKey==snapshotKey
         folderSort = sort
         folderSortPreferences[locationKey] = sort
         persistDirectorySettings()
+        if selectedServer?.kind == .webDAV { if loaded { contentsKey=snapshotKey };return }
         await reload()
     }
     private func restoreBrowseOptions() {
@@ -525,7 +625,7 @@ final class LibraryStore {
         saveLocation(); restoreBrowseOptions()
         if let options = bookmark.options { browseOptions = options; directoryPreferences[locationKey] = options }
         if let mode = bookmark.mode { UserDefaults.standard.set(mode.rawValue, forKey: "playbackMode") }
-        persistDirectorySettings(); clearContents(); await reload()
+        persistDirectorySettings(); clearContents(); await restoreOrReload()
         return error == nil
     }
     private func persistDirectorySettings() {
@@ -669,6 +769,7 @@ extension LibraryStore {
         try Task.checkCancellation()
         guard let index = servers.firstIndex(where: { $0.id == original.id }) else { throw CancellationError() }
         try Credentials.save(secret, for: original.id)
+        await directoryCache.remove(sourceID:original.id)
         servers[index] = candidate; persist()
         snapshots = snapshots.filter { !$0.key.hasPrefix(original.id.uuidString + ":") }
         browserPositions = browserPositions.filter { !$0.key.hasPrefix(original.id.uuidString + ":") }

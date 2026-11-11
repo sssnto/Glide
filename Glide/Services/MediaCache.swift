@@ -19,6 +19,25 @@ actor MediaCache {
         let hash = SHA256.hash(data: Data(key.utf8)).map { String(format: "%02x", $0) }.joined()
         return root.appendingPathComponent(scope).appendingPathComponent(hash)
     }
+    /// Thumbnail jobs retain structured cancellation instead of becoming an
+    /// unobserved fetch in `flights` after a lazy tile disappears.
+    func cachedData(scope: String, key: String, ttl: TimeInterval) -> Data? {
+        let identity = scope + ":" + key, url = file(scope: scope, key: key)
+        guard let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
+              let date = attrs[.modificationDate] as? Date, Date().timeIntervalSince(date) < ttl else { return nil }
+        if let cached = memory.object(forKey: identity as NSString) { return cached as Data }
+        guard let cached = try? Data(contentsOf: url) else { return nil }
+        memory.setObject(cached as NSData, forKey: identity as NSString, cost: cached.count); return cached
+    }
+    func epoch(scope: String) -> Int { versions[scope, default: 0] }
+    func storeThumbnail(_ data: Data, scope: String, key: String, epoch: Int) throws {
+        guard epoch == versions[scope, default: 0] else { throw CancellationError() }
+        guard data.count <= 2 * 1024 * 1024 else { throw MediaError.message("视频预览图片过大。") }
+        let url = file(scope: scope, key: key)
+        try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try data.write(to: url, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+        memory.setObject(data as NSData, forKey: (scope + ":" + key) as NSString, cost: data.count); trim()
+    }
     func data(scope: String, key: String, ttl: TimeInterval, refresh: Bool = false, fetch: @escaping () async throws -> Data) async throws -> Data {
         let identity = scope + ":" + key, url = file(scope: scope, key: key)
         if !refresh, let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
@@ -64,11 +83,22 @@ actor MediaCache {
 
 actor ArtworkCache {
     static let shared = ArtworkCache()
+    private let rotationGate = ArtworkWorkGate(limit: 2)
     private let decoded = NSCache<NSString, UIImage>()
     init() { decoded.totalCostLimit = 48 * 1024 * 1024 }
     func image(server: MediaServer, url: URL, pixels: Int, version: String = "") async throws -> UIImage {
         guard ServerURL.sameOrigin(server.address, url) else { throw MediaError.message("图片地址与媒体来源不匹配。") }
         let key = MediaCache.scope(server) + url.absoluteString + version + String(pixels)
+        if let value = decoded.object(forKey: key as NSString) { return value }
+        let permit: ArtworkWorkGate.Permit?
+        if server.kind == .jellyfin, url.path.hasSuffix("/RotationPreview") {
+            // Fast scrolling cancels waiting tiles. Only two uncached preview
+            // requests can reach the server, where extraction is also serial.
+            try await Task.sleep(for: .milliseconds(200))
+            permit = try await rotationGate.acquire(key: MediaCache.scope(server) + url.absoluteString + version)
+        } else { permit = nil }
+        defer { if let permit { Task { await rotationGate.release(permit) } } }
+        try Task.checkCancellation()
         if let value = decoded.object(forKey: key as NSString) { return value }
         guard let credential = Credentials.read(server.id) else { throw MediaError.message("请重新登录。") }
         let data = try await MediaCache.shared.data(scope: MediaCache.scope(server), key: "art:" + url.absoluteString + version, ttl: 7 * 86400) {

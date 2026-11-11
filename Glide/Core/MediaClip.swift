@@ -32,6 +32,31 @@ struct ClipCursor: Codable, Equatable, Sendable {
     var position: Double
     var finished = false
 }
+
+/// Build a non-destructive highlight queue. Longer clips are skipped rather than cut.
+enum HighlightMix {
+    static func make(clips: [MediaClip], maxDuration: Double) -> [MediaClip] {
+        guard maxDuration.isFinite, maxDuration > 0 else { return [] }
+        var buckets: [[MediaClip]] = []
+        var keys: [MomentReference] = []
+        var seen = Set<UUID>()
+        for clip in clips where seen.insert(clip.id).inserted && clip.length.isFinite && clip.length >= 0.5 {
+            if let index = keys.firstIndex(of: clip.moment.reference) { buckets[index].append(clip) }
+            else { keys.append(clip.moment.reference); buckets.append([clip]) }
+        }
+        var result: [MediaClip] = [], duration = 0.0
+        while buckets.contains(where: { !$0.isEmpty }) && result.count < 100 {
+            for index in buckets.indices where !buckets[index].isEmpty {
+                let clip = buckets[index].removeFirst()
+                if duration + clip.length <= maxDuration {
+                    result.append(clip); duration += clip.length
+                    if result.count == 100 { break }
+                }
+            }
+        }
+        return result
+    }
+}
 struct ClipLibrarySnapshot: Codable, Equatable, Sendable {
     var clips: [MediaClip] = []
     var collections: [ClipCollection] = []

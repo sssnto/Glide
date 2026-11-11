@@ -4,6 +4,7 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 import hashlib
+from http.client import HTTPException
 import json
 from pathlib import Path
 import sys
@@ -18,16 +19,18 @@ args = parser.parse_args()
 
 def verify(path):
     name = path.relative_to(ROOT).as_posix()
-    try:
-        request = Request("https://glide.sssnto.cn/" + name,
-                          headers={"User-Agent": "Glide-Website-Verification/1.0"})
-        with urlopen(request, timeout=25) as response:
-            data = response.read()
-            return {"file": name, "status": response.status, "bytes": len(data),
-                    "sha256": hashlib.sha256(data).hexdigest(),
-                    "matchesSource": data == path.read_bytes()}
-    except (URLError, TimeoutError, OSError) as error:
-        return {"file": name, "matchesSource": False, "error": str(error)}
+    for attempt in range(3):
+        try:
+            request = Request("https://glide.sssnto.cn/" + name,
+                              headers={"User-Agent": "Glide-Website-Verification/1.0"})
+            with urlopen(request, timeout=25) as response:
+                data = response.read()
+                return {"file": name, "status": response.status, "bytes": len(data),
+                        "sha256": hashlib.sha256(data).hexdigest(),
+                        "matchesSource": data == path.read_bytes()}
+        except (URLError, TimeoutError, OSError, HTTPException) as error:
+            if attempt == 2:
+                return {"file": name, "matchesSource": False, "error": str(error)}
 
 
 with ThreadPoolExecutor(max_workers=4) as executor:

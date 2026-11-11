@@ -1,6 +1,22 @@
 #if DEBUG
 import SwiftUI
 
+@MainActor enum RecommendationFixtures {
+    static func videos() -> [Video] {
+        (0..<3).compactMap { index in
+            guard let url = Bundle.main.url(forResource: "demo\(index)", withExtension: "mp4") else { return nil }
+            var video = Video(id: "demo-\(index)", title: ["重返山脊", "落日海岸", "第 1 集"][index], subtitle: "原创样例", url: url, duration: 12, demoIndex: index)
+            video.mediaType = index == 1 ? "Movie" : "Episode"
+            video.seriesID = index == 1 ? nil : "original-series-\(index)"
+            video.seriesTitle = index == 1 ? nil : index == 0 ? "原创山野物语" : "原创蓝色时分"
+            video.seasonNumber = index == 1 ? nil : index == 0 ? 2 : 1
+            video.episodeNumber = index == 1 ? nil : index == 0 ? 3 : 1
+            video.productionYear = 2025; video.genres = ["自然", "纪录"]
+            return video
+        }
+    }
+}
+
 /// Uses authored bundle videos and an isolated channel store, never the user's
 /// channels, server credentials or watch history.
 struct DiscoveryQAProbe: View {

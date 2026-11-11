@@ -4,6 +4,10 @@ import UIKit
     static var activeScene: UIWindowScene? {
         UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first { $0.activationState == .foregroundActive }
     }
+    static func toggle(onError: @escaping (String) -> Void) {
+        guard let orientation = activeScene?.interfaceOrientation else { onError("当前窗口暂时不能旋转。"); return }
+        request(orientation.isLandscape ? .portrait : .landscapeRight, onError: onError)
+    }
     static func request(_ orientation: UIInterfaceOrientationMask, onError: @escaping (String) -> Void) {
         guard let scene = activeScene else { onError("当前窗口暂时不能旋转。"); return }
         let root = scene.windows.first(where: \.isKeyWindow)?.rootViewController

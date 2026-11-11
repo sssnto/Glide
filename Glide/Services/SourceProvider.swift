@@ -1,4 +1,16 @@
 import Foundation
+#if DEBUG
+@MainActor enum DirectoryRequestQA {
+    static var counts: [UUID:Int] = [:]
+    static let session=UUID().uuidString
+    static func record(_ event: String, sourceID: UUID, videos: Int) {
+        let file=FileManager.default.urls(for:.documentDirectory,in:.userDomainMask)[0].appendingPathComponent("DirectoryCacheUsage.json")
+        var values=((try? Data(contentsOf:file)).flatMap { try? JSONSerialization.jsonObject(with:$0) } as? [[String:Any]]) ?? []
+        values.append(["event":event,"videos":videos,"requests":counts[sourceID,default:0],"session":session,"time":ISO8601DateFormatter().string(from:Date()),"build":Bundle.main.object(forInfoDictionaryKey:"CFBundleVersion") as? String ?? ""])
+        if let data=try? JSONSerialization.data(withJSONObject:Array(values.suffix(50)),options:[.prettyPrinted,.sortedKeys]) { try? data.write(to:file,options:.atomic) }
+    }
+}
+#endif
 
 /// File sources share browsing and queue construction; catalog sources keep their API semantics.
 @MainActor protocol DirectorySourceProvider {
@@ -7,7 +19,10 @@ import Foundation
 
 @MainActor struct WebDAVSourceProvider: DirectorySourceProvider {
     func entries(server: MediaServer, directory: URL?) async throws -> [DAVEntry] {
-        try await MediaClient.shared.webDAV(server: server, directory: directory)
+#if DEBUG
+        DirectoryRequestQA.counts[server.id,default:0]+=1
+#endif
+        return try await MediaClient.shared.webDAV(server: server, directory: directory)
     }
 }
 

@@ -85,7 +85,7 @@ import UIKit
     }()
 }
 
-/// Local files and explicitly verified SMB resources; shared by Glide and QA.
+/// Local files and verified SMB/WebDAV resources; shared by Glide and QA.
 @MainActor final class VLCPlaybackEngine: PlaybackEngine {
     let descriptor = PlaybackEngineDescriptor(id: .vlc, title: "兼容播放 · VLC", capabilities: [.tracks])
     let surface = UIView()
@@ -102,6 +102,7 @@ import UIKit
     private var polling: Task<Void, Never>?
     private var seeking: Task<Void, Never>?
     private var inspectionTask: Task<Void, Never>?
+    private var webDAVBridge: WebDAVPlaybackBridge?
     private var containerHint = MediaContainer.unknown
     private var headerRead = false
     private var inspectionSent = false
@@ -178,11 +179,20 @@ import UIKit
     func load(_ resource: PlaybackResource, preload: (any PlaybackPreload)?, options: PlaybackEngineOptions) async throws {
         stop()
         let token = lifetime.load
-        guard resource.headers.isEmpty, resource.url.isFileURL || (resource.smb != nil && resource.url.scheme == "smb") else {
-            throw MediaError.message("兼容播放仅接受本地文件或已验证的 SMB 资源。")
+        let webDAV = resource.webDAV && WebDAVPlaybackPolicy.accepts(file: resource.url, root: resource.url.deletingLastPathComponent())
+        guard webDAV || (resource.headers.isEmpty && (resource.url.isFileURL || (resource.smb != nil && resource.url.scheme == "smb"))) else {
+            throw MediaError.message("兼容播放仅接受本地文件或已验证的 SMB／WebDAV 资源。")
         }
         guard preload == nil else { throw MediaError.message("兼容播放暂不支持预加载。") }
         if resource.smb != nil { try await CompatibilityNetworkPath.shared.check(url: resource.url, allowsCellular: options.allowsCellular) }
+        var mediaURL = resource.url
+        if webDAV {
+            let bridge = WebDAVPlaybackBridge(url: resource.url, headers: resource.headers, allowsCellular: options.allowsCellular)
+            webDAVBridge = bridge
+            mediaURL = try await bridge.start()
+            guard lifetime.accepts(token) else { bridge.stop(); throw CancellationError() }
+            onEvent?(.diagnostic("webdav_authenticated_stream"))
+        }
         guard lifetime.accepts(token) else { throw CancellationError() }
         allowsCellular = options.allowsCellular
         self.resource = resource; clipEnd = options.endTime
@@ -196,7 +206,8 @@ import UIKit
         surface.addSubview(drawable)
         self.drawable = drawable
         player.drawable = drawable
-        let media = VLCMedia(url: resource.url)
+        let media = VLCMedia(url: mediaURL)
+        if webDAV { media.addOption(":network-caching=2000") }
         if let access = resource.smb {
             media.addOption(":smb-user=" + (access.options.guest ? "Guest" : access.username))
             media.addOption(":smb-pwd=" + (access.options.guest ? "" : access.password))
@@ -208,7 +219,7 @@ import UIKit
         player.media = media
         self.player = player
         if options.muted { player.audio?.volume = 0 }
-        if resource.smb != nil { headerRead = true }
+        if resource.smb != nil || webDAV { headerRead = true }
         else { inspectionTask = Task { [weak self] in
             let hint = await Task.detached(priority: .utility) {
                 defer { withExtendedLifetime(resource) {} }
@@ -546,6 +557,7 @@ import UIKit
     }
     func stop() {
         _ = lifetime.begin()
+        webDAVBridge?.stop(); webDAVBridge = nil
         polling?.cancel(); polling = nil; cancelPendingSeeks()
         inspectionTask?.cancel(); inspectionTask = nil
         containerHint = .unknown; headerRead = false; inspectionSent = false

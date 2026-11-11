@@ -1,0 +1,37 @@
+{
+  "version": "2.0.0",
+  "build": "1",
+  "status": "simulator_candidate",
+  "appBundleID": "com.songpeng.glide.v2preview",
+  "mainPhoneAppOverwritten": false,
+  "date": "2026-11-11",
+  "core": {
+    "xctestPassed": 11,
+    "swiftTestingPassed": 276,
+    "failed": 0
+  },
+  "ui": {
+    "primaryPassed": 5,
+    "primaryFailed": 0,
+    "finalTargetedPassed": 2,
+    "finalTargetedFailed": 0,
+    "skipped": 0
+  },
+  "layoutMetrics": {
+    "firstMediaTopPoints": 202.0,
+    "viewportWidthPoints": 402.0,
+    "viewportHeightPoints": 874.0
+  },
+  "layoutScope": "Built-in authored demo library; not a measurement of every remote directory",
+  "executableSHA256": "0868a1a3d056df6404823cb672d3a6f15740920380e486e6f9cf250647f8629e",
+  "nasWritesPerformed": false,
+  "performanceProfilingPerformed": false,
+  "pending": [
+    "Physical device interaction and long library scrolling",
+    "Real Jellyfin/Emby/WebDAV/SMB libraries and upgrade migration",
+    "Duo folding, unfolding and divider continuity",
+    "App Store archive and distribution checks"
+  ],
+  "fixtureServiceStopped": true,
+  "previewResetToAuthoredDemos": true
+}

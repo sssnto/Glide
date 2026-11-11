@@ -4,8 +4,13 @@ struct PersonalLibraryView: View {
     var library: LibraryStore
     var onPlay: (Video) -> Void
     var presentedAsSheet = true
+    var startsWithFavorites = true
     @Environment(\.dismiss) private var dismiss
-    @State private var favorites = false
+    @State private var favorites = true
+    @State private var initialized = false
+    @State private var editMode=EditMode.inactive
+    @State private var settingsOpen=false
+    @Environment(\.dynamicTypeSize) private var typeSize
     private var entries: [ContinueWatchingItem] {
         if favorites {
             return library.favoriteVideos.map { ContinueWatchingItem(id: $0.id, video: $0, historyIDs: [$0.id], lastPlayedAt: .distantPast) }
@@ -16,18 +21,9 @@ struct PersonalLibraryView: View {
         NavigationStack {
             List {
                 Section {
-                    NavigationLink { ClipLibraryView(library: library) } label: {
-                        Label("精彩片段集", systemImage: "scissors").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
-                    }.accessibilityIdentifier("personal.clips")
-                    NavigationLink { MomentLibraryView(library: library) } label: {
-                        Label("时刻收藏", systemImage: "bookmark")
-                            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
-                    }.accessibilityIdentifier("personal.moments")
-                }
-                Section {
                     Picker("个人片库", selection: $favorites) {
                         Text("继续观看").tag(false)
-                        Text("我的收藏").tag(true)
+                        Text("收藏视频").tag(true)
                     }.pickerStyle(.segmented).accessibilityIdentifier("personal.mode")
                 }.listRowBackground(Color.clear)
                 if entries.isEmpty {
@@ -40,10 +36,10 @@ struct PersonalLibraryView: View {
                         HStack(spacing: 14) {
                             VideoArtwork(video: cover(entry), server: library.servers.first { $0.id == entry.video.sourceID }).frame(width: 60, height: 84).clipShape(RoundedRectangle(cornerRadius: 8))
                             VStack(alignment: .leading, spacing: 7) {
-                                Text(favorites ? entry.video.title : entry.title).font(GlideTheme.Typography.itemTitle).lineLimit(2)
+                                Text(RecommendationMediaIdentity(entry.video).title).font(GlideTheme.Typography.itemTitle).lineLimit(2)
+                                if let episode=RecommendationMediaIdentity(entry.video).episode { Text(episode).font(.caption).foregroundStyle(.secondary).lineLimit(2) }
                                 Text(sourceName(entry.video)).font(.caption).foregroundStyle(GlideTheme.muted)
                                 if !favorites {
-                                    if !entry.episodeLabel.isEmpty { Text(entry.episodeLabel).font(.caption).foregroundStyle(GlideTheme.accent) }
                                     Text(entry.finished ? "已看完 · 从头观看" : position > 1 ? "已观看 " + position.mediaTime : "下一集")
                                         .font(.caption).foregroundStyle(GlideTheme.muted)
                                     if !entry.finished, entry.video.duration > 0 { ProgressView(value: min(position, entry.video.duration), total: entry.video.duration).tint(GlideTheme.accent) }
@@ -63,15 +59,27 @@ struct PersonalLibraryView: View {
                         .swipeActions { Button(favorites ? "取消收藏" : "移除记录", role: .destructive) { remove(entry) } }
                 }.onDelete { indices in indices.map { entries[$0] }.forEach(remove) }
 
-            }.scrollContentBackground(.hidden).background(GlideTheme.background)
-                .font(GlideTheme.Typography.body).navigationTitle("我的片库").navigationBarTitleDisplayMode(.inline)
-                .task { await library.refreshContinueWatching() }
+                Section("整理收藏") {
+                    NavigationLink { ClipLibraryView(library: library) } label: {
+                        Label("精彩片段集", systemImage: "scissors").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
+                    }.accessibilityIdentifier("personal.clips")
+                    NavigationLink { MomentLibraryView(library: library) } label: {
+                        Label("时刻收藏", systemImage: "bookmark")
+                            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
+                    }.accessibilityIdentifier("personal.moments")
+                    NavigationLink { DownloadsView(library:library) } label: { Label("离线片库",systemImage:"arrow.down.circle") }
+                }
+
+            }.environment(\.editMode,$editMode).scrollContentBackground(.hidden).background(GlideTheme.background)
+                .font(GlideTheme.Typography.body).navigationTitle("收藏").navigationBarTitleDisplayMode(.inline)
+                .task { if !initialized { favorites=startsWithFavorites;initialized=true };await library.refreshContinueWatching() }
                 .refreshable { await library.refreshContinueWatching(refresh: true) }
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) { EditButton().disabled(entries.isEmpty) }
+                    ToolbarItem(placement: .topBarLeading) { Button(editMode.isEditing ? "完成":"编辑") { withAnimation { editMode=editMode.isEditing ? .inactive:.active } }.disabled(entries.isEmpty) }
                     if presentedAsSheet { ToolbarItem(placement: .confirmationAction) { Button("完成") { dismiss() } } }
+                    else { ToolbarItem(placement:.topBarTrailing) { WorkspaceSettingsButton { settingsOpen=true } } }
                 }
-        }.tint(GlideTheme.accent)
+        }.sheet(isPresented:$settingsOpen) { WorkspaceSettingsSheet(library:library) }.tint(GlideTheme.accent)
     }
     private func remove(_ entry: ContinueWatchingItem) {
         if favorites { library.toggleFavorite(entry.video) } else { library.removeContinueWatching(entry) }

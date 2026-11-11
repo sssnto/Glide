@@ -22,6 +22,8 @@ struct PlaybackResource {
     var sourcePath: String?
     var localAccess: LocalFileAccess?
     var smb: SMBPlaybackAccess?
+    /// Set only by MediaClient after checking the selected WebDAV source scope.
+    var webDAV = false
     var sourceContainer: String?
     var resolvedTracks: TrackSelection?
     var preferredTextSubtitle = false

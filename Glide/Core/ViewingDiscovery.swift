@@ -120,6 +120,41 @@ struct TimePick: Identifiable, Sendable {
     var id: String { video.id }
 }
 
+/// Work identity is separate from an episode's title and from its playback source.
+struct RecommendationMediaIdentity: Equatable {
+    var title: String
+    var episode: String?
+    var facts: String?
+    init(_ video: Video) {
+        func clean(_ value: String?) -> String? {
+            guard let text = value?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty else { return nil }
+            return text
+        }
+        let series = clean(video.seriesTitle), name = clean(video.title) ?? "未命名视频"
+        let isEpisode = video.mediaType == "Episode" || series != nil || video.seriesID != nil
+        title = isEpisode ? series ?? name : name
+        var parts = [String]()
+        if isEpisode {
+            if let season = video.seasonNumber, season >= 0 { parts.append(season == 0 ? "特别篇" : "第 \(season) 季") }
+            if let number = video.episodeNumber, number > 0 { parts.append("第 \(number) 集") }
+            let compactName = name.lowercased().filter { !$0.isWhitespace }
+            let generic = video.episodeNumber.map { ["第\($0)集", "episode\($0)", "ep\($0)", "e\($0)"].contains(compactName) } ?? false
+            if let series, name != series, !generic { parts.append(name) }
+            if series == nil { parts.append("剧名未提供") }
+        }
+        episode = parts.isEmpty ? nil : parts.joined(separator: " · ")
+        var metadata = [String]()
+        if isEpisode { metadata.append("剧集") }
+        else if video.mediaType == "Movie" { metadata.append("电影") }
+        else if video.mediaType == "MusicVideo" { metadata.append("音乐视频") }
+        if let year = video.productionYear, (1800...9999).contains(year) { metadata.append(String(year)) }
+        var seen = Set<String>()
+        let genres = (video.genres ?? []).compactMap { clean($0) }.filter { seen.insert($0.lowercased()).inserted }.prefix(2)
+        if !genres.isEmpty { metadata.append(genres.joined(separator: " / ")) }
+        facts = metadata.isEmpty ? nil : metadata.joined(separator: " · ")
+    }
+}
+
 enum TimePickPlanner {
     static func recommendations(_ videos: [Video], minutes: Int, preference: ViewingPreference, positions: [String: Double], limit: Int = 3, excluding: Set<String> = []) -> [TimePick] {
         guard (1...240).contains(minutes), limit > 0 else { return [] }

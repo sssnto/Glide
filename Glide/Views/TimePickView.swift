@@ -50,7 +50,7 @@ struct TimePickView: View {
                     ForEach(picks) { pick in
                         Button { playing = DiscoveryPlayback(videos: [pick.video], title: "给我选一部", resumeAt: pick.resumeAt) } label: {
                             VStack(alignment: .leading, spacing: 8) {
-                                DiscoveryVideoRow(video: pick.video, library: library, detail: (pick.resumeAt > 1 ? "剩余 " : "片长 ") + pick.remaining.mediaTime)
+                                DiscoveryVideoRow(video: pick.video, library: library, detail: (pick.resumeAt > 1 ? "剩余 " : "片长 ") + pick.remaining.mediaTime, showsWorkIdentity: true)
                                 Text(pick.reasons.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary)
                             }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 4).contentShape(Rectangle())
                         }.buttonStyle(.plain).accessibilityIdentifier("discovery.pick." + pick.id)

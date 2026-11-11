@@ -1,0 +1,17 @@
+Glide is a personal media player for iPhone and iPad. It does not provide movies, TV channels, streaming subscriptions or online subtitle search, and does not require a Glide account.
+
+Version 2.0 reorganizes the app into Watching, Library, Collection and Tasks (Chinese labels: 观看, 片库, 收藏, 任务). The app uses the device language settings; the primary release materials are Simplified Chinese.
+
+No-account review path:
+1. Open Library (片库), tap the source button at the upper left, then select Offline Demo Library (离线演示片库).
+2. Play any of the three bundled original 12-second demo videos. They require no server login or external download. Tap the picture to reveal controls. Seeking, playback speed and pinch-to-zoom are available. Audio/subtitle choices depend on the file; a demo without those tracks correctly shows unavailable choices.
+3. Long-press a demo thumbnail to favorite it, then open Collection (收藏). Switch between favorites and viewing history; moments and clip collections remain available from this area.
+4. Settings are available from the gear button on Watching, Collection or Tasks. Library also retains a source button and a More menu. Tasks links to the Offline Library (离线片库), where downloads and trips are managed.
+
+Remote media is optional and requires the reviewer's own accessible Jellyfin, Emby, SMB or WebDAV source, or separately supplied review credentials. No credentials are embedded in these notes. Offline trip packaging, multi-source search and server track choices require suitable media and source permissions.
+
+Direction correction is an advanced optional feature for eligible MP4/MOV/M4V files. Jellyfin requires the matching Glide Toolkit 1.1.0+ server plugin, explicit user authorization and writable media storage. The current plugin package targets Jellyfin 12.2 on Linux/NAS Docker. Work is performed on that user's server. WebDAV uses the device to download, process and return a file, with safety checks and backup/restore. SMB and Emby do not expose the same original-file rotation action. The user explicitly confirms source-file changes. Batch selection stays in the original media grid, and Tasks shows queue progress.
+
+Source credentials are stored in the system Keychain. Media is fetched directly from the user's sources; it is not uploaded to a Glide-operated media server. Diagnostics can be previewed before explicit sharing.
+
+Please review the submitted main app with bundle ID com.songpeng.glide. The independent development preview bundle com.songpeng.glide.v2preview is not the App Store submission.

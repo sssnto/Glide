@@ -20,6 +20,7 @@ four_k_lock = threading.Lock()
 four_k_transport = os.environ.get('GLIDE_4K_TRANSPORT_FIXTURE') == '1'
 transport_menu_fixture = os.environ.get('GLIDE_TRANSPORT_MENU_FIXTURE') == '1'
 design_fixture = os.environ.get('GLIDE_DESIGN_FIXTURE') == '1'
+workspace_fixture = os.environ.get('GLIDE_WORKSPACE_FIXTURE') == '1'
 subtitle_switch_fixture = os.environ.get('GLIDE_SUBTITLE_SWITCH_FIXTURE') == '1'
 if four_k_transport:
     assert four_k_file, 'Transport fixture requires the authored 4K MP4'
@@ -226,6 +227,20 @@ class Handler(BaseHTTPRequestHandler):
         path = urlsplit(self.path).path
         if path == '/debug/metrics': return self.send(200, json.dumps(metrics).encode())
         metrics[path] = metrics.get(path,0)+1
+        if workspace_fixture and path.startswith(prefix+'/GlideToolkit/'):
+            if not self.jelly_auth(): return self.send(401)
+            if path.endswith('/Capabilities'):
+                return self.send(200,json.dumps(dict(protocolVersion=1,pluginVersion='1.1.0',available=True)).encode())
+            batches=[]
+            for number,state in [(1,'running'),(2,'finished')]:
+                batch=dict(batchId=f'00000000-0000-0000-0000-00000000000{number}',requestId=f'10000000-0000-0000-0000-00000000000{number}',quarterTurns=1,state=state,total=5,completed=2,failed=0 if number==1 else 1,remaining=3 if number==1 else 0,cancelled=0 if number==1 else 1,needsVerification=0 if number==1 else 1,updatedAt='2026-11-11T06:00:00Z',current=None,items=[])
+                batches.append(batch)
+            if path.endswith('/Batches'): return self.send(200,json.dumps(batches).encode())
+            if '/Batches/' in path:
+                found=next((b for b in batches if b['batchId']==path.rsplit('/',1)[-1]),None)
+                return self.send(200,json.dumps(found).encode()) if found else self.send(404)
+            if path.endswith('/RotationStates'): return self.send(200,b'[]')
+            return self.send(404)
         if four_k_transport and path == prefix+'/streams/fourk.m3u8':
             query = parse_qs(urlsplit(self.path).query)
             assert query.get('VideoCodec') == ['copy'], 'Native HLS must explicitly request video copy'

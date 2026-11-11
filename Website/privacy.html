@@ -8,23 +8,24 @@
   <meta name="description" content="Glide 是 iPhone 与 iPad 上的私人媒体播放器。本政策说明应用与本网站如何处理数据。不同版本提供的功能可能不同，实际可用范围以应用版本为准。">
   <link rel="canonical" href="https://glide.sssnto.cn/privacy.html">
   <link rel="icon" href="assets/app-icon.png">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=aff1bde9d652">
 </head>
 <body>
   <a class="skip-link" href="#main">跳到主要内容</a>
   <header class="site-header"><nav class="nav wrap" aria-label="主导航">
     <a class="brand" href="./" aria-label="Glide 首页"><img src="assets/app-icon.png" width="32" height="32" alt=""><span>Glide</span></a>
     <div class="nav-links"><a href="index.html#discover">探索功能</a><a href="index.html#sources">媒体来源</a><a href="updates.html">版本动态</a><a href="support.html">支持</a></div>
-    <a class="button button-small" href="https://apps.apple.com/cn/app/glide/id6814679647">获取 Glide <span aria-hidden="true">↗</span></a>
+    <a class="button button-small" href="https://apps.apple.com/app/id6814679647">获取 Glide <span aria-hidden="true">↗</span></a>
   </nav></header>
   <main id="main" class="wrap">
-    <div class="reading-header"><p class="eyebrow">你的媒体，保持私人</p><h1>隐私政策</h1><p>Glide 是 iPhone 与 iPad 上的私人媒体播放器。本政策说明应用与本网站如何处理数据。不同版本提供的功能可能不同，实际可用范围以应用版本为准。</p><p class="updated">更新于 2026 年 10 月 23 日</p></div>
-    <div class="reading-layout"><nav class="reading-toc" aria-label="本页目录"><strong>本页内容</strong><a href="#connections">连接与媒体</a><a href="#storage">本机存储</a><a href="#files">文件与目录授权</a><a href="#progress">服务器同步</a><a href="#diagnostics">诊断与反馈</a><a href="#website">网站与第三方</a><a href="#choices">你的选择</a></nav><article class="reading-body">
+    <div class="reading-header"><p class="eyebrow">你的媒体，保持私人</p><h1>隐私政策</h1><p>Glide 是 iPhone 与 iPad 上的私人媒体播放器。本政策说明应用与本网站如何处理数据。不同版本提供的功能可能不同，实际可用范围以应用版本为准。</p><p class="updated">更新于 2026 年 11 月 11 日</p></div>
+    <div class="reading-layout"><nav class="reading-toc" aria-label="本页目录"><strong>本页内容</strong><a href="#connections">连接与媒体</a><a href="#storage">本机存储</a><a href="#files">文件与目录授权</a><a href="#rotation">方向处理</a><a href="#progress">服务器同步</a><a href="#diagnostics">诊断与反馈</a><a href="#website">网站与第三方</a><a href="#choices">你的选择</a></nav><article class="reading-body">
 
 <div class="reading-callout"><p><strong>媒体直接来自你选择的来源。</strong>Glide 不运营你的媒体服务器，不把原视频上传到 Glide 的服务器，当前应用未集成第三方广告或行为分析 SDK。</p></div>
 <section id="connections"><h2>连接与媒体数据</h2><p>应用使用你提供的服务器地址和登录信息，直接向该服务器请求目录、元数据、海报、字幕及播放流。支持 Jellyfin、Emby、SMB、WebDAV 和 HTTP(S)／STRM 链接等来源。服务器及链接的运营者可能按其规则记录请求。</p><p>Glide 不要求创建 Glide 账号。连接第三方媒体服务时，使用的是你在该服务中的账号或访问权限。</p></section>
-<section id="storage"><h2>设备上的存储</h2><p>登录令牌、密码及保存链接的敏感连接信息使用 iOS 钥匙串保存。媒体来源资料、目录偏好、观看记录、收藏、频道、时刻与播放设置按功能保存在设备内。海报缓存、内容地图缩略图、主动下载的离线视频及导入的字幕或字体保存在应用沙盒。</p><p>你可以在应用中清理缓存、管理下载、删除本机记录或移除来源。卸载应用通常会移除其沙盒数据，钥匙串数据的保留与清理由 iOS 行为和应用对应操作共同决定。当前频道与时刻不提供跨设备同步。</p></section>
-<section id="files"><h2>本地文件与目录授权</h2><p>主动导入的视频、字幕或字体会复制到应用管理的目录。添加本地目录则保存系统授予的访问记录，视频仍留在原位置；你可以移除该目录来源。对授权目录及 NAS 媒体使用只读访问，不提供远端删除或重命名功能。</p><p>通过系统文件选择器访问 iCloud 或其他文件提供方时，文件下载、可用性及该提供方处理的数据由对应服务管理。Glide 不会因此将你的文件上传到 Glide 服务器。</p></section>
+<section id="storage"><h2>设备上的存储</h2><p>登录令牌、密码及保存链接的敏感连接信息使用 iOS 钥匙串保存。媒体来源资料、目录偏好、观看记录、收藏、频道、时刻、片段合集、离线行程、旋转任务引用与播放设置按功能保存在设备内。海报缓存、内容地图缩略图、主动下载的离线视频及导入的字幕或字体保存在应用沙盒。</p><p>你可以在应用中清理缓存、管理下载、删除本机记录或移除来源。卸载应用通常会移除其沙盒数据，钥匙串数据的保留与清理由 iOS 行为和应用对应操作共同决定。当前频道与时刻不提供跨设备同步。</p></section>
+<section id="files"><h2>本地文件与目录授权</h2><p>主动导入的视频、字幕或字体会复制到应用管理的目录。添加本地目录则保存系统授予的访问记录，视频仍留在原位置；你可以移除该目录来源。日常浏览与播放按来源读取文件。你主动使用方向保存时，符合条件的可写 WebDAV 来源会进行临时上传、备份及原文件替换；Jellyfin 则由你安装并授权的配套插件在自己的服务器执行。SMB 不提供方向写回功能。</p><p>通过系统文件选择器访问 iCloud 或其他文件提供方时，文件下载、可用性及该提供方处理的数据由对应服务管理。Glide 不会因此将你的文件上传到 Glide 服务器。</p></section>
+<section id="rotation"><h2>你主动发起的方向处理</h2><p>WebDAV 方向保存会先将原视频下载到设备处理，再回传至你选择的同一来源；临时文件、备份及任务记录由对应功能管理。Jellyfin 方向处理的任务、临时文件和原片备份保存在你自己的服务器，客户端保存用于查询、核对和还原的任务引用。</p><p>这些文件不会上传到 Glide 运营的服务器。原文件替换、还原和批量任务由你在应用中主动确认；移除应用或清理本机缓存不等于删除服务器端备份。请在自己的媒体服务器与 NAS 上管理其保留范围。</p></section>
 <section id="progress"><h2>与媒体服务器的同步</h2><p>使用 Jellyfin 或 Emby 时，播放进度与已看状态可能同步至你登录的媒体服务器。删除本机历史不一定会删除服务器记录，请按应用操作与服务器设置管理。</p><p>NAS 来源可选择是否记住播放进度。关闭本机历史不等于关闭第三方服务器可能保留的请求日志。</p></section>
 <section id="diagnostics"><h2>诊断与主动反馈</h2><p>播放诊断在你主动分享时导出，可先预览。诊断设计上不包含片名、服务器完整地址、密码或令牌。你主动填写的邮件内容将由所选择的邮件服务处理。</p><p>反馈时建议只提供版本、设备、复现步骤和脱敏诊断，不发送密码、令牌、完整公网地址或原视频。开发排查如需使用你保存的私人连接，将单独征得授权。</p></section>
 <section id="website"><h2>本网站与第三方</h2><p>本网站由 GitHub Pages 及域名配置的网络分发服务提供访问。这些服务可能按其自身政策处理 IP 地址、请求时间和浏览器等访问日志。本网站不使用广告、行为分析脚本或分析 Cookie。</p><p>点击 App Store、GitHub 或邮件链接后，后续数据处理遵循对应服务的规则。应用使用 Apple 系统框架及随应用提供的媒体组件；第三方组件许可可在项目声明中查看。</p></section>

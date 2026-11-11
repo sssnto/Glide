@@ -2,6 +2,40 @@ import Foundation
 import Testing
 @testable import GlideCore
 
+struct RecommendationMediaIdentityTests {
+    @Test func episodesIdentifyTheirSeriesInsteadOfUsingOnlyTheEpisodeTitle() {
+        let video = Video(id: "e", title: "重返山脊", subtitle: "j", mediaType: "Episode", seriesTitle: "山野物语", seasonNumber: 2, episodeNumber: 3, productionYear: 2025, genres: ["自然"])
+        let display = RecommendationMediaIdentity(video)
+        #expect(display.title == "山野物语")
+        #expect(display.episode == "第 2 季 · 第 3 集 · 重返山脊")
+        #expect(display.facts == "剧集 · 2025 · 自然")
+    }
+    @Test func genericEpisodeNamesAndSpecialsDoNotRepeatTheEpisodeNumber() {
+        let video = Video(id: "e", title: "第 1 集", subtitle: "", mediaType: "Episode", seriesTitle: "蓝色时分", seasonNumber: 0, episodeNumber: 1)
+        #expect(RecommendationMediaIdentity(video).episode == "特别篇 · 第 1 集")
+    }
+    @Test func missingSeriesNeverInventsAWorkOrTreatsTheSourceNameAsTheSeries() {
+        let video = Video(id: "e", title: "单集标题", subtitle: "j", mediaType: "Episode", seasonNumber: 1, episodeNumber: 2)
+        #expect(RecommendationMediaIdentity(video).title == "单集标题")
+        #expect(RecommendationMediaIdentity(video).episode == "第 1 季 · 第 2 集 · 剧名未提供")
+    }
+    @Test func movieIdentityAndCatalogMetadataSurvivePersistence() throws {
+        let server = MediaServer(name: "j", kind: .jellyfin, address: URL(string: "https://example.com")!, username: "fixture")
+        let item = CatalogItem(Id: "film", Name: "海岸", Type: "Movie", ProductionYear: 2025, Genres: [" 自然 ", "自然", "纪录", "旅行"])
+        let video = try JSONDecoder().decode(Video.self, from: JSONEncoder().encode(item.video(server: server)))
+        let display = RecommendationMediaIdentity(video)
+        #expect(display.title == "海岸" && display.episode == nil)
+        #expect(display.facts == "电影 · 2025 · 自然 / 纪录")
+        #expect(DirectoryQuery.playback(userID: "u", parentID: "library", start: 200)["Fields"]?.contains("Genres") == true)
+    }
+    @Test func oldVideosDecodeAndAbsentFactsStayAbsent() throws {
+        let old = try JSONDecoder().decode(Video.self, from: Data(#"{"id":"old","title":"本地视频","subtitle":"","duration":12,"resume":0}"#.utf8))
+        #expect(old.productionYear == nil && old.genres == nil)
+        #expect(RecommendationMediaIdentity(old).title == "本地视频")
+        #expect(RecommendationMediaIdentity(old).facts == nil)
+    }
+}
+
 struct ViewingDiscoveryTests {
     private let source = UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
     private func video(_ id: String, duration: Double = 1200, type: String = "Movie", series: String? = nil, season: Int? = nil, episode: Int? = nil, resume: Double = 0) -> Video {

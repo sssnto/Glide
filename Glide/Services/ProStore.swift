@@ -28,9 +28,14 @@ final class ProStore {
             for await result in Transaction.updates {
                 guard let self else { return }
                 if case .verified(let transaction) = result {
+                    // Other StoreKit products belong to their own transaction handlers.
+                    guard Self.isProTransaction(productID: transaction.productID,
+                                                isNonConsumable: transaction.productType == .nonConsumable) else { continue }
                     await self.refreshEntitlement()
                     await transaction.finish()
-                } else {
+                } else if case .unverified(let transaction, _) = result,
+                          Self.isProTransaction(productID: transaction.productID,
+                                                isNonConsumable: transaction.productType == .nonConsumable) {
                     self.message = "购买凭证未通过系统验证，权益尚未启用。"
                 }
             }
@@ -40,27 +45,35 @@ final class ProStore {
 
     var canUsePaidFeatures: Bool { !Self.paidFeaturesEnabled || status == .owned }
 
+    static func isProTransaction(productID: String, isNonConsumable: Bool) -> Bool {
+        productID == Self.productID && isNonConsumable
+    }
+
+    static func idleStatus(owned: Bool, productAvailable: Bool) -> Status {
+        owned ? .owned : (productAvailable ? .available : .unavailable)
+    }
+
     func load() async {
-        await refreshEntitlement()
+        message = nil
         do {
             product = try await Product.products(for: [Self.productID]).first { $0.id == Self.productID && $0.type == .nonConsumable }
-            if product == nil && status != .owned { status = .unavailable }
         } catch {
-            if status != .owned { status = .unavailable }
+            product = nil
             message = "暂时无法从 App Store 获取购买项目，请稍后重试。"
         }
+        await refreshEntitlement()
     }
 
     func refreshEntitlement() async {
         var owned = false
         for await result in Transaction.currentEntitlements {
             guard case .verified(let transaction) = result,
-                  transaction.productID == Self.productID,
-                  transaction.productType == .nonConsumable,
+                  Self.isProTransaction(productID: transaction.productID,
+                                        isNonConsumable: transaction.productType == .nonConsumable),
                   transaction.revocationDate == nil else { continue }
             owned = true
         }
-        status = owned ? .owned : (product == nil ? .loading : .available)
+        status = Self.idleStatus(owned: owned, productAvailable: product != nil)
     }
 
     func purchase() async {
@@ -72,6 +85,12 @@ final class ProStore {
             case .success(let result):
                 switch result {
                 case .verified(let transaction):
+                    guard Self.isProTransaction(productID: transaction.productID,
+                                                isNonConsumable: transaction.productType == .nonConsumable) else {
+                        status = .available
+                        message = "购买项目与 Glide Pro 不匹配，未启用权益。"
+                        return
+                    }
                     await refreshEntitlement()
                     await transaction.finish()
                 case .unverified:

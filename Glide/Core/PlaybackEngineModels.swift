@@ -2,11 +2,11 @@ import Foundation
 
 enum PlaybackEngineID: String, Codable, Sendable { case avPlayer, vlc }
 
-/// A local preference never selects compatibility for a generic network URL.
-/// SMB must arrive through the separately verified source contract.
+/// Generic URLs stay native. Network compatibility requires a verified source.
 enum PlaybackEngineSelection {
-    static func resolve(preferred: PlaybackEngineID, localFile: Bool, hasHeaders: Bool, smb: Bool = false) -> PlaybackEngineID {
+    static func resolve(preferred: PlaybackEngineID, localFile: Bool, hasHeaders: Bool, smb: Bool = false, webDAV: Bool = false) -> PlaybackEngineID {
         if smb && !hasHeaders { return .vlc }
+        if webDAV && !localFile { return preferred }
         return localFile && !hasHeaders ? preferred : .avPlayer
     }
 }

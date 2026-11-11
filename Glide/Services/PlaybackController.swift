@@ -15,7 +15,10 @@ final class PlaybackController {
     private var engineRevision = 0
     var presentation: PlaybackPresentation { _ = engineRevision; return engine.presentation }
     var engineDescriptor: PlaybackEngineDescriptor { _ = engineRevision; return engine.descriptor }
-    var canSwitchEngine: Bool { resource?.url.isFileURL == true && resource?.headers.isEmpty == true && !pictureInPicture.active }
+    var canSwitchEngine: Bool {
+        (resource?.webDAV == true || (resource?.url.isFileURL == true && resource?.headers.isEmpty == true))
+            && !pictureInPicture.active && !externalPlaybackActive
+    }
     var externalPlaybackActive: Bool { engine.snapshot.externalPlayback }
     var canPreview: Bool { resource?.url.isFileURL == true && engine.descriptor.capabilities.contains(.timelinePreview) }
     var localInspection: LocalMediaInspection?
@@ -77,10 +80,13 @@ final class PlaybackController {
     private var hasRebuffered = false
     private var transportRecovery = OriginalTransportRecovery()
     private var attemptStarted = Date()
+    private var timeAtOpen: Double = 0
     private var sessionStarted = Date()
     private var resourceReadyAt: Date?
     private var learnConversionRoute = false
     private var receivedFrame = false
+    private var webDAVEngineOverride: PlaybackEngineID?
+    private var webDAVCompatibilityAttempted = false
     private var bypassLocalFile = false
     private var pendingStartPosition: Double?
     private var pendingSeekTarget: Double?
@@ -399,9 +405,17 @@ final class PlaybackController {
             recoverOrFail(engine.descriptor.id == .vlc ? failure.localizedDescription : "当前文件无法播放，请检查网络、媒体格式或服务器转码状态。")
         case .inspection(let report):
             localInspection = report; diagnostic.localMedia = report
+            if resource?.webDAV == true, engine.descriptor.id == .avPlayer {
+                if let codec = report.videoCodec {
+                    diagnostic.videoCodec = codec; diagnostic.event("webdav_native_codec_" + codec)
+                }
+                if let count = report.videoTracks { diagnostic.event("webdav_native_video_tracks_" + String(count)) }
+            }
             if let message = report.failureMessage, !supportsTranscoding {
                 if error != nil { error = message }
-                else if !receivedFrame && (report.hasNoVideo || report.playable == false) { recoverOrFail(message, retryable: false) }
+                else if !receivedFrame && (report.hasNoVideo || report.playable == false) {
+                    if !recoverWebDAVCompatibility() { recoverOrFail(message, retryable: false) }
+                }
             }
         case .diagnostic(let event):
             if event == "network_rebuffer_hold" { warmup.cancel() }
@@ -564,8 +578,14 @@ final class PlaybackController {
         guard canSwitchEngine, id != engine.descriptor.id, let video = current, let library else { return }
         let position = pendingSeekTarget ?? pendingStartPosition ?? engine.snapshot.time
         let autoplay = error != nil || wantsPlayback
-        localEngineOverride = id
-        PlaybackPreferences.localEngine = id
+        if resource?.webDAV == true {
+            webDAVEngineOverride = id
+            // An explicit request for system playback should not loop back automatically.
+            webDAVCompatibilityAttempted = true
+        } else {
+            localEngineOverride = id
+            PlaybackPreferences.localEngine = id
+        }
         open(video, library: library, resumeAt: position, autoplay: autoplay, recovering: true, recordsProgress: recordsProgress)
     }
     func tryOriginalTransport(automatic: Bool = false) {
@@ -618,7 +638,13 @@ final class PlaybackController {
             }
         }
     }
+#if DEBUG
+    private(set) var openAttemptCount = 0
+#endif
     func open(_ video: Video, library: LibraryStore, resumeAt: Double? = nil, autoplay: Bool = true, recovering: Bool = false, recordsProgress: Bool = true) {
+#if DEBUG
+        openAttemptCount += 1
+#endif
         let sameVideo = recovering && current?.id == video.id
         let retainedLoop = sameVideo ? loop : nil, retainedStart = sameVideo ? loopStart : nil
         let retainedLoopCount = sameVideo ? loopCount : 0
@@ -629,6 +655,7 @@ final class PlaybackController {
         let recordsProgress = clip == nil && recordsProgress
         self.recordsProgress = recordsProgress
         if !sameVideo {
+            webDAVEngineOverride = nil; webDAVCompatibilityAttempted = false
             catalogSeekRecovery = CatalogSeekRecovery(); forceOriginalForSeek = false; originalReadyForSeekRecovery = false
             bypassLocalFile = false
             transportRecovery = OriginalTransportRecovery()
@@ -672,6 +699,7 @@ final class PlaybackController {
         if clip == nil { skips.prepare(video: video, server: server, preservingSession: sameVideo) }
         let requestedResume = resumeAt ?? (recordsProgress ? library.resumePosition(video) : 0)
         let resume = clip?.resume(requestedResume) ?? (requestedResume.isFinite ? max(0, requestedResume) : 0)
+        timeAtOpen = resume
         clipEnded = false
         if clip != nil || (resumeAt != nil ? resume > 0 : WatchProgress.canResume(position: resume, duration: video.duration)) {
             pendingStartPosition = resume
@@ -854,13 +882,15 @@ final class PlaybackController {
                 diagnostic.preferredTextSubtitle = resource.preferredTextSubtitle
                 diagnostic.directStreamFlag = resource.supportsDirectStream
                 let offlineEngine: PlaybackEngineID? = video.offlineOnly == true && resource.url.pathExtension.lowercased() == "mkv" ? .vlc : nil
-                let selectedEngine = PlaybackEngineSelection.resolve(preferred: localEngineOverride ?? offlineEngine ?? PlaybackPreferences.localEngine,
-                    localFile: resource.url.isFileURL, hasHeaders: !resource.headers.isEmpty, smb: resource.smb != nil)
+                let webDAVEngine: PlaybackEngineID? = resource.webDAV
+                    ? webDAVEngineOverride ?? (WebDAVPlaybackPolicy.prefersCompatibility(resource.url) ? .vlc : .avPlayer) : nil
+                let selectedEngine = PlaybackEngineSelection.resolve(preferred: webDAVEngine ?? localEngineOverride ?? offlineEngine ?? PlaybackPreferences.localEngine,
+                    localFile: resource.url.isFileURL, hasHeaders: !resource.headers.isEmpty, smb: resource.smb != nil, webDAV: resource.webDAV)
                 installEngine(selectedEngine)
                 diagnostic.event("engine_" + engine.descriptor.id.rawValue.lowercased())
                 self.resourceReadyAt = Date()
                 diagnostic.delivery = resource.url.isFileURL ? PlaybackDelivery.local.title : resource.delivery.title
-                diagnostic.videoCodec = PlaybackDiagnostic.token(resource.videoStream?.Codec)
+                diagnostic.videoCodec = PlaybackDiagnostic.token(resource.videoStream?.Codec) ?? (resource.webDAV ? diagnostic.videoCodec : nil)
                 diagnostic.sourceBitrate = resource.sourceBitrate ?? resource.videoStream?.BitRate
                 let frameRate = resource.videoStream?.AverageFrameRate ?? resource.videoStream?.RealFrameRate
                 diagnostic.sourceFrameRate = frameRate.flatMap { $0.isFinite && $0 > 0 ? $0 : nil }
@@ -905,6 +935,7 @@ final class PlaybackController {
     }
     private func recoverOrFail(_ message: String, stalled: Bool = false, videoFailed: Bool = false, retryable: Bool = true) {
         guard error == nil, let video = current, let library else { return }
+        if retryable, !receivedFrame, recoverWebDAVCompatibility() { return }
         if transportRecovery.returnToDirectIfPending() {
             diagnostic.originalTransportFailure = diagnostic.errorChain
             diagnostic.originalTransportOutcome = "returned_to_direct"
@@ -944,6 +975,21 @@ final class PlaybackController {
             error = bypassLocalFile ? "此离线文件无法由系统直接播放。请连接 媒体服务器 服务器后重试兼容播放。" : (localInspection?.failureMessage ?? message)
             state("播放失败"); diagnostic.event("failed"); Self.lastDiagnostic = diagnostic
         }
+    }
+    @discardableResult private func recoverWebDAVCompatibility() -> Bool {
+        guard let resource, let video = current, let library,
+              WebDAVPlaybackPolicy.canRecover(webDAV: resource.webDAV, engine: engine.descriptor.id,
+                  attempted: webDAVCompatibilityAttempted, external: engine.snapshot.externalPlayback),
+              !pictureInPicture.active else { return false }
+        webDAVCompatibilityAttempted = true; webDAVEngineOverride = .vlc
+        diagnostic.attemptSeconds.append(Date().timeIntervalSince(attemptStarted))
+        diagnostic.recoveryCount += 1; diagnostic.event("webdav_recovery_vlc")
+        // Before a first frame the audible clock can already be seconds ahead.
+        // Retry the requested visible position rather than skipping unseen content.
+        let position = pendingSeekTarget ?? pendingStartPosition ?? timeAtOpen
+        playbackNotice = "正在切换兼容播放…"
+        open(video, library: library, resumeAt: position, autoplay: wantsPlayback, recovering: true, recordsProgress: recordsProgress)
+        return true
     }
     func play() {
         guard error == nil else { return }

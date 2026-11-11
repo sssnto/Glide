@@ -157,6 +157,7 @@ final class MediaClient {
     private struct Item: Codable {
             var Id: String; var Name: String; var ProductionYear: Int?; var RunTimeTicks: Int64?; var SeriesName: String?; var SeriesId: String?; var IndexNumber: Int?; var ParentIndexNumber: Int?; var DateCreated: String?
             var IsFolder: Bool?; var MediaType: String?; var `Type`: String?; var CollectionType: String?; var ImageTags: [String: String]?
+            var Genres: [String]?
             var UserData: Progress?
             struct Progress: Codable { var PlaybackPositionTicks: Int64?; var Played: Bool? }
         }
@@ -190,7 +191,7 @@ final class MediaClient {
         return LibraryPage(folders: folders, videos: videos, total: result.TotalRecordCount, nextIndex: start + result.Items.count)
     }
     private func video(_ item: Item, server: MediaServer) -> Video {
-        Video(id: server.id.uuidString + item.Id, title: item.Name, subtitle: [item.SeriesName, item.ProductionYear.map(String.init), server.name].compactMap { $0 }.joined(separator: " · "), sourceID: server.id, remoteID: item.Id, artwork: ServerURL.endpoint(server.address, "Items/\(item.Id)/Images/Primary", query: ["maxWidth": "700", "quality": "85"]), duration: Double(item.RunTimeTicks ?? 0) / 10_000_000, resume: Double(item.UserData?.PlaybackPositionTicks ?? 0) / 10_000_000, mediaType: item.Type, addedAt: MediaTimestamp.parse(item.DateCreated), seriesID: item.SeriesId, seriesTitle: item.SeriesName, seasonNumber: item.ParentIndexNumber, episodeNumber: item.IndexNumber, isWatched: item.UserData?.Played)
+        Video(id: server.id.uuidString + item.Id, title: item.Name, subtitle: [item.SeriesName, item.ProductionYear.map(String.init), server.name].compactMap { $0 }.joined(separator: " · "), sourceID: server.id, remoteID: item.Id, artwork: ServerURL.endpoint(server.address, "Items/\(item.Id)/Images/Primary", query: ["maxWidth": "700", "quality": "85"]), duration: Double(item.RunTimeTicks ?? 0) / 10_000_000, resume: Double(item.UserData?.PlaybackPositionTicks ?? 0) / 10_000_000, mediaType: item.Type, addedAt: MediaTimestamp.parse(item.DateCreated), seriesID: item.SeriesId, seriesTitle: item.SeriesName, seasonNumber: item.ParentIndexNumber, episodeNumber: item.IndexNumber, isWatched: item.UserData?.Played, productionYear: item.ProductionYear, genres: item.Genres)
     }
     func playbackVideos(server: MediaServer, parentID: String, start: Int, search: String = "", options: BrowseOptions = BrowseOptions()) async throws -> VideoPage {
         guard let token = Credentials.read(server.id), let user = server.userID else { throw MediaError.message("请重新登录 \(server.kind.title)。") }
@@ -217,6 +218,15 @@ final class MediaClient {
     func basic(server: MediaServer, password: String? = nil) -> String {
         "Basic " + Data("\(server.username):\(password ?? Credentials.read(server.id) ?? "")".utf8).base64EncodedString()
     }
+    /// Ask the catalog to re-read a changed file without replacing scraped metadata or artwork.
+    func refreshAfterFileChange(server: MediaServer, itemID: String) async throws {
+        guard server.kind.isCatalogSource, let token = Credentials.read(server.id) else { throw MediaError.message("请重新登录媒体服务器。") }
+        let url = ServerURL.endpoint(server.address, "Items/\(itemID)/Refresh", query: [
+            "Recursive": "false", "MetadataRefreshMode": "Default", "ImageRefreshMode": "Default",
+            "ReplaceAllMetadata": "false", "ReplaceAllImages": "false"
+        ])
+        _ = try await request(url, method: "POST", headers: ["Authorization": authorization(token, server: server), "Content-Type": "application/json"], body: Data("{}".utf8))
+    }
     func mediaSegments(server: MediaServer, itemID: String) async throws -> [SkipSegment] {
         guard server.kind == .jellyfin, let token = Credentials.read(server.id) else { return [] }
         let data = try await request(ServerURL.endpoint(server.address, "MediaSegments/\(itemID)"), headers: ["Authorization": authorization(token, server: server)])
@@ -232,8 +242,8 @@ final class MediaClient {
         if server.kind == .local { return try LocalMediaStore.playback(video, server: server) }
         if server.kind == .smb { return try await SMBSourceProvider.playback(video: video, server: server) }
         if server.kind == .webDAV {
-            guard let url = video.url else { throw MediaError.message("文件地址无效。") }
-            return PlaybackResource(url: url, headers: ["Authorization": basic(server: server)])
+            guard let url = video.url, WebDAVPlaybackPolicy.accepts(file: url, root: server.address) else { throw MediaError.message("文件地址不在当前 WebDAV 目录内。") }
+            return PlaybackResource(url: url, headers: ["Authorization": basic(server: server)], webDAV: true)
         }
         guard let token = Credentials.read(server.id), let item = video.remoteID, let user = server.userID else { throw MediaError.message("登录已失效，请重新添加服务器。") }
         var tracks = tracks

@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "mode": "public",
+  "version": "1.1.1.0",
+  "targetAbi": "12.2.0.0",
+  "zipBytes": 67025,
+  "zipSHA256": "e94dfdcde896ffe2d47a7596a28f91dadc578f55c0414c10f33420fe5cc9454a",
+  "checks": [
+    "catalog_identity",
+    "abi",
+    "download_url",
+    "jellyfin_md5",
+    "flat_managed_only_archive",
+    "metadata_version",
+    "catalog_updates_enabled",
+    "pe_binary",
+    "internal_sha256"
+  ]
+}

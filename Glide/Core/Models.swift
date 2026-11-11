@@ -54,9 +54,13 @@ struct Video: Identifiable, Equatable, Codable, Sendable {
     var streamLinkID: UUID? = nil
     /// A deliberate local-only session. Never negotiate, prefetch, or recover online.
     var offlineOnly: Bool? = nil
+    var productionYear: Int? = nil
+    var genres: [String]? = nil
+    /// File-source modification date, independent of the library's added date.
+    var fileModifiedAt: Date? = nil
 }
 
-struct DAVEntry: Identifiable, Equatable, Sendable {
+struct DAVEntry: Identifiable, Equatable, Codable, Sendable {
     var url: URL
     var name: String
     var isDirectory: Bool

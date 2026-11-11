@@ -9,6 +9,7 @@ import Observation
     init(file: URL? = nil) {
         var folder = "Moments"
 #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--glide-duo-fixture") { folder = "DuoQA" }
         if ProcessInfo.processInfo.arguments.contains("--glide-map-fixture") {
             folder = "MomentsUIQA"
         }

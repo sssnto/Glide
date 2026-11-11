@@ -35,6 +35,7 @@ actor UnifiedLibraryIndex {
     init(file: URL? = nil) {
         var folder = "UnifiedLibrary"
 #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--glide-duo-fixture") { folder = "DuoQA" }
         if ProcessInfo.processInfo.arguments.contains("--glide-unified-fixture") { folder = "UnifiedLibraryQA" }
 #endif
         store = RecoverableStore(file: file ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent(folder + "/index-v1.json"))

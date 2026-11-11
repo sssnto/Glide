@@ -79,6 +79,7 @@ extension DirectoryQuery {
     /// Playback recursively includes descendants, while ALWAYS retaining the selected parent.
     static func playback(userID: String, parentID: String, start: Int, search: String = "", options: BrowseOptions = BrowseOptions()) -> [String: String] {
         var query = ["UserId": userID, "ParentId": parentID, "Recursive": options.includesDescendants ? "true" : "false", "MediaTypes": "Video", "IsFolder": "false", "SortBy": options.sort.jellyfinField, "SortOrder": options.sort.jellyfinOrder, "StartIndex": String(start), "Limit": "200", "EnableUserData": "true"]
+        query["Fields"] = "Genres"
         let term = search.trimmingCharacters(in: .whitespacesAndNewlines)
         if !term.isEmpty { query["SearchTerm"] = term }
         return query
@@ -105,13 +106,15 @@ enum DirectoryScope {
 }
 
 @MainActor enum ScopedQueueCollector {
-    static func pages(fetch: (Int) async throws -> VideoPage, progress: (Int) -> Void) async throws -> [Video] {
+    static func pages(limit: Int? = nil, fetch: (Int) async throws -> VideoPage, progress: (Int) -> Void) async throws -> [Video] {
         var result: [Video] = [], seen = Set<String>(), cursor = 0
         while true {
             try Task.checkCancellation()
             let page = try await fetch(cursor)
             try Task.checkCancellation()
+            if let limit, page.total > limit { throw JellyfinRotationFailure.code("batch_too_large") }
             result += page.videos.filter { seen.insert($0.id).inserted }
+            if let limit, result.count > limit { throw JellyfinRotationFailure.code("batch_too_large") }
             progress(result.count)
             if page.nextIndex >= page.total { break }
             guard page.nextIndex > cursor else { throw MediaError.message("服务器分页没有继续前进，请刷新目录后重试。") }

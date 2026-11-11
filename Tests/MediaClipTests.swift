@@ -69,4 +69,15 @@ struct MediaClipTests {
         state.collections.removeAll()
         #expect(state.clips.count == 1 && state.clips[0].moment.reference == a.moment.reference)
     }
+    @Test func highlightMixAlternatesVideosAndRespectsDurationWithoutChangingClips() {
+        let a = clip(), b = clip(start: 6, end: 9)
+        var c = clip(); c.moment.video.id = "other"; c.moment.reference.videoID = "other"
+        let input = [a, b, c]
+        let result = HighlightMix.make(clips: input, maxDuration: 6)
+        #expect(result.map(\.id) == [a.id, c.id])
+        #expect(input == [a, b, c])
+        #expect(HighlightMix.make(clips: input, maxDuration: 2).isEmpty)
+        #expect(HighlightMix.make(clips: input, maxDuration: .nan).isEmpty)
+        #expect(HighlightMix.make(clips: [a, a], maxDuration: 10).count == 1)
+    }
 }

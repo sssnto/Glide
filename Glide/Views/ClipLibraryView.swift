@@ -17,6 +17,7 @@ struct ClipLibraryView: View {
     @State private var name = ""
     @State private var editing: MediaClip?
     @State private var playing: ClipPlaybackSelection?
+    @State private var mix: HighlightMixPreview?
     @State private var error: String?
     private var clips: [MediaClip] { store.snapshot.clips.filter { query.isEmpty || $0.moment.name.localizedStandardContains(query) || $0.moment.video.title.localizedStandardContains(query) } }
     var body: some View {
@@ -26,6 +27,13 @@ struct ClipLibraryView: View {
                 ContentUnavailableView("把喜欢的那一段留下来", systemImage: "scissors", description: Text("播放视频时，在播放设置中选择“收藏精彩片段”。也可以从时刻收藏补充终点。"))
             }
             Section("我的合集") {
+                Menu("生成回看串播", systemImage: "sparkles") {
+                    ForEach([60, 180, 300], id: \.self) { seconds in
+                        Button("最长 \(seconds / 60) 分钟") {
+                            mix = HighlightMixPreview(clips: HighlightMix.make(clips: store.snapshot.clips, maxDuration: Double(seconds)))
+                        }
+                    }
+                }.disabled(store.snapshot.clips.isEmpty)
                 ForEach(store.snapshot.collections.filter { query.isEmpty || $0.name.localizedStandardContains(query) }) { collection in
                     NavigationLink { ClipCollectionView(library: library, store: store, collectionID: collection.id) } label: {
                         HStack(spacing: 12) {
@@ -67,10 +75,63 @@ struct ClipLibraryView: View {
                 } }
             }
             .sheet(item: $editing) { ClipEditorView(library: library, store: store, clip: $0) }
+            .sheet(item: $mix) { preview in
+                HighlightMixView(library: library, store: store, preview: preview)
+            }
             .fullScreenCover(item: $playing) { ClipPlaybackView(library: library, store: store, selection: $0) }
             .alert("暂时无法完成", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) { Button("好") { error = nil } } message: { Text(error ?? "") }
     }
     private func perform(_ work: () throws -> Void) { do { try work() } catch { self.error = error.localizedDescription } }
+}
+
+private struct HighlightMixPreview: Identifiable {
+    let id = UUID()
+    let clips: [MediaClip]
+}
+
+private struct HighlightMixView: View {
+    var library: LibraryStore
+    var store: ClipStore
+    var preview: HighlightMixPreview
+    @State private var playing: ClipPlaybackSelection?
+    @State private var error: String?
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    Text("\(preview.clips.count) 个片段 · 合计 \(preview.clips.reduce(0) { $0 + $1.length }.mediaTime)")
+                    Text("按视频交替选择完整片段，不裁剪或修改原片段，也不会导出视频。播放时仍需原视频可用。")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    Button("预览串播") { playing = ClipPlaybackSelection(clips: preview.clips) }.disabled(preview.clips.isEmpty)
+                    Button("保存为新合集") { save() }.disabled(preview.clips.isEmpty)
+                }
+                Section("预览顺序") { ForEach(preview.clips) { ClipRow(clip: $0, library: library) } }
+                if preview.clips.isEmpty { Text("没有符合时长的片段，请选择更长的时长。") }
+            }
+            .navigationTitle("回看串播")
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { dismiss() } } }
+            .fullScreenCover(item: $playing) { ClipPlaybackView(library: library, store: store, selection: $0) }
+            .alert("暂时无法保存", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
+                Button("好") { error = nil }
+            } message: { Text(error ?? "") }
+        }
+    }
+
+    private func save() {
+        do {
+            try store.change { snapshot in
+                guard snapshot.collections.count < 100 else { throw MediaError.message("最多保存 100 个合集。") }
+                let ids = preview.clips.map(\.id)
+                guard Set(ids).isSubset(of: Set(snapshot.clips.map(\.id))) else {
+                    throw MediaError.message("部分片段已删除，请重新生成串播。")
+                }
+                snapshot.collections.insert(ClipCollection(name: "回看串播", clipIDs: ids), at: 0)
+            }
+            dismiss()
+        } catch { self.error = error.localizedDescription }
+    }
 }
 
 struct ClipCollectionView: View {

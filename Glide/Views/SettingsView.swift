@@ -13,10 +13,15 @@ struct SettingsView: View {
     @AppStorage("downloadLimitGB") private var limit = 20
     @AppStorage("seekInterval") private var seek = 10.0
     @AppStorage("controlsDelay") private var delay = 3.0
+    @State private var sourcesOpen = false
     @State private var clearing = false
     @State private var message: String?
     var body: some View {
         Form {
+            Section("媒体") {
+                Button { sourcesOpen=true } label: { Label("媒体来源",systemImage:"externaldrive") }
+                NavigationLink { WorkspaceTasksView(library:library) } label: { Label("任务与离线",systemImage:"arrow.down.circle") }
+            }
             Section("外观") {
                 Picker("显示模式", selection: $appearance) {
                     ForEach(GlideAppearance.allCases) { mode in Text(mode.title).tag(mode.rawValue) }
@@ -42,6 +47,9 @@ struct SettingsView: View {
                 }
                 Toggle("新下载仅使用 Wi-Fi", isOn: $wifi)
                 Picker("离线容量预算", selection: $limit) { ForEach([5, 10, 20, 50, 100], id: \.self) { Text("\($0) GB").tag($0) } }
+                ForEach(library.servers.filter { $0.kind == .jellyfin }) { server in
+                    NavigationLink("旋转任务 · " + server.name) { RotationQueueView(library: library, server: server) }
+                }
                 NavigationLink("管理离线下载") { DownloadsView(library: library) }
                 Button(clearing ? "正在清理…" : "清理海报与媒体缓存") {
                     clearing = true
@@ -62,6 +70,7 @@ struct SettingsView: View {
 
             } header: { Text("帮助与反馈") } footer: { Text("反馈时请附版本、设备和复现步骤。诊断导出前可预览，内容不包含片名、服务器地址或凭据。") }
         }
+            .sheet(isPresented:$sourcesOpen) { SourcesView(library:library) }
             .tint(GlideTheme.accent)
             .font(.body).navigationTitle("设置").navigationBarTitleDisplayMode(.inline).accessibilityIdentifier("settings.screen")
     }

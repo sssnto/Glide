@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-11-11T08:44:10.559399+00:00",
+  "scope": "Public Apple lookup, not App Store Connect submission status",
+  "results": [
+    {
+      "country": "cn",
+      "resultCount": 0,
+      "results": []
+    },
+    {
+      "country": "us",
+      "resultCount": 1,
+      "results": [
+        {
+          "trackName": "Glide 视频播放器",
+          "version": "1.15.0",
+          "currentVersionReleaseDate": "2026-11-07T20:08:03Z",
+          "trackViewUrl": "https://apps.apple.com/us/app/glide-%E8%A7%86%E9%A2%91%E6%92%AD%E6%94%BE%E5%99%A8/id6814679647?uo=4",
+          "minimumOsVersion": "17.0"
+        }
+      ]
+    }
+  ]
+}

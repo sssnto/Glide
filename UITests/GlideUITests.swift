@@ -3,6 +3,397 @@ import UIKit
 import Vision
 
 extension GlideUITests {
+    @MainActor func testWorkspaceV2NavigationAndPlayback() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_V2_FIXTURE"] == "1" else { throw XCTSkip("Isolated 2.0 preview only") }
+        continueAfterFailure=false
+        let app=XCUIApplication()
+        app.launchArguments=["--glide-v2-preview","-appAppearance","system","-controlsDelay","120"]
+        app.launch()
+        let tabs=app.tabBars.firstMatch
+        XCTAssertTrue(tabs.buttons["观看"].waitForExistence(timeout:20),app.debugDescription)
+        for label in ["观看","片库","收藏","任务"] { XCTAssertTrue(tabs.buttons[label].exists) }
+        XCTAssertFalse(tabs.buttons["More"].exists)
+        XCTAssertTrue(app.buttons["workspace.resume.demo-0"].waitForExistence(timeout:10))
+        workspaceShot("01 Watching Light",app)
+        let history=app.buttons["personal.video.demo-0"]
+        workspaceOpen(app.buttons["观看历史"],until:history)
+        XCTAssertTrue(history.waitForExistence(timeout:8))
+        let historyCanvas=app.otherElements["player.canvas"].firstMatch
+        workspaceOpen(history,until:historyCanvas)
+        XCTAssertTrue(historyCanvas.waitForExistence(timeout:12),app.debugDescription)
+        XCTAssertFalse(app.buttons["上一个视频"].exists)
+        XCTAssertFalse(app.buttons["下一个视频"].exists)
+        workspaceShot("10 Single Video from History",app)
+        app.buttons["返回观看历史"].tap()
+        XCTAssertTrue(app.buttons["workspace.settings"].waitForExistence(timeout:8))
+        let video=app.buttons["video.demo-0"]
+        workspaceOpen(tabs.buttons["片库"],until:video)
+        XCTAssertTrue(video.waitForExistence(timeout:10),app.debugDescription)
+        let metrics=XCTAttachment(string:"{\"firstMediaTopPoints\":\(video.frame.minY),\"viewportWidthPoints\":\(app.windows.firstMatch.frame.width),\"viewportHeightPoints\":\(app.windows.firstMatch.frame.height)}")
+        metrics.name="Workspace layout metrics";metrics.lifetime = .keepAlways;add(metrics)
+        XCTAssertLessThan(video.frame.minY,300,"The first media preview should appear without a redundant hero or toolbar stack")
+        XCTAssertGreaterThanOrEqual(app.buttons["demo.play"].frame.height,44)
+        workspaceShot("02 Library Light",app)
+        app.buttons["library.sort"].tap()
+        XCTAssertTrue(app.switches["只看收藏"].exists || app.buttons["只看收藏"].exists,app.debugDescription)
+        app.tap() // Dismiss the menu before navigating.
+        tabs.buttons["收藏"].tap()
+        XCTAssertTrue(app.staticTexts["落日海岸"].waitForExistence(timeout:8),app.debugDescription)
+        workspaceShot("03 Collection Light",app)
+        tabs.buttons["任务"].tap()
+        let offline=app.buttons["workspace.offline"]
+        XCTAssertTrue(offline.waitForExistence(timeout:8),app.debugDescription)
+        workspaceShot("04 Tasks Light",app)
+        offline.tap()
+        XCTAssertTrue(app.navigationBars["随身片库"].waitForExistence(timeout:8))
+        app.navigationBars.buttons.firstMatch.tap()
+        tabs.buttons["观看"].tap()
+        app.buttons["workspace.settings"].tap()
+        XCTAssertTrue(app.navigationBars["设置"].waitForExistence(timeout:8))
+        XCTAssertTrue(app.buttons["媒体来源"].exists)
+        workspaceShot("05 Settings Light",app)
+        app.buttons["完成"].tap()
+        tabs.buttons["片库"].tap()
+        video.tap()
+        let canvas=app.otherElements["player.canvas"].firstMatch
+        XCTAssertTrue(canvas.waitForExistence(timeout:15),app.debugDescription)
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"label CONTAINS %@","已显示画面"),object:canvas)],timeout:20),.completed,app.debugDescription)
+        XCTAssertTrue(app.buttons["player.toggle"].exists)
+        workspaceShot("06 Player Light",app)
+    }
+    @MainActor func testWorkspaceV2DarkAndAccessibility() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_V2_FIXTURE"] == "1" else { throw XCTSkip("Isolated 2.0 preview only") }
+        continueAfterFailure=false
+        let app=XCUIApplication()
+        app.launchArguments=["--glide-v2-preview","-appAppearance","dark"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.buttons["观看"].waitForExistence(timeout:15))
+        XCTAssertTrue(app.buttons["workspace.resume.demo-0"].waitForExistence(timeout:10))
+        workspaceShot("07 Watching Dark",app)
+        workspaceOpen(app.tabBars.buttons["片库"],until:app.buttons["video.demo-0"])
+        XCTAssertTrue(app.buttons["video.demo-0"].waitForExistence(timeout:8))
+        workspaceShot("08 Library Dark",app)
+        app.terminate()
+        app.launchArguments=["--glide-v2-preview","-appAppearance","system","-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.buttons["片库"].waitForExistence(timeout:15))
+        let video=app.buttons["video.demo-0"]
+        workspaceOpen(app.tabBars.buttons["片库"],until:video)
+        XCTAssertTrue(video.waitForExistence(timeout:8),app.debugDescription)
+        XCTAssertGreaterThan(video.frame.width,app.windows.firstMatch.frame.width*0.6,"Accessibility text uses a readable single column")
+        XCTAssertTrue(app.staticTexts["片长 00:12"].firstMatch.exists)
+        workspaceShot("09 Library Accessibility",app)
+    }
+    @MainActor func testWorkspaceV2CatalogAndInlineSelection() async throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_WORKSPACE_FIXTURE"] == "1" else { throw XCTSkip("Authored localhost catalog only") }
+        continueAfterFailure=false
+        let app=XCUIApplication()
+        app.launchArguments=["--glide-jellyfin-fixture","--glide-ui-audit","-appAppearance","system"]
+        app.launch()
+        await openProfessionalMovieCatalog(app)
+        let card=app.buttons["catalog.demo0"]
+        XCTAssertTrue(card.waitForExistence(timeout:15))
+        workspaceShot("13 Movie Library",app)
+        workspaceOpen(app.buttons["rotation.inline.begin"],until:app.buttons["rotation.inline.selectAll"])
+        card.press(forDuration:0.15)
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"value == %@","已选择"),object:card)],timeout:8),.completed,app.debugDescription)
+        XCTAssertTrue(app.buttons["rotation.inline.selectAll"].exists)
+        XCTAssertFalse(app.otherElements["player.canvas"].exists)
+        workspaceShot("14 Original Grid Selection",app)
+        app.buttons["rotation.inline.cancel"].tap()
+        card.tap()
+        let play=app.buttons["detail.play"]
+        XCTAssertTrue(play.waitForExistence(timeout:12));XCTAssertTrue(play.isHittable)
+        XCTAssertGreaterThanOrEqual(play.frame.height,44)
+        workspaceShot("15 Movie Detail",app)
+    }
+    @MainActor func testWorkspaceV2RemoteTaskOverview() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_WORKSPACE_FIXTURE"] == "1" else { throw XCTSkip("Authored localhost queue summaries only") }
+        continueAfterFailure=false
+        let app=XCUIApplication()
+        app.launchArguments=["--glide-jellyfin-fixture","--glide-ui-audit","-appAppearance","system"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.buttons["任务"].waitForExistence(timeout:20))
+        app.tabBars.buttons["任务"].tap()
+        let active=app.buttons["workspace.rotation.00000000-0000-0000-0000-000000000001"]
+        XCTAssertTrue(active.waitForExistence(timeout:20),app.debugDescription)
+        XCTAssertTrue(active.label.contains("已保存 2 · 待处理 3 · 共 5 个"),active.label)
+        workspaceShot("11 Active Rotation Task",app)
+        app.segmentedControls.buttons["需处理"].tap()
+        let attention=app.buttons["workspace.rotation.00000000-0000-0000-0000-000000000002"]
+        XCTAssertTrue(attention.waitForExistence(timeout:8))
+        XCTAssertTrue(attention.label.contains("需核对 1 · 未完成 1"),attention.label)
+        XCTAssertFalse(active.exists)
+        workspaceShot("12 Task Needs Attention",app)
+        attention.tap()
+        XCTAssertTrue(app.navigationBars["旋转任务详情"].waitForExistence(timeout:10))
+        XCTAssertFalse(app.buttons["重试未完成的视频"].exists,"Unverified commits must retain their existing safe recovery flow")
+    }
+    @MainActor private func openV2Settings(_ app:XCUIApplication) {
+        app.tabBars.buttons["观看"].tap()
+        let gear=app.buttons["workspace.settings"]
+        XCTAssertTrue(gear.waitForExistence(timeout:8))
+        let settings=app.navigationBars["设置"]
+        for _ in 0..<3 {
+            gear.tap()
+            if settings.waitForExistence(timeout:5) { return }
+        }
+        XCTFail("Settings must open after tapping its toolbar action")
+    }
+    @MainActor private func openV2Offline(_ app:XCUIApplication) {
+        app.tabBars.buttons["任务"].tap()
+        let entry=app.buttons["workspace.offline"]
+        if entry.waitForExistence(timeout:3) { entry.tap() }
+        XCTAssertTrue(app.navigationBars["随身片库"].waitForExistence(timeout:8))
+    }
+    @MainActor private func workspaceOpen(_ trigger:XCUIElement,until destination:XCUIElement) {
+        for _ in 0..<3 {
+            if destination.exists && destination.isHittable { return }
+            XCTAssertTrue(trigger.waitForExistence(timeout:5))
+            trigger.press(forDuration:0.15)
+            if destination.waitForExistence(timeout:5),destination.isHittable { return }
+        }
+        XCTFail("Navigation must reach its visible destination")
+    }
+    @MainActor private func workspaceShot(_ title:String,_ app:XCUIApplication) {
+        let shot=XCTAttachment(screenshot:app.screenshot());shot.name="Glide 2 "+title;shot.lifetime = .keepAlways;add(shot)
+    }
+}
+
+
+extension GlideUITests {
+    @MainActor func testJellyfinBatchRotationFromLibrary() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_JELLYFIN_ROTATION_FIXTURE"] == "1" else { throw XCTSkip("Authored localhost Jellyfin only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-jellyfin-rotation-fixture", "--glide-jellyfin-batch-fixture", "--glide-ui-audit", "-glideRotationQAReader", "NO"]
+        app.launch()
+        let begin = app.buttons["rotation.inline.begin"]
+        XCTAssertTrue(begin.waitForExistence(timeout:40),app.debugDescription);begin.tap()
+        let card0 = app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@ AND label CONTAINS %@","catalog.","GlideBatchUI0")).firstMatch
+        let card1 = app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@ AND label CONTAINS %@","catalog.","GlideBatchUI1")).firstMatch
+        XCTAssertTrue(card0.waitForExistence(timeout:20),app.debugDescription)
+        XCTAssertTrue(app.buttons["rotation.inline.selectAll"].exists)
+        XCTAssertFalse(app.searchFields["筛选待旋转的视频"].exists)
+        card0.tap();card1.tap()
+        XCTAssertEqual(card0.value as? String,"已选择")
+        XCTAssertEqual(card1.value as? String,"已选择")
+        XCTAssertFalse(app.otherElements["player.canvas"].exists)
+        let submit = app.buttons["rotation.batch.submit"]
+        XCTAssertTrue(submit.isEnabled, app.debugDescription)
+        let before = XCTAttachment(screenshot: app.screenshot()); before.name = "Batch selection"; before.lifetime = .keepAlways; add(before)
+        submit.tap()
+        app.buttons["在服务器旋转并保存"].tap()
+        let finished = app.staticTexts["处理结束"].firstMatch
+        XCTAssertTrue(finished.waitForExistence(timeout: 60), app.debugDescription)
+        XCTAssertTrue(app.staticTexts["已保存 2 · 剩余 0 · 未完成 0"].exists, app.debugDescription)
+        let result = XCTAttachment(screenshot: app.screenshot()); result.name = "Batch completed"; result.lifetime = .keepAlways; add(result)
+        XCTAssertFalse(app.buttons["重试未完成的视频"].exists)
+    }
+    @MainActor func testJellyfinSavedDirectionPreviewInHomeList() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_JELLYFIN_ROTATION_FIXTURE"] == "1" else { throw XCTSkip("Authored localhost Jellyfin only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-jellyfin-rotation-fixture", "--glide-jellyfin-batch-fixture", "--glide-jellyfin-batch-home-fixture", "--glide-ui-audit", "-glideRotationQAReader", "NO"]
+        app.launch()
+        let card = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "video.", "GlideBatchUI0")).firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 40), app.debugDescription)
+        let itemID = String(card.identifier.dropFirst("video.".count))
+        let preview = app.otherElements.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND identifier ENDSWITH %@", "video.preview.", itemID)).firstMatch
+        XCTAssertTrue(preview.waitForExistence(timeout: 10), app.debugDescription)
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == %@", "缩略图已显示"), object: preview)], timeout: 35), .completed, app.debugDescription)
+        XCTAssertTrue(card.label.contains("方向已保存"), app.debugDescription)
+        app.buttons["rotation.inline.begin"].tap()
+        XCTAssertTrue(app.buttons["rotation.batch.submit"].exists)
+        if !card.isHittable { app.swipeUp() }
+        card.tap();XCTAssertEqual(card.value as? String,"已选择")
+        XCTAssertFalse(app.otherElements["player.canvas"].exists)
+        XCTAssertTrue(preview.exists)
+        let proof = XCTAttachment(screenshot: app.screenshot()); proof.name = "Inline home grid selection"; proof.lifetime = .keepAlways; add(proof)
+        app.buttons["rotation.inline.cancelBottom"].tap()
+        XCTAssertFalse(app.buttons["rotation.batch.submit"].exists)
+    }
+    @MainActor func testJellyfinServerRotationSaveAndRestore() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_JELLYFIN_ROTATION_FIXTURE"] == "1" else { throw XCTSkip("Official local Jellyfin 12.2 with authored media only") }
+        continueAfterFailure=false
+        let app=XCUIApplication();app.launchArguments=["--glide-jellyfin-rotation-fixture","--glide-ui-audit","-glideRotationQAReader","NO","-controlsDelay","120"];app.launch()
+        let open=app.buttons["jellyfin.rotation.qa.play"];XCTAssertTrue(open.waitForExistence(timeout:30),app.debugDescription);open.tap()
+        let canvas=app.otherElements["player.canvas"].firstMatch
+        if !canvas.waitForExistence(timeout:3),open.exists { open.tap() }
+        XCTAssertTrue(canvas.waitForExistence(timeout:20))
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"label CONTAINS %@","已显示画面"),object:canvas)],timeout:30),.completed,app.debugDescription)
+        app.buttons["播放设置"].tap();let rotation=app.buttons["player.rotation"];XCTAssertTrue(rotation.waitForExistence(timeout:5));rotation.tap()
+        let right=app.buttons["player.rotation.right"];XCTAssertTrue(right.waitForExistence(timeout:8));right.tap()
+        let save=app.buttons["player.rotation.save"]
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"enabled == true"),object:save)],timeout:20),.completed,app.debugDescription)
+        XCTAssertTrue(save.label.contains("服务器"));save.tap();app.buttons["player.rotation.confirm"].firstMatch.tap()
+        let result=app.staticTexts["player.rotation.result"]
+        XCTAssertTrue(result.waitForExistence(timeout:60),app.debugDescription)
+        XCTAssertTrue(result.label.contains("已保存到服务器原文件"),result.label)
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"label CONTAINS %@","已显示画面"),object:canvas)],timeout:30),.completed,app.debugDescription)
+        let shot=XCTAttachment(screenshot:app.screenshot());shot.name="Jellyfin server-side rotation saved";shot.lifetime = .keepAlways;add(shot)
+        app.buttons["player.rotation.restore"].tap();app.buttons["player.rotation.restore.confirm"].firstMatch.tap()
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"label CONTAINS %@","已在服务器从备份还原原文件"),object:result)],timeout:60),.completed,app.debugDescription)
+    }
+    @MainActor func testJellyfinServerRotationRequiresWriteAuthorization() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_JELLYFIN_ROTATION_FIXTURE"] == "1" else { throw XCTSkip("Official local Jellyfin 12.2 only") }
+        continueAfterFailure=false
+        let app=XCUIApplication();app.launchArguments=["--glide-jellyfin-rotation-fixture","--glide-ui-audit","-glideRotationQAReader","YES","-controlsDelay","120"];app.launch()
+        let open=app.buttons["jellyfin.rotation.qa.play"];XCTAssertTrue(open.waitForExistence(timeout:30));open.tap()
+        let canvas=app.otherElements["player.canvas"].firstMatch
+        if !canvas.waitForExistence(timeout:3),open.exists { open.tap() }
+        XCTAssertTrue(canvas.waitForExistence(timeout:20),app.debugDescription)
+        let settings=app.buttons["播放设置"];XCTAssertTrue(settings.waitForExistence(timeout:30));settings.tap()
+        let rotation=app.buttons["player.rotation"];XCTAssertTrue(rotation.waitForExistence(timeout:20));rotation.tap()
+        let error=app.staticTexts["player.rotation.error"]
+        XCTAssertTrue(error.waitForExistence(timeout:15));XCTAssertTrue(error.label.contains("权限"),error.label)
+        app.buttons["player.rotation.right"].tap();XCTAssertFalse(app.buttons["player.rotation.save"].isEnabled)
+    }
+    @MainActor func testWebDAVVideoThumbnailsAndCache() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_WEBDAV_ARTWORK_FIXTURE"] == "1" else { throw XCTSkip("Authored WebDAV video artwork only") }
+        let app=XCUIApplication();app.launchArguments=["--glide-webdav-artwork-probe","--glide-ui-audit"];app.launch()
+        for index in 0..<3 {
+            let image=app.otherElements["video.preview.dav-art-\(index)"]
+            XCTAssertTrue(image.waitForExistence(timeout:10))
+            XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"value == %@","缩略图已显示"),object:image)],timeout:50),.completed,app.debugDescription)
+        }
+        let button=app.buttons["dav.artwork.verify"]
+        if !button.isHittable { app.swipeUp() };button.tap()
+        let status=app.staticTexts["dav.artwork.status"]
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"label == %@ OR label == %@","验证通过","验证失败"),object:status)],timeout:30),.completed)
+        XCTAssertEqual(status.label,"验证通过",app.debugDescription)
+        app.swipeDown()
+        let shot=XCTAttachment(screenshot:app.screenshot());shot.name="WebDAV native and compatibility video thumbnails";shot.lifetime = .keepAlways;add(shot)
+    }
+    @MainActor func testWebDAVAuthenticatedCompatibilityPlayback() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_WEBDAV_PLAYBACK_FIXTURE"] == "1" else { throw XCTSkip("Authored WebDAV playback fixture only") }
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-webdav-playback-probe", "--glide-ui-audit"]
+        app.launch()
+        let status = app.staticTexts["dav.playback.status"]
+        XCTAssertTrue(status.waitForExistence(timeout: 10))
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label == %@ OR label == %@", "验证通过", "验证失败"), object: status)], timeout: 180), .completed)
+        XCTAssertEqual(status.label, "验证通过", app.debugDescription)
+        let shot = XCTAttachment(screenshot: app.screenshot()); shot.name = "Authenticated WebDAV playback regression"; shot.lifetime = .keepAlways; add(shot)
+    }
+    @MainActor func testWebDAVInlineRotationAndInheritedFolderCovers() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_WEBDAV_PRESENTATION_FIXTURE"]=="1" else { throw XCTSkip("Authored WebDAV presentation fixture only") }
+        continueAfterFailure=false
+        let app=XCUIApplication()
+        app.launchArguments=["--glide-webdav-presentation-fixture","--glide-ui-audit","-controlsDelay","120","-localPlaybackEngine","avPlayer"]
+        app.launch()
+        let play=app.buttons["dav.qa.play"]
+        XCTAssertTrue(play.waitForExistence(timeout:20))
+        for name in ["Direct","Nested"] {
+            let cover=app.otherElements["folder.preview."+name]
+            XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"value == %@","封面已显示"),object:cover)],timeout:45),.completed,app.debugDescription)
+        }
+        let folderShot=XCTAttachment(screenshot:app.screenshot());folderShot.name="WebDAV direct and inherited video covers";folderShot.lifetime = .keepAlways;add(folderShot)
+        play.tap()
+        let canvas=app.otherElements["player.canvas"].firstMatch
+        XCTAssertTrue(canvas.waitForExistence(timeout:20))
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"label CONTAINS %@","已显示画面"),object:canvas)],timeout:20),.completed)
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"label == %@","原画直放"),object:app.staticTexts["player.delivery"])],timeout:20),.completed)
+        let before=canvas.value as? String ?? ""
+        app.buttons["播放设置"].tap()
+        let rotation=app.buttons["player.rotation"]
+        for _ in 0..<5 { if rotation.exists && rotation.isHittable { break };app.swipeUp() }
+        XCTAssertTrue(rotation.exists,app.debugDescription);rotation.tap()
+        XCTAssertTrue(app.buttons["player.rotation.right"].waitForExistence(timeout:8),app.debugDescription)
+        XCTAssertFalse(app.textFields["rotation.connection.address"].exists)
+        XCTAssertFalse(app.buttons["添加 WebDAV 写入目录"].exists)
+        app.buttons["player.rotation.right"].tap()
+        let after=canvas.value as? String ?? ""
+        XCTAssertTrue(after.contains("方向 90°"),after)
+        XCTAssertTrue(app.buttons["player.toggle"].isHittable,"旋转操作区不应遮挡播放按钮")
+        XCTAssertTrue(app.otherElements["player.seekBar"].isHittable,"旋转操作区不应遮挡进度条")
+        XCTAssertTrue(before.contains("opens=1;") && after.contains("opens=1;"),after)
+        func layer(_ text: String) -> String { text.components(separatedBy:"layer=").last?.components(separatedBy:";").first ?? "" }
+        XCTAssertEqual(layer(before),layer(after))
+        let preview=XCTAttachment(screenshot:app.screenshot());preview.name="Same player rotated with fixed controls";preview.lifetime = .keepAlways;add(preview)
+        app.buttons["player.rotation.save"].tap()
+        let confirm=app.buttons["player.rotation.confirm"].firstMatch
+        XCTAssertTrue(confirm.waitForExistence(timeout:5));confirm.tap()
+        let result=app.staticTexts["player.rotation.result"]
+        XCTAssertTrue(result.waitForExistence(timeout:40),app.debugDescription)
+        XCTAssertEqual(result.label,"已保存到原文件，原始备份已保留。")
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"value CONTAINS %@","opens=2;"),object:canvas)],timeout:15),.completed)
+        XCTAssertTrue((canvas.value as? String ?? "").contains("方向 0°"))
+        app.buttons["player.rotation.restore"].tap();app.buttons["player.rotation.restore.confirm"].firstMatch.tap()
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"label == %@","已从备份还原原文件。"),object:result)],timeout:40),.completed,app.debugDescription)
+        let saved=XCTAttachment(screenshot:app.screenshot());saved.name="Inline save and exact backup restore";saved.lifetime = .keepAlways;add(saved)
+    }
+    @MainActor func testWebDAVDirectoryCacheProductionPathsAndProcessRestart() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_DIRECTORY_CACHE_FIXTURE"]=="1" else { throw XCTSkip("Loopback directory-cache fixture only") }
+        continueAfterFailure=false
+        let app=XCUIApplication()
+        app.launchArguments=["--glide-directory-cache-probe","--glide-ui-audit"]
+        app.launch()
+        let result=app.staticTexts["directory.qa.status"]
+        XCTAssertTrue(result.waitForExistence(timeout:10))
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"label == %@ OR label == %@","验证通过","验证失败"),object:result)],timeout:90),.completed)
+        XCTAssertEqual(result.label,"验证通过",app.debugDescription)
+        let first=XCTAttachment(screenshot:app.screenshot());first.name="Directory cache production paths";first.lifetime = .keepAlways;add(first)
+        app.terminate();app.launchArguments=["--glide-directory-cache-probe","--glide-directory-cache-resume","--glide-ui-audit"];app.launch()
+        XCTAssertTrue(result.waitForExistence(timeout:10))
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"label == %@ OR label == %@","验证通过","验证失败"),object:result)],timeout:30),.completed)
+        XCTAssertEqual(result.label,"验证通过",app.debugDescription)
+        let resumed=XCTAttachment(screenshot:app.screenshot());resumed.name="Directory cache survives process restart";resumed.lifetime = .keepAlways;add(resumed)
+    }
+    @MainActor func testRotationValidationBundleOpensWithoutQALaunchFlags() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_ROTATION_FIXTURE"] == "1" else { throw XCTSkip("Independent rotation QA bundle only") }
+        let app=XCUIApplication()
+        app.launchArguments=["--glide-rotation-fixture"]
+        app.launch()
+        XCTAssertTrue(app.navigationBars["修正视频方向"].waitForExistence(timeout:15),app.debugDescription)
+        XCTAssertTrue(app.buttons["添加 WebDAV 写入目录"].exists)
+    }
+    @MainActor func testRotationEditorSaveRestoreAndPreview() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_ROTATION_FIXTURE"] == "1" else { throw XCTSkip("Loopback authored-media rotation fixture only") }
+        continueAfterFailure=false
+        let app=XCUIApplication()
+        app.launchArguments=["--glide-rotation-qa","--glide-rotation-fixture","--glide-ui-audit","-glideRotationQAAddress","http://127.0.0.1:8828/lock-ui-"+UUID().uuidString+"/"]
+        app.launch()
+        let addConnection=app.buttons["添加 WebDAV 写入目录"]
+        XCTAssertTrue(addConnection.waitForExistence(timeout:15));addConnection.tap()
+        let user=app.textFields["rotation.connection.username"]
+        XCTAssertTrue(user.waitForExistence(timeout:5));user.tap();user.typeText("glide")
+        let password=app.secureTextFields["rotation.connection.password"]
+        password.tap();password.typeText("rotation-fixture")
+        app.buttons["连接并保存"].tap()
+        let original=app.buttons["original.mp4"]
+        for _ in 0..<5 { if original.exists && original.isHittable { break }; app.swipeUp() }
+        XCTAssertTrue(original.waitForExistence(timeout:15));original.tap()
+        let turn=app.buttons["rotation.right"]
+        for _ in 0..<6 { if turn.exists && turn.isHittable { break }; app.swipeUp() }
+        XCTAssertTrue(turn.waitForExistence(timeout:15),app.debugDescription);turn.tap()
+        let confirm=app.switches["rotation.confirmFile"]
+        if !confirm.isHittable { app.swipeUp() }
+        confirm.coordinate(withNormalizedOffset:CGVector(dx:0.9,dy:0.5)).tap()
+        let save=app.buttons["rotation.save"]
+        if !save.isHittable { app.swipeUp() }
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"enabled == true"),object:save)],timeout:20),.completed)
+        let preview=XCTAttachment(screenshot:app.screenshot());preview.name="Rotation preview with fixed controls";preview.lifetime = .keepAlways;add(preview)
+        save.tap()
+        let publish=app.buttons["rotation.publish.confirm"].firstMatch
+        XCTAssertTrue(publish.waitForExistence(timeout:5),app.debugDescription);publish.tap()
+        let success=app.staticTexts["已替换所选目录中的原文件，原始备份已保留。"]
+        XCTAssertTrue(success.waitForExistence(timeout:30),app.debugDescription)
+        let restore=app.buttons["从备份还原原文件"].firstMatch
+        for _ in 0..<7 { if restore.exists && restore.isHittable { break };app.swipeUp() }
+        XCTAssertTrue(restore.waitForExistence(timeout:10));restore.tap();app.buttons["rotation.restore.confirm"].firstMatch.tap()
+        XCTAssertTrue(app.staticTexts["原文件已从备份还原；此次还原前的文件也已备份。"].waitForExistence(timeout:30),app.debugDescription)
+        let qa=app.buttons["rotation.qa.run"]
+        for _ in 0..<8 { if qa.exists && qa.isHittable { break };app.swipeDown() }
+        XCTAssertTrue(qa.isHittable);qa.tap()
+        let result=app.staticTexts["rotation.qa.result"]
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate(format:"label == %@ OR label == %@","验证通过","验证失败"),object:result)],timeout:60),.completed)
+        XCTAssertEqual(result.label,"验证通过",app.debugDescription)
+        let shot=XCTAttachment(screenshot:app.screenshot());shot.name="Rotation backup restore and native playback contract";shot.lifetime = .keepAlways;add(shot)
+    }
+}
+
+extension GlideUITests {
     @MainActor private func unifiedApp(probe: Bool = false) throws -> XCUIApplication {
         guard ProcessInfo.processInfo.environment["GLIDE_UNIFIED_FIXTURE"] == "1" else { throw XCTSkip("Original unified-library fixture only") }
         continueAfterFailure = false
@@ -145,6 +536,7 @@ extension GlideUITests {
     }
     @MainActor func testDiscoveryChannelCreateAutomaticAdvanceEditAndRestart() throws {
         let app = try discoveryApp()
+        app.buttons["workspace.channels"].tap()
         app.buttons["discovery.channel.create"].tap()
         let name = app.textFields["discovery.channel.name"]
         XCTAssertTrue(name.waitForExistence(timeout: 5)); name.tap()
@@ -251,19 +643,164 @@ extension GlideUITests {
 }
 
 final class GlideUITests: XCTestCase {
+    @MainActor func testVideoZoomGeometryContract() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_ZOOM_FIXTURE"] == "1" else { throw XCTSkip("Isolated zoom regression only") }
+        continueAfterFailure = false
+        let app = XCUIApplication(); app.launchArguments = ["--glide-zoom-probe"]; app.launch()
+        XCTAssertTrue(app.staticTexts["验证通过"].waitForExistence(timeout: 20), app.debugDescription)
+    }
+    @MainActor func testPinchNative4KContinuity() throws { try checkPinchContinuity(engine: "avPlayer") }
+    @MainActor func testPinchCompatibility4KContinuity() throws { try checkPinchContinuity(engine: "vlc") }
+    @MainActor private func checkPinchContinuity(engine: String) throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_ZOOM_FIXTURE"] == "1" else { throw XCTSkip("Authored 4K zoom fixture only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-duo-fixture", "--glide-zoom-4k", "--glide-ui-audit", "-localPlaybackEngine", engine, "-controlsDelay", "120"]
+        app.launch()
+        let play = app.buttons["duo.play"]
+        XCTAssertTrue(play.waitForExistence(timeout: 30), app.debugDescription); play.tap()
+        let canvas = app.otherElements["player.canvas"].firstMatch
+        clipWaitLabel(canvas, contains: "已显示画面", seconds: 40)
+        func context() -> [String: String] {
+            Dictionary((canvas.value as? String ?? "").split(separator: ";").compactMap { part in
+                let pair = part.split(separator: "=", maxSplits: 1).map(String.init)
+                return pair.count == 2 ? (pair[0], pair[1]) : nil
+            }, uniquingKeysWith: { _, last in last })
+        }
+        let before = context()
+        XCTAssertEqual(before["opens"], "1"); XCTAssertEqual(before["requested"], "true")
+        // Remove transport controls from the two-finger touch path.
+        canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)).tap()
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: app.buttons["播放设置"])], timeout: 5), .completed)
+        for _ in 0..<3 {
+            canvas.pinch(withScale: 2, velocity: 1.5)
+            let zoom = Double((canvas.value as? String ?? "").split(separator: " ").dropFirst().first ?? "1") ?? 1
+            XCTAssertGreaterThan(zoom, 1.1)
+            canvas.pinch(withScale: 0.4, velocity: -1.5)
+            XCTAssertTrue((canvas.value as? String ?? "").hasPrefix("缩放 1.0 倍"))
+        }
+        let after = context()
+        for key in ["session", "layer", "opens", "requested"] { XCTAssertEqual(before[key], after[key], key) }
+        XCTAssertGreaterThan(Double(after["time"] ?? "0") ?? 0, Double(before["time"] ?? "0") ?? 0)
+        XCTAssertFalse(app.staticTexts["player.error"].exists)
+        clipShot("4K Pinch Continuity " + engine, app: app)
+    }
+    @MainActor func testRecommendationWorkIdentity() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_DUO_FIXTURE"] == "1" || ProcessInfo.processInfo.environment["GLIDE_DISCOVERY_FIXTURE"] == "1" else { throw XCTSkip("Original recommendation fixture only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-discovery-fixture", "--glide-discovery-reset", "--glide-recommendation-fixture", "-selectedServer", "00000000-0000-0000-0000-000000000000"]
+        app.launch()
+        XCTAssertTrue(app.buttons["discovery.time.open"].waitForExistence(timeout: 20)); app.buttons["discovery.time.open"].tap()
+        let picks = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "discovery.pick."))
+        XCTAssertTrue(picks.firstMatch.waitForExistence(timeout: 20))
+        app.swipeUp()
+        let combined = picks.allElementsBoundByIndex.map(\.label).joined(separator: "\n")
+        for value in ["原创山野物语", "第 2 季", "第 3 集", "重返山脊", "落日海岸", "电影", "2025", "原创蓝色时分"] { XCTAssertTrue(combined.contains(value), combined) }
+        clipShot("Recommendation Work Identity", app: app)
+    }
+    @MainActor private func waitForDuoPose(_ stage: String, app: XCUIApplication, element: XCUIElement) {
+        guard ProcessInfo.processInfo.environment["GLIDE_DUO_POSE_ACCEPTANCE"] == "1" else { return }
+        let original = element.frame.size
+        print("DUO_STAGE_\(stage): change the official simulator pose")
+        let changed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            let current = element.frame.size
+            return current.width > 0 && current.height > 0 && (abs(current.width - original.width) > 16 || abs(current.height - original.height) > 16)
+        }, object: app)
+        XCTAssertEqual(XCTWaiter.wait(for: [changed], timeout: 120), .completed)
+    }
+    @MainActor func testDuoControlsAndEditingDraft() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_DUO_FIXTURE"] == "1" else { throw XCTSkip("Isolated original Duo material only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-duo-fixture", "--glide-ui-audit", "-controlsDelay", "120", "-localPlaybackEngine", "avPlayer"]
+        app.launch()
+        let play = app.buttons["duo.play"]
+        XCTAssertTrue(play.waitForExistence(timeout: 30))
+        let search = app.textFields["library.search"]
+        XCTAssertTrue(search.waitForExistence(timeout: 15)); search.tap()
+        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5)); search.typeText("mp4")
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == %@", "mp4"), object: search)], timeout: 5), .completed)
+        XCTAssertEqual(search.value as? String, "mp4")
+        search.typeText("\n")
+        XCTAssertEqual(search.value as? String, "mp4")
+        clipShot("Duo Library Search", app: app)
+        play.tap()
+        let canvas = app.otherElements["player.canvas"].firstMatch
+        clipWaitLabel(canvas, contains: "已显示画面", seconds: 30)
+        XCTAssertTrue((canvas.value as? String ?? "").contains("opens=1;"))
+        app.buttons["暂停"].tap()
+        let speedMenu = app.descendants(matching: .any)["player.quick.speed"].firstMatch
+        XCTAssertTrue(speedMenu.waitForExistence(timeout: 5))
+        speedMenu.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        let faster = app.buttons["1.5×"]
+        if !faster.waitForExistence(timeout: 3) { speedMenu.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        XCTAssertTrue(faster.waitForExistence(timeout: 5)); faster.tap()
+        let audioMenu = app.descendants(matching: .any)["player.quick.audio"].firstMatch
+        audioMenu.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        let audioItems = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", "player.audio.audio-"))
+        if !audioItems.firstMatch.waitForExistence(timeout: 5) { audioMenu.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        XCTAssertTrue(audioItems.firstMatch.waitForExistence(timeout: 10))
+        let audio = audioItems.allElementsBoundByIndex
+        XCTAssertGreaterThanOrEqual(audio.count, 2); audio.last!.tap()
+        XCTAssertTrue((canvas.value as? String ?? "").contains("rate=1.5;"))
+        XCTAssertTrue((canvas.value as? String ?? "").contains("requested=false;"))
+        clipShot("Duo Playback Controls", app: app)
+        let settingsButton = app.buttons["播放设置"]
+        if !settingsButton.waitForExistence(timeout: 5) { canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        XCTAssertTrue(settingsButton.waitForExistence(timeout: 5))
+        settingsButton.tap(); app.buttons["player.clip.create"].tap()
+        let name = app.textFields["clip.name"]
+        XCTAssertTrue(name.waitForExistence(timeout: 15)); name.tap(); name.typeText("Duo draft")
+        waitForDuoPose("DRAFT", app: app, element: name)
+        XCTAssertEqual(name.value as? String, "Duo draft")
+        clipShot("Duo Clip Draft and Keyboard", app: app)
+    }
+    @MainActor func testDuoPausedPlaybackPose() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_DUO_FIXTURE"] == "1" else { throw XCTSkip("Original Duo material only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-duo-fixture", "--glide-ui-audit", "--glide-duo-continuity", "--glide-duo-paused", "-controlsDelay", "120", "-localPlaybackEngine", "avPlayer"]
+        app.launch()
+        let canvas = app.otherElements["player.canvas"].firstMatch
+        clipWaitLabel(canvas, contains: "已显示画面", seconds: 30)
+        let beforePose = canvas.value as? String ?? ""
+        XCTAssertTrue(beforePose.contains("requested=false;")); XCTAssertTrue(beforePose.contains("rate=1.5;"))
+        waitForDuoPose("PLAYBACK", app: app, element: canvas)
+        let afterPose = canvas.value as? String ?? ""
+        for key in ["session", "layer", "opens", "rate", "audio", "requested"] {
+            let before = beforePose.components(separatedBy: ";").first { $0.hasPrefix(key + "=") }
+            let after = afterPose.components(separatedBy: ";").first { $0.hasPrefix(key + "=") }
+            XCTAssertNotNil(before); XCTAssertEqual(before, after)
+        }
+        clipShot("Duo Paused Playback Continuity", app: app)
+    }
+    @MainActor func testDuoSearchPose() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_DUO_FIXTURE"] == "1" else { throw XCTSkip("Original Duo material only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-duo-fixture", "--glide-ui-audit"]
+        app.launch()
+        let search = app.textFields["library.search"]
+        XCTAssertTrue(search.waitForExistence(timeout: 30)); search.tap(); search.typeText("mp4\n")
+        waitForDuoPose("SEARCH", app: app, element: search)
+        XCTAssertEqual(search.value as? String, "mp4")
+        XCTAssertTrue(app.staticTexts["videos.heading"].firstMatch.exists)
+        clipShot("Duo Search Continuity", app: app)
+    }
     @MainActor func testNativeAppearanceAndLibraryNavigation() throws {
         guard ProcessInfo.processInfo.environment["GLIDE_NATIVE_UI_FIXTURE"] == "1" else { throw XCTSkip("Isolated simulator appearance review only") }
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["--glide-link-fixture"]
         app.launch()
-        XCTAssertTrue(app.tabBars.buttons["我的"].waitForExistence(timeout: 15))
+        XCTAssertTrue(app.tabBars.buttons["收藏"].waitForExistence(timeout: 15))
         openLinks(in: app)
         app.buttons["完成"].tap()
         revealLibraryAction("pins.open", in: app); app.buttons["pins.open"].tap()
         XCTAssertTrue(app.navigationBars["固定目录"].waitForExistence(timeout: 5))
         app.buttons["完成"].tap()
-        app.tabBars.buttons["设置"].tap()
+        openV2Settings(app)
         let appearance = app.descendants(matching: .any)["settings.appearance"].firstMatch
         XCTAssertTrue(appearance.waitForExistence(timeout: 5))
         for mode in ["深色", "浅色", "跟随系统"] {
@@ -273,7 +810,7 @@ final class GlideUITests: XCTestCase {
             XCTAssertTrue(appearance.label.contains(mode) || (appearance.value as? String ?? "").contains(mode))
             let shot = XCTAttachment(screenshot: app.screenshot()); shot.name = "Native Appearance " + mode; shot.lifetime = .keepAlways; add(shot)
         }
-        app.tabBars.buttons["离线"].tap()
+        app.buttons["完成"].tap();openV2Offline(app)
         XCTAssertTrue(app.staticTexts["downloads.storage"].waitForExistence(timeout: 5))
         app.tabBars.buttons["片库"].tap()
         XCTAssertTrue(app.buttons["library.more"].waitForExistence(timeout: 5))
@@ -290,13 +827,12 @@ final class GlideUITests: XCTestCase {
         }
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 25))
         capture("01-Library")
-        let settings = app.tabBars.buttons["设置"]
-        XCTAssertTrue(settings.exists); settings.tap()
+        openV2Settings(app)
         XCTAssertTrue(app.descendants(matching: .any)["settings.screen"].firstMatch.waitForExistence(timeout: 8)); capture("02-Settings")
         app.swipeUp(); capture("03-Settings-Footer")
-        app.tabBars.buttons["离线"].tap(); capture("04-Downloads")
-        let personalTab = app.tabBars.buttons.element(boundBy: 1)
-        personalTab.tap(); capture("05-Continue")
+        app.buttons["完成"].tap(); openV2Offline(app); capture("04-Downloads")
+        let personalTab = app.tabBars.buttons["收藏"]
+        personalTab.tap();app.segmentedControls["personal.mode"].buttons["继续观看"].tap(); capture("05-Continue")
         let recent = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'personal.video.'")).firstMatch
         if recent.waitForExistence(timeout: 8) {
             recent.tap()
@@ -1176,8 +1712,8 @@ final class GlideUITests: XCTestCase {
         XCTAssertTrue(app.buttons["directory.back"].waitForExistence(timeout: 10), "Restart restores the authorized descendant")
         XCTAssertTrue(childVideo.waitForExistence(timeout: 10))
         if UIDevice.current.userInterfaceIdiom == .pad { app.staticTexts["收藏与继续观看"].firstMatch.tap() }
-        else { app.tabBars.buttons["我的"].tap() }
-        app.segmentedControls["personal.mode"].buttons["我的收藏"].tap()
+        else { app.tabBars.buttons["收藏"].tap(); app.segmentedControls["personal.mode"].buttons["继续观看"].tap() }
+        app.segmentedControls["personal.mode"].buttons["收藏视频"].tap()
         let favorite = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND identifier ENDSWITH %@", "personal.video.", ":local:子目录/第二片段.mp4")).firstMatch
         XCTAssertTrue(favorite.waitForExistence(timeout: 10)); favorite.tap()
         let canvas = app.otherElements["player.canvas"]
@@ -1278,7 +1814,7 @@ final class GlideUITests: XCTestCase {
         open(app.buttons["离线下载"], until: offline)
         XCTAssertTrue(offline.waitForExistence(timeout: 10)); XCTAssertEqual(state.label, "已完成")
         app.terminate(); app.launch()
-        open(app.tabBars.buttons["离线"], until: offline)
+        openV2Offline(app)
         XCTAssertTrue(offline.waitForExistence(timeout: 10)); XCTAssertEqual(state.label, "已完成")
         let streamPath = "/mock/jellyfin/Videos/" + fixtureID + "/stream"
         let streamsBefore = fixtureMetric(streamPath)
@@ -1296,7 +1832,7 @@ final class GlideUITests: XCTestCase {
         let fixture = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "source.", fixtureName)).firstMatch
         XCTAssertTrue(fixture.waitForExistence(timeout: 5)); fixture.swipeLeft()
         app.buttons["移除"].tap(); app.buttons["移除来源，保留已下载影片"].firstMatch.tap(); app.buttons["完成"].tap()
-        app.tabBars.buttons["离线"].tap()
+        openV2Offline(app)
         XCTAssertTrue(offline.waitForExistence(timeout: 10), "Removing a source may retain completed local files")
         let afterRemove = fixtureMetric(streamPath)
         open(offline, until: canvas)
@@ -2456,7 +2992,7 @@ final class GlideUITests: XCTestCase {
         XCTAssertTrue(canvas.label.contains("Episode Ten"), "Locking disables episode swipes")
         app.buttons["解锁触控"].press(forDuration: 0.15)
         open(app.buttons["返回片库"], until: app.buttons["detail.play"])
-        app.tabBars.buttons["我的"].tap()
+        app.tabBars.buttons["收藏"].tap(); app.segmentedControls["personal.mode"].buttons["继续观看"].tap()
         let showRows = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "personal.video.", fixtureName))
         XCTAssertTrue(showRows.firstMatch.waitForExistence(timeout: 8)); XCTAssertEqual(showRows.count, 1, "Episode history is one series entry")
         XCTAssertTrue(showRows.firstMatch.label.contains("Fixture Show"))
@@ -2614,15 +3150,15 @@ final class GlideUITests: XCTestCase {
         XCTAssertEqual(XCTWaiter.wait(for: [seekCompleted], timeout: 8), .completed, "Native Jellyfin playback must react to slider seeking")
         app.buttons["播放设置"].tap(); app.buttons["收藏视频"].tap()
         app.buttons["返回片库"].tap()
-        app.tabBars.buttons["我的"].tap()
+        app.tabBars.buttons["收藏"].tap(); app.segmentedControls["personal.mode"].buttons["继续观看"].tap()
         let history = app.buttons["personal.video.demo2"]
         XCTAssertFalse(history.exists, "Browsing playback must not create a history entry")
-        app.segmentedControls.buttons["我的收藏"].tap()
+        app.segmentedControls.buttons["收藏视频"].tap()
         XCTAssertTrue(history.waitForExistence(timeout: 5))
         app.tabBars.buttons["片库"].tap()
         app.terminate(); app.launch()
-        app.tabBars.buttons["我的"].tap()
-        app.segmentedControls.buttons["我的收藏"].tap()
+        app.tabBars.buttons["收藏"].tap(); app.segmentedControls["personal.mode"].buttons["继续观看"].tap()
+        app.segmentedControls.buttons["收藏视频"].tap()
         XCTAssertTrue(history.waitForExistence(timeout: 5), "Favorite survives app relaunch")
         history.tap()
         XCTAssertTrue(canvas.waitForExistence(timeout: 10))
@@ -2636,9 +3172,9 @@ final class GlideUITests: XCTestCase {
         XCTAssertEqual(XCTWaiter.wait(for: [removed], timeout: 5), .completed)
         app.tabBars.buttons["片库"].tap()
         app.terminate(); app.launch()
-        app.tabBars.buttons["我的"].tap()
+        app.tabBars.buttons["收藏"].tap(); app.segmentedControls["personal.mode"].buttons["继续观看"].tap()
         XCTAssertFalse(history.exists)
-        app.segmentedControls.buttons["我的收藏"].tap(); XCTAssertFalse(history.exists)
+        app.segmentedControls.buttons["收藏视频"].tap(); XCTAssertFalse(history.exists)
         app.tabBars.buttons["片库"].tap()
         app.buttons["sources.open"].tap()
         let fixture = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "source.", fixtureName)).firstMatch
@@ -2874,7 +3410,7 @@ final class GlideUITests: XCTestCase {
         XCTAssertTrue(app.buttons["detail.play"].waitForExistence(timeout: 5))
         destination(phone: "我的", tablet: "收藏与继续观看")
         let mode = app.segmentedControls["personal.mode"]
-        XCTAssertTrue(mode.waitForExistence(timeout: 5)); mode.buttons["我的收藏"].tap()
+        XCTAssertTrue(mode.waitForExistence(timeout: 5)); mode.buttons["收藏视频"].tap()
         XCTAssertTrue(app.buttons["personal.video.demo0"].waitForExistence(timeout: 5)); capture("10 Personal")
         destination(phone: "离线", tablet: "离线下载")
         XCTAssertTrue(app.staticTexts["downloads.storage"].waitForExistence(timeout: 5)); capture("11 Downloads")
@@ -3072,10 +3608,12 @@ final class GlideUITests: XCTestCase {
     @MainActor func testStageSettingsAndDiagnostics() throws {
         continueAfterFailure = false
         let app = XCUIApplication(); app.launch()
-        XCTAssertTrue(app.tabBars.buttons["设置"].waitForExistence(timeout: 10))
-        app.tabBars.buttons["设置"].tap()
-        XCTAssertTrue(app.staticTexts["声音与字幕"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["下载与存储"].exists)
+        openV2Settings(app)
+        for title in ["声音与字幕","下载与存储"] {
+            let header=app.staticTexts[title]
+            for _ in 0..<6 { if header.exists { break };app.swipeUp() }
+            XCTAssertTrue(header.exists,app.debugDescription)
+        }
         let diagnostics = app.buttons["最近一次播放诊断"]
         for _ in 0..<4 { if diagnostics.isHittable { break }; app.swipeUp() }
         XCTAssertTrue(diagnostics.isHittable)
@@ -3166,7 +3704,7 @@ extension GlideUITests {
         app.terminate()
         app.launchArguments = ["--glide-map-fixture", "-controlsDelay", "120", "-localPlaybackEngine", "avPlayer"]
         app.launch()
-        XCTAssertTrue(app.tabBars.buttons["我的"].waitForExistence(timeout: 10)); app.tabBars.buttons["我的"].tap()
+        XCTAssertTrue(app.tabBars.buttons["收藏"].waitForExistence(timeout: 10)); app.tabBars.buttons["收藏"].tap(); app.segmentedControls["personal.mode"].buttons["继续观看"].tap()
         app.buttons["personal.moments"].tap()
         let item = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "moments.item.")).firstMatch
         XCTAssertTrue(item.waitForExistence(timeout: 8)); XCTAssertTrue(item.label.contains("生日时刻"))
@@ -3234,7 +3772,7 @@ extension GlideUITests {
         app.buttons["moment.save"].tap()
         app.terminate(); app.launchArguments = ["--glide-map-fixture", "-controlsDelay", "120"]
         app.launch()
-        XCTAssertTrue(app.tabBars.buttons["我的"].waitForExistence(timeout: 10)); app.tabBars.buttons["我的"].tap()
+        XCTAssertTrue(app.tabBars.buttons["收藏"].waitForExistence(timeout: 10)); app.tabBars.buttons["收藏"].tap(); app.segmentedControls["personal.mode"].buttons["继续观看"].tap()
         app.buttons["personal.moments"].tap()
         let saved = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "moments.item.", "服务器时刻")).firstMatch
         XCTAssertTrue(saved.waitForExistence(timeout: 10)); saved.tap(); waitForMapPlayer(app)
@@ -3334,7 +3872,8 @@ extension GlideUITests {
         let shot = XCTAttachment(screenshot: app.screenshot()); shot.name = name; shot.lifetime = .keepAlways; add(shot)
     }
     @MainActor private func clipWaitLabel(_ element: XCUIElement, contains value: String, seconds: Double = 15) {
-        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", value), object: element)], timeout: seconds), .completed)
+        let result = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", value), object: element)], timeout: seconds)
+        if result != .completed { XCTFail("Expected \(value): " + XCUIApplication().debugDescription) }
     }
     @MainActor func testClipProductionContractProbe() throws {
         let app = try clipApp(probe: true), status = app.staticTexts["clips.probe.status"]

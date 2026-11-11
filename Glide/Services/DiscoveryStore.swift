@@ -12,6 +12,9 @@ import AVFoundation
     init(file: URL? = nil) {
         var defaultFile = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("Discovery/discovery-v1.json")
 #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--glide-duo-fixture") {
+            defaultFile = defaultFile.deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("DuoQA/discovery-v1.json")
+        }
         if ProcessInfo.processInfo.arguments.contains("--glide-unified-fixture") {
             defaultFile = defaultFile.deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("UnifiedLibraryQA/discovery-v1.json")
         }
@@ -130,6 +133,9 @@ import AVFoundation
     private static func videos(_ scope: DiscoveryScope, library: LibraryStore, readDurations: Bool, progress: (Int) -> Void) async throws -> [Video] {
         _ = try scope.validated()
         if scope.kind == .demo {
+#if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--glide-recommendation-fixture") { return RecommendationFixtures.videos() }
+#endif
             return (0..<3).compactMap { index in
                 Bundle.main.url(forResource: "demo\(index)", withExtension: "mp4").map {
                     Video(id: "demo-\(index)", title: ["静谧山野", "落日海岸", "蓝色时分"][index], subtitle: "原创演示", url: $0, duration: 12, demoIndex: index)

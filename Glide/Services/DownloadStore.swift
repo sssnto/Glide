@@ -44,6 +44,7 @@ final class DownloadStore: NSObject, URLSessionDownloadDelegate {
     @ObservationIgnored var backgroundCompletion: (() -> Void)?
     nonisolated static var directory: URL {
 #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--glide-duo-fixture") { return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("OfflineDuoQA", isDirectory: true) }
         if ProcessInfo.processInfo.arguments.contains("--glide-clip-fixture") { return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("OfflineClipsQA", isDirectory: true) }
         if ProcessInfo.processInfo.arguments.contains("--glide-unified-fixture") {
             return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("OfflineUnifiedQA", isDirectory: true)

@@ -1,0 +1,91 @@
+{
+  "version": "2.0.0",
+  "buildInProject": "1",
+  "prepared": "2026-11-11",
+  "fields": {
+    "name": {
+      "characters": 11,
+      "utf8Bytes": 21,
+      "limit": 30,
+      "limitUnit": "characters",
+      "sha256": "f2caef819c196557f1bdba78a00e56d5e2fbc2cdd8fb91741f6063244964ad26"
+    },
+    "subtitle": {
+      "characters": 12,
+      "utf8Bytes": 36,
+      "limit": 30,
+      "limitUnit": "characters",
+      "sha256": "9f4e6b836e33996d544e7d506fe6a8fce54a108a6f23595f09492ba27ed1600b"
+    },
+    "promotional-text": {
+      "characters": 80,
+      "utf8Bytes": 220,
+      "limit": 170,
+      "limitUnit": "characters",
+      "sha256": "df01dab93e8100453f6cfa5ce2b097b2639778c0ff2c92c6e6d4244133cb4774"
+    },
+    "release-notes": {
+      "characters": 448,
+      "utf8Bytes": 1164,
+      "limit": 4000,
+      "limitUnit": "characters",
+      "sha256": "e96bf34f98c1878180fa176479534e1e3a86fc51cf742e58e0b268f1db89bd5c"
+    },
+    "release-notes-short": {
+      "characters": 240,
+      "utf8Bytes": 608,
+      "limit": 4000,
+      "limitUnit": "characters",
+      "sha256": "1b1a241331fd00b1473187040f8c15d95ac0dbe303c052e161bafcf505d309f8"
+    },
+    "description": {
+      "characters": 1189,
+      "utf8Bytes": 2887,
+      "limit": 4000,
+      "limitUnit": "characters",
+      "sha256": "fbea260ad5b2ab4f569605a8d856bb9f26b0c84335cdea212c7b88086a51b27b"
+    },
+    "keywords": {
+      "characters": 52,
+      "utf8Bytes": 92,
+      "limit": 100,
+      "limitUnit": "UTF-8 bytes",
+      "sha256": "f93b5cae6f6b1c3eb74dd6540afae5916ee0be8d43478f3a0a2dfff216aabef6"
+    },
+    "announcement": {
+      "characters": 337,
+      "utf8Bytes": 757,
+      "limit": null,
+      "limitUnit": "characters",
+      "sha256": "6d9c32c24680a155d02c7919868c8352268e8b52d9e26cc20e10485069eb6ed6"
+    },
+    "preview-announcement": {
+      "characters": 166,
+      "utf8Bytes": 364,
+      "limit": null,
+      "limitUnit": "characters",
+      "sha256": "c73a642f0bb61dfbe604dc729237ef25bc494b5dcae2cc76f4722a67a2ca74af"
+    },
+    "github-release-notes": {
+      "characters": 442,
+      "utf8Bytes": 969,
+      "limit": null,
+      "limitUnit": "characters",
+      "sha256": "7c2c3e3af3ec0e9b265e98e3444f618a8fd5f87a421972efe3aecb9907c47154"
+    },
+    "testflight-what-to-test": {
+      "characters": 582,
+      "utf8Bytes": 1552,
+      "limit": null,
+      "limitUnit": "characters",
+      "sha256": "68964715d108d1b31304e94d5aa1c003e6b1e88d21846982a44a931fe40245b6"
+    },
+    "review-notes-en": {
+      "characters": 2562,
+      "utf8Bytes": 2606,
+      "limit": 4000,
+      "limitUnit": "UTF-8 bytes",
+      "sha256": "f4c39da1d947c2c0a5d8f939892312052c799ff96d63f86548926563b54680ac"
+    }
+  }
+}

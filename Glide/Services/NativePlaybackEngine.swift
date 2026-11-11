@@ -170,7 +170,7 @@ import UIKit
             }
         }
         onEvent?(.installed)
-        if resource.url.isFileURL {
+        if resource.url.isFileURL || resource.webDAV {
             inspectionTask = Task { [weak self] in
                 let report = await LocalMediaInspector.inspect(asset: asset, resource: resource) { [weak self] container in
                     guard !Task.isCancelled, let self, self.lifetime.accepts(token) else { return }
@@ -397,7 +397,7 @@ import UIKit
         defer { withExtendedLifetime(access) {} }
         let container = await Task.detached {
             defer { withExtendedLifetime(access) {} }
-            guard let handle = try? FileHandle(forReadingFrom: url) else { return MediaContainer.unknown }
+            guard url.isFileURL, let handle = try? FileHandle(forReadingFrom: url) else { return MediaContainer.unknown }
             defer { try? handle.close() }
             return MediaContainer.identify((try? handle.read(upToCount: 4096)) ?? Data())
         }.value

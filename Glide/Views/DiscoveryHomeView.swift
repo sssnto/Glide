@@ -18,76 +18,136 @@ struct DiscoveryPlayer: View {
                    initialResumeAt: selection.resumeAt, channelMode: selection.channelID != nil,
                    onFirstFrame: { video in
                        if let channel = selection.channelID { store.recordStart(channelID: channel, videoID: video.id) }
-                   }, onQueueFinished: onQueueFinished, returnLabel: selection.channelID != nil ? "返回频道" : selection.title == "继续观看" ? "返回首页" : "返回选片")
+                   }, onQueueFinished: onQueueFinished, returnLabel: selection.channelID != nil ? "返回频道" : selection.title == "继续观看" ? "返回观看" : selection.title == "观看历史" ? "返回观看历史":"返回选片")
     }
 }
 
 struct DiscoveryHomeView: View {
-    var library: LibraryStore
-    var store = DiscoveryStore.shared
-    @State private var editing: PrivateChannel?
-    @State private var playing: DiscoveryPlayback?
-    @State private var error: String?
-    var body: some View {
+    var library:LibraryStore
+    var openLibrary:(()->Void)?=nil
+    var store=DiscoveryStore.shared
+    @State private var playing:DiscoveryPlayback?
+    @State private var pendingPlayback:DiscoveryPlayback?
+    private enum Sheet:String,Identifiable { case sources,history,library,settings;var id:String {rawValue} }
+    @State private var sheet:Sheet?
+    @Environment(\.dynamicTypeSize) private var typeSize
+    var body:some View {
         NavigationStack {
-            List {
-                Section {
-                    NavigationLink { UnifiedLibraryView(library: library) } label: {
-                        Label("搜索全部片库", systemImage: "magnifyingglass").frame(minHeight: 44)
-                    }.accessibilityIdentifier("unified.open")
-                }
-                Section {
-                    NavigationLink { ClipLibraryView(library: library) } label: {
-                        Label("精彩片段集", systemImage: "scissors").frame(minHeight: 44)
-                    }.accessibilityIdentifier("clips.open")
-                    NavigationLink { TimePickView(library: library, store: store) } label: {
-                        Label {
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text("给我选一部").font(.headline)
-                                Text("按你现在的时间，挑一部能看完的").font(.subheadline).foregroundStyle(.secondary)
-                            }.padding(.vertical, 8)
-                        } icon: { Image(systemName: "clock.badge.checkmark").font(.title2) }
-                            .frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
-                    }.accessibilityIdentifier("discovery.time.open")
-                }
-                if !library.continueWatching.isEmpty {
-                    Section("继续观看") {
-                        ForEach(Array(library.continueWatching.prefix(3))) { item in
-                            Button { playing = DiscoveryPlayback(videos: [item.video], title: "继续观看", resumeAt: library.resumePosition(item.video)) } label: {
-                                DiscoveryVideoRow(video: item.video, library: library, detail: item.episodeLabel.isEmpty ? "继续上次观看" : item.episodeLabel)
-                            }.buttonStyle(.plain)
+            ScrollView {
+                LazyVStack(alignment:.leading,spacing:26) {
+                    if !library.continueWatching.isEmpty {
+                        VStack(alignment:.leading,spacing:12) {
+                            HStack {
+                                WorkspaceSectionHeading(title:"继续观看")
+                                Button("观看历史") { sheet = .history }.font(.caption).frame(minHeight:44)
+                            }
+                            ScrollView(.horizontal,showsIndicators:false) {
+                                LazyHStack(alignment:.top,spacing:14) {
+                                    ForEach(Array(library.continueWatching.prefix(8))) { entry in
+                                        WorkspaceResumeCard(entry:entry,library:library) {
+                                            playing=DiscoveryPlayback(videos:[entry.video],title:"继续观看",resumeAt:library.resumePosition(entry.video))
+                                        }
+                                    }
+                                }
+                            }.contentMargins(.bottom,2)
                         }
                     }
-                }
-                Section {
-                    if store.channels.isEmpty {
-                        Text("把喜欢的剧集、电影或视频目录编排成频道，打开就能看。").font(.subheadline).foregroundStyle(.secondary).padding(.vertical, 4)
+                    VStack(alignment:.leading,spacing:12) {
+                        WorkspaceSectionHeading(title:"现在想看什么")
+                        NavigationLink { TimePickView(library:library,store:store) } label: {
+                            WorkspaceFeatureLabel(title:"给我选一部",detail:"按时间和观看进度挑选",symbol:"clock.badge.checkmark")
+                        }.buttonStyle(.plain).accessibilityIdentifier("discovery.time.open")
+                        NavigationLink { WorkspaceChannelsView(library:library,store:store) } label: {
+                            WorkspaceFeatureLabel(title:"我的频道",detail:store.channels.isEmpty ? "把喜欢的内容编成连续观看的频道":"\(store.channels.count) 个频道 · 剧集保持顺序",symbol:"play.rectangle.on.rectangle")
+                        }.buttonStyle(.plain).accessibilityIdentifier("workspace.channels")
                     }
-                    ForEach(store.channels) { channel in
-                        NavigationLink { PrivateChannelView(library: library, store: store, channelID: channel.id) } label: {
-                            Label {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(channel.name).font(.headline)
-                                    Text("\(channel.scopes.count) 个内容范围 · 剧集按顺序").font(.caption).foregroundStyle(.secondary)
-                                }.padding(.vertical, 5)
-                            } icon: { Image(systemName: "tv") }
-                                .frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
-                        }.accessibilityIdentifier("discovery.channel." + channel.id.uuidString)
-                            .swipeActions {
-                                Button("删除频道", role: .destructive) { do { try store.remove(channel.id) } catch { self.error = error.localizedDescription } }
+                    if !library.videos.isEmpty {
+                        VStack(alignment:.leading,spacing:12) {
+                            HStack {
+                                WorkspaceSectionHeading(title:library.selectedID == nil ? "先看一段演示":"当前片库",detail:library.selectedID == nil ? "原创素材":library.currentDirectoryName)
+                                Button("查看") { browse(nil) }.font(.caption).frame(minHeight:44)
                             }
+                            ScrollView(.horizontal,showsIndicators:false) {
+                                LazyHStack(alignment:.top,spacing:14) {
+                                    ForEach(Array(library.videos.prefix(8))) { video in
+                                        Button { playing=DiscoveryPlayback(videos:[video],title:library.currentDirectoryName) } label: {
+                                            VStack(alignment:.leading,spacing:7) {
+                                                VideoArtwork(video:video,server:library.selectedServer).frame(width:210,height:118).clipShape(.rect(cornerRadius:10))
+                                                Text(RecommendationMediaIdentity(video).title).font(.subheadline.weight(.medium)).lineLimit(2).foregroundStyle(.primary)
+                                                Text(video.duration>0 ? video.duration.mediaTime:video.demoIndex != nil ? "原创动态风景":"视频").font(.caption).foregroundStyle(.secondary)
+                                            }.frame(width:210,alignment:.leading)
+                                        }.buttonStyle(.plain).accessibilityIdentifier("workspace.featured."+video.id)
+                                    }
+                                }
+                            }
+                        }
                     }
-                    Button("新建频道", systemImage: "plus") { editing = PrivateChannel(name: "我的频道", scopes: [DiscoveryResolver.current(library)]) }
-                        .accessibilityIdentifier("discovery.channel.create")
-                } header: { Text("我的频道") }
-                if let message = store.message ?? library.storageMessage { Section { Text(message).font(.footnote).foregroundStyle(.secondary) } }
-            }
-            .navigationTitle("首页").navigationBarTitleDisplayMode(.inline)
-            .scrollContentBackground(.hidden).background(GlideTheme.background)
-            .sheet(item: $editing) { draft in ChannelEditorView(library: library, store: store, draft: draft) }
-            .fullScreenCover(item: $playing) { selection in DiscoveryPlayer(library: library, selection: selection, store: store) }
-            .alert("暂时无法完成", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) { Button("好") { error = nil } } message: { Text(error ?? "") }
+                    VStack(alignment:.leading,spacing:12) {
+                        HStack {
+                            WorkspaceSectionHeading(title:"媒体来源",detail:"\(library.servers.count) 个连接")
+                            Button { sheet = .sources } label: { Image(systemName:"plus").frame(width:44,height:44) }.accessibilityLabel("添加或管理媒体来源")
+                        }
+                        if library.servers.isEmpty {
+                            Button { sheet = .sources } label: {
+                                WorkspaceFeatureLabel(title:"连接你的片库",detail:"Jellyfin、Emby、NAS 或本地视频",symbol:"externaldrive.badge.plus")
+                            }.buttonStyle(.plain).accessibilityIdentifier("workspace.connect")
+                        } else {
+                            ForEach(library.servers) { server in
+                                Button { browse(server) } label: {
+                                    HStack(spacing:12) {
+                                        Image(systemName:server.kind == .local ? "folder":"externaldrive").foregroundStyle(.tint).frame(width:32,height:44)
+                                        Text(server.name).font(.subheadline.weight(.medium)).foregroundStyle(.primary)
+                                        Spacer();Text(server.kind.rawValue).font(.caption).foregroundStyle(.secondary)
+                                        Image(systemName:"chevron.right").font(.caption2).foregroundStyle(.tertiary)
+                                    }.contentShape(.rect)
+                                }.buttonStyle(.plain).accessibilityIdentifier("workspace.source."+server.id.uuidString)
+                            }
+                        }
+                    }
+                    if let message=store.message ?? library.storageMessage { Text(message).font(.footnote).foregroundStyle(.secondary) }
+                }.padding(.horizontal,16).padding(.top,12).padding(.bottom,28).frame(maxWidth:1000).frame(maxWidth:.infinity)
+            }.background(GlideTheme.background).navigationTitle("观看").navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement:.topBarTrailing) { NavigationLink { UnifiedLibraryView(library:library) } label: { Image(systemName:"magnifyingglass").frame(width:44,height:44) }.accessibilityLabel("搜索全部片库").accessibilityIdentifier("unified.open") }
+                    ToolbarItem(placement:.topBarTrailing) { WorkspaceSettingsButton { sheet = .settings } }
+                }
+                .task { await library.refreshContinueWatching() }
+                .sheet(item:$sheet,onDismiss:{ if let value=pendingPlayback { pendingPlayback=nil;playing=value } }) { destination in
+                    switch destination {
+                    case .settings:WorkspaceSettingsSheet(library:library)
+                    case .sources:SourcesView(library:library)
+                    case .history:PersonalLibraryView(library:library,onPlay:{ pendingPlayback=DiscoveryPlayback(videos:[$0],title:"观看历史",resumeAt:library.resumePosition($0));sheet=nil },startsWithFavorites:false)
+                    case .library:LibraryView(library:library)
+                    }
+                }
+                .fullScreenCover(item:$playing) { value in DiscoveryPlayer(library:library,selection:value,store:store) }
         }
+    }
+    private func browse(_ server:MediaServer?) {
+        Task { if let server { await library.select(server.id) };if let openLibrary { openLibrary() } else { sheet = .library } }
+    }
+}
+
+struct WorkspaceChannelsView:View {
+    let library:LibraryStore
+    let store:DiscoveryStore
+    @State private var editing:PrivateChannel?
+    var body:some View {
+        List {
+            if store.channels.isEmpty {
+                ContentUnavailableView("创建你的频道",systemImage:"play.rectangle.on.rectangle",description:Text("把电影、剧集和目录编排在一起，打开就能接着看。"))
+            }
+            ForEach(store.channels) { channel in
+                NavigationLink { PrivateChannelView(library:library,store:store,channelID:channel.id) } label: {
+                    VStack(alignment:.leading,spacing:5) {
+                        Text(channel.name).font(.subheadline.weight(.semibold))
+                        Text("\(channel.scopes.count) 个内容范围 · 剧集按顺序").font(.caption).foregroundStyle(.secondary)
+                    }.padding(.vertical,6)
+                }.accessibilityIdentifier("discovery.channel."+channel.id.uuidString)
+            }
+        }.navigationTitle("我的频道").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement:.primaryAction) { Button { editing=PrivateChannel(name:"我的频道",scopes:[DiscoveryResolver.current(library)]) } label: { Label("新建频道",systemImage:"plus") }.accessibilityIdentifier("discovery.channel.create") } }
+            .sheet(item:$editing) { draft in ChannelEditorView(library:library,store:store,draft:draft) }
     }
 }
 
@@ -95,14 +155,24 @@ struct DiscoveryVideoRow: View {
     var video: Video
     var library: LibraryStore
     var detail: String
+    var showsWorkIdentity = false
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    private var identity: RecommendationMediaIdentity { RecommendationMediaIdentity(video) }
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(alignment: showsWorkIdentity ? .top : .center, spacing: 12) {
             VideoArtwork(video: video, server: library.servers.first { $0.id == video.sourceID })
-                .frame(width: 48, height: 68).clipShape(RoundedRectangle(cornerRadius: 7))
+                .frame(width: showsWorkIdentity ? 60 : 48, height: showsWorkIdentity ? 90 : 68).clipShape(RoundedRectangle(cornerRadius: 7)).accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 5) {
-                Text(video.title).font(.subheadline.weight(.medium)).foregroundStyle(.primary).lineLimit(2)
+                Text(showsWorkIdentity ? identity.title : video.title).font(.subheadline.weight(.medium)).foregroundStyle(.primary)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+                if showsWorkIdentity, let episode = identity.episode {
+                    Text(episode).font(.caption).foregroundStyle(.primary).lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+                }
+                if showsWorkIdentity, let facts = identity.facts { Text(facts).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true) }
                 Text(detail).font(.caption).foregroundStyle(.secondary).lineLimit(2)
-                if let server = library.servers.first(where: { $0.id == video.sourceID }) { Text(server.name).font(.caption2).foregroundStyle(.secondary) }
+                if let server = library.servers.first(where: { $0.id == video.sourceID }) {
+                    Text(showsWorkIdentity ? "来源 · " + server.name : server.name).font(.caption2).foregroundStyle(.secondary)
+                }
             }
         }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 3).contentShape(Rectangle())
     }

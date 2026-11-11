@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "scope": "Fresh isolated local official Jellyfin, public repository install and restart; no private NAS",
+  "serverVersion": "12.2.0",
+  "pluginVersion": "1.1.1.0",
+  "checks": [
+    "public_repository_registered",
+    "catalog_version_visible",
+    "standard_catalog_install_completed",
+    "plugin_loaded_after_restart",
+    "capabilities_authenticated"
+  ],
+  "timestamp": "2026-11-11T11:12:18.671555+00:00"
+}
