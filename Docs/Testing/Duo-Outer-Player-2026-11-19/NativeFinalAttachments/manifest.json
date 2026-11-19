@@ -1,0 +1,35 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "FF88BD51-C367-4D99-8BE7-CF91FD771543",
+        "deviceName" : "Glide Duo Outer QA 20261119",
+        "exportedFileName" : "C5376032-81C0-4399-9EA8-4645C4840DAB.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Duo fitted viewport rotation 2_0_039F4F9D-6757-42AE-A306-D7EAE2FCF7AB.png",
+        "timestamp" : 1795053276.882
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "FF88BD51-C367-4D99-8BE7-CF91FD771543",
+        "deviceName" : "Glide Duo Outer QA 20261119",
+        "exportedFileName" : "4B037E60-6F8E-415B-883F-9828C546743F.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Duo fitted viewport rotation 1_0_347B516C-C106-4E53-8E3D-6A35448741B1.png",
+        "timestamp" : 1795053272.983
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "FF88BD51-C367-4D99-8BE7-CF91FD771543",
+        "deviceName" : "Glide Duo Outer QA 20261119",
+        "exportedFileName" : "2821CC5A-458C-4864-B153-82DC656B7E03.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Duo fitted viewport_0_D1381102-72EE-46B8-8B5C-A9E29EA57115.png",
+        "timestamp" : 1795053262.971
+      }
+    ],
+    "testIdentifier" : "GlideUITests/testDuoViewportDoesNotCropFittedVideo()",
+    "testIdentifierURL" : "test://com.apple.xcode/Glide/GlideUITests/GlideUITests/testDuoViewportDoesNotCropFittedVideo"
+  }
+]

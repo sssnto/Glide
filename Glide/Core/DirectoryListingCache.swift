@@ -17,6 +17,8 @@ struct CachedDirectoryListing: Codable, Equatable, Sendable {
     var directory: URL
     var entries: [DAVEntry]
     var date: Date
+    /// Missing in older indexes which did not request file sizes.
+    var metadataVersion: Int? = 2
 }
 struct CachedDirectoryScan: Sendable {
     var videos: [DAVEntry]
@@ -41,7 +43,7 @@ actor DirectoryListingCache {
         return load(identity)?.listings[DirectoryScope.key(root)]
     }
 
-    func scan(_ identity: DirectoryCacheIdentity, directory root: URL, recursive: Bool) -> CachedDirectoryScan? {
+    func scan(_ identity: DirectoryCacheIdentity, directory root: URL, recursive: Bool, requiresFileSize: Bool = false) -> CachedDirectoryScan? {
         guard valid(root,identity:identity),let index=load(identity) else { return nil }
         var pending=[root],seen=Set<String>(),files=Set<String>(),videos:[DAVEntry]=[],cursor=0,date=Date.distantFuture
         guard let initial=index.listings[DirectoryScope.key(root)] else { return nil }
@@ -49,6 +51,7 @@ actor DirectoryListingCache {
             let folder=pending[cursor];cursor+=1
             guard seen.insert(DirectoryScope.key(folder)).inserted else { continue }
             guard let listing=index.listings[DirectoryScope.key(folder)] else { return nil }
+            guard !requiresFileSize || listing.metadataVersion == 2 else { return nil }
             date=min(date,listing.date)
             for entry in listing.entries where DirectoryScope.contains(root:root,child:entry.url) {
                 if entry.isDirectory { if recursive { pending.append(entry.url) } }

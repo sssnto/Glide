@@ -1,0 +1,16 @@
+{
+  "Glide/Core/ArtworkWorkGate.swift": "4cf6d656182e6c1754cfed2a6e7359949b875c115ad1fe36752b1fa3bfd82709",
+  "Glide/Core/Models.swift": "f66dfb6b2b48941128e07c5a01e737952ff0252c138aa818483af0eb73130037",
+  "Glide/Services/MediaCache.swift": "c4f575ffa6874db9870f2f4721818653e8192fc5ff32493f54a6fbbcdc665972",
+  "Glide/Services/WebDAVArtwork.swift": "ea525ad3001125c86a9be45f27e04446bb39e22a02f5f6d98f2ae9ee64044c7a",
+  "Glide/Services/Compatibility/GlideVLCFrameExtractor.h": "f985593dc79244edc4b0a388e7bdf779c83130e946263f2b187a86fdd5f6b7f6",
+  "Glide/Services/Compatibility/GlideVLCFrameExtractor.m": "ecf6b321baaa04595daeb49db43fa9c23b56b349e2b0acfce5a22aa968e6a130",
+  "Glide/Services/Compatibility/VLCClockPlayer.h": "717130111d9ce3d15925613822e488816e2dfc26015ceabf511fb0a9039c58bb",
+  "Glide/Services/WebDAVArtworkQAProbe.swift": "8be0a31dcebbd51cc2c4c768553aba9c3c8ad79b3ba44bb3b733f6ad64416f6c",
+  "Glide/Views/Theme.swift": "ad8ca5ecb2cc90da12c5b7980f6cdc87e86f33250ad1de0389d4cb3b3fad10d8",
+  "Glide/LibraryStore.swift": "b326308caa319f5028497bcef2c61129f7d7d963990a1e08f453abebba032a48",
+  "Glide/GlideApp.swift": "be7b232a1e5cc787aa241e421e7a524f2787f98d91a809ea6f2793250020e5d7",
+  "Tests/ArtworkWorkGateTests.swift": "33f8f5d1186cdf654f9e3f7ed1abafcebffd554f1d0af358b9a4262f75c82916",
+  "UITests/GlideUITests.swift": "f46e40fe45e5da0e76aa56351b4402ae2eea7af98020d7c4ddee2d232139835d",
+  "Glide.xcodeproj/project.pbxproj": "5646ee6c0b597caee600035ae2ef29b45f2ef8b77d8d626eae79cb1f21c58292"
+}

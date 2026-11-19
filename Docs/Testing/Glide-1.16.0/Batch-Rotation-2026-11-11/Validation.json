@@ -1,0 +1,71 @@
+{
+  "appVersion": "1.16.0 (13)",
+  "pluginVersion": "1.1.0.0",
+  "timestamp": "2026-11-11T01:58:03.950430+00:00",
+  "serverCoreChecks": 80,
+  "serverIntegrationChecks": 22,
+  "swiftCoreTests": 286,
+  "uiTests": 2,
+  "uiSkipped": 0,
+  "builds": {
+    "pluginRelease": true,
+    "pluginWarnings": 0,
+    "pluginErrors": 0,
+    "compatibilityQASimulator": true,
+    "iPhoneRelease": true,
+    "deepSignature": true,
+    "staticPreflight": true,
+    "compatibilityQADevice": true,
+    "qaDeepSignature": true
+  },
+  "performanceBounds": {
+    "itemsPerBatch": 1000,
+    "unfinishedBatchesPerUser": 8,
+    "batchChildrenInFlight": 1,
+    "mediaWorkers": 1,
+    "phonePreviewRequests": 2,
+    "serverPreviewDecoders": 1,
+    "previewCacheFiles": 1000,
+    "previewCacheMiB": 256,
+    "foregroundSummaryPollSeconds": 2,
+    "largeAuthoredFixtureBytes": 67167183
+  },
+  "recoveryValidated": [
+    "lost_submission_response_does_not_rotate_twice",
+    "paused_queue_survives_real_container_restart",
+    "cancelling_lost_response_tracks_current_child",
+    "retry_skips_completed",
+    "uncertain_commit_pauses_remaining",
+    "journal_failure_stops_new_dispatch",
+    "stable_saved_content_order_survives_metadata_updates",
+    "all_authored_files_restored_byte_identically"
+  ],
+  "package": "Server/artifacts/GlideToolkit-1.1.0-Jellyfin-12.2.zip",
+  "packageSHA256": "24e8198613b00ca41b0800d9baf2b4b18c5d7c4c83b4667256c9aeeeb7f5f70b",
+  "dllSHA256": "8c27ae9edda2a775cabeb3c08ee11fe70eb771ae99b7fe1e7b6839f969765c4b",
+  "actualNAS": {
+    "previousSingleRotationSaveUserConfirmed": "2026-11-11",
+    "newBatchValidationPending": false,
+    "requiresPlugin": "1.1.0.0",
+    "phone": "connected_foreground_kept_awake",
+    "finalClientInstalled": true,
+    "pluginUpdateUserConfirmed": true,
+    "pluginAvailableReadOnlyVerified": true,
+    "verifiedAuthoredClips": 0,
+    "originalAutomaticWriteAttempt": "auto_review_rejected_before_launch",
+    "awaiting": null,
+    "userManualTestingReportedComplete": true,
+    "manualCompletionReportDate": "2026-11-11",
+    "automatedBatchWriteExecuted": false,
+    "validationBasis": "用户反馈测试完成；未提供逐项结果，不将此反馈冒记为自动化写入通过。"
+  },
+  "productionNASMediaModifiedByThisTask": false,
+  "inlineGridSelectionUI": true,
+  "userDeviceTesting": {
+    "reportedComplete": true,
+    "date": "2026-11-11",
+    "statement": "我已经测试完成了。",
+    "itemizedResultsProvided": false,
+    "newIssuesReported": false
+  }
+}

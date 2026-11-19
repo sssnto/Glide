@@ -1,0 +1,125 @@
+{
+  "version": "2.0.1",
+  "build": "11",
+  "mainBundleIdentifier": "com.songpeng.glide",
+  "date": "2026-11-18",
+  "acceptance": {
+    "physicalDuo": "User reported testing completed and Duo adaptation accepted in this conversation; no physical device connected for this capture session.",
+    "simulatorCapture": {
+      "duoInner": {
+        "runtime": "iOS 27.1",
+        "passedTests": 1,
+        "failedTests": 0,
+        "resultBundle": ".build/Publication201-Duo-Inner-Capture02.xcresult"
+      },
+      "iphone": {
+        "runtime": "iOS 27.0",
+        "passedTests": 1,
+        "failedTests": 0,
+        "resultBundle": ".build/Publication201-iPhone-Capture01.xcresult",
+        "note": "MCP response timed out during cold startup; completed xcresult summary independently read as Passed, 1 passed / 0 failed."
+      }
+    }
+  },
+  "copyCharacterCounts": {
+    "release-notes": 247,
+    "promotional-text": 63,
+    "announcement": 215
+  },
+  "screenshotSource": "Unmodified Simulator framebuffers of current public-demo UI; original media only.",
+  "limitations": [
+    "Duo outer screen was not recaptured because the official fold controls were blocked by Mac lock.",
+    "No PiP scene screenshot: system PiP is unsupported in Duo Simulator.",
+    "Existing iPad screenshots may be retained."
+  ],
+  "screenshots": [
+    {
+      "file": "screenshots/duo-inner/01-watching.jpg",
+      "width": 2007,
+      "height": 2853,
+      "alpha": false,
+      "sha256": "3a0251dd67e2271c86ab47ef78612b2902cc08945d9f8450d9197ce785f4f0bf",
+      "visualReview": "passed; actual public demo app screen"
+    },
+    {
+      "file": "screenshots/duo-inner/02-library.jpg",
+      "width": 2007,
+      "height": 2853,
+      "alpha": false,
+      "sha256": "bd8a2d253e1a8cbb295a625505e62274e980e9ca89bb3b172a109b1719a99e55",
+      "visualReview": "passed; actual public demo app screen"
+    },
+    {
+      "file": "screenshots/duo-inner/03-fullscreen-controls.jpg",
+      "width": 2007,
+      "height": 2853,
+      "alpha": false,
+      "sha256": "99c515468c11e88aafc5566c779eaab6bbe9248df8c762d0237877d846daf70b",
+      "visualReview": "passed; actual public demo app screen"
+    },
+    {
+      "file": "screenshots/duo-inner/04-control-panel.jpg",
+      "width": 2007,
+      "height": 2853,
+      "alpha": false,
+      "sha256": "8af07afdee6cb89b44765b4b7e14ff5b88f47bd2fb0272ed34f00de35275c0ad",
+      "visualReview": "passed; actual public demo app screen"
+    },
+    {
+      "file": "screenshots/duo-inner/05-fullscreen-picture.jpg",
+      "width": 2007,
+      "height": 2853,
+      "alpha": false,
+      "sha256": "d6f4632fcafe5d4e0b7e2ade85181cab89edd7bb766a471a691309ed5c0104ce",
+      "visualReview": "passed; actual public demo app screen"
+    },
+    {
+      "file": "screenshots/duo-inner/06-library-dark.jpg",
+      "width": 2007,
+      "height": 2853,
+      "alpha": false,
+      "sha256": "df824c5ea00713d6845540807b122127cc1f1f66ce702f400de6fe436b521931",
+      "visualReview": "passed; actual public demo app screen"
+    },
+    {
+      "file": "screenshots/iphone/01-watching.jpg",
+      "width": 1206,
+      "height": 2622,
+      "alpha": false,
+      "sha256": "3fc649f16983bb9f891241341984c166d204421d7715a313f169edc109b7ba15",
+      "visualReview": "passed; actual public demo app screen"
+    },
+    {
+      "file": "screenshots/iphone/02-library.jpg",
+      "width": 1206,
+      "height": 2622,
+      "alpha": false,
+      "sha256": "3d41c36694e3700711be7ec2f7ffc882bd50e57f0777e8a947b415209d3f2771",
+      "visualReview": "passed; actual public demo app screen"
+    },
+    {
+      "file": "screenshots/iphone/03-fullscreen-controls.jpg",
+      "width": 1206,
+      "height": 2622,
+      "alpha": false,
+      "sha256": "7f2a3fd8b91f7f0d2a6cf0d40ec7d06e57d157580cb3e4bec2018ce303a0a199",
+      "visualReview": "passed; actual public demo app screen"
+    },
+    {
+      "file": "screenshots/iphone/05-fullscreen-picture.jpg",
+      "width": 1206,
+      "height": 2622,
+      "alpha": false,
+      "sha256": "e5df83a272e96427b9ceb52332ad45cadc542bbdcf137da4be17cd565d5ef14a",
+      "visualReview": "passed; actual public demo app screen"
+    },
+    {
+      "file": "screenshots/iphone/06-library-dark.jpg",
+      "width": 1206,
+      "height": 2622,
+      "alpha": false,
+      "sha256": "0ab52706625b7055464623846021710a6b0add43a11aa1fd04ffb5648275ef0a",
+      "visualReview": "passed; actual public demo app screen"
+    }
+  ]
+}

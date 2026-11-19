@@ -23,6 +23,9 @@ struct AdaptiveMediaGrid<Content: View>: View {
     }
     var body: some View {
         LazyVGrid(columns: columns, alignment: .leading, spacing: rowSpacing, content: content)
+            // Measure the offered width, not the old fixed columns' intrinsic
+            // width, so restored system bars can reduce the content proposal.
+            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             .onGeometryChange(for: MediaGridSpace.self) { proxy in
                 var result = MediaGridSpace(width: proxy.size.width)
 #if GLIDE_DUO_SDK

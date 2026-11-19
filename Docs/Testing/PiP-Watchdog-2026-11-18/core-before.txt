@@ -1,0 +1,64 @@
+Building for debugging...
+[Pre-planning 1 / 95]
+[Planning deferred tasks]
+[2 / 21] GlideCoreTests-product
+[5 / 22] GlideCore
+[7 / 24] GlideCore
+[9 / 26] GlideCore
+[11 / 29] GlideCore
+[16 / 27] GlideCore
+[18 / 27] GlideCoreTests-product
+[19 / 36] GlideCoreTests-product
+[20 / 36] GlideCoreTests-product
+[22 / 35] GlideCoreTests-product
+[26 / 35] GlideCoreTests-product
+[27 / 35] GlideCoreTests-product
+[29 / 35] GlideCoreTests-product
+[31 / 35] GlideCoreTests-product
+[33 / 35] GlideCoreTests-product
+[35 / 35] GlideCoreTests-product
+Build complete! (38.57秒)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite PlaybackFrameWatchdogTests started.
+◇ Test pipMayStopInlineFramesWithoutInterruptingPlayback() started.
+◇ Test pipEntryAndExitResetTheInlineFailureDeadline() started.
+◇ Test pausedAndBufferingVideoMustNotAccumulateFrameFailure() started.
+◇ Test inlineBlackScreenStillRecoversAfterSixSeconds() started.
+◇ Test externalPlaybackIsNotJudgedByTheInlineLayer() started.
+◇ Test restoredInlineFrameClearsOldFailure() started.
+✔ Test externalPlaybackIsNotJudgedByTheInlineLayer() passed after 0.001 seconds.
+✔ Test restoredInlineFrameClearsOldFailure() passed after 0.001 seconds.
+✔ Test inlineBlackScreenStillRecoversAfterSixSeconds() passed after 0.001 seconds.
+✔ Test pausedAndBufferingVideoMustNotAccumulateFrameFailure() passed after 0.001 seconds.
+✘ Test pipMayStopInlineFramesWithoutInterruptingPlayback() recorded an issue at PlaybackFrameWatchdogTests.swift:21:53: Expectation failed: actual == recovers
+↳ actual == recovers → false
+↳   actual → true
+↳   recovers → false
+✘ Test pipEntryAndExitResetTheInlineFailureDeadline() recorded an issue at PlaybackFrameWatchdogTests.swift:28:15: Expectation failed: actual == recovers
+↳ actual == recovers → false
+↳   actual → true
+↳   recovers → false
+✘ Test pipEntryAndExitResetTheInlineFailureDeadline() recorded an issue at PlaybackFrameWatchdogTests.swift:29:15: Expectation failed: actual == recovers
+↳ actual == recovers → false
+↳   actual → true
+↳   recovers → false
+✘ Test pipEntryAndExitResetTheInlineFailureDeadline() recorded an issue at PlaybackFrameWatchdogTests.swift:30:15: Expectation failed: actual == recovers
+↳ actual == recovers → false
+↳   actual → true
+↳   recovers → false
+✘ Test pipMayStopInlineFramesWithoutInterruptingPlayback() recorded an issue at PlaybackFrameWatchdogTests.swift:21:53: Expectation failed: actual == recovers
+↳ actual == recovers → false
+↳   actual → true
+↳   recovers → false
+✘ Test pipEntryAndExitResetTheInlineFailureDeadline() failed after 0.002 seconds with 3 issues.
+✘ Test pipMayStopInlineFramesWithoutInterruptingPlayback() recorded an issue at PlaybackFrameWatchdogTests.swift:21:53: Expectation failed: actual == recovers
+↳ actual == recovers → false
+↳   actual → true
+↳   recovers → false
+✘ Test pipMayStopInlineFramesWithoutInterruptingPlayback() failed after 0.002 seconds with 3 issues.
+✘ Suite PlaybackFrameWatchdogTests failed after 0.003 seconds with 6 issues.
+✘ Test run with 6 tests in 1 suite failed after 0.003 seconds with 6 issues.
+Note: Some test targets reported failures:
+  - GlideCoreTests (Swift Testing)

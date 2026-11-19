@@ -1,0 +1,20 @@
+{
+  "checks" : [
+    "取帧成功且最长边不超过 640",
+    "重进与不同显示尺寸复用已有图片，无额外解码",
+    "取帧并发最多两个"
+  ],
+  "error" : "",
+  "live" : true,
+  "os" : "27.2",
+  "passed" : true,
+  "stage" : "验证通过",
+  "statistics" : {
+    "cacheHits" : 1,
+    "compatibilityFrames" : 1,
+    "generated" : 1,
+    "peakActive" : 1
+  },
+  "timestamp" : "2026-11-10T10:35:42Z",
+  "version" : "1.16.0 (9)"
+}

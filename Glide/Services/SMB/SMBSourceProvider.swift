@@ -97,7 +97,8 @@ final class SMBAccess: @unchecked Sendable {
             let entries = try session.list(path).compactMap { entry -> DAVEntry? in
                 guard !entry.name.hasPrefix("."), SMBLocation.validName(entry.name) else { return nil }
                 return DAVEntry(url: try location.child(entry.name, directory: entry.directory), name: entry.name,
-                    isDirectory: entry.directory, createdAt: entry.created, modifiedAt: entry.modified)
+                    isDirectory: entry.directory, createdAt: entry.created, modifiedAt: entry.modified,
+                    fileSize: entry.directory ? nil : Int64(exactly: entry.size))
             }.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
             let images = Dictionary(grouping: entries.filter { !$0.isDirectory && ["jpg", "jpeg", "png"].contains($0.url.pathExtension.lowercased()) }, by: { $0.url.deletingPathExtension().lastPathComponent })
             return entries.map { entry in

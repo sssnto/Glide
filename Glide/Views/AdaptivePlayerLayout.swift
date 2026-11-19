@@ -22,29 +22,24 @@ struct AdaptivePlayerLayout<Picture: View, Controls: View>: View {
     private var fallback: some View {
         let layout = expanded ? AnyLayout(HStackLayout(spacing: 0)) : AnyLayout(ZStackLayout())
         return layout {
-            picture().clipped()
-            controls().frame(width: expanded ? 340 : 0).clipped()
+            // The fullscreen surface extends behind safe areas. Clipping its
+            // safe-area-sized parent cuts off that fitted image on Duo.
+            picture()
+            controls().frame(width: expanded ? 340 : 0, height: expanded ? nil : 0).clipped()
                 .opacity(expanded ? 1 : 0).allowsHitTesting(expanded).accessibilityHidden(!expanded)
-        }
+        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
     }
 }
 
 /// Extra insets are queried in the custom canvas's coordinate space, never from UIScreen.
-struct PlayerChromeInsets: Equatable {
-    var top: CGFloat = 0
-    var leading: CGFloat = 0
-    var trailing: CGFloat = 0
-    static func read(_ proxy: GeometryProxy) -> Self {
-        var result = Self()
+extension PlayerChromeInsets {
+    static func read(_ proxy: GeometryProxy, headerHeight: CGFloat = 44) -> Self {
+        var frames: [CGRect] = []
 #if GLIDE_DUO_SDK
         if #available(iOS 27.1, *) {
-            for region in proxy.reservedRegions(kind: .occlusion) where region.isActive {
-                if region.frame.minY < 100, region.frame.maxY > 0 {
-                    result.top = max(result.top, region.frame.maxY + region.margins.bottom - proxy.safeAreaInsets.top)
-                }
-            }
+            frames = proxy.reservedRegions(kind: .occlusion).filter(\.isActive).map(\.frame)
         }
 #endif
-        return result
+        return avoiding(size: proxy.size, headerHeight: headerHeight, occlusions: frames)
     }
 }

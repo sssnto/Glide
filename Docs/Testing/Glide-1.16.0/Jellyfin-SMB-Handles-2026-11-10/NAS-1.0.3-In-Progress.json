@@ -1,0 +1,15 @@
+{
+  "authoredBytes": 58319,
+  "authoredFromManualCopy": true,
+  "checks": [
+    "updated_plugin_available"
+  ],
+  "indexCandidates": 0,
+  "indexQueries": 19,
+  "passed": false,
+  "pluginVersion": "1.0.3",
+  "protocolVersion": 1,
+  "stage": "等待 Jellyfin 索引原创短片",
+  "time": "2026-11-10T15:02:13Z",
+  "version": "1.16.0 (11)"
+}

@@ -1,0 +1,648 @@
+{
+  "build" : "5",
+  "checks" : {
+    "authoredUpload" : true,
+    "exactRestore" : true,
+    "nativeDecodedFrame" : true,
+    "nativePlayable" : true,
+    "nativeRotatedDimensions" : true,
+    "otherBytesPreserved" : true,
+    "ownedFilesCleaned" : true,
+    "previousAuthoredRunsCleaned" : true,
+    "savedMatrix" : true
+  },
+  "failure" : {
+
+  },
+  "httpTrace" : [
+    {
+      "contentLength" : 0,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "PUT-upload",
+      "role" : "authored",
+      "status" : 201
+    },
+    {
+      "contentLength" : 0,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "PUT",
+      "role" : "probe-a",
+      "status" : 201
+    },
+    {
+      "contentLength" : 0,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "PUT",
+      "role" : "probe-b",
+      "status" : 201
+    },
+    {
+      "contentLength" : 0,
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "MOVE",
+      "role" : "probe-b",
+      "status" : 412
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET",
+      "role" : "probe-a",
+      "status" : 200
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET",
+      "role" : "probe-b",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : true,
+      "method" : "LOCK",
+      "role" : "probe-a",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "MOVE",
+      "role" : "probe-b",
+      "status" : 204
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET",
+      "role" : "probe-a",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "UNLOCK",
+      "role" : "probe-a",
+      "status" : 204
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "probe-a",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "DELETE",
+      "role" : "probe-a",
+      "status" : 204
+    },
+    {
+      "contentLength" : 0,
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "probe-b",
+      "status" : 404
+    },
+    {
+      "contentLength" : 0,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "PUT",
+      "role" : "probe-a",
+      "status" : 201
+    },
+    {
+      "contentLength" : 0,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "PUT",
+      "role" : "probe-b",
+      "status" : 201
+    },
+    {
+      "contentLength" : 0,
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "MOVE",
+      "role" : "probe-b",
+      "status" : 412
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET",
+      "role" : "probe-a",
+      "status" : 200
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET",
+      "role" : "probe-b",
+      "status" : 200
+    },
+    {
+      "contentLength" : 0,
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "MOVE",
+      "role" : "probe-b",
+      "status" : 412
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET",
+      "role" : "probe-a",
+      "status" : 200
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET",
+      "role" : "probe-b",
+      "status" : 200
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "probe-a",
+      "status" : 200
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "probe-b",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "MOVE",
+      "role" : "probe-b",
+      "status" : 204
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET",
+      "role" : "probe-a",
+      "status" : 200
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "probe-a",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "DELETE",
+      "role" : "probe-a",
+      "status" : 204
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-download",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 36,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-range",
+      "role" : "authored",
+      "status" : 206
+    },
+    {
+      "contentLength" : 0,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "PUT-upload",
+      "role" : "staged",
+      "status" : 201
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "staged",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-download",
+      "role" : "staged",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "COPY",
+      "role" : "authored",
+      "status" : 201
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "backup",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-download",
+      "role" : "backup",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "MOVE",
+      "role" : "staged",
+      "status" : 204
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 36,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-range",
+      "role" : "authored",
+      "status" : 206
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-download",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 36,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-range",
+      "role" : "authored",
+      "status" : 206
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-download",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 36,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-range",
+      "role" : "authored",
+      "status" : 206
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "backup",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-download",
+      "role" : "backup",
+      "status" : 200
+    },
+    {
+      "contentLength" : 0,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "PUT-upload",
+      "role" : "staged",
+      "status" : 201
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "staged",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-download",
+      "role" : "staged",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "COPY",
+      "role" : "authored",
+      "status" : 201
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "backup",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-download",
+      "role" : "backup",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "MOVE",
+      "role" : "staged",
+      "status" : 204
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 36,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-range",
+      "role" : "authored",
+      "status" : 206
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-download",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 36,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-range",
+      "role" : "authored",
+      "status" : 206
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "backup",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-download",
+      "role" : "backup",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "DELETE",
+      "role" : "backup",
+      "status" : 204
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "backup",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-download",
+      "role" : "backup",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "DELETE",
+      "role" : "backup",
+      "status" : 204
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "DELETE",
+      "role" : "authored",
+      "status" : 204
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-download",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "contentLength" : 58319,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET-download",
+      "role" : "authored",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "DELETE",
+      "role" : "authored",
+      "status" : 204
+    }
+  ],
+  "result" : "验证通过",
+  "time" : "2026-11-10T02:43:54Z",
+  "version" : 2
+}

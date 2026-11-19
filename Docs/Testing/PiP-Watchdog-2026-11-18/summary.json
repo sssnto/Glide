@@ -1,0 +1,29 @@
+{
+  "candidate": "2.0.1 (11)",
+  "regression": {
+    "oldLogic": {
+      "passed": 4,
+      "failed": 2,
+      "issues": 6
+    },
+    "fixedLogic": {
+      "passed": 6,
+      "failed": 0
+    },
+    "allCore": {
+      "XCTest": 11,
+      "SwiftTesting": 303,
+      "failed": 0
+    }
+  },
+  "productionIntegration": "PlaybackController watchdog calls PlaybackFrameWatchdog using PictureInPicture.keepsPlaybackInBackground",
+  "physicalPiP": "Pending offline user verification; simulator does not support system PiP",
+  "archive": {
+    "path": ".build/Archives/Glide-2.0.1-11-PiPWatchdog.xcarchive",
+    "version": "2.0.1",
+    "build": "11",
+    "buildSucceeded": true,
+    "codesignDeepStrictVerified": true,
+    "allSymbolsMatched": true
+  }
+}

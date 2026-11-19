@@ -1,0 +1,521 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project Glide.xcodeproj -scheme Glide -configuration Debug -destination "platform=iOS Simulator,id=30EE8806-FEDF-48A5-B206-95A21D990D65" -derivedDataPath /tmp/Glide1150PadDerived -resultBundlePath /tmp/Glide-Zoom-Fixed.xcresult -jobs 1 -parallel-testing-enabled NO -collect-test-diagnostics never "-only-testing:GlideUITests/GlideUITests/testVideoZoomGeometryContract" "-only-testing:GlideUITests/GlideUITests/testPinchNative4KContinuity" "-only-testing:GlideUITests/GlideUITests/testPinchCompatibility4KContinuity" "-only-testing:GlideUITests/GlideUITests/testOriginalASSStylesNativeAndCompatibility"
+
+Writing result bundle at path:
+	/tmp/Glide-Zoom-Fixed.xcresult
+
+2026-11-06 09:20:18.902 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:20:23.889745+0800 GlideUITests-Runner[62028:15122705] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-06 09:20:26.161.
+Test Suite 'GlideUITests.xctest' started at 2026-11-06 09:20:26.164.
+Test Suite 'GlideUITests' started at 2026-11-06 09:20:26.164.
+Test Case '-[GlideUITests.GlideUITests testOriginalASSStylesNativeAndCompatibility]' started.
+    t =     0.00s Start Test at 2026-11-06 09:20:26.165
+    t =     0.69s Set Up
+    t =     0.72s Open com.songpeng.glide
+    t =     0.72s     Launch com.songpeng.glide
+    t =     0.72s         Terminate com.songpeng.glide:61952
+2026-11-06 09:20:28.473 xcodebuild[62000:15122311] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-11-06 09:20:28.474 xcodebuild[62000:15122311] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-11-06 09:20:28.585 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     3.37s         Setting up automation session
+    t =     5.45s         Wait for com.songpeng.glide to idle
+    t =     8.29s Waiting 30.0s for Button (First Match) to exist
+    t =     9.33s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     9.34s         Checking existence of `Button (First Match)`
+    t =     9.56s Tap Button (First Match)[0.50, 0.35]
+    t =     9.56s     Wait for com.songpeng.glide to idle
+    t =    10.06s     Find the Button (First Match)
+    t =    10.14s     Check for interrupting elements affecting "video.D31DE472-2DED-4482-9156-4145497F9478:local:ass-style.mp4" Button
+    t =    10.36s     Synthesize event
+    t =    10.37s         Find the "video.D31DE472-2DED-4482-9156-4145497F9478:local:ass-style.mp4" Button
+    t =    10.44s         Find the "video.D31DE472-2DED-4482-9156-4145497F9478:local:ass-style.mp4" Button
+    t =    10.51s         Find the "video.D31DE472-2DED-4482-9156-4145497F9478:local:ass-style.mp4" Button
+    t =    10.99s     Wait for com.songpeng.glide to idle
+    t =    12.65s Checking `Expect predicate `label CONTAINS "已显示画面"` for object "player.canvas" Other`
+    t =    12.66s     Find the "player.canvas" Other
+    t =    12.94s     Capturing element debug description
+    t =    13.05s         Requesting snapshot of accessibility hierarchy for app with pid 62042
+    t =    13.16s         Find: Descendants matching type Other
+    t =    13.16s         Find: Elements matching predicate '"player.canvas" IN identifiers'
+    t =    13.16s         Requesting snapshot of accessibility hierarchy for app with pid 62042
+    t =    13.24s         Find: Descendants matching type Other
+    t =    13.24s         Requesting snapshot of accessibility hierarchy for app with pid 62042
+    t =    13.61s Checking `Expect predicate `label CONTAINS "已显示画面"` for object "player.canvas" Other`
+    t =    13.61s     Find the "player.canvas" Other
+    t =    13.68s Find the "player.seekBar" Any
+    t =    13.71s Press "player.seekBar" Other[0.15, 0.50] for 0.1 seconds, then drag to "player.seekBar" Other[0.13, 0.50] with velocity of 250.00 pixels per second, and then hold for 1.0 seconds 
+    t =    13.71s     Wait for com.songpeng.glide to idle
+    t =    13.72s     Find the "player.seekBar" Other
+    t =    13.75s     Check for interrupting elements affecting "player.seekBar" Other
+    t =    13.88s     Synthesize event
+    t =    13.88s         Find the "player.seekBar" Other
+    t =    13.91s         Find the "player.seekBar" Other
+    t =    13.94s         Find the "player.seekBar" Other
+    t =    13.98s         Find the "player.seekBar" Other
+    t =    14.01s         Find the "player.seekBar" Other
+    t =    15.43s     Wait for com.songpeng.glide to idle
+    t =    16.47s Checking `Expect predicate `value CONTAINS "ASS已渲染"` for object "player.canvas" Other`
+    t =    16.48s     Find the "player.canvas" Other
+    t =    16.58s Checking existence of `"player.subtitle.overlay" Any`
+    t =    16.64s Find the Target Application 'com.songpeng.glide'
+    t =    16.92s Added attachment named 'Original ASS colours and fonts avPlayer'
+    t =    16.92s Find the "player.seekBar" Any
+    t =    16.97s Press "player.seekBar" Other[0.15, 0.50] for 0.1 seconds, then drag to "player.seekBar" Other[0.22, 0.50] with velocity of 250.00 pixels per second, and then hold for 1.0 seconds 
+    t =    16.97s     Wait for com.songpeng.glide to idle
+    t =    16.98s     Find the "player.seekBar" Other
+    t =    17.01s     Check for interrupting elements affecting "player.seekBar" Other
+    t =    17.10s     Synthesize event
+    t =    17.10s         Find the "player.seekBar" Other
+    t =    17.14s         Find the "player.seekBar" Other
+    t =    17.18s         Find the "player.seekBar" Other
+    t =    17.22s         Find the "player.seekBar" Other
+    t =    17.34s         Find the "player.seekBar" Other
+    t =    18.86s     Wait for com.songpeng.glide to idle
+    t =    19.91s Checking `Expect predicate `value CONTAINS "ASS已渲染"` for object "player.canvas" Other`
+    t =    19.91s     Find the "player.canvas" Other
+    t =    20.11s Find the "player.seekBar" Any
+    t =    20.16s Press "player.seekBar" Other[0.15, 0.50] for 0.1 seconds, then drag to "player.seekBar" Other[0.50, 0.50] with velocity of 250.00 pixels per second, and then hold for 1.0 seconds 
+    t =    20.16s     Wait for com.songpeng.glide to idle
+    t =    20.16s     Find the "player.seekBar" Other
+    t =    20.19s     Check for interrupting elements affecting "player.seekBar" Other
+    t =    20.26s     Synthesize event
+    t =    20.26s         Find the "player.seekBar" Other
+    t =    20.30s         Find the "player.seekBar" Other
+    t =    20.33s         Find the "player.seekBar" Other
+    t =    20.36s         Find the "player.seekBar" Other
+    t =    20.40s         Find the "player.seekBar" Other
+    t =    22.29s     Wait for com.songpeng.glide to idle
+    t =    23.33s Checking `Expect predicate `value CONTAINS "ASS已渲染"` for object "player.canvas" Other`
+    t =    23.33s     Find the "player.canvas" Other
+    t =    23.43s Find the Target Application 'com.songpeng.glide'
+    t =    23.70s Added attachment named 'Original ASS motion avPlayer'
+    t =    23.70s Waiting 5.0s for "player.quick.subtitle" Any to exist
+    t =    24.73s     Checking `Expect predicate `existsNoRetry == 1` for object "player.quick.subtitle" Any`
+    t =    24.74s         Checking existence of `"player.quick.subtitle" Any`
+    t =    24.80s Tap "player.quick.subtitle" Any[0.50, 0.50]
+    t =    24.80s     Wait for com.songpeng.glide to idle
+    t =    24.81s     Find the "player.quick.subtitle" Any
+    t =    24.85s     Check for interrupting elements affecting "player.quick.subtitle" Button
+    t =    24.94s     Synthesize event
+    t =    24.94s         Find the "player.quick.subtitle" Button
+    t =    24.98s         Find the "player.quick.subtitle" Button
+    t =    25.02s         Find the "player.quick.subtitle" Button
+    t =    25.36s     Wait for com.songpeng.glide to idle
+    t =    25.62s Waiting 3.0s for "player.subtitle.off" Any to exist
+    t =    26.65s     Checking `Expect predicate `existsNoRetry == 1` for object "player.subtitle.off" Any`
+    t =    26.66s         Checking existence of `"player.subtitle.off" Any`
+    t =    26.77s Waiting 5.0s for "player.subtitle.off" Any to exist
+    t =    27.80s     Checking `Expect predicate `existsNoRetry == 1` for object "player.subtitle.off" Any`
+    t =    27.80s         Checking existence of `"player.subtitle.off" Any`
+    t =    27.88s Tap "player.subtitle.off" Any
+    t =    27.88s     Wait for com.songpeng.glide to idle
+    t =    27.88s     Find the "player.subtitle.off" Any
+    t =    27.93s     Check for interrupting elements affecting "player.subtitle.off" Button
+    t =    28.02s     Synthesize event
+    t =    28.32s     Wait for com.songpeng.glide to idle
+    t =    30.03s Waiting 5.0s for "player.subtitle.off" Button to not exist
+    t =    31.06s     Checking `Expect predicate `existsNoRetry == 0` for object "player.subtitle.off" Button`
+    t =    31.06s         Checking existence of `"player.subtitle.off" Button`
+    t =    32.35s Checking `Expect predicate `NOT value CONTAINS "ASS已渲染"` for object "player.canvas" Other`
+    t =    32.36s     Find the "player.canvas" Other
+    t =    32.43s Waiting 5.0s for "player.quick.subtitle" Any to exist
+    t =    33.47s     Checking `Expect predicate `existsNoRetry == 1` for object "player.quick.subtitle" Any`
+    t =    33.47s         Checking existence of `"player.quick.subtitle" Any`
+    t =    33.52s Tap "player.quick.subtitle" Any[0.50, 0.50]
+    t =    33.52s     Wait for com.songpeng.glide to idle
+    t =    33.53s     Find the "player.quick.subtitle" Any
+    t =    33.57s     Check for interrupting elements affecting "player.quick.subtitle" Button
+    t =    33.70s     Synthesize event
+    t =    33.71s         Find the "player.quick.subtitle" Button
+    t =    33.75s         Find the "player.quick.subtitle" Button
+    t =    33.79s         Find the "player.quick.subtitle" Button
+    t =    34.13s     Wait for com.songpeng.glide to idle
+    t =    35.31s Waiting 3.0s for "player.subtitle.sidecar.ass-style.ass" Any to exist
+    t =    36.34s     Checking `Expect predicate `existsNoRetry == 1` for object "player.subtitle.sidecar.ass-style.ass" Any`
+    t =    36.34s         Checking existence of `"player.subtitle.sidecar.ass-style.ass" Any`
+    t =    36.41s Waiting 5.0s for "player.subtitle.sidecar.ass-style.ass" Any to exist
+    t =    37.44s     Checking `Expect predicate `existsNoRetry == 1` for object "player.subtitle.sidecar.ass-style.ass" Any`
+    t =    37.44s         Checking existence of `"player.subtitle.sidecar.ass-style.ass" Any`
+    t =    37.50s Tap "player.subtitle.sidecar.ass-style.ass" Any
+    t =    37.50s     Wait for com.songpeng.glide to idle
+    t =    37.50s     Find the "player.subtitle.sidecar.ass-style.ass" Any
+    t =    37.54s     Check for interrupting elements affecting "player.subtitle.sidecar.ass-style.ass" Button
+    t =    37.61s     Synthesize event
+    t =    37.91s     Wait for com.songpeng.glide to idle
+    t =    39.31s Waiting 5.0s for "player.subtitle.sidecar.ass-style.ass" Button to not exist
+    t =    40.35s     Checking `Expect predicate `existsNoRetry == 0` for object "player.subtitle.sidecar.ass-style.ass" Button`
+    t =    40.36s         Checking existence of `"player.subtitle.sidecar.ass-style.ass" Button`
+    t =    41.61s Checking `Expect predicate `value CONTAINS "ASS已渲染"` for object "player.canvas" Other`
+    t =    41.61s     Find the "player.canvas" Other
+    t =    41.70s Tap "返回片库" Button
+    t =    41.70s     Wait for com.songpeng.glide to idle
+    t =    41.70s     Find the "返回片库" Button
+    t =    41.75s     Check for interrupting elements affecting "chevron.down" Button
+    t =    41.84s     Synthesize event
+    t =    42.14s     Wait for com.songpeng.glide to idle
+    t =    42.65s Terminate com.songpeng.glide:62042
+2026-11-06 09:21:08.871 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:21:08.880 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    43.71s Open com.songpeng.glide
+    t =    43.72s     Launch com.songpeng.glide
+2026-11-06 09:21:09.908 xcodebuild[62000:15122311] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-11-06 09:21:09.909 xcodebuild[62000:15122311] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-11-06 09:21:09.959 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    44.17s         Setting up automation session
+    t =    46.11s         Wait for com.songpeng.glide to idle
+    t =    49.40s Waiting 30.0s for Button (First Match) to exist
+    t =    50.42s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    50.43s         Checking existence of `Button (First Match)`
+    t =    50.57s Tap Button (First Match)[0.50, 0.35]
+    t =    50.57s     Wait for com.songpeng.glide to idle
+    t =    50.61s     Find the Button (First Match)
+    t =    50.67s     Check for interrupting elements affecting "video.D31DE472-2DED-4482-9156-4145497F9478:local:ass-style.mp4" Button
+    t =    50.74s     Synthesize event
+    t =    50.74s         Find the "video.D31DE472-2DED-4482-9156-4145497F9478:local:ass-style.mp4" Button
+    t =    50.80s         Find the "video.D31DE472-2DED-4482-9156-4145497F9478:local:ass-style.mp4" Button
+    t =    50.86s         Find the "video.D31DE472-2DED-4482-9156-4145497F9478:local:ass-style.mp4" Button
+    t =    51.21s     Wait for com.songpeng.glide to idle
+    t =    52.57s Checking `Expect predicate `label CONTAINS "已显示画面"` for object "player.canvas" Other`
+    t =    52.58s     Find the "player.canvas" Other
+    t =    52.75s     Capturing element debug description
+    t =    52.81s         Requesting snapshot of accessibility hierarchy for app with pid 62103
+    t =    52.89s         Find: Descendants matching type Other
+    t =    52.89s         Find: Elements matching predicate '"player.canvas" IN identifiers'
+    t =    52.89s         Requesting snapshot of accessibility hierarchy for app with pid 62103
+    t =    52.96s         Find: Descendants matching type Other
+    t =    52.97s         Requesting snapshot of accessibility hierarchy for app with pid 62103
+    t =    53.55s Checking `Expect predicate `label CONTAINS "已显示画面"` for object "player.canvas" Other`
+    t =    53.55s     Find the "player.canvas" Other
+    t =    53.64s Find the "player.seekBar" Any
+    t =    53.67s Press "player.seekBar" Other[0.15, 0.50] for 0.1 seconds, then drag to "player.seekBar" Other[0.13, 0.50] with velocity of 250.00 pixels per second, and then hold for 1.0 seconds 
+    t =    53.67s     Wait for com.songpeng.glide to idle
+    t =    53.67s     Find the "player.seekBar" Other
+    t =    53.70s     Check for interrupting elements affecting "player.seekBar" Other
+    t =    53.78s     Synthesize event
+    t =    53.79s         Find the "player.seekBar" Other
+    t =    53.82s         Find the "player.seekBar" Other
+    t =    53.85s         Find the "player.seekBar" Other
+    t =    53.88s         Find the "player.seekBar" Other
+    t =    53.92s         Find the "player.seekBar" Other
+    t =    55.33s     Wait for com.songpeng.glide to idle
+    t =    56.36s Checking `Expect predicate `value CONTAINS "ASS已渲染"` for object "player.canvas" Other`
+    t =    56.36s     Find the "player.canvas" Other
+    t =    56.42s Checking existence of `"player.subtitle.overlay" Any`
+    t =    56.48s Find the Target Application 'com.songpeng.glide'
+    t =    56.69s Added attachment named 'Original ASS colours and fonts vlc'
+    t =    56.69s Find the "player.seekBar" Any
+    t =    56.74s Press "player.seekBar" Other[0.15, 0.50] for 0.1 seconds, then drag to "player.seekBar" Other[0.22, 0.50] with velocity of 250.00 pixels per second, and then hold for 1.0 seconds 
+    t =    56.74s     Wait for com.songpeng.glide to idle
+    t =    56.74s     Find the "player.seekBar" Other
+    t =    56.77s     Check for interrupting elements affecting "player.seekBar" Other
+    t =    56.85s     Synthesize event
+    t =    56.85s         Find the "player.seekBar" Other
+    t =    56.88s         Find the "player.seekBar" Other
+    t =    57.02s         Find the "player.seekBar" Other
+    t =    57.06s         Find the "player.seekBar" Other
+    t =    57.09s         Find the "player.seekBar" Other
+    t =    58.58s     Wait for com.songpeng.glide to idle
+    t =    59.62s Checking `Expect predicate `value CONTAINS "ASS已渲染"` for object "player.canvas" Other`
+    t =    59.62s     Find the "player.canvas" Other
+    t =    59.67s Find the "player.seekBar" Any
+    t =    59.71s Press "player.seekBar" Other[0.15, 0.50] for 0.1 seconds, then drag to "player.seekBar" Other[0.50, 0.50] with velocity of 250.00 pixels per second, and then hold for 1.0 seconds 
+    t =    59.71s     Wait for com.songpeng.glide to idle
+    t =    59.71s     Find the "player.seekBar" Other
+    t =    59.74s     Check for interrupting elements affecting "player.seekBar" Other
+    t =    59.80s     Synthesize event
+    t =    59.80s         Find the "player.seekBar" Other
+    t =    59.83s         Find the "player.seekBar" Other
+    t =    59.86s         Find the "player.seekBar" Other
+    t =    59.89s         Find the "player.seekBar" Other
+    t =    59.93s         Find the "player.seekBar" Other
+    t =    61.81s     Wait for com.songpeng.glide to idle
+    t =    62.85s Checking `Expect predicate `value CONTAINS "ASS已渲染"` for object "player.canvas" Other`
+    t =    62.85s     Find the "player.canvas" Other
+    t =    62.92s Find the Target Application 'com.songpeng.glide'
+    t =    63.07s Added attachment named 'Original ASS motion vlc'
+    t =    63.07s Waiting 5.0s for "player.quick.subtitle" Any to exist
+    t =    64.08s     Checking `Expect predicate `existsNoRetry == 1` for object "player.quick.subtitle" Any`
+    t =    64.09s         Checking existence of `"player.quick.subtitle" Any`
+    t =    64.14s Tap "player.quick.subtitle" Any[0.50, 0.50]
+    t =    64.14s     Wait for com.songpeng.glide to idle
+    t =    64.14s     Find the "player.quick.subtitle" Any
+    t =    64.18s     Check for interrupting elements affecting "player.quick.subtitle" Button
+    t =    64.24s     Synthesize event
+    t =    64.24s         Find the "player.quick.subtitle" Button
+    t =    64.29s         Find the "player.quick.subtitle" Button
+    t =    64.33s         Find the "player.quick.subtitle" Button
+    t =    64.66s     Wait for com.songpeng.glide to idle
+    t =    65.16s Waiting 3.0s for "player.subtitle.off" Any to exist
+    t =    66.18s     Checking `Expect predicate `existsNoRetry == 1` for object "player.subtitle.off" Any`
+    t =    66.18s         Checking existence of `"player.subtitle.off" Any`
+    t =    66.29s Waiting 5.0s for "player.subtitle.off" Any to exist
+    t =    67.32s     Checking `Expect predicate `existsNoRetry == 1` for object "player.subtitle.off" Any`
+    t =    67.32s         Checking existence of `"player.subtitle.off" Any`
+    t =    67.39s Tap "player.subtitle.off" Any
+    t =    67.39s     Wait for com.songpeng.glide to idle
+    t =    67.39s     Find the "player.subtitle.off" Any
+    t =    67.44s     Check for interrupting elements affecting "player.subtitle.off" Button
+    t =    67.51s     Synthesize event
+    t =    67.81s     Wait for com.songpeng.glide to idle
+    t =    69.26s Waiting 5.0s for "player.subtitle.off" Button to not exist
+    t =    70.29s     Checking `Expect predicate `existsNoRetry == 0` for object "player.subtitle.off" Button`
+    t =    70.29s         Checking existence of `"player.subtitle.off" Button`
+    t =    71.53s Checking `Expect predicate `NOT value CONTAINS "ASS已渲染"` for object "player.canvas" Other`
+    t =    71.53s     Find the "player.canvas" Other
+    t =    71.59s Waiting 5.0s for "player.quick.subtitle" Any to exist
+    t =    72.60s     Checking `Expect predicate `existsNoRetry == 1` for object "player.quick.subtitle" Any`
+    t =    72.61s         Checking existence of `"player.quick.subtitle" Any`
+    t =    72.65s Tap "player.quick.subtitle" Any[0.50, 0.50]
+    t =    72.65s     Wait for com.songpeng.glide to idle
+    t =    72.65s     Find the "player.quick.subtitle" Any
+    t =    72.70s     Check for interrupting elements affecting "player.quick.subtitle" Button
+    t =    72.77s     Synthesize event
+    t =    72.77s         Find the "player.quick.subtitle" Button
+    t =    72.82s         Find the "player.quick.subtitle" Button
+    t =    72.86s         Find the "player.quick.subtitle" Button
+    t =    73.21s     Wait for com.songpeng.glide to idle
+    t =    74.34s Waiting 3.0s for "player.subtitle.sidecar.ass-style.ass" Any to exist
+    t =    75.38s     Checking `Expect predicate `existsNoRetry == 1` for object "player.subtitle.sidecar.ass-style.ass" Any`
+    t =    75.38s         Checking existence of `"player.subtitle.sidecar.ass-style.ass" Any`
+    t =    75.45s Waiting 5.0s for "player.subtitle.sidecar.ass-style.ass" Any to exist
+    t =    76.47s     Checking `Expect predicate `existsNoRetry == 1` for object "player.subtitle.sidecar.ass-style.ass" Any`
+    t =    76.48s         Checking existence of `"player.subtitle.sidecar.ass-style.ass" Any`
+    t =    76.54s Tap "player.subtitle.sidecar.ass-style.ass" Any
+    t =    76.54s     Wait for com.songpeng.glide to idle
+    t =    76.54s     Find the "player.subtitle.sidecar.ass-style.ass" Any
+    t =    76.58s     Check for interrupting elements affecting "player.subtitle.sidecar.ass-style.ass" Button
+    t =    76.77s     Synthesize event
+    t =    77.13s     Wait for com.songpeng.glide to idle
+    t =    78.51s Waiting 5.0s for "player.subtitle.sidecar.ass-style.ass" Button to not exist
+    t =    79.52s     Checking `Expect predicate `existsNoRetry == 0` for object "player.subtitle.sidecar.ass-style.ass" Button`
+    t =    79.52s         Checking existence of `"player.subtitle.sidecar.ass-style.ass" Button`
+    t =    80.77s Checking `Expect predicate `value CONTAINS "ASS已渲染"` for object "player.canvas" Other`
+    t =    80.78s     Find the "player.canvas" Other
+    t =    80.84s Tap "返回片库" Button
+    t =    80.84s     Wait for com.songpeng.glide to idle
+    t =    80.84s     Find the "返回片库" Button
+    t =    80.90s     Check for interrupting elements affecting "chevron.down" Button
+    t =    80.95s     Synthesize event
+    t =    81.25s     Wait for com.songpeng.glide to idle
+    t =    81.68s Terminate com.songpeng.glide:62103
+2026-11-06 09:21:47.928 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:21:47.947 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =    82.77s Tear Down
+Test Case '-[GlideUITests.GlideUITests testOriginalASSStylesNativeAndCompatibility]' passed (83.745 seconds).
+Test Case '-[GlideUITests.GlideUITests testPinchCompatibility4KContinuity]' started.
+    t =     0.01s Start Test at 2026-11-06 09:21:49.923
+    t =     0.08s Set Up
+    t =     0.08s Open com.songpeng.glide
+    t =     0.08s     Launch com.songpeng.glide
+2026-11-06 09:21:50.018 xcodebuild[62000:15122311] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-11-06 09:21:50.019 xcodebuild[62000:15122311] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-11-06 09:21:50.059 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     0.53s         Setting up automation session
+    t =     2.28s         Wait for com.songpeng.glide to idle
+    t =     3.95s Waiting 30.0s for "duo.play" Button to exist
+    t =     4.97s     Checking `Expect predicate `existsNoRetry == 1` for object "duo.play" Button`
+    t =     4.98s         Checking existence of `"duo.play" Button`
+    t =     5.26s Tap "duo.play" Button
+    t =     5.26s     Wait for com.songpeng.glide to idle
+    t =     5.56s     Find the "duo.play" Button
+    t =     5.64s     Check for interrupting elements affecting "duo.play" Button
+    t =     5.80s     Synthesize event
+    t =     6.12s     Wait for com.songpeng.glide to idle
+    t =     8.24s Checking `Expect predicate `label CONTAINS "已显示画面"` for object "player.canvas" Other`
+    t =     8.25s     Find the "player.canvas" Other
+    t =     8.36s Find the "player.canvas" Other
+    t =     8.41s Tap "player.canvas" Other[0.50, 0.45]
+    t =     8.41s     Wait for com.songpeng.glide to idle
+    t =     8.41s     Find the "player.canvas" Other
+    t =     8.45s     Check for interrupting elements affecting "player.canvas" Other
+    t =     8.63s     Synthesize event
+    t =     8.64s         Find the "player.canvas" Other
+    t =     8.67s         Find the "player.canvas" Other
+    t =     8.70s         Find the "player.canvas" Other
+    t =     9.03s     Wait for com.songpeng.glide to idle
+    t =    10.06s Checking `Expect predicate `exists == 0` for object "播放设置" Button`
+    t =    10.06s     Checking existence of `"播放设置" Button`
+    t =    10.18s Pinch with scale 2, velocity 1.5 in "player.canvas" Other
+    t =    10.18s     Wait for com.songpeng.glide to idle
+    t =    10.18s     Find the "player.canvas" Other
+    t =    10.22s     Check for interrupting elements affecting "player.canvas" Other
+    t =    10.29s     Synthesize event
+    t =    10.31s         Pinching with rect {{50, 50}, {302, 774}}
+    t =    11.98s     Wait for com.songpeng.glide to idle
+    t =    11.98s Find the "player.canvas" Other
+    t =    12.02s Pinch with scale 0.4, velocity -1.5 in "player.canvas" Other
+    t =    12.02s     Wait for com.songpeng.glide to idle
+    t =    12.03s     Find the "player.canvas" Other
+    t =    12.06s     Check for interrupting elements affecting "player.canvas" Other
+    t =    12.16s     Synthesize event
+    t =    12.21s         Pinching with rect {{50, 50}, {302, 774}}
+    t =    12.90s     Wait for com.songpeng.glide to idle
+    t =    12.92s Find the "player.canvas" Other
+    t =    12.99s Pinch with scale 2, velocity 1.5 in "player.canvas" Other
+    t =    12.99s     Wait for com.songpeng.glide to idle
+    t =    13.00s     Find the "player.canvas" Other
+    t =    13.03s     Check for interrupting elements affecting "player.canvas" Other
+    t =    13.09s     Synthesize event
+    t =    13.14s         Pinching with rect {{50, 50}, {302, 774}}
+    t =    14.81s     Wait for com.songpeng.glide to idle
+    t =    14.81s Find the "player.canvas" Other
+    t =    14.85s Pinch with scale 0.4, velocity -1.5 in "player.canvas" Other
+    t =    14.85s     Wait for com.songpeng.glide to idle
+    t =    14.85s     Find the "player.canvas" Other
+    t =    14.89s     Check for interrupting elements affecting "player.canvas" Other
+    t =    14.94s     Synthesize event
+    t =    14.97s         Pinching with rect {{50, 50}, {302, 774}}
+    t =    15.59s     Wait for com.songpeng.glide to idle
+    t =    15.59s Find the "player.canvas" Other
+    t =    15.62s Pinch with scale 2, velocity 1.5 in "player.canvas" Other
+    t =    15.62s     Wait for com.songpeng.glide to idle
+    t =    15.63s     Find the "player.canvas" Other
+    t =    15.66s     Check for interrupting elements affecting "player.canvas" Other
+    t =    15.71s     Synthesize event
+    t =    15.73s         Pinching with rect {{50, 50}, {302, 774}}
+    t =    17.40s     Wait for com.songpeng.glide to idle
+    t =    17.41s Find the "player.canvas" Other
+    t =    17.45s Pinch with scale 0.4, velocity -1.5 in "player.canvas" Other
+    t =    17.45s     Wait for com.songpeng.glide to idle
+    t =    17.45s     Find the "player.canvas" Other
+    t =    17.48s     Check for interrupting elements affecting "player.canvas" Other
+    t =    17.56s     Synthesize event
+    t =    17.59s         Pinching with rect {{50, 50}, {302, 774}}
+    t =    18.21s     Wait for com.songpeng.glide to idle
+    t =    18.22s Find the "player.canvas" Other
+    t =    18.25s Find the "player.canvas" Other
+    t =    18.28s Checking existence of `"player.error" StaticText`
+    t =    18.38s Find the Target Application 'com.songpeng.glide'
+    t =    18.59s Added attachment named '4K Pinch Continuity vlc'
+    t =    18.60s Tear Down
+Test Case '-[GlideUITests.GlideUITests testPinchCompatibility4KContinuity]' passed (18.938 seconds).
+Test Case '-[GlideUITests.GlideUITests testPinchNative4KContinuity]' started.
+    t =     0.00s Start Test at 2026-11-06 09:22:08.858
+    t =     0.06s Set Up
+    t =     0.06s Open com.songpeng.glide
+    t =     0.06s     Launch com.songpeng.glide
+    t =     0.06s         Terminate com.songpeng.glide:62157
+2026-11-06 09:22:09.006 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:22:09.013 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:22:10.028 xcodebuild[62000:15122311] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-11-06 09:22:10.029 xcodebuild[62000:15122311] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-11-06 09:22:10.072 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     1.58s         Setting up automation session
+    t =     3.49s         Wait for com.songpeng.glide to idle
+    t =     5.05s Waiting 30.0s for "duo.play" Button to exist
+    t =     6.09s     Checking `Expect predicate `existsNoRetry == 1` for object "duo.play" Button`
+    t =     6.09s         Checking existence of `"duo.play" Button`
+    t =     6.30s Tap "duo.play" Button
+    t =     6.30s     Wait for com.songpeng.glide to idle
+    t =     6.61s     Find the "duo.play" Button
+    t =     6.68s     Check for interrupting elements affecting "duo.play" Button
+    t =     6.77s     Synthesize event
+    t =     7.07s     Wait for com.songpeng.glide to idle
+    t =     8.91s Checking `Expect predicate `label CONTAINS "已显示画面"` for object "player.canvas" Other`
+    t =     8.92s     Find the "player.canvas" Other
+    t =     8.97s Find the "player.canvas" Other
+    t =     8.99s Tap "player.canvas" Other[0.50, 0.45]
+    t =     9.00s     Wait for com.songpeng.glide to idle
+    t =     9.00s     Find the "player.canvas" Other
+    t =     9.03s     Check for interrupting elements affecting "player.canvas" Other
+    t =     9.09s     Synthesize event
+    t =     9.09s         Find the "player.canvas" Other
+    t =     9.13s         Find the "player.canvas" Other
+    t =     9.16s         Find the "player.canvas" Other
+    t =     9.48s     Wait for com.songpeng.glide to idle
+    t =    10.51s Checking `Expect predicate `exists == 0` for object "播放设置" Button`
+    t =    10.51s     Checking existence of `"播放设置" Button`
+    t =    10.58s Pinch with scale 2, velocity 1.5 in "player.canvas" Other
+    t =    10.58s     Wait for com.songpeng.glide to idle
+    t =    10.58s     Find the "player.canvas" Other
+    t =    10.61s     Check for interrupting elements affecting "player.canvas" Other
+    t =    10.67s     Synthesize event
+    t =    10.72s         Pinching with rect {{50, 50}, {302, 774}}
+    t =    12.39s     Wait for com.songpeng.glide to idle
+    t =    12.40s Find the "player.canvas" Other
+    t =    12.44s Pinch with scale 0.4, velocity -1.5 in "player.canvas" Other
+    t =    12.44s     Wait for com.songpeng.glide to idle
+    t =    12.44s     Find the "player.canvas" Other
+    t =    12.47s     Check for interrupting elements affecting "player.canvas" Other
+    t =    12.52s     Synthesize event
+    t =    12.54s         Pinching with rect {{50, 50}, {302, 774}}
+    t =    13.16s     Wait for com.songpeng.glide to idle
+    t =    13.16s Find the "player.canvas" Other
+    t =    13.19s Pinch with scale 2, velocity 1.5 in "player.canvas" Other
+    t =    13.19s     Wait for com.songpeng.glide to idle
+    t =    13.20s     Find the "player.canvas" Other
+    t =    13.23s     Check for interrupting elements affecting "player.canvas" Other
+    t =    13.27s     Synthesize event
+    t =    13.29s         Pinching with rect {{50, 50}, {302, 774}}
+    t =    14.98s     Wait for com.songpeng.glide to idle
+    t =    14.98s Find the "player.canvas" Other
+    t =    15.04s Pinch with scale 0.4, velocity -1.5 in "player.canvas" Other
+    t =    15.04s     Wait for com.songpeng.glide to idle
+    t =    15.04s     Find the "player.canvas" Other
+    t =    15.07s     Check for interrupting elements affecting "player.canvas" Other
+    t =    15.16s     Synthesize event
+    t =    15.27s         Pinching with rect {{50, 50}, {302, 774}}
+    t =    15.91s     Wait for com.songpeng.glide to idle
+    t =    15.91s Find the "player.canvas" Other
+    t =    15.94s Pinch with scale 2, velocity 1.5 in "player.canvas" Other
+    t =    15.94s     Wait for com.songpeng.glide to idle
+    t =    15.94s     Find the "player.canvas" Other
+    t =    15.97s     Check for interrupting elements affecting "player.canvas" Other
+    t =    16.02s     Synthesize event
+    t =    16.04s         Pinching with rect {{50, 50}, {302, 774}}
+    t =    17.71s     Wait for com.songpeng.glide to idle
+    t =    17.71s Find the "player.canvas" Other
+    t =    17.75s Pinch with scale 0.4, velocity -1.5 in "player.canvas" Other
+    t =    17.75s     Wait for com.songpeng.glide to idle
+    t =    17.75s     Find the "player.canvas" Other
+    t =    17.78s     Check for interrupting elements affecting "player.canvas" Other
+    t =    17.84s     Synthesize event
+    t =    17.86s         Pinching with rect {{50, 50}, {302, 774}}
+    t =    18.48s     Wait for com.songpeng.glide to idle
+    t =    18.49s Find the "player.canvas" Other
+    t =    18.53s Find the "player.canvas" Other
+    t =    18.56s Checking existence of `"player.error" StaticText`
+    t =    18.63s Find the Target Application 'com.songpeng.glide'
+    t =    18.80s Added attachment named '4K Pinch Continuity avPlayer'
+    t =    18.80s Tear Down
+Test Case '-[GlideUITests.GlideUITests testPinchNative4KContinuity]' passed (19.130 seconds).
+Test Case '-[GlideUITests.GlideUITests testVideoZoomGeometryContract]' started.
+    t =     0.00s Start Test at 2026-11-06 09:22:27.990
+    t =     0.07s Set Up
+    t =     0.07s Open com.songpeng.glide
+    t =     0.08s     Launch com.songpeng.glide
+    t =     0.08s         Terminate com.songpeng.glide:62188
+2026-11-06 09:22:28.127 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:22:28.134 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:22:29.158 xcodebuild[62000:15122311] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-11-06 09:22:29.158 xcodebuild[62000:15122311] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-11-06 09:22:29.197 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+    t =     1.58s         Setting up automation session
+    t =     3.50s         Wait for com.songpeng.glide to idle
+    t =     5.08s Waiting 20.0s for "验证通过" StaticText to exist
+    t =     6.10s     Checking `Expect predicate `existsNoRetry == 1` for object "验证通过" StaticText`
+    t =     6.10s         Checking existence of `"验证通过" StaticText`
+    t =     6.16s Tear Down
+Test Case '-[GlideUITests.GlideUITests testVideoZoomGeometryContract]' passed (6.404 seconds).
+Test Suite 'GlideUITests' passed at 2026-11-06 09:22:34.393.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 128.218 (128.230) seconds
+Test Suite 'GlideUITests.xctest' passed at 2026-11-06 09:22:34.394.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 128.218 (128.231) seconds
+Test Suite 'Selected tests' passed at 2026-11-06 09:22:34.395.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 128.218 (128.234) seconds
+2026-11-06 09:22:34.438 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:22:34.438 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:22:34.453 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:22:34.453 xcodebuild[62000:15122311] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:22:34.835 xcodebuild[62000:15122311] [MT] IDETestOperationsObserverDebug: 136.801 elapsed -- Testing started completed.
+2026-11-06 09:22:34.835 xcodebuild[62000:15122311] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-06 09:22:34.835 xcodebuild[62000:15122311] [MT] IDETestOperationsObserverDebug: 136.801 sec, +136.801 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/Glide-Zoom-Fixed.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

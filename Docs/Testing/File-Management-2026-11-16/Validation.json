@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-16",
+  "passed": true,
+  "scope": "Authored loopback Jellyfin 12.2 fixture only; private NAS file operations not tested",
+  "pluginVersion": "1.2.0.0",
+  "pluginSourceCommit": "ad1685a85a628251949f4bcb64a19075acdf50e4",
+  "pluginCatalogCommit": "dd69ca1",
+  "clientCore": {
+    "xctest": 11,
+    "swiftTesting": 289,
+    "failures": 0
+  },
+  "serverCoreChecks": 100,
+  "serverAPIChecks": 25,
+  "restartChecks": 4,
+  "ui": {
+    "simulator": "iPhone 17 / iOS 26.3",
+    "passed": true,
+    "test": "testJellyfinBatchMoveDeleteAndRestoreFromOriginalGrid",
+    "checks": [
+      "select_in_original_thumbnail_grid",
+      "bottom_row_scrolls_above_selection_toolbar",
+      "choose_visible_destination_folder",
+      "confirm_move_on_server",
+      "move_two_videos_and_restore",
+      "confirm_recoverable_delete",
+      "delete_two_videos_and_restore"
+    ]
+  },
+  "builds": {
+    "releaseIPhoneOS": true,
+    "signedCompatibilityQA": true,
+    "qaBundleId": "com.songpeng.glide.compatibilityqa",
+    "qaVersion": "2.0.0 (2)"
+  },
+  "publicPackageSHA256": "83ee4011b1104ae0989ea411e370090b6d683719e38b277a5c2a99239eb2da1b",
+  "device": {
+    "qaInstalled": true,
+    "launchBlocked": "iOS device locked",
+    "privateNASAcceptance": "pending plugin update, explicit file-management enablement and user validation"
+  },
+  "userFeedback": {
+    "date": "2026-11-16",
+    "reported": "Glide 兼容验证完成",
+    "detail": "未逐项拆分；另报主应用无法连接 Jellyfin，等待错误信息"
+  }
+}

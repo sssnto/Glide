@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "fileBytes": 536929239,
+  "phoneCommandBytes": 258,
+  "checks": [
+    "512_MiB_file_processed_on_server_without_phone_media_transfer",
+    "job_continues_after_client_disconnect_before_response",
+    "job_and_backup_survive_actual_jellyfin_container_restart",
+    "same_request_after_restart_does_not_rotate_again",
+    "large_original_restored_with_exact_SHA256"
+  ],
+  "publicationMode": "SameDirectoryRename",
+  "sharedMount": false,
+  "cifs": true,
+  "timestamp": "2026-11-10T14:38:54Z"
+}

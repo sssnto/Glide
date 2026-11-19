@@ -1,0 +1,18 @@
+{
+  "identifier" : "964E2D4F-95CD-4326-8911-4CC78B4CC90A",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "49.00",
+      "familyShareable" : false,
+      "internalID" : "14E2F3F4",
+      "localizations" : [{"description" : "Local testing only", "displayName" : "Glide Pro Test", "locale" : "en_US"}],
+      "productID" : "com.songpeng.glide.pro.lifetime",
+      "referenceName" : "Glide Pro Test",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {"_failTransactionsEnabled" : false, "_locale" : "en_US", "_storefront" : "USA"},
+  "subscriptionGroups" : [],
+  "version" : {"major" : 3, "minor" : 0}
+}

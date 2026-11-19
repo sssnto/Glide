@@ -1,0 +1,27 @@
+{
+  "candidate": "2.0.1 (10)",
+  "runtime": "iOS 27.1 official Duo simulator",
+  "UIRegression": {
+    "test": "testDuoFullScreenAndOptionalPanel",
+    "passed": true,
+    "seconds": 88.164
+  },
+  "pictureInPictureCrossApp": {
+    "test": "testDuoPictureInPictureAcrossAnotherApp",
+    "status": "skipped",
+    "reason": "AVPictureInPictureController.isPictureInPictureSupported() = false",
+    "systemSupported": false
+  },
+  "resultBundle": ".build/DuoPiP-Final-Simulator.xcresult",
+  "physicalValidation": "Deferred by user; no device connection, user will test offline",
+  "mainArchive": {
+    "path": ".build/Archives/Glide-2.0.1-10-DuoPiP.xcarchive",
+    "version": "2.0.1",
+    "build": "10",
+    "buildSucceeded": true,
+    "codesignDeepStrictVerified": true,
+    "symbolsVerified": true,
+    "MobileVLCKitSymbolsRepaired": false
+  },
+  "officialReference": "https://developer.apple.com/videos/play/tech-talks/111466/?time=201"
+}

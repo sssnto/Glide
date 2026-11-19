@@ -1,0 +1,48 @@
+{
+  "checks": [
+    "direct:consumed_actual_startup_bytes",
+    "direct:less_wait_than_cold",
+    "4k:one_muted_paused_speculative_player",
+    "4k:reused_copy_route_without_direct_detour",
+    "4k:actual_3840x2160_frames",
+    "4k:less_wait_than_same_format_cold",
+    "4k:no_video_reencoding_recovery",
+    "4k:current_progresses_while_next_4k_primes",
+    "pause:releases_unselected_segment_player",
+    "handoff:pause_and_seek_preserved",
+    "network:range_ignored_refused_without_full_download",
+    "exit:unused_work_canceled"
+  ],
+  "delivery": "",
+  "error": "",
+  "events": [
+    "attempt_automatic",
+    "warmup_hit",
+    "warmup_original_segments",
+    "engine_avplayer",
+    "resource_ready_audioConversion",
+    "first_frame",
+    "output_color_unavailable"
+  ],
+  "metrics": {
+    "coldCopyFirstFrameSeconds": 1.7851692083349917,
+    "coldFirstFrameSeconds": 2.2490064166486263,
+    "directCachedBytes": 2097152,
+    "warmCopyFirstFrameSeconds": 0.06003966665593907,
+    "warmDirectFirstFrameSeconds": 0.08625170832965523
+  },
+  "passed": true,
+  "scope": "Authored loopback fixture; not a private NAS measurement",
+  "environment": {
+    "date": "2026-11-12",
+    "xcode": "27.1",
+    "device": "iPhone 17 Simulator",
+    "runtime": "iOS 26.3",
+    "fixture": "127.0.0.1:8797",
+    "fixture4kDimensions": [
+      3840,
+      2160
+    ],
+    "fixture4kBytes": 31728009
+  }
+}

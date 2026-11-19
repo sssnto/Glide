@@ -33,7 +33,7 @@ struct CatalogView: View {
                             .font(.subheadline.weight(.medium)).foregroundStyle(GlideTheme.muted)
                         Spacer(minLength: 8)
                         Menu {
-                            ForEach(CatalogSort.allCases) { sort in
+                            ForEach(CatalogSort.allCases.filter { !shows || $0 != .size }) { sort in
                                 Button { order.sort = sort; saveOrder() } label: { Label(sort.title, systemImage: order.sort == sort ? "checkmark" : "line.3.horizontal.decrease") }
                             }
                             Divider()
@@ -52,12 +52,12 @@ struct CatalogView: View {
                                 if rotationInline.active {
                                     let video=item.video(server:server)
                                     Button { rotationInline.toggle(video) } label: {
-                                        CatalogPosterCard(item:item,server:server,videoPreview:true)
+                                        CatalogPosterCard(item:item,server:server,videoPreview:true,showFileSize:order.sort == .size)
                                             .overlay(alignment:.topTrailing) { RotationSelectionMark(selected:rotationInline.contains(video)) }
                                     }.accessibilityValue(rotationInline.contains(video) ? "已选择":"未选择")
                                         .accessibilityAddTraits(rotationInline.contains(video) ? .isSelected:[])
                                 } else {
-                                    NavigationLink { CatalogDetailView(library: library, server: server, initial: item) } label: { CatalogPosterCard(item: item, server: server) }
+                                    NavigationLink { CatalogDetailView(library: library, server: server, initial: item) } label: { CatalogPosterCard(item: item, server: server, showFileSize:order.sort == .size) }
                                 }
                             }.buttonStyle(.plain).accessibilityIdentifier("catalog." + item.id).id(item.id)
                         }
@@ -128,22 +128,27 @@ struct CatalogView: View {
     private func load(reset: Bool, refresh: Bool = false) async {
         guard reset || !loading else { return }
         let key = requestKey
+        let requestedOrder = order
+        let requestedSearch = query.trimmingCharacters(in: .whitespacesAndNewlines)
         let id = UUID(); generation = id; loading = true; error = nil
         let retainedCursor = refresh && loadedRequestKey == key ? min(nextIndex, 1200) : 0
         let retainedAnchor = visiblePosterID ?? retainedPosterID
         let start = reset ? 0 : nextIndex
         defer { if generation == id { loading = false } }
         do {
-            var page = try await MediaClient.shared.catalogPage(server: server, parentID: folder.id, type: shows ? "Series" : "Movie", start: start, order: order, search: query.trimmingCharacters(in: .whitespacesAndNewlines), refresh: refresh)
+            var page = try await MediaClient.shared.catalogPage(server: server, parentID: folder.id, type: shows ? "Series" : "Movie", start: start, order: requestedOrder, search: requestedSearch, refresh: refresh)
+            try Task.checkCancellation(); guard id == generation && key == requestKey else { return }
             var cursor = start + page.Items.count
-            while reset && cursor < retainedCursor && cursor < page.TotalRecordCount {
+            while reset && (requestedOrder.sort == .size || cursor < retainedCursor) && cursor < page.TotalRecordCount {
                 try Task.checkCancellation()
-                let extra = try await MediaClient.shared.catalogPage(server: server, parentID: folder.id, type: shows ? "Series" : "Movie", start: cursor, order: order, search: query.trimmingCharacters(in: .whitespacesAndNewlines), refresh: refresh)
+                let extra = try await MediaClient.shared.catalogPage(server: server, parentID: folder.id, type: shows ? "Series" : "Movie", start: cursor, order: requestedOrder, search: requestedSearch, refresh: refresh)
+                guard id == generation && key == requestKey else { return }
                 guard !extra.Items.isEmpty else { throw MediaError.message("分页没有进展，请刷新重试。") }
                 page.Items += extra.Items; cursor += extra.Items.count; page.TotalRecordCount = extra.TotalRecordCount
             }
             try Task.checkCancellation(); guard id == generation && key == requestKey else { return }
-            var known = Set(reset ? [] : items.map(\.id)); let added = page.Items.filter { known.insert($0.id).inserted }
+            var known = Set(reset ? [] : items.map(\.id)); var added = page.Items.filter { known.insert($0.id).inserted }
+            if requestedOrder.sort == .size { added = requestedOrder.sortedBySize(added) }
             guard start + page.Items.count >= page.TotalRecordCount || !added.isEmpty else { throw MediaError.message("分页没有进展，请刷新重试。") }
             if reset {
                 items = added; loadedRequestKey = key
@@ -151,7 +156,8 @@ struct CatalogView: View {
                 visiblePosterID = anchor; retainedPosterID = anchor
             }
             else { items += added }
-            nextIndex = start + page.Items.count; total = page.TotalRecordCount
+            nextIndex = requestedOrder.sort == .size ? items.count : start + page.Items.count
+            total = requestedOrder.sort == .size ? items.count : page.TotalRecordCount
         } catch { if !Task.isCancelled && id == generation { self.error = error.localizedDescription } }
     }
 }
@@ -160,6 +166,7 @@ struct CatalogPosterCard: View {
     var item: CatalogItem
     var server: MediaServer
     var videoPreview=false
+    var showFileSize=false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @ScaledMetric(relativeTo: .subheadline) private var titleHeight = 36
     private var cardFacts: String {
@@ -202,6 +209,7 @@ struct CatalogPosterCard: View {
             Text(item.Name).font(.subheadline.weight(.medium)).lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
                 .frame(minHeight: titleHeight, alignment: .topLeading)
             VideoRotationStatus(server: server, itemID: item.id)
+            if showFileSize { Text(MediaFileSize.label(item.fileSize)).font(.caption2).foregroundStyle(.secondary).monospacedDigit() }
             if !cardFacts.isEmpty {
                 Text(cardFacts).font(.caption2).foregroundStyle(GlideTheme.muted).lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
             }

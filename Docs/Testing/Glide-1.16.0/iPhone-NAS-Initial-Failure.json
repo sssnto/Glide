@@ -1,0 +1,123 @@
+{
+  "build" : "2",
+  "checks" : {
+
+  },
+  "failure" : {
+    "code" : 2,
+    "domain" : "Glide.RemoteRotationError",
+    "type" : "Glide.RemoteRotationError"
+  },
+  "httpTrace" : [
+    {
+      "contentLength" : 0,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "PUT-upload",
+      "role" : "authored",
+      "status" : 201
+    },
+    {
+      "contentLength" : 0,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "PUT",
+      "role" : "probe-a",
+      "status" : 201
+    },
+    {
+      "contentLength" : 0,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "PUT",
+      "role" : "probe-b",
+      "status" : 201
+    },
+    {
+      "contentLength" : 0,
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "MOVE",
+      "role" : "probe-b",
+      "status" : 412
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET",
+      "role" : "probe-a",
+      "status" : 200
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET",
+      "role" : "probe-b",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : true,
+      "method" : "LOCK",
+      "role" : "probe-a",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "MOVE",
+      "role" : "probe-b",
+      "status" : 204
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "GET",
+      "role" : "probe-a",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "UNLOCK",
+      "role" : "probe-a",
+      "status" : 204
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "UNLOCK",
+      "role" : "probe-a",
+      "status" : 204
+    },
+    {
+      "contentLength" : 18,
+      "etag" : "strong",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "probe-a",
+      "status" : 200
+    },
+    {
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "DELETE",
+      "role" : "probe-a",
+      "status" : 204
+    },
+    {
+      "contentLength" : 0,
+      "etag" : "absent",
+      "lockTokenPresent" : false,
+      "method" : "HEAD",
+      "role" : "probe-b",
+      "status" : 404
+    }
+  ],
+  "result" : "验证失败",
+  "time" : "2026-11-10T02:27:21Z",
+  "version" : 2
+}

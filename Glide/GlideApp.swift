@@ -54,7 +54,15 @@ struct GlideApp: App {
     }
     @ViewBuilder private var root: some View {
 #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("--glide-rotation-recovery-probe") || ProcessInfo.processInfo.arguments.contains("--glide-nas-rotation-acceptance") || ProcessInfo.processInfo.arguments.contains("--glide-nas-batch-rotation-acceptance") || ProcessInfo.processInfo.arguments.contains("--glide-nas-batch-readonly") {
+        if ProcessInfo.processInfo.arguments.contains("--glide-grid-layout-fixture"), Bundle.main.bundleIdentifier == "com.songpeng.glide.compatibilityqa" {
+            if #available(iOS 18, *) { GridLayoutQAView() }
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-login-investigation"), Bundle.main.bundleIdentifier == "com.songpeng.glide.compatibilityqa" {
+            JellyfinLoginQAView(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-file-size-fixture"), Bundle.main.bundleIdentifier == "com.songpeng.glide.compatibilityqa" {
+            FileManagementQAView(library: library, folderName:"size-sort")
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-file-management-fixture"), Bundle.main.bundleIdentifier == "com.songpeng.glide.compatibilityqa" {
+            FileManagementQAView(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-rotation-recovery-probe") || ProcessInfo.processInfo.arguments.contains("--glide-nas-rotation-acceptance") || ProcessInfo.processInfo.arguments.contains("--glide-nas-batch-rotation-acceptance") || ProcessInfo.processInfo.arguments.contains("--glide-nas-batch-readonly") {
             JellyfinRotationRecoveryProbe(library:library)
         } else if ProcessInfo.processInfo.arguments.contains("--glide-jellyfin-rotation-fixture") {
             JellyfinRotationQAView(library:library)
@@ -82,7 +90,7 @@ struct GlideApp: App {
             VideoNavigationQAProbe(library: library)
         } else if ProcessInfo.processInfo.arguments.contains("--glide-discovery-probe") {
             DiscoveryQAProbe(library: library)
-        } else if ProcessInfo.processInfo.arguments.contains("--glide-jellyfin-investigation") {
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-jellyfin-investigation") || ProcessInfo.processInfo.arguments.contains("--glide-rotation-playback-probe") {
             JellyfinPlaybackQAProbe(library: library)
         } else if ProcessInfo.processInfo.arguments.contains("--glide-subtitle-study-probe") {
             SubtitleStudyQAProbe(library: library)
@@ -96,6 +104,10 @@ struct GlideApp: App {
             SubtitleQAProbe(library: library)
         } else if ProcessInfo.processInfo.arguments.contains("--glide-smb-probe") {
             SMBQAProbe(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-feed-warmup-ui") {
+            FeedWarmupUIFixture(library: library)
+        } else if ProcessInfo.processInfo.arguments.contains("--glide-feed-warmup-probe") {
+            FeedWarmupQAProbe(library: library)
         } else if ProcessInfo.processInfo.arguments.contains("--glide-network-buffer-probe") {
             NetworkBufferQAProbe(library: library)
         } else if ProcessInfo.processInfo.arguments.contains("--glide-compatibility-probe") {

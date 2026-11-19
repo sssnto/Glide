@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "checks": [
+    "exchange_incompatible_mount_uses_probed_same_directory_native_rename",
+    "same_directory_rename_changes_authored_shared_mount_file",
+    "shared_mount_fallback_restore_is_byte_identical",
+    "patched_plugin_loaded",
+    "native_linux_atomic_rotation_completes",
+    "atomic_exchange_keeps_two_original_copies",
+    "backup_preserves_original_ownership_and_permissions",
+    "rotated_native_file_remains_decodable",
+    "new_publication_remains_idempotent",
+    "native_linux_normal_restore_is_byte_identical",
+    "legacy_failure_reproduced_with_item_removed_from_library",
+    "recovery_works_without_indexed_item",
+    "own_job_history_does_not_require_existing_media",
+    "ordinary_user_cannot_inspect_or_execute_emergency_restore",
+    "explicit_recovery_confirmation_required",
+    "exact_backup_restored_even_when_normal_writes_disabled",
+    "emergency_restore_retains_backup_and_processed_stage",
+    "repeated_emergency_restore_does_not_write_again",
+    "existing_different_file_is_never_overwritten",
+    "authored_fixture_returned_to_initial_bytes",
+    "manual_nas_copy_reconciliation_is_read_only",
+    "recovery_api_exports_no_paths_or_credentials"
+  ],
+  "originalSHA256": "3c01e7d06cb6f710eef97c7c01a1da224b36579ea0eb17d47093049003a9a8b4",
+  "rotatedSHA256": "3b1eeae43f5b9dc797751505c6606000626efdcadfece70af3794e6e82d12d10",
+  "timestamp": "2026-11-10T14:49:17Z"
+}

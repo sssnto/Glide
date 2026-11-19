@@ -1,0 +1,76 @@
+{
+  "date": "2026-11-06",
+  "version": "1.15.0 (2)",
+  "status": "fix-implemented-simulator-inapp-device-and-user-manual-passed",
+  "symptom": "two-finger pinch during playback",
+  "geometry": {
+    "passed": true,
+    "checks": 9,
+    "updates": 480,
+    "before": "Baseline.json",
+    "after": "Fixed.json",
+    "decoderFrameWritesBefore": 959,
+    "decoderFrameWritesAfter": 0,
+    "videoFPSMeasured": false
+  },
+  "simulator": {
+    "device": "iPhone 17",
+    "passed": 4,
+    "failed": 0,
+    "log": "Logs/Simulator-UI.log",
+    "resultBundle": "/tmp/Glide-Zoom-Fixed.xcresult",
+    "real4KNativeAndVLC": true,
+    "pinchCyclesPerEngine": 3,
+    "sessionLayerAndOpenCountPreserved": true,
+    "clockContinues": true,
+    "originalASSRegressionPassed": true
+  },
+  "physicalDevice": {
+    "device": "iPhone 13 Pro Max",
+    "os": "iOS 27.0.1",
+    "bundle": "com.songpeng.glide.nasqa",
+    "installed": true,
+    "uiAutomationPassed": false,
+    "failureStage": "runner before connection, code 74; IDE channel refused",
+    "appLaunchPassed": true,
+    "log": "Logs/Device-UI.log",
+    "runnerExcerpt": "Logs/Device-Runner-Error.txt",
+    "waitingForUSB": false,
+    "connectionAtLastCheck": "connected; app launched and in-app reports retrieved",
+    "usbUITouchRetryPassed": false,
+    "usbUITouchLog": "Logs/Device-USB-UI.log",
+    "geometryReport": "iPhone-Geometry.json",
+    "geometryPassed": true,
+    "geometryChecks": 9,
+    "inApp4KRegression": {
+      "passed": true,
+      "native": "iPhone-4K-Native.json",
+      "compatibility": "iPhone-4K-Compatibility.json",
+      "checksPerEngine": 9,
+      "method": "production zoom method driven in-app; not physical touch automation",
+      "decodedSize": "3840x2160",
+      "playingCyclesPerEngine": 3,
+      "pausedCyclesPerEngine": 1
+    },
+    "userManual": {
+      "passed": true,
+      "date": "2026-11-06",
+      "engine": "vlc",
+      "fixture": "authored 4K sample",
+      "pinchCycles": 3,
+      "feedback": "已经顺畅，没有明显卡顿"
+    },
+    "uiAutomationScope": "XCTest failed before touch connection on both initial and USB retry; in-app and manual checks are separate."
+  },
+  "releaseBuild": {
+    "passed": true,
+    "log": "Logs/Release-Final-Build.log",
+    "signature": "Release-Signature.txt"
+  },
+  "fixture": "Fixture.json",
+  "privateMediaOrSavedAccountUsedForValidation": false,
+  "sourceSnapshot": "Source-Snapshot.json",
+  "committed": false,
+  "pushed": false,
+  "published": false
+}

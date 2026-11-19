@@ -1,0 +1,18 @@
+{
+  "programs": [],
+  "stream_groups": [],
+  "streams": [
+    {
+      "codec_name": "h264",
+      "width": 3840,
+      "height": 2160,
+      "r_frame_rate": "24/1"
+    }
+  ],
+  "format": {
+    "duration": "300.000000"
+  },
+  "sha256": "cf6ea84be50083596ced3514e1c8455f1d6f7ec2c1675dc78fe99ab886aae05f",
+  "source": "Glide/Resources/demo0.mp4 (authored original)",
+  "privateMedia": false
+}

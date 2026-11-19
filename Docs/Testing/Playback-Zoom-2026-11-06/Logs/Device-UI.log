@@ -1,0 +1,30 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project Glide.xcodeproj -scheme GlideCompatibilityQA -configuration CompatibilityQA -destination platform=iOS,id=00008110-001A79A42201801E -derivedDataPath /tmp/Glide1140Device -resultBundlePath /tmp/Glide-Zoom-iPhone.xcresult -jobs 1 -parallel-testing-enabled NO -collect-test-diagnostics never GLIDE_QA_BUNDLE_IDENTIFIER=com.songpeng.glide.nasqa "GLIDE_DISPLAY_NAME=Glide NAS 验证" "-only-testing:GlideUITests/GlideUITests/testVideoZoomGeometryContract" "-only-testing:GlideUITests/GlideUITests/testPinchNative4KContinuity" "-only-testing:GlideUITests/GlideUITests/testPinchCompatibility4KContinuity"
+
+Build settings from command line:
+    GLIDE_DISPLAY_NAME = Glide NAS 验证
+    GLIDE_QA_BUNDLE_IDENTIFIER = com.songpeng.glide.nasqa
+
+Writing result bundle at path:
+	/tmp/Glide-Zoom-iPhone.xcresult
+
+2026-11-06 09:26:05.959 xcodebuild[62990:15133315] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:26:06.754488+0800 GlideUITests-Runner[78903:11505145] [Default] Running tests...
+2026-11-06 09:26:25.163694+0800 GlideUITests-Runner[78903:11505169] [DTXConnection] Connection peer refused channel request for "dtxproxy:XCTestDriverInterface:XCTestManager_IDEInterface"; channel canceled <DTXChannel 0x1064695c0 : x1.c1> "dtxproxy:XCTestDriverInterface:XCTestManager_IDEInterface"
+2026-11-06 09:26:25.164385+0800 GlideUITests-Runner[78903:11505169] [Default] Exiting due to IDE disconnection.
+2026-11-06 09:26:25.197 xcodebuild[62990:15133315] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:26:25.198 xcodebuild[62990:15133315] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:26:25.203 xcodebuild[62990:15133315] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-11-06 09:26:25.554 xcodebuild[62990:15133315] [MT] IDETestOperationsObserverDebug: 21.849 elapsed -- Testing started completed.
+2026-11-06 09:26:25.554 xcodebuild[62990:15133315] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-06 09:26:25.554 xcodebuild[62990:15133315] [MT] IDETestOperationsObserverDebug: 21.849 sec, +21.849 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/Glide-Zoom-iPhone.xcresult
+
+Testing failed:
+	GlideUITests-Runner (78903) encountered an error (Early unexpected exit, operation never finished bootstrapping - no restart will be attempted. (Underlying Error: The test runner exited with code 74 before establishing connection.))
+
+** TEST EXECUTE FAILED **
+
+Testing started

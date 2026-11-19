@@ -3,7 +3,7 @@ import UIKit
 
 @MainActor final class NativePlaybackEngine: PlaybackEngine {
     let descriptor = PlaybackEngineDescriptor.native
-    let player = AVPlayer()
+    private(set) var player = AVPlayer()
     var presentation: PlaybackPresentation { .native(player) }
     var onEvent: ((PlaybackEngineEvent) -> Void)?
     private(set) var tracks: [PlaybackTrack] = []
@@ -92,21 +92,7 @@ import UIKit
             accessLogTransferSeconds: log.flatMap { $0.transferDuration.isFinite && $0.transferDuration >= 0 ? $0.transferDuration : nil })
     }
     init() {
-        player.automaticallyWaitsToMinimizeStalling = true
-        observer = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.5, preferredTimescale: 600), queue: .main) { [weak self] _ in
-            Task { @MainActor in
-                guard let self, self.resource != nil else { return }
-                if self.player.timeControlStatus == .playing, self.layer?.isReadyForDisplay == true { self.hasPlayedFrame = true }
-                self.onEvent?(.clock)
-            }
-        }
-        controlObservation = player.observe(\.timeControlStatus, options: [.new]) { [weak self] _, _ in
-            Task { @MainActor in
-                guard let self, self.resource != nil else { return }
-                self.beginRebufferIfNeeded()
-                self.onEvent?(.stateChanged)
-            }
-        }
+        observePlayer()
         endObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: nil, queue: .main) { [weak self] note in
             guard let item = note.object as? AVPlayerItem else { return }
             Task { @MainActor in
@@ -124,6 +110,23 @@ import UIKit
             }
         }
     }
+    private func observePlayer() {
+        player.automaticallyWaitsToMinimizeStalling = true
+        observer = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.5, preferredTimescale: 600), queue: .main) { [weak self] _ in
+            Task { @MainActor in
+                guard let self, self.resource != nil else { return }
+                if self.player.timeControlStatus == .playing, self.layer?.isReadyForDisplay == true { self.hasPlayedFrame = true }
+                self.onEvent?(.clock)
+            }
+        }
+        controlObservation = player.observe(\.timeControlStatus, options: [.new]) { [weak self] _, _ in
+            Task { @MainActor in
+                guard let self, self.resource != nil else { return }
+                self.beginRebufferIfNeeded()
+                self.onEvent?(.stateChanged)
+            }
+        }
+    }
     func attachLayer(_ layer: AVPlayerLayer?) {
         guard self.layer !== layer else { return }
         self.layer = layer
@@ -133,12 +136,22 @@ import UIKit
     }
     func load(_ resource: PlaybackResource, preload: (any PlaybackPreload)?, options configuration: PlaybackEngineOptions) async throws {
         stop()
+        let prepared = (preload as? PlaybackWarmup.Prepared).flatMap { $0.resource.url == resource.url ? $0 : nil }
+        var warmItem: AVPlayerItem?
+        if let lease = prepared?.lease, let item = lease.player.currentItem, item.status != .failed {
+            if let observer { player.removeTimeObserver(observer); self.observer = nil }
+            controlObservation = nil
+            player = lease.player; lease.adopt(); warmItem = item
+            player.allowsExternalPlayback = true; player.preventsDisplaySleepDuringVideoPlayback = true
+            observePlayer()
+        }
         player.isMuted = configuration.muted
         defer { withExtendedLifetime(resource) {} }
         let token = lifetime.load
         self.resource = resource
-        if let prepared = preload as? PlaybackWarmup.Prepared, prepared.resource.url == resource.url {
+        if let prepared {
             asset = prepared.asset; loader = prepared.loader
+            loader?.setAllowsCellular(configuration.allowsCellular)
         } else if resource.headers.isEmpty {
             asset = AVURLAsset(url: resource.url, options: [AVURLAssetAllowsCellularAccessKey: configuration.allowsCellular])
         } else {
@@ -146,7 +159,7 @@ import UIKit
             loader = authenticated; asset = authenticated.asset
         }
         guard let asset else { throw MediaError.message("无法创建播放资源。") }
-        let item = AVPlayerItem(asset: asset)
+        let item = warmItem ?? AVPlayerItem(asset: asset)
         item.startsOnFirstEligibleVariant = resource.prefersFirstHDRVariant
         if configuration.inspectWideColor {
             let probe = AVPlayerItemVideoOutput(outputSettings: [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange, AVVideoAllowWideColorKey: true])
@@ -162,7 +175,7 @@ import UIKit
                 else if observed.status == .readyToPlay { self.onEvent?(.ready) }
             }
         }
-        player.replaceCurrentItem(with: item)
+        if player.currentItem !== item { player.replaceCurrentItem(with: item) }
         rangesObservation = item.observe(\.loadedTimeRanges, options: [.initial, .new]) { [weak self] observed, _ in
             Task { @MainActor in
                 guard let self, self.lifetime.accepts(token), observed === self.player.currentItem else { return }

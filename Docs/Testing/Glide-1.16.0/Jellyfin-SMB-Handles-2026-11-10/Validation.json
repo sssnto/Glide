@@ -1,0 +1,63 @@
+{
+  "appVersion": "1.16.0 (11)",
+  "pluginVersion": "1.0.3.0",
+  "timestamp": "2026-11-10T14:54:36.478337+00:00",
+  "coreChecks": 50,
+  "oldOriginalHandleRegressionFailedBeforeFix": true,
+  "realSMB2OldFailureReproduced": true,
+  "realSMB2Checks": 12,
+  "realSMB2LargeFileChecks": 5,
+  "ordinaryRecoveryChecks": 22,
+  "ordinaryProtocolChecks": 20,
+  "swiftTests": 5,
+  "builds": {
+    "pluginRelease": true,
+    "pluginErrors": 0,
+    "pluginWarnings": 0,
+    "compatibilityQA": true,
+    "release": true,
+    "deepSignaturesVerified": true,
+    "staticPreflight": true
+  },
+  "package": "Server/artifacts/GlideToolkit-1.0.3-Jellyfin-12.2.zip",
+  "packageSHA256": "0c1e988510216466d7d151f4c4b5c68b0c670a776dd2ecf6064e59cb324d4c44",
+  "dllSHA256": "e81bdbd7d41360922c03c5955742af980b0a2efe60e9189db4bef432aaa6799f",
+  "actualNAS": {
+    "filesystem": "smb2",
+    "observedMediaUID": 1000,
+    "observedMediaGID": 1000,
+    "observedMediaMode": "755",
+    "terminalUID": 0,
+    "jellyfinProcessUID": "not_determined",
+    "lastVerifiedPluginVersion": "1.0.3",
+    "lastFailureCode": "atomic_rename_13",
+    "privateOriginalPresentAfterManualRecovery": true,
+    "onlyAuthoredCopyUsedInSubsequentTests": true,
+    "plugin103UpgradePending": false,
+    "plugin103SaveRestorePending": true,
+    "latestKnownAcceptanceStage": "user_confirmed_rotation_and_save",
+    "phoneConnectionInterrupted": true,
+    "userConfirmedRotationAndSave": true,
+    "userConfirmationDate": "2026-11-11",
+    "userConfirmation": "用户确认昨日已完成实际旋转与保存测试",
+    "plugin103SavePending": false,
+    "plugin103RestorePending": true
+  },
+  "clientProtection": {
+    "minimumPluginVersion": "1.0.3",
+    "oldVersionsBlocked": [
+      "1.0.0",
+      "1.0.1",
+      "1.0.2"
+    ],
+    "deviceInstalled": true
+  },
+  "localResources": {
+    "cifsPrivilegedTestContainerRemoved": true,
+    "cifsLargeFileAndOwnedBackupsCleaned": true,
+    "standardServerStopped": true
+  },
+  "committed": false,
+  "pushed": false,
+  "uploadedToStore": false
+}

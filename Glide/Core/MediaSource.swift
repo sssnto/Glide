@@ -51,13 +51,14 @@ enum LocalMediaIdentity {
 enum LocalDirectoryIndex {
     static func entries(root: URL, directory: URL) throws -> [DAVEntry] {
         _ = try LocalMediaIdentity.relativePath(root: root.resolvingSymlinksInPath(), file: directory.resolvingSymlinksInPath())
-        let keys: Set<URLResourceKey> = [.isDirectoryKey, .isRegularFileKey, .isSymbolicLinkKey, .isPackageKey, .creationDateKey, .contentModificationDateKey]
+        let keys: Set<URLResourceKey> = [.isDirectoryKey, .isRegularFileKey, .isSymbolicLinkKey, .isPackageKey, .creationDateKey, .contentModificationDateKey, .fileSizeKey]
         return try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: Array(keys), options: [.skipsHiddenFiles]).compactMap { url in
             let values = try url.resourceValues(forKeys: keys)
             guard values.isSymbolicLink != true, values.isPackage != true,
                   values.isDirectory == true || values.isRegularFile == true else { return nil }
             return DAVEntry(url: url, name: url.lastPathComponent, isDirectory: values.isDirectory == true,
-                            createdAt: values.creationDate, modifiedAt: values.contentModificationDate)
+                            createdAt: values.creationDate, modifiedAt: values.contentModificationDate,
+                            fileSize: values.isDirectory == true ? nil : values.fileSize.map(Int64.init))
         }.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
     }
 }

@@ -1,0 +1,30 @@
+{
+  "checks" : [
+
+  ],
+  "passed" : true,
+  "readOnly" : true,
+  "sources" : [
+    {
+      "available" : true,
+      "pluginVersion" : "1.1.0",
+      "searchCandidates" : 0,
+      "sourceID" : "6D7DB699-F774-4B8F-8878-0F32BB2DE6E4",
+      "verifiedAuthoredClips" : [
+
+      ]
+    },
+    {
+      "available" : true,
+      "pluginVersion" : "1.1.0",
+      "searchCandidates" : 0,
+      "sourceID" : "1A3891B7-8D96-464A-8152-E8AFE6B0F479",
+      "verifiedAuthoredClips" : [
+
+      ]
+    }
+  ],
+  "stage" : "只读核对完成；未提交旋转、还原或上传",
+  "time" : "2026-11-11T03:07:07Z",
+  "version" : "1.16.0 (13)"
+}

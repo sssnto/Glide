@@ -1,8 +1,25 @@
 import Foundation
+import CoreGraphics
 import Testing
 @testable import GlideCore
 
 struct AdaptiveDisplayTests {
+    @Test func playerHeaderIgnoresSideStatusRegionOutsideItsBand() {
+        let size = CGSize(width: 382, height: 644)
+        #expect(PlayerChromeInsets.avoiding(size: size, headerHeight: 44, occlusions: [CGRect(x: 388, y: 86, width: 64, height: 64)]) == PlayerChromeInsets())
+        #expect(PlayerChromeInsets.avoiding(size: size, headerHeight: 44, occlusions: [CGRect(x: 330, y: 86, width: 52, height: 64)]) == PlayerChromeInsets())
+    }
+    @Test func playerHeaderAvoidsOnlyTheIntersectingPartOfTopOcclusion() {
+        let result = PlayerChromeInsets.avoiding(size: CGSize(width: 390, height: 800), headerHeight: 44, occlusions: [CGRect(x: 150, y: -20, width: 90, height: 55)])
+        #expect(result == PlayerChromeInsets(top: 35))
+    }
+    @Test func playerHeaderKeepsAsymmetricSideBarsOutOfItsButtons() {
+        let size = CGSize(width: 678, height: 432)
+        let right = PlayerChromeInsets.avoiding(size: size, headerHeight: 44, occlusions: [CGRect(x: 594, y: -5, width: 100, height: 500)])
+        let left = PlayerChromeInsets.avoiding(size: size, headerHeight: 44, occlusions: [CGRect(x: -20, y: -5, width: 68, height: 500)])
+        #expect(right == PlayerChromeInsets(trailing: 84))
+        #expect(left == PlayerChromeInsets(leading: 48))
+    }
     @Test func compactAndExpandedUseAvailableWidth() {
         let phone = MediaGridPlan.make(width: 360, minimum: 100)
         let inner = MediaGridPlan.make(width: 860, minimum: 140)

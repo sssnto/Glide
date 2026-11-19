@@ -1,0 +1,49 @@
+{
+  "appVersion": "1.16.0 (11)",
+  "pluginVersion": "1.0.1.0",
+  "jellyfinVersion": "12.2.0",
+  "timestamp": "2026-11-10T13:00:23.445751+00:00",
+  "coreChecks": 33,
+  "officialServerChecks": 21,
+  "largeFileChecks": 5,
+  "swiftRotationTests": 4,
+  "recoveryPageInteractionChecks": true,
+  "pluginBuild": {
+    "release": true,
+    "warnings": 0,
+    "errors": 0
+  },
+  "clientBuild": {
+    "compatibilityQA": true,
+    "release": true,
+    "deepSignaturesVerified": true,
+    "staticPreflight": true
+  },
+  "device": {
+    "mainInstalled": true,
+    "normalLibraryLaunched": true,
+    "readOnlyRecoveryProbePassed": true,
+    "userConfirmedOriginalPlayback": true,
+    "updatedNASReadOnlyPassed": true
+  },
+  "deployment": {
+    "package": "Server/artifacts/GlideToolkit-1.0.1-Jellyfin-12.2.zip",
+    "packageSHA256": "9bf09aace4946576f2b9057fd733ad3d594040de7c601eb626c931ed2f0481ce",
+    "dllSHA256": "eb4f3c4911b6b963eca9dca5c8541eedd35bc46cdf7b2a62c99b258c8c32ba77",
+    "realNASPluginUpgradePending": false,
+    "realNASPatchedSaveAcceptancePending": true,
+    "realNASPluginVersionVerified": "1.0.1",
+    "pendingAcceptanceCondition": "Real NAS rejected exchange with atomic_exchange_22 before replacement. Plugin 1.0.2 same-directory native rename is being prepared; copied authored fixture is indexed and byte-verified.",
+    "actualNASExchangeProbeRejected": true
+  },
+  "limitations": [
+    "User NAS failure syscall was not recorded by old plugin; underlying filesystem root cause is unconfirmed.",
+    "Docker Desktop shared-mount refusal is a local regression, not proof of user NAS filesystem behavior.",
+    "Large fixture uses authored MP4 plus a valid free box."
+  ],
+  "largeFixtureAndOwnedBackupsCleaned": true,
+  "temporaryServerStopped": true,
+  "committed": false,
+  "pushed": false,
+  "uploadedToStore": false
+}

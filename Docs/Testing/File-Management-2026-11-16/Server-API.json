@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "serverVersion": "12.2.0",
+  "pluginVersion": "1.2.0.0",
+  "scope": "Fixed localhost authored media only; no private NAS",
+  "checks": [
+    "file_management_protocol_available",
+    "administrator_explicitly_enables_file_management",
+    "folder_picker_lists_visible_libraries",
+    "inspect_move_0",
+    "server_batch_moves_two_videos",
+    "video_and_subtitles_move_on_nas_without_phone_transfer",
+    "lost_response_retry_returns_same_batch",
+    "same_request_with_changed_intent_rejected",
+    "server_move_restore_returns_original_paths",
+    "inspect_trash_1",
+    "delete_removes_selected_original_paths",
+    "delete_retains_byte_identical_recoverable_originals",
+    "delete_restore_returns_videos_and_subtitles",
+    "inspect_move_2",
+    "same_name_conflict_does_not_overwrite_or_remove_source",
+    "rotation_authorization_does_not_grant_file_management",
+    "ordinary_user_cannot_submit_file_changes",
+    "unauthorized_user_cannot_read_private_batch",
+    "inspect_move_3",
+    "active_playback_prevents_move",
+    "retry_only_failed_items_after_playback_stops",
+    "retried_move_can_be_restored",
+    "file_management_authorized_user_cannot_read_other_users_jobs",
+    "batch_folder_refresh_restores_catalog_visibility",
+    "history_returns_lightweight_counts_with_details_loaded_on_demand"
+  ]
+}

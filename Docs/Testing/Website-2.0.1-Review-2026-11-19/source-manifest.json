@@ -1,0 +1,66 @@
+{
+  "repository": "sssnto/glide-privacy",
+  "baseCommit": "3097f5b7b92dca02c568bf303f184ad779a7d32a",
+  "baseTree": "1ee4ad526ab54a9b89948a27b68ae39272c222db",
+  "files": [
+    {
+      "path": "404.html",
+      "bytes": 778,
+      "sha": "8f9edbe998a30e0bc180349c458e067a94f5f6d5"
+    },
+    {
+      "path": "index.html",
+      "bytes": 19699,
+      "sha": "69a983e6e2c23e241c32d799afb6d3538de62fdd"
+    },
+    {
+      "path": "privacy.html",
+      "bytes": 7322,
+      "sha": "31deedf4556d39e7f6357ea1d9a0371b8ea697f7"
+    },
+    {
+      "path": "sitemap.xml",
+      "bytes": 458,
+      "sha": "767df1ff693b3692cd88e304107c7aac4d77635e"
+    },
+    {
+      "path": "style.css",
+      "bytes": 29223,
+      "sha": "63178f8b234a9da91b1c78b5e47b23b3c59f061c"
+    },
+    {
+      "path": "support.html",
+      "bytes": 13115,
+      "sha": "30b45b459de32057c51cd7cc8daf89b52b8e3d73"
+    },
+    {
+      "path": "updates.html",
+      "bytes": 13471,
+      "sha": "8034c999cadf16854a1a1e6fa556bde43de0f4de"
+    },
+    {
+      "path": "assets/duo-201-fullscreen.jpg",
+      "bytes": 265648,
+      "sha": "3195fd594468eaebc7c225a5f329b7f88fc37566"
+    },
+    {
+      "path": "assets/duo-201-library.jpg",
+      "bytes": 332600,
+      "sha": "f5fd275cf41af6dcb5695136d4fa21b28bdbd82a"
+    },
+    {
+      "path": "assets/duo-201-panel.jpg",
+      "bytes": 242131,
+      "sha": "5225340e02d99cfee8f576bb2670816394845f5f"
+    }
+  ],
+  "commit": "00394325832f05dcf18365225c747d876ede8bf6",
+  "tree": "828a71d37a3f22c0e7ca5b681a8b91ebe0140329",
+  "publicVersion": "2.0.1",
+  "publicStatus": "已提交 App Store 审核",
+  "screenshots": {
+    "source": "Docs/Publishing/2.0.1/screenshots/duo-inner",
+    "build": "2.0.1 (11)",
+    "method": "Unmodified JPEG copies from original demo simulator captures; no private media."
+  }
+}

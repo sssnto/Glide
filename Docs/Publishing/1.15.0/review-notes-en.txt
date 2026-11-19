@@ -1,0 +1,20 @@
+Glide is a player for media users own or are authorized to access. It does not provide a movie/TV catalog or host third-party media. No Glide account or purchase is required. This build has no ads or purchase screens.
+
+Version 1.15.0 adds unified library search, offline trip packs, saved clip collections, clearer recommendations, pinch-zoom improvements and adaptive iPhone Duo layouts since public version 1.11.0. The UI supports iPhone and iPad; iPad provides equivalent sidebar destinations.
+
+Review without a server:
+1. Open Library (片库), then the media-source control, and choose Offline Demo Library (离线演示片库). Bundled videos are original artwork and require no login.
+2. Play a demo. Tap the picture to show/hide controls, try seeking, speed, pinch zoom and orientation. Playback Settings (播放设置) offers system/compatibility playback for supported local files.
+3. On Home (首页), open Search All Libraries (搜索全部片库) and search a visible demo title. Inspect the result and open it. Imported local files, completed downloads and connected Jellyfin/Emby libraries also appear within their supported search scopes.
+4. Near the beginning of a demo, open Playback Settings > Save Highlight Clip (收藏精彩片段), set start/end, preview and save. Open My > Highlight Collections (我的 > 精彩片段集) to organize saved clips into a collection and play it. Clips are time ranges referencing originals; they do not export or modify videos.
+5. Open Offline (离线) > Create Trip Pack (创建行程包). Select original demos or imported local videos, set time/storage budgets, generate candidates, then confirm Prepare Trip Pack (准备行程包). In the pack, run Pre-departure Offline Check (出发前离线检查), which silently plays local files and checks saved companions. Prepared files can then play with networking disabled. Actual media must support local decoding.
+6. On Home, Pick Something for Me (给我选一部) displays candidates with duration and reasons. Private channels organize existing user media; they are not live TV or IPTV.
+
+Optional remote sources:
+Jellyfin, Emby, SMB and WebDAV need reachable user-configured servers and credentials. No built-in server accounts or content subscriptions are supplied. LAN permission is used to reach selected local servers. Remote progress may synchronize with the selected server. If remote review access is requested, a reachable dedicated review server/account must be supplied separately in App Store Connect; localhost QA fixtures are not review credentials.
+
+Scope:
+Unified remote search covers Jellyfin/Emby, not full NAS indexing. Trip packs support applicable default original files from local/Jellyfin/Emby sources, not SMB/WebDAV downloads or transcoded HLS. Clip playback needs the original file or its completed local copy; cross-file transitions may load. Original ASS fonts need attachments or user import. App-rendered external subtitles are not included in PiP/AirPlay. Formats, buffering and conversion depend on device, media, network and server.
+
+Support: 133317737@qq.com
+Privacy: https://glide.sssnto.cn/privacy.html

@@ -52,9 +52,11 @@ struct PlayerView: View {
     @State private var duoDisplaySize = CGSize.zero
     @State private var duoConfigured = false
     @State private var zoomProbeTask: Task<Void, Never>?
-    private func recordDuoEvidence() { DuoPlaybackEvidence.save(playback, session: duoSession, size: duoDisplaySize, expanded: expandedPlayer, interaction: interaction) }
+    private func recordDuoEvidence() { DuoPlaybackEvidence.save(playback, session: duoSession, size: duoDisplaySize, expanded: supportsControlPanel, interaction: interaction) }
 #endif
-    private var expandedPlayer: Bool { horizontalSizeClass == .regular && verticalSizeClass == .regular }
+    @State private var controlPanelRequested = false
+    private var supportsControlPanel: Bool { horizontalSizeClass == .regular && verticalSizeClass == .regular }
+    private var expandedPlayer: Bool { supportsControlPanel && controlPanelRequested }
     @State private var controls = true
     @State private var quickMenuHolding = false
     @State private var locked = false
@@ -64,7 +66,7 @@ struct PlayerView: View {
     @State private var hideTask: Task<Void, Never>?
     @State private var suppressTapUntil = Date.distantPast
     @State private var settingsOpen = false
-    private enum SettingsAction { case diagnostic, videoInfo, subtitleImport, subtitleControls, navigation, moment, clip, rotation }
+    private enum SettingsAction { case diagnostic, videoInfo, subtitleImport, subtitleControls, navigation, moment, clip, rotation, controlPanel }
     private struct RotationPlaybackContext {
         let video: Video
         let filename: String?
@@ -120,9 +122,12 @@ struct PlayerView: View {
     @State private var pendingAutomaticAdvance = false
     @State private var scrubTarget: Double?
     private var current: Video { queue.current! } // Presented only after collecting a nonempty queue.
-    private var nextVideo: Video? { queue.canGoForward ? queue.ordered[queue.index + 1] : nil }
+    @State private var warmupDirection = 1
+    private var warmupVideos: [Video] {
+        PlaybackWarmupPolicy.indices(current: queue.index, count: queue.ordered.count, direction: warmupDirection).map { queue.ordered[$0] }
+    }
     private var warmupKey: String {
-        current.id + ":" + (nextVideo?.id ?? "") + ":\(playback.frameReady):\(playback.loading):\(playback.isPlaying):\(playback.rate):\(scenePhase == .active)"
+        current.id + ":" + warmupVideos.map(\.id).joined(separator: ",") + ":\(playback.frameReady):\(playback.loading):\(playback.isPlaying):\(playback.rate):\(scenePhase == .active):\(playback.externalPlaybackActive):\(playback.pictureInPicture.active)"
     }
     private var selectedMediaSource: CatalogItem.Source? {
         if let id = playback.resource?.mediaSourceID ?? playback.tracks.mediaSourceID { return videoDetail?.MediaSources?.first { $0.Id == id } }
@@ -134,7 +139,7 @@ struct PlayerView: View {
             return ";opens=\(playback.openAttemptCount);layer=\(ObjectIdentifier(interaction.videoLayer));time=\(Int(playback.time));"
         }
         if ProcessInfo.processInfo.arguments.contains("--glide-duo-fixture") {
-            return ";session=\(duoSession.uuidString);layer=\(ObjectIdentifier(interaction.videoLayer));opens=\(playback.openAttemptCount);time=\(Int(playback.time));rate=\(playback.rate);audio=\(playback.selectedAudio?.id ?? "none");requested=\(playback.isPlaybackRequested);"
+            return ";session=\(duoSession.uuidString);layer=\(ObjectIdentifier(interaction.videoLayer));opens=\(playback.openAttemptCount);time=\(Int(playback.time));rate=\(playback.rate);audio=\(playback.selectedAudio?.id ?? "none");requested=\(playback.isPlaybackRequested);wide=\(supportsControlPanel);panel=\(expandedPlayer);controls=\(controls);pip=\(playback.pictureInPicture.active);pipStarting=\(playback.pictureInPicture.starting);pipPossible=\(playback.pictureInPicture.possible);pipSupported=\(playback.pictureInPicture.supported);"
         }
 #endif
         return ""
@@ -155,6 +160,10 @@ struct PlayerView: View {
         } controls: {
             expandedControlPanel
         }
+        .onChange(of: playback.pictureInPicture.keepsPlaybackInBackground) { _, keepPlaying in
+            if !keepPlaying, scenePhase == .background, playback.pauseForBackgroundIfNeeded() { controls = true }
+        }
+        .onChange(of: playback.pictureInPicture.message) { _, message in if let message { showHUD(message) } }
     }
     var body: some View {
         NavigationStack {
@@ -214,11 +223,12 @@ struct PlayerView: View {
         }
         .task(id: queueReload) { await expandQueue() }
         .task(id: warmupKey) {
-            guard clip == nil, playback.frameReady, !playback.loading, playback.isPlaying,
-                  playback.rate == 1, scenePhase == .active, let nextVideo else { playback.cancelWarmup(); return }
-            try? await Task.sleep(for: .seconds(1))
+            guard clip == nil, scenePhase == .active, !playback.externalPlaybackActive, !playback.pictureInPicture.active,
+                  playback.rate == 1, !warmupVideos.isEmpty else { playback.cancelWarmup(); return }
+            guard playback.frameReady, !playback.loading, playback.isPlaying else { playback.suspendWarmup(); return }
+            try? await Task.sleep(for: .milliseconds(350))
             guard !Task.isCancelled else { return }
-            await playback.prepareNext(nextVideo, library: library)
+            playback.prepareAdjacent(warmupVideos, library: library)
         }
         .fileImporter(isPresented: $importingSubtitle, allowedContentTypes: subtitleFileTypes, allowsMultipleSelection: false,
                       onCompletion: handleSubtitleImport, onCancellation: finishSubtitleImport)
@@ -252,6 +262,7 @@ struct PlayerView: View {
             case .videoInfo: videoInfoOpen = true
             case .subtitleImport: beginSubtitleImport()
             case .subtitleControls: subtitleControlsOpen = true
+            case .controlPanel: controlPanelRequested.toggle(); scheduleHide()
             case nil: scheduleHide()
             }
         }) { settingsPanel }
@@ -277,7 +288,7 @@ struct PlayerView: View {
         }
         .onChange(of: settingsOpen) { _, open in if open { controls = true; hideTask?.cancel() } else { scheduleHide() } }
         .onChange(of: episodesOpen) { _, open in if open { hideTask?.cancel() } else { scheduleHide() } }
-        .onChange(of: scenePhase) { _, phase in if phase == .background && !playback.pictureInPicture.active && !playback.externalPlaybackActive { playback.pause(); controls = true } }
+        .onChange(of: scenePhase) { _, phase in handleScenePhase(phase) }
         .onChange(of: playback.isPlaying) { _, playing in if playing { scheduleHide() } else if !playback.loading { controls = true } }
         .sheet(item: $clipDraft, onDismiss: {
             if clipWasPlaying { playback.play() }; clipWasPlaying = false; scheduleHide()
@@ -345,7 +356,7 @@ struct PlayerView: View {
                     },
                     onSpeedPreset: { playback.setRate($0); scheduleHideAfterInteraction() }, onHUD: showHUD, subtitleSession: subtitles, secondarySubtitleSession: playback.secondarySubtitles,
                     subtitleClock: { playback.subtitleRenderTime }, subtitleVideoMatrix: playback.subtitleVideoMatrix, subtitleSourceSize: playback.subtitleVideoSize, interactionState: interaction, evidenceContext: duoAccessibilityContext, quarterTurn: rotationTurn)
-                    .ignoresSafeArea()
+                    .ignoresSafeArea(.container, edges: expandedPlayer ? [] : .all)
                 if !playback.frameReady && playback.error == nil {
                     if current.offlineOnly != true, let server = library.servers.first(where: { $0.id == current.sourceID }), server.kind.isCatalogSource, let id = current.remoteID {
                         CatalogArtwork(item: CatalogItem(Id: id, Name: current.title, Type: current.mediaType), server: server, contentMode: .fit).opacity(0.45).allowsHitTesting(false)
@@ -354,16 +365,19 @@ struct PlayerView: View {
                 if controls {
                     LinearGradient(stops: [.init(color: .black.opacity(0.65), location: 0), .init(color: .clear, location: 0.3), .init(color: .clear, location: 0.55), .init(color: .black.opacity(0.85), location: 1)], startPoint: .top, endPoint: .bottom).ignoresSafeArea().allowsHitTesting(false)
                 }
-                PlayerPGSOverlay(session: subtitles, filled: filled).ignoresSafeArea()
+                PlayerPGSOverlay(session: subtitles, filled: filled).ignoresSafeArea(.container, edges: expandedPlayer ? [] : .all)
                 PlayerSubtitleOverlay(playback: playback, cues: subtitles.overlayCues, delay: subtitles.delay,
                                       bottomInset: max(geometry.size.height * subtitleBottom / 100, controls && !locked && !expandedPlayer ? bottomControlsHeight + 24 : 0), secondaryCues: playback.secondarySubtitles.overlayCues, secondaryDelay: playback.secondarySubtitles.delay)
                 if controls && !expandedPlayer {
+                    let insets = PlayerChromeInsets.read(geometry, headerHeight: max(44, topControlsHeight))
                     VStack {
                         if locked { HStack { Spacer(); RoundControl(symbol: "lock.fill", label: "解锁触控") { locked = false; scheduleHideAfterInteraction() } } }
                         else { topBar.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { topControlsHeight = $0 } }
                         Spacer()
                         if !locked { bottomControls(compact: landscape) }
-                    }.padding(.horizontal, landscape ? 28 : 20).padding(.top, max(4, PlayerChromeInsets.read(geometry).top)).padding(.bottom, 8)
+                    }.padding(.horizontal, landscape ? 28 : 20)
+                        .padding(.leading, insets.leading).padding(.trailing, insets.trailing)
+                        .padding(.top, max(4, insets.top)).padding(.bottom, 8)
                     .transition(.opacity).disabled(rotationSave.busy)
                 }
                 PlayerSkipControls(playback: playback, locked: locked, controls: controls && !expandedPlayer, landscape: landscape) {
@@ -418,7 +432,7 @@ struct PlayerView: View {
                     if touch.location.y >= geometry.size.height - inset - 64,
                        touch.location.y <= geometry.size.height - inset + 16 { return }
                 }
-                let headerEnd = max(4, PlayerChromeInsets.read(geometry).top) + max(44, topControlsHeight) + 16
+                let headerEnd = max(4, PlayerChromeInsets.read(geometry, headerHeight: max(44, topControlsHeight)).top) + max(44, topControlsHeight) + 16
                 let footerHeight = max(bottomControlsHeight + 16, landscape ? 150 : 230)
                 if controls && (touch.location.y < headerEnd || touch.location.y > geometry.size.height - footerHeight) { return }
                 toggleControls()
@@ -431,6 +445,9 @@ struct PlayerView: View {
                     HStack { Text("已锁定触控").font(.headline); Spacer(); RoundControl(symbol: "lock.fill", label: "解锁触控") { locked = false } }
                 } else {
                     topBar
+                    Button("全屏观看", systemImage: "arrow.up.left.and.arrow.down.right") {
+                        controlPanelRequested = false
+                    }.frame(minHeight: 44).accessibilityIdentifier("player.layout.fullscreen")
                     Text(clip?.moment.name ?? current.title).font(.headline).fixedSize(horizontal: false, vertical: true)
                     bottomControls(compact: true)
                     if queue.ordered.count > 1 {
@@ -459,10 +476,20 @@ struct PlayerView: View {
             RoundControl(symbol: "chevron.down", label: returnLabel) { exitPlayer() }
             VStack(alignment: .leading, spacing: 3) {
                 Text(RecommendationMediaIdentity(current).title).font(GlideTheme.Typography.itemTitle).lineLimit(1).foregroundStyle(.white)
+                    .accessibilityIdentifier("player.identity.title")
                 Text(playerIdentityDetail)
-                    .font(.caption2).monospacedDigit().foregroundStyle(.white.opacity(0.58)).accessibilityIdentifier("player.queuePosition")
+                    .font(.caption2).monospacedDigit().foregroundStyle(.white.opacity(0.58)).lineLimit(1).truncationMode(.tail)
+                    .accessibilityIdentifier("player.queuePosition")
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+            if playback.engineDescriptor.capabilities.contains(.pictureInPicture) {
+                RoundControl(symbol: playback.pictureInPicture.active ? "pip.exit" : "pip.enter", label: playback.pictureInPicture.active ? "收起画中画" : "画中画播放") {
+                    playback.pictureInPicture.toggle(); scheduleHideAfterInteraction()
+                }
+                .disabled(!playback.pictureInPicture.possible || playback.pictureInPicture.starting || rotationTurn != .original)
+                .accessibilityIdentifier("player.quick.pip")
+                .accessibilityHint("切换到其他 App 后继续观看；在 Duo 上可将画中画固定到屏幕顶部。")
+            }
             RoundControl(symbol: "rectangle.split.3x3", label: "画面与时刻") { presentNavigation() }
                 .disabled(playback.navigationPosition == nil)
                 .accessibilityIdentifier("player.navigation")
@@ -478,6 +505,12 @@ struct PlayerView: View {
         DuoPlaybackEvidence.event("exit-request", session: duoSession)
 #endif
         if let onExit { onExit() } else { dismiss() }
+    }
+    private func handleScenePhase(_ phase: ScenePhase) {
+        if phase == .background, playback.pauseForBackgroundIfNeeded() { controls = true }
+#if DEBUG
+        DuoPlaybackEvidence.event("scene=\(phase);time=\(playback.time);pip=\(playback.pictureInPicture.active);starting=\(playback.pictureInPicture.starting);requested=\(playback.isPlaybackRequested)", session: duoSession)
+#endif
     }
     private func presentClip() {
         guard let position = playback.navigationPosition, let resource = playback.resource else { return }
@@ -578,6 +611,11 @@ struct PlayerView: View {
         NavigationStack {
             Form {
                 Section {
+                    if supportsControlPanel {
+                        Button(controlPanelRequested ? "全屏观看" : "打开控制面板", systemImage: controlPanelRequested ? "arrow.up.left.and.arrow.down.right" : "rectangle.trailinghalf.inset.filled") {
+                            pendingSettingsAction = .controlPanel; settingsOpen = false
+                        }.accessibilityIdentifier("player.layout.toggle")
+                    }
                     if rotationTarget != nil {
                         Button("视频方向与保存", systemImage: "rotate.right") { presentRotation();settingsOpen = false }
                             .accessibilityIdentifier("player.rotation")
@@ -665,9 +703,12 @@ struct PlayerView: View {
                 if playback.engineDescriptor.capabilities.contains(.pictureInPicture) || playback.engineDescriptor.capabilities.contains(.externalPlayback) {
                     Section("播放设备") {
                         if playback.engineDescriptor.capabilities.contains(.pictureInPicture) {
-                            Button("画中画", systemImage: "pip") { playback.pictureInPicture.toggle(); if playback.pictureInPicture.possible { settingsOpen = false } }
-                                .disabled(rotationTurn != .original)
+                            Button(playback.pictureInPicture.active ? "收起画中画" : "画中画播放", systemImage: "pip") { playback.pictureInPicture.toggle(); if playback.pictureInPicture.possible { settingsOpen = false } }
+                                .disabled(!playback.pictureInPicture.possible || playback.pictureInPicture.starting || rotationTurn != .original)
                                 .accessibilityIdentifier("player.pip")
+                            Text("切换到其他 App 后继续观看。在 Duo 上，可将系统画中画固定到顶部，让另一 App 使用下方空间。")
+                                .font(.caption).foregroundStyle(.secondary)
+                            if !playback.pictureInPicture.supported { Text("当前设备不支持系统画中画。").font(.caption).foregroundStyle(.secondary) }
                             if let message = playback.pictureInPicture.message { Text(message).font(.caption).foregroundStyle(.secondary) }
                         }
                         if playback.engineDescriptor.capabilities.contains(.externalPlayback) {
@@ -1080,6 +1121,7 @@ struct PlayerView: View {
             showHUD(delta > 0 ? (channelMode ? "频道本次已播完" : isEpisode ? "已经是最后一集" : isCinema ? "已播放完毕" : "本目录已刷完") : (channelMode ? "已经是频道第一条" : isEpisode ? "已经是第一集" : "已经是第一部"))
             return
         }
+        warmupDirection = delta < 0 ? -1 : 1
         playCurrent(automatic: automatic)
     }
     private func playCurrent(automatic: Bool) {

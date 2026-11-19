@@ -1,0 +1,33 @@
+{
+  "audio": "audio-2",
+  "engine": "兼容播放 · VLC",
+  "error": "",
+  "expanded": true,
+  "frameReady": true,
+  "height": 835,
+  "isPlaying": false,
+  "layer": "ObjectIdentifier(0x000000010e934460)",
+  "openAttempts": 1,
+  "originalMaterialOnly": true,
+  "pipActive": false,
+  "pipDiagnostics": {
+    "audioCategory": "AVAudioSessionCategoryPlayback",
+    "controllerPossible": false,
+    "hasController": false,
+    "observedPossible": false,
+    "pipLayerAttached": false,
+    "pipLayerReady": false,
+    "pipPlayerItemReady": false,
+    "supported": false
+  },
+  "pipStarting": false,
+  "rate": 1.5,
+  "requested": false,
+  "session": "FCCEA1DE-2637-4519-BD6D-2D6F2EB3A424",
+  "subtitle": "",
+  "time": 1.157,
+  "timestamp": "2026-11-19T01:34:44Z",
+  "video": "向着山野出发，寻找藏在四季里的风景",
+  "width": 669,
+  "zoom": 1
+}

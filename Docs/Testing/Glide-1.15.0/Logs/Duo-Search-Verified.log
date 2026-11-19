@@ -1,0 +1,268 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project Glide.xcodeproj -scheme Glide -configuration Debug -destination "platform=iOS Simulator,id=9CCDDB00-69A5-45D2-B334-98ED23326F45" -derivedDataPath /tmp/Glide1150Derived -resultBundlePath /tmp/Glide1150-Duo-Search-Verified.xcresult -parallel-testing-enabled NO -collect-test-diagnostics never "-only-testing:GlideUITests/GlideUITests/testDuoSearchPose"
+
+Writing result bundle at path:
+	/tmp/Glide1150-Duo-Search-Verified.xcresult
+
+2026-10-28 15:51:09.629 xcodebuild[51039:8148833] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-28 15:51:09.629 xcodebuild[51039:8148833] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94425), error = invalidDigitCount(94425).
+2026-10-28 15:51:18.747051+0800 GlideUITests-Runner[51120:8149414] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+objc[51120]: Class UIAccessibilityLoaderWebShared is implemented in both /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.1.94425.0.euXGqL/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.1.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x105bb8310) and /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.1.94425.0.euXGqL/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.1.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x106224398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+Test Suite 'Selected tests' started at 2026-10-28 15:51:38.175.
+Test Suite 'GlideUITests.xctest' started at 2026-10-28 15:51:38.323.
+Test Suite 'GlideUITests' started at 2026-10-28 15:51:38.323.
+Test Case '-[GlideUITests.GlideUITests testDuoSearchPose]' started.
+    t =     0.05s Start Test at 2026-10-28 15:51:38.377
+    t =     0.80s Set Up
+    t =     0.87s Open com.songpeng.glide
+    t =     0.87s     Launch com.songpeng.glide
+2026-10-28 15:51:40.049 xcodebuild[51039:8148833] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-28 15:51:40.050 xcodebuild[51039:8148833] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-28 15:51:40.397 xcodebuild[51039:8148833] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-28 15:51:40.399 xcodebuild[51039:8148833] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94425), error = invalidDigitCount(94425).
+    t =    24.27s         Setting up automation session
+    t =    25.17s         Wait for com.songpeng.glide to idle
+    t =    49.09s Waiting 30.0s for "library.search" TextField to exist
+    t =    50.12s     Checking `Expect predicate `existsNoRetry == 1` for object "library.search" TextField`
+    t =    50.12s         Checking existence of `"library.search" TextField`
+    t =    51.57s Tap "library.search" TextField
+    t =    51.57s     Wait for com.songpeng.glide to idle
+    t =    51.57s     Find the "library.search" TextField
+    t =    51.68s     Check for interrupting elements affecting "library.search" TextField
+    t =    51.92s         Wait for com.apple.springboard to idle
+    t =    52.87s     Synthesize event
+    t =    54.41s     Wait for com.songpeng.glide to idle
+    t =    65.44s Type 'mp4
+' into "library.search" TextField
+    t =    65.44s     Wait for com.songpeng.glide to idle
+    t =    65.50s     Find the "library.search" TextField
+    t =    65.88s     Check for interrupting elements affecting "library.search" TextField
+    t =    66.02s         Wait for com.apple.springboard to idle
+    t =    66.27s     Synthesize event
+    t =    66.57s     Wait for com.songpeng.glide to idle
+    t =    67.08s Find the "library.search" TextField
+DUO_STAGE_SEARCH: change the official simulator pose
+    t =    68.26s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    68.26s     Find the "library.search" TextField
+    t =    68.32s     Capturing element debug description
+    t =    69.24s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    69.24s     Find the "library.search" TextField
+    t =    69.30s     Capturing element debug description
+    t =    70.31s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    70.31s     Find the "library.search" TextField
+    t =    70.39s     Capturing element debug description
+    t =    71.31s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    71.31s     Find the "library.search" TextField
+    t =    71.37s     Capturing element debug description
+    t =    72.30s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    72.30s     Find the "library.search" TextField
+    t =    72.35s     Capturing element debug description
+    t =    73.28s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    73.29s     Find the "library.search" TextField
+    t =    73.41s     Capturing element debug description
+    t =    74.24s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    74.24s     Find the "library.search" TextField
+    t =    74.35s     Capturing element debug description
+    t =    75.28s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    75.28s     Find the "library.search" TextField
+    t =    75.34s     Capturing element debug description
+    t =    76.27s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    76.27s     Find the "library.search" TextField
+    t =    76.33s     Capturing element debug description
+    t =    77.26s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    77.26s     Find the "library.search" TextField
+    t =    77.32s     Capturing element debug description
+    t =    78.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    78.25s     Find the "library.search" TextField
+    t =    78.36s     Capturing element debug description
+    t =    79.29s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    79.29s     Find the "library.search" TextField
+    t =    79.35s     Capturing element debug description
+    t =    80.28s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    80.28s     Find the "library.search" TextField
+    t =    80.34s     Capturing element debug description
+    t =    81.27s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    81.27s     Find the "library.search" TextField
+    t =    81.35s     Capturing element debug description
+    t =    82.27s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    82.42s     Find the "library.search" TextField
+    t =    82.71s     Capturing element debug description
+    t =    83.33s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    83.33s     Find the "library.search" TextField
+    t =    83.41s     Capturing element debug description
+    t =    84.34s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    84.34s     Find the "library.search" TextField
+    t =    84.42s     Capturing element debug description
+    t =    85.34s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    85.35s     Find the "library.search" TextField
+    t =    85.51s     Capturing element debug description
+    t =    86.32s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    86.37s     Find the "library.search" TextField
+    t =    86.58s     Capturing element debug description
+    t =    87.30s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    87.30s     Find the "library.search" TextField
+    t =    87.38s     Capturing element debug description
+    t =    88.31s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    88.31s     Find the "library.search" TextField
+    t =    88.38s     Capturing element debug description
+    t =    89.30s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    89.30s     Find the "library.search" TextField
+    t =    89.47s     Capturing element debug description
+    t =    90.30s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    90.30s     Find the "library.search" TextField
+    t =    90.37s     Capturing element debug description
+    t =    91.30s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    91.30s     Find the "library.search" TextField
+    t =    91.38s     Capturing element debug description
+    t =    92.31s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    92.31s     Find the "library.search" TextField
+    t =    92.38s     Capturing element debug description
+    t =    93.31s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    93.31s     Find the "library.search" TextField
+    t =    93.38s     Capturing element debug description
+    t =    94.31s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    94.31s     Find the "library.search" TextField
+    t =    94.39s     Capturing element debug description
+    t =    95.32s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    95.33s     Find the "library.search" TextField
+    t =    95.40s     Capturing element debug description
+    t =    96.32s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    96.32s     Find the "library.search" TextField
+    t =    96.40s     Capturing element debug description
+    t =    97.32s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    97.33s     Find the "library.search" TextField
+    t =    97.40s     Capturing element debug description
+    t =    98.33s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    98.33s     Find the "library.search" TextField
+    t =    98.41s     Capturing element debug description
+    t =    99.33s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =    99.34s     Find the "library.search" TextField
+    t =    99.41s     Capturing element debug description
+    t =   100.33s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   100.33s     Find the "library.search" TextField
+    t =   100.41s     Capturing element debug description
+    t =   101.33s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   101.33s     Find the "library.search" TextField
+    t =   101.42s     Capturing element debug description
+    t =   102.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   102.25s     Find the "library.search" TextField
+    t =   102.32s     Capturing element debug description
+    t =   103.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   103.25s     Find the "library.search" TextField
+    t =   103.32s     Capturing element debug description
+    t =   104.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   104.25s     Find the "library.search" TextField
+    t =   104.32s     Capturing element debug description
+    t =   105.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   105.25s     Find the "library.search" TextField
+    t =   105.32s     Capturing element debug description
+    t =   106.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   106.25s     Find the "library.search" TextField
+    t =   106.33s     Capturing element debug description
+    t =   107.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   107.25s     Find the "library.search" TextField
+    t =   107.32s     Capturing element debug description
+    t =   108.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   108.25s     Find the "library.search" TextField
+    t =   108.33s     Capturing element debug description
+    t =   109.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   109.25s     Find the "library.search" TextField
+    t =   109.33s     Capturing element debug description
+    t =   110.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   110.25s     Find the "library.search" TextField
+    t =   110.33s     Capturing element debug description
+    t =   111.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   111.26s     Find the "library.search" TextField
+    t =   111.33s     Capturing element debug description
+    t =   112.24s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   112.25s     Find the "library.search" TextField
+    t =   112.32s     Capturing element debug description
+    t =   113.34s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   113.34s     Find the "library.search" TextField
+    t =   113.71s     Capturing element debug description
+    t =   114.33s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   114.33s     Find the "library.search" TextField
+    t =   114.41s     Capturing element debug description
+    t =   115.33s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   115.33s     Find the "library.search" TextField
+    t =   115.41s     Capturing element debug description
+    t =   116.33s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   116.33s     Find the "library.search" TextField
+    t =   116.41s     Capturing element debug description
+    t =   117.33s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   117.33s     Find the "library.search" TextField
+    t =   117.40s     Capturing element debug description
+    t =   118.33s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   118.33s     Find the "library.search" TextField
+    t =   118.40s     Capturing element debug description
+    t =   119.33s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   119.34s     Find the "library.search" TextField
+    t =   119.44s     Capturing element debug description
+    t =   120.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   120.25s     Find the "library.search" TextField
+    t =   120.33s     Capturing element debug description
+    t =   121.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   121.25s     Find the "library.search" TextField
+    t =   121.33s     Capturing element debug description
+    t =   122.27s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   122.27s     Find the "library.search" TextField
+    t =   122.34s     Capturing element debug description
+    t =   123.26s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   123.27s     Find the "library.search" TextField
+    t =   123.34s     Capturing element debug description
+    t =   124.27s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   124.27s     Find the "library.search" TextField
+    t =   124.34s     Capturing element debug description
+    t =   125.27s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   125.27s     Find the "library.search" TextField
+    t =   125.34s     Capturing element debug description
+    t =   126.27s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   126.27s     Find the "library.search" TextField
+    t =   126.34s     Capturing element debug description
+    t =   127.27s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   127.29s     Find the "library.search" TextField
+    t =   127.72s     Capturing element debug description
+    t =   128.24s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   128.25s     Find the "library.search" TextField
+    t =   128.33s     Capturing element debug description
+    t =   129.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   129.25s     Find the "library.search" TextField
+    t =   129.43s     Capturing element debug description
+    t =   129.54s Interface orientation changed to Landscape Left
+    t =   130.25s Checking `Expect predicate `BLOCKPREDICATE(0x1065cb1b0)` for object Target Application 'com.songpeng.glide'`
+    t =   130.25s     Find the "library.search" TextField
+    t =   137.37s Find the "library.search" TextField
+    t =   138.37s Checking existence of `"videos.heading" StaticText`
+    t =   138.53s Find the Target Application 'com.songpeng.glide'
+    t =   141.32s Added attachment named 'Duo Search Continuity'
+    t =   141.33s Tear Down
+Test Case '-[GlideUITests.GlideUITests testDuoSearchPose]' passed (142.197 seconds).
+Test Suite 'GlideUITests' passed at 2026-10-28 15:54:00.532.
+	 Executed 1 test, with 0 failures (0 unexpected) in 142.197 (142.209) seconds
+Test Suite 'GlideUITests.xctest' passed at 2026-10-28 15:54:00.547.
+	 Executed 1 test, with 0 failures (0 unexpected) in 142.197 (142.224) seconds
+Test Suite 'Selected tests' passed at 2026-10-28 15:54:00.548.
+	 Executed 1 test, with 0 failures (0 unexpected) in 142.197 (142.373) seconds
+2026-10-28 15:54:01.744 xcodebuild[51039:8148833] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-28 15:54:01.746 xcodebuild[51039:8148833] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94425), error = invalidDigitCount(94425).
+2026-10-28 15:54:01.749 xcodebuild[51039:8148833] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-28 15:54:01.749 xcodebuild[51039:8148833] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94425), error = invalidDigitCount(94425).
+2026-10-28 15:54:01.762 xcodebuild[51039:8148833] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-28 15:54:01.762 xcodebuild[51039:8148833] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94425), error = invalidDigitCount(94425).
+2026-10-28 15:54:01.791 xcodebuild[51039:8148833] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-28 15:54:01.791 xcodebuild[51039:8148833] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94425), error = invalidDigitCount(94425).
+2026-10-28 15:54:01.791 xcodebuild[51039:8148833] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-28 15:54:01.792 xcodebuild[51039:8148833] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94425), error = invalidDigitCount(94425).
+2026-10-28 15:54:01.793 xcodebuild[51039:8148833] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94232>, error = invalidDigitCount(94232).
+2026-10-28 15:54:01.793 xcodebuild[51039:8148833] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94425), error = invalidDigitCount(94425).
+2026-10-28 15:54:02.077 xcodebuild[51039:8148833] [MT] IDETestOperationsObserverDebug: 172.794 elapsed -- Testing started completed.
+2026-10-28 15:54:02.077 xcodebuild[51039:8148833] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-28 15:54:02.077 xcodebuild[51039:8148833] [MT] IDETestOperationsObserverDebug: 172.794 sec, +172.794 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/Glide1150-Duo-Search-Verified.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

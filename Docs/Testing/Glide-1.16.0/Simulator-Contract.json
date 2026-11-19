@@ -1,0 +1,15 @@
+{
+  "build" : "1",
+  "checks" : {
+    "authoredUpload" : true,
+    "exactRestore" : true,
+    "nativePlayable" : true,
+    "nativeRotatedDimensions" : true,
+    "otherBytesPreserved" : true,
+    "ownedFilesCleaned" : true,
+    "savedMatrix" : true
+  },
+  "result" : "验证通过",
+  "time" : "2026-11-10T02:01:12Z",
+  "version" : 1
+}

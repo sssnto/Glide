@@ -1,0 +1,45 @@
+{
+  "appVersion": "1.16.0 (11)",
+  "pluginVersion": "1.0.2.0",
+  "timestamp": "2026-11-10T13:48:29.966007+00:00",
+  "coreChecks": 45,
+  "officialServerRecoveryChecks": 22,
+  "officialServerProtocolChecks": 20,
+  "sameDirectoryLargeFileChecks": 5,
+  "swiftTests": 5,
+  "recoveryPageInteractionChecks": true,
+  "pluginBuild": {
+    "release": true,
+    "warnings": 0,
+    "errors": 0
+  },
+  "clientBuild": {
+    "compatibilityQA": true,
+    "release": true,
+    "deepSignaturesVerified": true,
+    "staticPreflight": true
+  },
+  "package": "Server/artifacts/GlideToolkit-1.0.2-Jellyfin-12.2.zip",
+  "packageSHA256": "62fa2aa090ac986f0572e7a8277d4f8fcbbdd605e2d22b26cf4d2130a9d74d3e",
+  "dllSHA256": "e69da95ee7a65a33d653199740d7523f847dd0c6a8719f3c6b5a8bc5b6349f9a",
+  "actualNAS": {
+    "installedVerifiedVersion": "1.0.1",
+    "copiedAuthoredFileIndexedAndByteVerified": true,
+    "exchangeRefused": "atomic_exchange_22",
+    "sameDirectorySavePending": false,
+    "plugin102InstallPending": false,
+    "saveFailed": "atomic_rename_13",
+    "filesystem": "smb2",
+    "supersededBy": "1.0.3"
+  },
+  "phone": {
+    "qaInstalled": true,
+    "lastLaunchBlockedByLock": true
+  },
+  "largeAuthoredFixtureAndOwnedBackupsCleaned": true,
+  "committed": false,
+  "pushed": false,
+  "uploadedToStore": false,
+  "temporaryServerStopped": true,
+  "packageMetadataActuallyLoadedInOfficialServer": "1.0.2.0"
+}

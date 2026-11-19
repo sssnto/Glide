@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-06",
+  "version": "1.15.0 (2)",
+  "baseCommit": "979ce117dea27c572f743bb4221cfe99fae5f9c4",
+  "files": [
+    {
+      "path": "Glide/Views/VideoSurface.swift",
+      "sha256": "585a538c65fd006ee0cfad27184a6a3f4747b1eb60e3086597f41e15e153ac9c"
+    },
+    {
+      "path": "Glide/Services/VideoZoomQAProbe.swift",
+      "sha256": "d8244e577e77fb99bc94284f148dbc6384ca0cb87e2c03b3895359205c518bcc"
+    },
+    {
+      "path": "Glide/Services/DuoQAView.swift",
+      "sha256": "b3d75090453a8b5dd7b454b014084d9ca565dcb5ca9735ede33c38b498e6716b"
+    },
+    {
+      "path": "Glide/GlideApp.swift",
+      "sha256": "e6d0e98a5ea8372097eb1fc34c76751943e90bdfbdbc95925b4f3d31987af509"
+    },
+    {
+      "path": "Glide.xcodeproj/project.pbxproj",
+      "sha256": "73295ab979fe778ce878b4d3b0a7863c08ee912ea7361dcd0b1b7a14bfa1826c"
+    },
+    {
+      "path": "UITests/GlideUITests.swift",
+      "sha256": "dc26f47b333246c9d58f4c12d6be3baaedd67228f29f9281449eeee4e7ce3926"
+    },
+    {
+      "path": "Glide/Views/PlayerView.swift",
+      "sha256": "fa1ebfc84315a09b8cc38da612c10d75763e944a51d1e6537a01c11c36c33b23"
+    }
+  ],
+  "note": "Production zoom fix unchanged; DEBUG-only in-app 4K regression added after XCTest device channel failed."
+}

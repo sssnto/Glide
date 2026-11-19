@@ -4,7 +4,7 @@
 
 实际 GitHub Pages 仓库是 [sssnto/glide-privacy](https://github.com/sssnto/glide-privacy)，不是应用源码仓库。当前使用其 `main` 分支根目录发布，保留既有 CNAME 和域名分发配置。只推送 Glide 仓库不会自动更新官网。
 
-当前官网已按用户于 2026-10-23 确认的 1.11.0 上架状态更新，移除当前功能的开发预览提示。以下“内容与素材”保留当天较早重设计时的版本状态；最新发布结果见[上架同步记录](Testing/Website-1.11.0-Published-2026-10-23/README.md)。
+当前官网已于 2026-11-19 更新为 **2.0.1 已提交 App Store 审核**，展示 Duo 展开全屏、片库布局、画中画与 Jellyfin 登录改进；正式可用版本以 App Store 为准。新增三张来自 2.0.1（11）的原创演示截图。最新记录见[本次官网更新](Testing/Website-2.0.1-Review-2026-11-19/README.md)。以下 2026-10-23 内容保留为历史资料。
 
 ## 更新网站
 

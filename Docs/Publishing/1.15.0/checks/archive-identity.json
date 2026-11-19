@@ -1,0 +1,15 @@
+{
+  "archive": {
+    "path": "/Users/songpeng/Library/Developer/Xcode/Archives/2026-11-07/Glide 2026-11-7, 10.37.xcarchive",
+    "version": "1.15.0",
+    "build": "3",
+    "created": "2026-11-07 02:37:41"
+  },
+  "bundleID": "com.songpeng.glide",
+  "minimumOS": "17.0",
+  "debugQAMarkersPresent": {
+    "--glide-zoom-inapp-probe": false,
+    "--glide-duo-fixture": false,
+    "--glide-zoom-probe": false
+  }
+}

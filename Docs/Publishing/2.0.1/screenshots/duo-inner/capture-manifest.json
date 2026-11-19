@@ -1,0 +1,68 @@
+[
+  {
+    "file": "01-watching.jpg",
+    "stage": "01-Watching",
+    "metadata": [
+      "  pixelWidth: 2007",
+      "  pixelHeight: 2853",
+      "  hasAlpha: no"
+    ],
+    "sha256": "3a0251dd67e2271c86ab47ef78612b2902cc08945d9f8450d9197ce785f4f0bf",
+    "source": "unmodified Simulator framebuffer"
+  },
+  {
+    "file": "02-library.jpg",
+    "stage": "02-Library",
+    "metadata": [
+      "  pixelWidth: 2007",
+      "  pixelHeight: 2853",
+      "  hasAlpha: no"
+    ],
+    "sha256": "bd8a2d253e1a8cbb295a625505e62274e980e9ca89bb3b172a109b1719a99e55",
+    "source": "unmodified Simulator framebuffer"
+  },
+  {
+    "file": "03-fullscreen-controls.jpg",
+    "stage": "03-Fullscreen-Controls",
+    "metadata": [
+      "  pixelWidth: 2007",
+      "  pixelHeight: 2853",
+      "  hasAlpha: no"
+    ],
+    "sha256": "99c515468c11e88aafc5566c779eaab6bbe9248df8c762d0237877d846daf70b",
+    "source": "unmodified Simulator framebuffer"
+  },
+  {
+    "file": "04-control-panel.jpg",
+    "stage": "04-Control-Panel",
+    "metadata": [
+      "  pixelWidth: 2007",
+      "  pixelHeight: 2853",
+      "  hasAlpha: no"
+    ],
+    "sha256": "8af07afdee6cb89b44765b4b7e14ff5b88f47bd2fb0272ed34f00de35275c0ad",
+    "source": "unmodified Simulator framebuffer"
+  },
+  {
+    "file": "05-fullscreen-picture.jpg",
+    "stage": "05-Fullscreen-Picture",
+    "metadata": [
+      "  pixelWidth: 2007",
+      "  pixelHeight: 2853",
+      "  hasAlpha: no"
+    ],
+    "sha256": "d6f4632fcafe5d4e0b7e2ade85181cab89edd7bb766a471a691309ed5c0104ce",
+    "source": "unmodified Simulator framebuffer"
+  },
+  {
+    "file": "06-library-dark.jpg",
+    "stage": "06-Library-Dark",
+    "metadata": [
+      "  pixelWidth: 2007",
+      "  pixelHeight: 2853",
+      "  hasAlpha: no"
+    ],
+    "sha256": "df824c5ea00713d6845540807b122127cc1f1f66ce702f400de6fe436b521931",
+    "source": "unmodified Simulator framebuffer"
+  }
+]

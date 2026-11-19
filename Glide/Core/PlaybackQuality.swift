@@ -65,6 +65,18 @@ struct PlaybackRouteMemory {
     }
 }
 
+/// AVKit renders PiP separately; the inline layer no longer proves video health.
+struct PlaybackFrameWatchdog {
+    private var missingSince: Date?
+    mutating func shouldRecover(at date: Date, requested: Bool, playing: Bool, frameReady: Bool,
+                                externalPlayback: Bool, pictureInPicture: Bool) -> Bool {
+        guard requested, playing, !frameReady, !externalPlayback, !pictureInPicture,
+              date.timeIntervalSince1970.isFinite else { missingSince = nil; return false }
+        if missingSince == nil || date < missingSince! { missingSince = date }
+        return date.timeIntervalSince(missingSince!) > 6
+    }
+}
+
 struct PlaybackStallTracker {
     static let minimumWait: TimeInterval = 45
     static let bufferProgressTimeout: TimeInterval = 20

@@ -1,0 +1,17 @@
+{
+  "pluginVersion": "1.0.2",
+  "filesystem": "smb2",
+  "state": "needs_verification",
+  "errorCode": "uncertain_commit",
+  "failureCode": "atomic_rename_2",
+  "originalPathExistsAfterJob": false,
+  "publicationMode": "SameDirectoryRename",
+  "checks": [
+    "actual_kernel_smb2_mount",
+    "expected_plugin_version_loaded",
+    "authored_original_matches_fixture",
+    "old_open_handle_publication_fails_on_real_smb2"
+  ],
+  "timestamp": "2026-11-10T14:22:49Z",
+  "passed": true
+}

@@ -287,3 +287,129 @@ struct NetworkBufferQAProbe: View {
     }
 }
 #endif
+
+#if DEBUG
+/// Authored loopback media only. Measures the production controller, loader and AVPlayer handoff.
+struct FeedWarmupQAProbe: View {
+    let library: LibraryStore
+    @State private var playback = PlaybackController()
+    @State private var status = "准备相邻视频预加载验证"
+    @State private var checks: [String] = []
+    @State private var metrics: [String: Double] = [:]
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            VideoSurface(presentation: playback.presentation, onLayer: playback.attachLayer,
+                identity: playback.current?.id ?? "feed-warmup", title: "原创预加载验证", frameReady: playback.frameReady,
+                locked: true, filled: false, onSwipe: { _ in }, onToggle: {}, onSeek: { _ in }, onSpeedPreset: { _ in }, onHUD: { _ in })
+            VStack { Text(status).accessibilityIdentifier("feed.probe.status"); Text("通过 \(checks.count) 项"); Spacer() }.foregroundStyle(.white).padding(32)
+        }.task { await run() }.onDisappear { playback.close(); UIApplication.shared.isIdleTimerDisabled = false }
+    }
+    @MainActor private func wait(_ name: String, seconds: Double = 20, _ condition: () -> Bool) async throws {
+        let end = ProcessInfo.processInfo.systemUptime + seconds
+        while !condition() {
+            if let error = playback.error { throw MediaError.message(name + ": " + error) }
+            guard ProcessInfo.processInfo.systemUptime < end else { throw MediaError.message(name + "超时") }
+            try await Task.sleep(for: .milliseconds(25))
+        }
+    }
+    @MainActor private func check(_ condition: Bool, _ label: String) throws {
+        guard condition else { throw MediaError.message(label) }; checks.append(label)
+    }
+    @MainActor private func save(_ passed: Bool, error: String? = nil) {
+        let result: [String: Any] = ["passed": passed, "checks": checks, "metrics": metrics, "error": error ?? "", "scope": "Authored loopback fixture; not a private NAS measurement", "delivery": playback.resource?.delivery.rawValue ?? "", "events": playback.diagnostic.events]
+        let file = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("feed-warmup-report.json")
+        try? JSONSerialization.data(withJSONObject: result, options: [.prettyPrinted,.sortedKeys]).write(to: file)
+    }
+    @MainActor private func run() async {
+        UIApplication.shared.isIdleTimerDisabled = true
+        do {
+            let server = MediaServer(name: "Glide Feed Warmup QA", kind: .jellyfin, address: URL(string: "http://127.0.0.1:8797")!, username: "fixture", userID: "fixture-user")
+            try Credentials.save("authored-feed-only", for: server.id)
+            library.servers.append(server)
+            func video(_ id: String) -> Video { Video(id: server.id.uuidString + id, title: id, subtitle: "原创 loopback 素材", sourceID: server.id, remoteID: id, duration: 20, mediaType: "Video") }
+            let cold = video("cold"), direct = video("direct"), segmented = video("segmented"), extra = video("extra")
+            status = "测量未预加载的起播"
+            let before = ProcessInfo.processInfo.systemUptime
+            playback.open(cold, library: library, recordsProgress: false)
+            try await wait("冷启动首帧") { playback.frameReady }
+            metrics["coldFirstFrameSeconds"] = ProcessInfo.processInfo.systemUptime - before
+            playback.pause()
+            let cold4kStart = ProcessInfo.processInfo.systemUptime
+            playback.open(video("segmented-cold"), library: library, recordsProgress: false)
+            try await wait("未预加载 4K 首帧") { playback.frameReady }
+            metrics["coldCopyFirstFrameSeconds"] = ProcessInfo.processInfo.systemUptime - cold4kStart
+            playback.pause()
+            status = "预加载三个相邻视频"
+            playback.prepareAdjacent([direct, extra, segmented], library: library)
+            try await wait("分段读取预加载") { playback.warmupEvidence(direct, library: library).bytes > 0 }
+            metrics["directCachedBytes"] = Double(playback.warmupEvidence(direct, library: library).bytes)
+            let warmStart = ProcessInfo.processInfo.systemUptime
+            playback.tracks = TrackSelection(); playback.open(direct, library: library, recordsProgress: false)
+            try await wait("已预加载首帧") { playback.frameReady }
+            metrics["warmDirectFirstFrameSeconds"] = ProcessInfo.processInfo.systemUptime - warmStart
+            try check(playback.diagnostic.events.contains("warmup_startup_bytes"), "direct:consumed_actual_startup_bytes")
+            try check((metrics["warmDirectFirstFrameSeconds"] ?? 99) < (metrics["coldFirstFrameSeconds"] ?? 0), "direct:less_wait_than_cold")
+            status = "预加载原画兼容 4K 路线"
+            playback.prepareAdjacent([segmented, extra], library: library)
+            try await wait("原画分段预热完成") { playback.warmupEvidence(segmented, library: library).copyPrimed }
+            let evidence = playback.warmupEvidence(segmented, library: library)
+            try check(evidence.players == 1 && evidence.paused, "4k:one_muted_paused_speculative_player")
+            let copyStart = ProcessInfo.processInfo.systemUptime
+            playback.tracks = TrackSelection(); playback.open(segmented, library: library, recordsProgress: false)
+            try await wait("分段复用首帧") { playback.frameReady }
+            metrics["warmCopyFirstFrameSeconds"] = ProcessInfo.processInfo.systemUptime - copyStart
+            try check(playback.resource.map { [.remux, .audioConversion].contains($0.delivery) } == true && playback.diagnostic.events.contains("warmup_original_segments"), "4k:reused_copy_route_without_direct_detour")
+            if case .native(let player) = playback.presentation {
+                let size = player.currentItem?.presentationSize ?? .zero
+                try check(Int(size.width) == 3840 && Int(size.height) == 2160, "4k:actual_3840x2160_frames")
+            }
+            try check((metrics["warmCopyFirstFrameSeconds"] ?? 99) < (metrics["coldCopyFirstFrameSeconds"] ?? 0), "4k:less_wait_than_same_format_cold")
+            try check(playback.diagnostic.recoveryCount == 0, "4k:no_video_reencoding_recovery")
+            let next4k = video("segmented-next")
+            playback.prepareAdjacent([next4k], library: library)
+            try await wait("播放 4K 时准备下一条 4K") { playback.warmupEvidence(next4k, library: library).copyPrimed }
+            let runningAt = playback.time
+            try await Task.sleep(for: .seconds(1.2))
+            try check(playback.time > runningAt + 0.3 && playback.diagnostic.recoveryCount == 0,
+                "4k:current_progresses_while_next_4k_primes")
+            playback.pause()
+            try check(playback.warmupEvidence(next4k, library: library).players == 0, "pause:releases_unselected_segment_player")
+            playback.seek(3)
+            try await wait("暂停定位保留") { abs(playback.time - 3) < 0.5 }
+            try check(!playback.isPlaybackRequested, "handoff:pause_and_seek_preserved")
+            do {
+                _ = try await StartupRangeRead.fetch(url: URL(string: "http://127.0.0.1:8797/ignore-range")!, headers: [:], offset: 0, count: 16)
+                throw MediaError.message("忽略 Range 的响应被错误接受")
+            } catch let error as URLError { try check(error.code == .badServerResponse, "network:range_ignored_refused_without_full_download") }
+            playback.prepareAdjacent([extra], library: library)
+            playback.cancelWarmup()
+            try check(playback.warmupEvidence(extra, library: library).bytes == 0, "exit:unused_work_canceled")
+            playback.close(); status = "相邻视频预加载验证通过"; save(true)
+        } catch { playback.close(); status = "预加载验证失败：" + error.localizedDescription; save(false, error: error.localizedDescription) }
+    }
+}
+#endif
+
+#if DEBUG
+struct FeedWarmupUIFixture: View {
+    let library: LibraryStore
+    @State private var ready = false
+    @State private var server = MediaServer(name: "Glide Feed UI QA", kind: .jellyfin, address: URL(string: "http://127.0.0.1:8797")!, username: "fixture", userID: "fixture-user")
+    private var videos: [Video] {
+        ["cold", "direct", "extra"].map { Video(id: server.id.uuidString + $0, title: $0, subtitle: "原创测试队列", sourceID: server.id, remoteID: $0, duration: 18, mediaType: "Video") }
+    }
+    var body: some View {
+        Group {
+            if ready { PlayerView(library: library, queue: PlaybackQueue(videos: videos, mode: .sequential, startID: videos[0].id), scopeName: "原创滑动验证") }
+            else { ProgressView("准备原创片库") }
+        }.task {
+            guard !ready else { return }
+            do {
+                try Credentials.save("authored-feed-only", for: server.id)
+                library.servers.append(server); ready = true
+            } catch { library.error = error.localizedDescription }
+        }
+    }
+}
+#endif

@@ -1,0 +1,11 @@
+CSSM_ModuleLoad(): One or more parameters passed to a function were not valid.
+Unhandled exception. System.IO.IOException: The process cannot access the file '/var/folders/fs/s4nwlcbs4wv2j7q7fwxk1z3r0000gn/T/GlideToolkit-Tests-30052971fec949a7882f59c6f18180a1/closed-before-publication.mp4' because it is being used by another process.
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Init(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Int64& fileLength, UnixFileMode& filePermissions)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share)
+   at FaultPublication.RenameSameDirectory(String staged, String original) in /Users/songpeng/code/github/tools/Glide/Server/GlideToolkit.Tests/Program.cs:line 133
+   at Jellyfin.Plugin.GlideToolkit.Core.RotationProcessor.Execute(RotationJob job, RotationJob restore, CancellationToken token, Action beforeReplace) in /Users/songpeng/code/github/tools/Glide/Server/Jellyfin.Plugin.GlideToolkit/Core/RotationProcessor.cs:line 66
+   at Jellyfin.Plugin.GlideToolkit.Core.RotationProcessor.Execute(RotationJob job, RotationJob restore, CancellationToken token, Action beforeReplace) in /Users/songpeng/code/github/tools/Glide/Server/Jellyfin.Plugin.GlideToolkit/Core/RotationProcessor.cs:line 72
+   at Program.<Main>$(String[] args) in /Users/songpeng/code/github/tools/Glide/Server/GlideToolkit.Tests/Program.cs:line 117
+   at Program.<Main>(String[] args)

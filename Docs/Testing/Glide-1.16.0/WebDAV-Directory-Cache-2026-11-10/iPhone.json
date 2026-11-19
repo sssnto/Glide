@@ -1,0 +1,17 @@
+{
+  "build" : "6",
+  "checks" : {
+    "newStoreRestoresDiskIndex" : true,
+    "noRequestsAfterIndex" : true,
+    "queueUsesIndex" : true,
+    "reentryWithoutRequests" : true
+  },
+  "counts" : {
+    "allRequestsAfterIndex" : 0,
+    "repeatSelectionRequests" : 0,
+    "videoCount" : 4311
+  },
+  "live" : true,
+  "result" : "验证通过",
+  "time" : "2026-11-10T03:29:46Z"
+}

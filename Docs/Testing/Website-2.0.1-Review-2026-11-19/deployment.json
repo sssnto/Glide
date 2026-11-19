@@ -1,0 +1,211 @@
+{
+  "site": "https://glide.sssnto.cn/",
+  "timestamp": "2026-11-19T03:35:58.505066+00:00",
+  "passed": true,
+  "files": [
+    {
+      "file": ".nojekyll",
+      "status": 200,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matchesSource": true
+    },
+    {
+      "file": "404.html",
+      "status": 200,
+      "bytes": 778,
+      "sha256": "c7fd328f4bbf63ff12c0fcdba68cb6aa4b4e96c368498bfabedff041cb083f10",
+      "matchesSource": true
+    },
+    {
+      "file": "CNAME",
+      "status": 200,
+      "bytes": 16,
+      "sha256": "5156e1ebce2915fad74d50454806de83533d883ee2f29bb1acf3f2a52304d14f",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/alpine.jpg",
+      "status": 200,
+      "bytes": 385062,
+      "sha256": "817a6db7684772791195f14756fde06cd9af4818120a8b27625f66f49055414a",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/app-icon.png",
+      "status": 200,
+      "bytes": 60630,
+      "sha256": "1c890c2966278c979ef1dd8ed3fccfba14becd602374f0f0f11caafe8c8cce0b",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/channel.png",
+      "status": 200,
+      "bytes": 290019,
+      "sha256": "f22294bea7ba1a948d6c82017f0170fbcebd55900e63fc28466ad7dd310bba81",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/coast.jpg",
+      "status": 200,
+      "bytes": 548480,
+      "sha256": "a27cfe8099c5fafa242fa2fceb96368584c57d24ee8891e28dd47350e7f330f4",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/content-map.png",
+      "status": 200,
+      "bytes": 495943,
+      "sha256": "38bbb16cc41387ceaef85e352788e110030d5e5e9bd32b3122e1411fbf91fd4b",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/duo-201-fullscreen.jpg",
+      "status": 200,
+      "bytes": 265648,
+      "sha256": "99c515468c11e88aafc5566c779eaab6bbe9248df8c762d0237877d846daf70b",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/duo-201-library.jpg",
+      "status": 200,
+      "bytes": 332600,
+      "sha256": "bd8a2d253e1a8cbb295a625505e62274e980e9ca89bb3b172a109b1719a99e55",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/duo-201-panel.jpg",
+      "status": 200,
+      "bytes": 242131,
+      "sha256": "8af07afdee6cb89b44765b4b7e14ff5b88f47bd2fb0272ed34f00de35275c0ad",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/player.png",
+      "status": 200,
+      "bytes": 554665,
+      "sha256": "c70fea15b6f3042da18fb0dc9139c3e5c6bf0265e2ed2f7aa59d0d9baa6443e6",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/time-picks.png",
+      "status": 200,
+      "bytes": 502924,
+      "sha256": "82abd4465f9c3cfc70af0fdcca44be12ce6fc48410d205724b709c76b4bbfb0e",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/v2-collection.png",
+      "status": 200,
+      "bytes": 234988,
+      "sha256": "6bcd34507438a64c01bf9f7917fe507030386dbf980efa1ef270bb091ab5db32",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/v2-dark.png",
+      "status": 200,
+      "bytes": 697896,
+      "sha256": "bfa0cafece5b7e0800bf1d86fe4a4a76993e745d01542db456ebeb3f74f84932",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/v2-library.png",
+      "status": 200,
+      "bytes": 570895,
+      "sha256": "06a2d40fffe0c9373d41f4f88fd7b933481380ca74c22a54c41a75ab983479d7",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/v2-player.png",
+      "status": 200,
+      "bytes": 486114,
+      "sha256": "f6434fca53e4d73c3a7b6cb0dcfa23c07407e8e74c694825b3833f9749e25d84",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/v2-selection.png",
+      "status": 200,
+      "bytes": 675568,
+      "sha256": "55109afc589002318fd0a62e0d293626d3794e8ed82a63449f6c3a73f090b846",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/v2-tasks.png",
+      "status": 200,
+      "bytes": 196703,
+      "sha256": "fa48eec1812aabc7aeb92a5a95ce2d332a0cc848ed958c0c65e670bde5e0d63f",
+      "matchesSource": true
+    },
+    {
+      "file": "assets/v2-watch.png",
+      "status": 200,
+      "bytes": 915612,
+      "sha256": "6892c9cf57cae3a29d4805a5f8dcc84160130ae60f9750dff0eb5edb77d83bab",
+      "matchesSource": true
+    },
+    {
+      "file": "icons.svg",
+      "status": 200,
+      "bytes": 2119,
+      "sha256": "3d62192a2deb607eeaa65e985f6f6329e5bb3233a766c92ca7b331b10cbcca0e",
+      "matchesSource": true
+    },
+    {
+      "file": "index.html",
+      "status": 200,
+      "bytes": 19699,
+      "sha256": "383cf19f5c2814b5199ad63a47f617ba4a5db11482105cf306f052fe651efd53",
+      "matchesSource": true
+    },
+    {
+      "file": "privacy.html",
+      "status": 200,
+      "bytes": 7322,
+      "sha256": "ed5b59d2ce9a72f4bfe7aa048508aa4951db9993cfcfe5850b3dc635e26a704b",
+      "matchesSource": true
+    },
+    {
+      "file": "robots.txt",
+      "status": 200,
+      "bytes": 68,
+      "sha256": "add2147a66a985d8e3cbd097fd29bf6e1efe96791fda014f065558842c2eaefd",
+      "matchesSource": true
+    },
+    {
+      "file": "site.js",
+      "status": 200,
+      "bytes": 970,
+      "sha256": "63fc8defbf4d9e8737e33c8efda0c1cb76e51b14d10c8b9114d716dc1f7dae92",
+      "matchesSource": true
+    },
+    {
+      "file": "sitemap.xml",
+      "status": 200,
+      "bytes": 458,
+      "sha256": "336952e19b0e56ca1a539b42d48e8e672b7fd5c3e7b315b588534260cc241e8e",
+      "matchesSource": true
+    },
+    {
+      "file": "style.css",
+      "status": 200,
+      "bytes": 29223,
+      "sha256": "5c84b6154b6c1a84d99ffa065a578c5336664b5adfe45603f7fbdbd2a274f621",
+      "matchesSource": true
+    },
+    {
+      "file": "support.html",
+      "status": 200,
+      "bytes": 13115,
+      "sha256": "1d20e4d4f24ee883e42c775171d2357546b74aba6814fb16643a91944d52c155",
+      "matchesSource": true
+    },
+    {
+      "file": "updates.html",
+      "status": 200,
+      "bytes": 13471,
+      "sha256": "70e762ff0f6fed7e55ca5e6f60e9be74d7651e200641e549593d316a74d2886c",
+      "matchesSource": true
+    }
+  ],
+  "scope": "Unversioned public URLs, bytes and SHA-256; does not render or interact with the site"
+}

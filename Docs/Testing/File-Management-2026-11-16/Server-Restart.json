@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "checks": [
+    "restart_retains_move_receipt_and_restore_link",
+    "restart_retains_trash_receipt_and_restore_link",
+    "restart_retains_busy_receipt_and_restore_link",
+    "restart_does_not_replay_completed_mutations"
+  ]
+}

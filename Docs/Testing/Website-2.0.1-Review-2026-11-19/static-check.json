@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "pages": 5,
+  "localReferences": 141,
+  "publicBytes": 7543117,
+  "errors": [],
+  "scope": "Static integrity checks; does not replace browser visual or interaction QA"
+}

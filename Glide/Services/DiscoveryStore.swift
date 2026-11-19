@@ -204,6 +204,6 @@ import AVFoundation
         let relative = server.kind == .local ? try LocalMediaIdentity.relativePath(root: server.address, file: entry.url) : nil
         return Video(id: relative.map { LocalMediaIdentity.id(sourceID: server.id, relativePath: $0) } ?? server.id.uuidString + entry.id,
                      title: entry.name, subtitle: server.name, sourceID: server.id, url: entry.url, artwork: entry.artwork,
-                     addedAt: entry.displayDate, localRelativePath: relative)
+                     addedAt: entry.displayDate, localRelativePath: relative, fileSize: entry.fileSize)
     }
 }

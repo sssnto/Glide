@@ -79,7 +79,7 @@ extension DirectoryQuery {
     /// Playback recursively includes descendants, while ALWAYS retaining the selected parent.
     static func playback(userID: String, parentID: String, start: Int, search: String = "", options: BrowseOptions = BrowseOptions()) -> [String: String] {
         var query = ["UserId": userID, "ParentId": parentID, "Recursive": options.includesDescendants ? "true" : "false", "MediaTypes": "Video", "IsFolder": "false", "SortBy": options.sort.jellyfinField, "SortOrder": options.sort.jellyfinOrder, "StartIndex": String(start), "Limit": "200", "EnableUserData": "true"]
-        query["Fields"] = "Genres"
+        query["Fields"] = options.sort.isFileSize ? "Genres,MediaSources" : "Genres"
         let term = search.trimmingCharacters(in: .whitespacesAndNewlines)
         if !term.isEmpty { query["SearchTerm"] = term }
         return query

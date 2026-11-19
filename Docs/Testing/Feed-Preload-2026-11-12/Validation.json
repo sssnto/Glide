@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-12",
+  "core": {
+    "passed": true,
+    "xctest": 11,
+    "swiftTesting": 284,
+    "total": 295
+  },
+  "candidateBuild": "CompatibilityQA iOS Simulator; ad hoc signed",
+  "ui": "UI-Summary.json",
+  "runtime": "Runtime.json",
+  "scope": "Authored local fixtures; no private NAS or physical iPhone deployment",
+  "sourceSHA256": {
+    "Glide/Core/PlaybackWarmupPolicy.swift": "fb7f277f0fc791c9d942aa39196a1bae9e491e610a5abccf0ce73b9cf35f8078",
+    "Glide/Services/PlaybackWarmup.swift": "2467aa4ac83081bc4ab7e628582b189afc75f42e64efce85caf755fb1cb19a1e",
+    "Glide/Services/AuthenticatedAsset.swift": "ba70da92075487150915d96526bbd1f4fc79486fb41f1daabe902eb017e25531",
+    "Glide/Services/NativePlaybackEngine.swift": "f6c38a7eeef59e06a0298dde86571f98476e0fcf0ea0912206f6157fbf2fe3a8",
+    "Glide/Services/PlaybackController.swift": "49c956db8d4999394bec2caf18e1be3d52f4cd4c85b71c6e2c3cc9513849be68",
+    "Glide/Views/PlayerView.swift": "d0c2676b2a0fcc06584ea4d3d514ace88f7b7e371a1f843ef20af64eb907db5b",
+    "Glide/Services/NetworkBufferQAProbe.swift": "2295b5b99140f264d79ea727373a95850a38bac1c4db18380c0da535ee259b2b",
+    "Glide/GlideApp.swift": "06f1a82683ae2100f410e106def0ec92ac89c0bc2a1867404d9d945dc3aedbc9",
+    "Glide.xcodeproj/project.pbxproj": "25ac8c848647b8617dd128de906b5b167a872a4d040f75d20b64934b4a2aa3e9",
+    "UITests/GlideUITests.swift": "c550cedb1eb41394ce27a976de9e5000251fb9a83239dda8def875a3e62b35c9",
+    "Tests/PlaybackWarmupTests.swift": "af48b85722e71550b4c60cd2253c03cac11791c51aafacecc3a70ed105c0f5d4",
+    "Scripts/feed_warmup_fixture.py": "bf7884dc878f07a757e8738a5cbce1b64bc41c15a4b976fbc07f8d21e240eca9"
+  },
+  "runtimePassed": true,
+  "runtimeChecks": 12,
+  "uiPassed": true,
+  "buildLogSHA256": "7f02da9ed92b6e56359e84cdd167a8b4964571c690e7de184131d75bf9488eda"
+}

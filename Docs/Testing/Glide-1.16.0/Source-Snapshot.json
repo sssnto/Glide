@@ -1,0 +1,14 @@
+{
+  "Glide/Core/VideoFileRotation.swift": "e6ee7de7cbead4e4891cda4e450c5b73f04ed1a9f468430d9009d045ed317984",
+  "Glide/Core/RemoteVideoRotation.swift": "ecf4f8dd9e72b12b7c3b12bdd31758670368a80be71980b51f80a8b365d551f6",
+  "Glide/Services/VideoRotationEditorModel.swift": "2a6732e08bce9111c7aa5e817ba9e070546c9d5d543c2a5f7c2f94ddce51eb49",
+  "Glide/Views/VideoRotationEditor.swift": "7b551afe42eb2468094e817f6137aea19cc7cac8e8a0c8782978828dd2780245",
+  "Glide/Views/PlayerView.swift": "860ae51c1822b6efd7caba9af1926996d7042cded8bf3855d6b515abdda968ed",
+  "Glide/Services/MediaClient.swift": "87c56d0c229bb79be52059ee973ecbcb861fe688343ef169158e164da447b817",
+  "Glide/GlideApp.swift": "90d04401d73a45175a0a5ffd99d167fdf167a31246abdcc2dfa4c1026bf532f9",
+  "Glide/LibraryStore.swift": "df6593170a30ea5d1b4804b436fbec6159cb16df55ca1c965d26f0fe9d1cf214",
+  "Glide.xcodeproj/project.pbxproj": "4da06d01318a4ab6a35c74f6f1f64c45677c4d47350238e56f9b61512dba241a",
+  "Tests/RemoteVideoRotationTests.swift": "346b973ab0ac198942622eee410eacec3e734f7785eca1771f1277cfe203057f",
+  "Tests/VideoFileRotationTests.swift": "a96b106cd8e2b864053ef6530dcb68a1b0b1cd16851ef4b4ff5610a1d876549d",
+  "UITests/GlideUITests.swift": "700ca6e63756bdfdbd01de70a5fde092e5abec1451205cbc7f730fbe496aaae3"
+}

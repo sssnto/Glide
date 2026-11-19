@@ -1,0 +1,23 @@
+{
+  "build" : "6",
+  "checks" : {
+    "allReentryOperationsWithoutRequests" : true,
+    "emptyLoaded" : true,
+    "explicitRefresh" : true,
+    "failedScanNoAutomaticRetry" : true,
+    "failedScanNotCommitted" : true,
+    "firstScan" : true,
+    "newStoreDisk" : true,
+    "nonrecursive" : true,
+    "queue" : true,
+    "stoppedScanNotCommitted" : true,
+    "subtree" : true
+  },
+  "counts" : {
+    "firstScan" : 3,
+    "requestsAfterReentry" : 0
+  },
+  "live" : false,
+  "result" : "验证通过",
+  "time" : "2026-11-10T03:20:48Z"
+}

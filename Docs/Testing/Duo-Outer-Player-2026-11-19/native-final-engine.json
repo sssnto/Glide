@@ -1,0 +1,33 @@
+{
+  "audio": "audio-1",
+  "engine": "AVPlayer \u00b7 \u7cfb\u7edf\u64ad\u653e\u5668",
+  "error": "",
+  "expanded": false,
+  "frameReady": true,
+  "height": 644,
+  "isPlaying": false,
+  "layer": "ObjectIdentifier(0x000000010fbb50e0)",
+  "openAttempts": 1,
+  "originalMaterialOnly": true,
+  "pipActive": false,
+  "pipDiagnostics": {
+    "audioCategory": "AVAudioSessionCategoryPlayback",
+    "controllerPossible": false,
+    "hasController": false,
+    "observedPossible": false,
+    "pipLayerAttached": false,
+    "pipLayerReady": false,
+    "pipPlayerItemReady": false,
+    "supported": false
+  },
+  "pipStarting": false,
+  "rate": 1.5,
+  "requested": false,
+  "session": "069B40A6-D26D-4C7F-8617-433203CF3F30",
+  "subtitle": "",
+  "time": 0,
+  "timestamp": "2026-11-19T01:54:34Z",
+  "video": "\u5411\u7740\u5c71\u91ce\u51fa\u53d1\uff0c\u5bfb\u627e\u85cf\u5728\u56db\u5b63\u91cc\u7684\u98ce\u666f",
+  "width": 382,
+  "zoom": 1
+}

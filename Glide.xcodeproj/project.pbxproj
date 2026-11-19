@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		001EB14EE4B8E0C2DF538487 /* Glide/Views/SubtitleTranscriptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5DE949384D4D6039A8EF077 /* Glide/Views/SubtitleTranscriptView.swift */; };
 		01D8DB8001BED0212F6EEAF0 /* Glide/Core/OfflineTrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A786AAB3B84C95A0D948BE7 /* Glide/Core/OfflineTrip.swift */; };
+		0323F52201987A5EAEE37B01 /* Glide/Core/FileManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5832F0B1CC78342263E696 /* Glide/Core/FileManagement.swift */; };
 		05DA19C739F5E3914AED1BAA /* Glide/Resources/demo0.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = BD7E4CD3C8F5D4559A0CB38A /* Glide/Resources/demo0.mp4 */; };
 		07ACE4D271FA55E16A5ADEE6 /* Glide/Core/RotationQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491FACEF65C26159CBC56260 /* Glide/Core/RotationQueue.swift */; };
 		09048DB7158BC02410C5C832 /* Glide/Services/NativePlaybackEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64532CB3A2D61AD50F584514 /* Glide/Services/NativePlaybackEngine.swift */; };
@@ -33,6 +34,7 @@
 		27CD9A3E51181F4397B97AD7 /* Glide/Views/SubtitleAppearanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F514B3A7A7C74E964FF8A737 /* Glide/Views/SubtitleAppearanceView.swift */; };
 		283CAA6E9EE47ED135F24068 /* Glide/Core/CatalogSort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BD3F57752F38D9740EB3D1F /* Glide/Core/CatalogSort.swift */; };
 		288928410B66C925BB65B3CC /* Glide/Views/PinnedDirectoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BC83AB31913AAE638DBED4 /* Glide/Views/PinnedDirectoriesView.swift */; };
+		2893CDE8230BCD2734C8B4C8 /* Glide/Services/FileManagementStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25AEFDDAE3F994F6D46150EF /* Glide/Services/FileManagementStore.swift */; };
 		296B8A50DE6709091B1B11FF /* Glide/Resources/ass-style-qa.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 969D8BBB8F0B5FDC8DA6280A /* Glide/Resources/ass-style-qa.mp4 */; };
 		2E8DB8428B56B3F580361DF9 /* Glide/Views/ClipLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E67B0ED50C6C6EFE99670AF /* Glide/Views/ClipLibraryView.swift */; };
 		2FDBB680DAE51FBEC7B2F443 /* Glide/Views/PrivacySupportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EFD46C035C87ED6906105A /* Glide/Views/PrivacySupportView.swift */; };
@@ -105,6 +107,7 @@
 		9EE1DD75580A8224389174AE /* Glide/Core/PlaybackQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC087321279EC7E3A60B4DE /* Glide/Core/PlaybackQueue.swift */; };
 		A0956CDB6F804CC76031AD7A /* Glide/Services/DiscoveryQAProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC24CD223803ED1D7D28A079 /* Glide/Services/DiscoveryQAProbe.swift */; };
 		A1233C0338B410050F131B8B /* Glide/Core/UnifiedLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AAA6B7AFDF8585C360BE6B /* Glide/Core/UnifiedLibrary.swift */; };
+		A12EFED512AAB7388CC21001 /* Glide/Core/PlaybackWarmupPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12EFED512AAB7388CC21002 /* Glide/Core/PlaybackWarmupPolicy.swift */; };
 		A1A62AD09712495696945EE7 /* Glide/Services/JellyfinRotationQAView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A74BA1D3702443C9AAFA643 /* Glide/Services/JellyfinRotationQAView.swift */; };
 		A3CB12EF25359B59043B8CD5 /* Glide/Views/RotationQueueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E77FBC3AE2F6F2E8FBA6F27 /* Glide/Views/RotationQueueView.swift */; };
 		A52D5E31B3DB2CD112FCB292 /* Glide/Services/DuoQAView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31700EA42FD20545C4C05F47 /* Glide/Services/DuoQAView.swift */; };
@@ -117,6 +120,7 @@
 		AD876672B6EBE3E49DF76BDF /* Glide/Core/LibrarySnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0637B8D9A96B7038E2000AC2 /* Glide/Core/LibrarySnapshot.swift */; };
 		ADC072E913FFFF10EC069361 /* ThirdPartyNotices.txt in Resources */ = {isa = PBXBuildFile; fileRef = 54462BBD2835B7BE827242CB /* ThirdPartyNotices.txt */; };
 		AE4241E2AED11761E30C555B /* SMBQAProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C39305EC24C40FE29E74A5 /* SMBQAProbe.swift */; };
+		AE504CAB1649F3534C7E743A /* Glide/Views/FileManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595480A9816F3C0068591993 /* Glide/Views/FileManagementView.swift */; };
 		AFFD9441FFA2E88D47533AF3 /* Glide/Views/DiscoveryScopePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC2A239C69C5741F312147B /* Glide/Views/DiscoveryScopePicker.swift */; };
 		B2786421E0C0DE57D1AB8D31 /* Glide/Core/ViewingDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517A35591EA2533C52569E87 /* Glide/Core/ViewingDiscovery.swift */; };
 		B3A27E7804C193FD546ED34F /* Glide/Core/VideoNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4142F531DF98AB5FB5033558 /* Glide/Core/VideoNavigation.swift */; };
@@ -234,6 +238,7 @@
 		235025B6B2A666E806287784 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		246C6B4FCE7443E743C616B8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		2582C0EE99F293CECA7AB18C /* Glide/Services/AuthenticatedAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/AuthenticatedAsset.swift; sourceTree = SOURCE_ROOT; };
+		25AEFDDAE3F994F6D46150EF /* Glide/Services/FileManagementStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/FileManagementStore.swift; sourceTree = "<group>"; };
 		26AD4D980733D54F2500566A /* Glide/Core/CatalogSeekRecovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/CatalogSeekRecovery.swift; sourceTree = SOURCE_ROOT; };
 		28054353902C7AF13B24B895 /* CompatibilityQAProbe.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CompatibilityQAProbe.swift; path = Glide/Services/Compatibility/CompatibilityQAProbe.swift; sourceTree = "<group>"; };
 		2D102E8F72AECB9B626CCD86 /* Glide/Views/TrackChoicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/TrackChoicesView.swift; sourceTree = SOURCE_ROOT; };
@@ -276,6 +281,7 @@
 		56644A1673F13999A040DC55 /* MobileVLCKit.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.xcframework; name = MobileVLCKit.xcframework; path = .build/CompatibilitySDK/MobileVLCKit.xcframework; sourceTree = "<group>"; };
 		58C77C8B99663A70DE1C3B9F /* Glide/Core/SubtitleCue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/SubtitleCue.swift; sourceTree = SOURCE_ROOT; };
 		58C7FC486F289745F920B5F8 /* Glide/Views/VideoNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/VideoNavigationView.swift; sourceTree = SOURCE_ROOT; };
+		595480A9816F3C0068591993 /* Glide/Views/FileManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/FileManagementView.swift; sourceTree = "<group>"; };
 		5B0FF3A2D2ECA8A545CF0E78 /* Glide/Views/PersonMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/PersonMediaView.swift; sourceTree = SOURCE_ROOT; };
 		5D743AFCAC3B97ACF94AE326 /* Glide/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Glide/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		5FC087321279EC7E3A60B4DE /* Glide/Core/PlaybackQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/PlaybackQueue.swift; sourceTree = SOURCE_ROOT; };
@@ -324,6 +330,7 @@
 		9DCE04BBC021C3AF2FFB868E /* Glide/Services/SourceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/SourceProvider.swift; sourceTree = SOURCE_ROOT; };
 		9E63C50C803DDF54551C9780 /* Glide/Services/PlaybackAudioSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/PlaybackAudioSession.swift; sourceTree = SOURCE_ROOT; };
 		9F2A144B2BC32E73D9F76135 /* Glide/Services/EmbyQAProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/EmbyQAProbe.swift; sourceTree = SOURCE_ROOT; };
+		A12EFED512AAB7388CC21002 /* Glide/Core/PlaybackWarmupPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/PlaybackWarmupPolicy.swift; sourceTree = "<group>"; };
 		A1B1A500BCE7880D315C366A /* Glide/Core/ContinuousWatching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/ContinuousWatching.swift; sourceTree = SOURCE_ROOT; };
 		A2DF8957C42441FF79A730CA /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		A38264E075FA47EF82A98505 /* Glide/Views/PlayerRotationControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Views/PlayerRotationControls.swift; sourceTree = SOURCE_ROOT; };
@@ -359,6 +366,7 @@
 		D32E360E863F0536CDBECDC2 /* Glide/Services/SubtitleStudyQAProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/SubtitleStudyQAProbe.swift; sourceTree = SOURCE_ROOT; };
 		D4665AB89034C1BBB2E25089 /* SMBSourceProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SMBSourceProvider.swift; path = Glide/Services/SMB/SMBSourceProvider.swift; sourceTree = "<group>"; };
 		D6C4B67B22DA8032DDDBB391 /* Glide/Resources/duo-continuity.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Glide/Resources/duo-continuity.mp4"; sourceTree = SOURCE_ROOT; };
+		DB5832F0B1CC78342263E696 /* Glide/Core/FileManagement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/FileManagement.swift; sourceTree = "<group>"; };
 		DC19A9EB591ABBA8F31195AD /* Glide/Services/MediaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/MediaClient.swift; sourceTree = SOURCE_ROOT; };
 		DC9C72AE1007282F39FA9F02 /* Glide/Services/LocalMediaStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Services/LocalMediaStore.swift; sourceTree = SOURCE_ROOT; };
 		DCA85C9F83062760EB37D6E4 /* Glide/Core/MediaClip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glide/Core/MediaClip.swift; sourceTree = SOURCE_ROOT; };
@@ -454,6 +462,10 @@
 			children = (
 				A1B1A500BCE7880D315C366A /* Glide/Core/ContinuousWatching.swift */,
 				87BCC9908235A8E6EC280D82 /* Glide/Services/PlaybackWarmup.swift */,
+				A12EFED512AAB7388CC21002 /* Glide/Core/PlaybackWarmupPolicy.swift */,
+				595480A9816F3C0068591993 /* Glide/Views/FileManagementView.swift */,
+				25AEFDDAE3F994F6D46150EF /* Glide/Services/FileManagementStore.swift */,
+				DB5832F0B1CC78342263E696 /* Glide/Core/FileManagement.swift */,
 				F8071E5A04B6688FE96FB4AF /* Glide/Core/BrowseOptions.swift */,
 				E66DE99BCFE045DAE13E6681 /* Glide/Core/CatalogMedia.swift */,
 				6BD3F57752F38D9740EB3D1F /* Glide/Core/CatalogSort.swift */,
@@ -802,6 +814,10 @@
 				EFC591199F119273718EF848 /* Glide/Core/MediaClip.swift in Sources */,
 				7E6F03B313155F4748F1F27A /* Glide/Core/ContinuousWatching.swift in Sources */,
 				D0F03F881DBA0E00A2A6E674 /* Glide/Services/PlaybackWarmup.swift in Sources */,
+				A12EFED512AAB7388CC21001 /* Glide/Core/PlaybackWarmupPolicy.swift in Sources */,
+				AE504CAB1649F3534C7E743A /* Glide/Views/FileManagementView.swift in Sources */,
+				2893CDE8230BCD2734C8B4C8 /* Glide/Services/FileManagementStore.swift in Sources */,
+				0323F52201987A5EAEE37B01 /* Glide/Core/FileManagement.swift in Sources */,
 				42DA54F46A80294808323793 /* Glide/Core/BrowseOptions.swift in Sources */,
 				F659E3682F9B49E68C6FE2A1 /* Glide/Core/CatalogMedia.swift in Sources */,
 				283CAA6E9EE47ED135F24068 /* Glide/Core/CatalogSort.swift in Sources */,
@@ -930,7 +946,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = FR9RTRV9BC;
 				GENERATE_INFOPLIST_FILE = NO;
 				GLIDE_DISPLAY_NAME = "Glide 兼容验证";
@@ -949,7 +965,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -985,7 +1001,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = FR9RTRV9BC;
 				GENERATE_INFOPLIST_FILE = NO;
 				GLIDE_DISPLAY_NAME = Glide;
@@ -1003,7 +1019,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1025,7 +1041,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = FR9RTRV9BC;
 				GENERATE_INFOPLIST_FILE = NO;
 				GLIDE_DISPLAY_NAME = Glide;
@@ -1043,7 +1059,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

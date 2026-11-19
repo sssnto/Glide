@@ -1,0 +1,194 @@
+{
+  "version": "2.0.1",
+  "build": "12",
+  "date": "2026-11-19",
+  "fixture": "Official iPhone Duo / iOS 27.1; original assets only; independent bundle com.songpeng.glide.v2preview",
+  "coreTests": {
+    "suite": "AdaptiveDisplayTests",
+    "passed": 10,
+    "failed": 0
+  },
+  "regressions": [
+    {
+      "resultBundle": ".build/Duo-Viewport-Before-20261119.xcresult",
+      "result": "expected failure before fix",
+      "croppedFraction": 0.07296
+    },
+    {
+      "resultBundle": ".build/Duo-Viewport-After-Landscape-20261119.xcresult",
+      "result": "passed",
+      "scenario": "Outer display landscape, native 16:9 video and long episode metadata"
+    },
+    {
+      "resultBundle": ".build/Duo-Viewport-Expanded-Panel-20261119.xcresult",
+      "result": "passed",
+      "scenario": "Official Open pose: default fullscreen, optional panel and auto-hidden controls"
+    },
+    {
+      "resultBundle": ".build/Duo-Viewport-Native-Portrait-Roundtrip-20261119.xcresult",
+      "result": "not counted as passed",
+      "reason": "AX rectangle remains in physical-display coordinates after interface rotation; wait condition corrected to the actual rotation-control label."
+    },
+    {
+      "resultBundle": ".build/Player-Viewport-iPhone263-20261119.xcresult",
+      "result": "not counted as passed",
+      "reason": "Cold-start readiness exceeded the original 30-second fixture wait. Final wait is 90 seconds; the final iOS 26.3 run below passed."
+    },
+    {
+      "resultBundle": ".build/Duo-Viewport-Outer-Native-Final-20261119.xcresult",
+      "result": "passed",
+      "scenario": "Official Closed outer display; native portrait media; two interface rotations; aspect, crop, controls and playback-session state",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "resultBundle": ".build/Duo-Viewport-Outer-VLC-Landscape-Final-20261119.xcresult",
+      "result": "passed",
+      "scenario": "Official Closed outer display; actual VLC with 16:9 media; two interface rotations",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "resultBundle": ".build/Duo-Viewport-Outer-VLC-Portrait-Final-20261119.xcresult",
+      "result": "passed",
+      "scenario": "Official Closed outer display; actual VLC with 480x854 media; two interface rotations",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "resultBundle": ".build/Player-Viewport-iPhone263-Final-20261119.xcresult",
+      "result": "passed",
+      "scenario": "Ordinary iPhone 17 / iOS 26.3; native portrait media and two interface rotations",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "resultBundle": ".build/Duo-Viewport-VLC-Raw-Capture-20261119.xcresult",
+      "result": "passed",
+      "scenario": "Repeated VLC 16:9 rotation check before direct active-framebuffer visual verification",
+      "passed": 1,
+      "failed": 0
+    }
+  ],
+  "manualNativeContinuity": {
+    "passed": true,
+    "records": [
+      {
+        "file": "native-landscape.json",
+        "fields": {
+          "session": "CE874554-141F-4664-A6B3-474FC8F30175",
+          "layer": "ObjectIdentifier(0x00000001168d8aa0)",
+          "opens": "1",
+          "time": "0",
+          "rate": "1.5",
+          "audio": "audio-0",
+          "requested": "false",
+          "pictureAspect": "1.77778",
+          "croppedFraction": "0.00000"
+        }
+      },
+      {
+        "file": "native-portrait.json",
+        "fields": {
+          "session": "CE874554-141F-4664-A6B3-474FC8F30175",
+          "layer": "ObjectIdentifier(0x00000001168d8aa0)",
+          "opens": "1",
+          "time": "0",
+          "rate": "1.5",
+          "audio": "audio-0",
+          "requested": "false",
+          "pictureAspect": "1.77778",
+          "croppedFraction": "0.00000"
+        }
+      }
+    ]
+  },
+  "compatibilityInner": {
+    "engine": "VLC",
+    "frameReady": true,
+    "pictureAspect": 0.56206,
+    "croppedFraction": 0,
+    "error": ""
+  },
+  "pending": [],
+  "archive": {
+    "path": ".build/Archives/Glide-2.0.1-12-DuoOuter.xcarchive",
+    "version": "2.0.1",
+    "build": "12",
+    "bundleId": "com.songpeng.glide",
+    "signature": "codesign --verify --deep --strict passed",
+    "symbols": {
+      "archive": "/Users/songpeng/code/github/tools/Glide/.build/Archives/Glide-2.0.1-12-DuoOuter.xcarchive",
+      "passed": true,
+      "coverage": [
+        {
+          "binary": "Products/Applications/Glide.app/Glide",
+          "architecture": "arm64",
+          "uuid": "6EF84FA5-95D3-3A51-8E9C-5E8E689E45C2",
+          "dSYM": "dSYMs/Glide.app.dSYM"
+        },
+        {
+          "binary": "Products/Applications/Glide.app/Frameworks/MobileVLCKit.framework/MobileVLCKit",
+          "architecture": "arm64",
+          "uuid": "99DC0B74-A3D1-3ED3-AC1F-2B8FC6A452A3",
+          "dSYM": "dSYMs/MobileVLCKit.framework.dSYM"
+        }
+      ],
+      "repairedMobileVLCKit": false
+    },
+    "package": {
+      "path": ".build/Archives/Glide-2.0.1-12-DuoOuter.zip",
+      "bytes": 96191589,
+      "sha256": "86a366e4dd7bf9a298b091c4a75419eb441fe28bb09c1ca30e0ddb1b410785b3",
+      "entries": 119,
+      "integrityPassed": true
+    }
+  },
+  "physicalDevice": "No physical Duo connected; final device acceptance remains an offline user check.",
+  "finalUITests": {
+    "passed": 7,
+    "failed": 0,
+    "scope": "Final runs only; excludes the expected before-fix failure and two corrected test-harness runs."
+  },
+  "simulators": [
+    {
+      "id": "9CCDDB00-69A5-45D2-B334-98ED23326F45",
+      "role": "Existing official Duo, including real Open-pose panel verification; original data preserved"
+    },
+    {
+      "id": "FF88BD51-C367-4D99-8BE7-CF91FD771543",
+      "name": "Glide Duo Outer QA 20261119",
+      "role": "Temporary official iPhone Duo / iOS 27.1, default Closed pose; no synthetic size or pose override"
+    },
+    {
+      "id": "30EE8806-FEDF-48A5-B206-95A21D990D65",
+      "role": "iPhone 17 / iOS 26.3 regression"
+    }
+  ],
+  "engineEvidence": [
+    "native-final-engine.json",
+    "vlc-landscape-final-engine.json",
+    "vlc-portrait-final-engine.json"
+  ],
+  "visualVerification": {
+    "passed": true,
+    "method": "Unmodified simctl screenshots of the active official display, visually inspected. Runtime geometry and continuity recorded separately.",
+    "acceptedScreenshots": [
+      "Screenshots/03-after-native-outer-landscape.jpg",
+      "Screenshots/04-after-native-outer-portrait.jpg",
+      "Screenshots/05-after-inner-during-regression.jpg",
+      "Screenshots/06-after-vlc-outer-landscape-live.jpg",
+      "Screenshots/07-after-vlc-outer-portrait-live.jpg"
+    ],
+    "rawLandscapePixels": [
+      2034,
+      1398
+    ],
+    "rawPortraitPixels": [
+      1398,
+      2034
+    ],
+    "vlcContinuity": "vlc-live-continuity.json",
+    "captureLimitation": "Rotated app.screenshot XCTest attachments retain physical-display coordinates and can show shifted crops. They are excluded as visual acceptance evidence; direct active-framebuffer captures show the complete picture."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "Glide/Core/WebDAVMediaPresentation.swift": "8a811076812ed0b40f841f9dbe783dcb7272602b0ac937602f883585ff6c8498",
+  "Glide/Core/DirectoryListingCache.swift": "8cfc69749e0ee50eacd5f1fd10e57571111a2cde6f24b5a36ecc60ce62926641",
+  "Glide/Services/WebDAVArtwork.swift": "9ea6ce8cc5b62330e25df4cf1dfcb952ccba88abb0e2d16bea213a9bfcc09664",
+  "Glide/Views/PlayerRotationControls.swift": "adc3ef1183ce6c00601b8bf172506ab3a15c5bb473b5e2861de5949313f88f03",
+  "Glide/Views/PlayerView.swift": "6424a842f83465ac0bc0cae86fa62b1ed0a1fc387091f879dd041e224d552064",
+  "Glide/Views/VideoSurface.swift": "0a30665ad48bc600dab634a269098ef479d1dd2e359913e8b795621e7e3ceb11",
+  "Glide/Views/Theme.swift": "8b0ffcb72244d22b56d5880858199a7ab42cda2fdb4934691c71bfe4a337d67d",
+  "Glide/Views/LibraryView.swift": "4b916d7c0b9b049e09347c64d16ed05c117170f2a103f98dd4030aeca0f1b4c7",
+  "Glide/LibraryStore.swift": "899b8f75fc87a78432cc8eafbda449ec24aa000a258617c5be99abcb9457ddf0",
+  "Glide/Services/WebDAVPresentationQAView.swift": "8c3bdfd808ec829d68e7603a0a3fe3ba19ec3f33b334324bbb64f3b9d0d7db49",
+  "Glide/Services/VideoZoomQAProbe.swift": "b2b87e358a89dfbe3aaf5c493d9d60e3974c9c381eabf9a760d784e2260a33f7",
+  "Tests/WebDAVMediaPresentationTests.swift": "696a0f33d7ca5506d722c64a7777559a275d16630f6d73bbedb51bc8c71a5223",
+  "UITests/GlideUITests.swift": "06991db95e09a37b1b049dd18a04b8e88ec0d97c791a53eb97c715b4889fcbc1",
+  "Glide.xcodeproj/project.pbxproj": "3aa2be25894036d7e2c8289095fdb3e99a25d147b1064820357372a6544470f3",
+  "Scripts/rotation_webdav_fixture.py": "289dea6b7bb86524b51cc2081a412581e040c6e245f6f28190aeba72e1acaf2a"
+}

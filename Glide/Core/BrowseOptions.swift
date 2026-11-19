@@ -1,7 +1,7 @@
 import Foundation
 
 enum VideoSort: String, Codable, CaseIterable, Identifiable {
-    case nameAscending, nameDescending, addedNewest, addedOldest
+    case nameAscending, nameDescending, addedNewest, addedOldest, sizeDescending, sizeAscending
     var id: String { rawValue }
     var title: String {
         switch self {
@@ -9,13 +9,18 @@ enum VideoSort: String, Codable, CaseIterable, Identifiable {
         case .nameDescending: "名称降序"
         case .addedNewest: "最新添加"
         case .addedOldest: "最早添加"
+        case .sizeDescending: "文件大小：从大到小"
+        case .sizeAscending: "文件大小：从小到大"
         }
     }
-    var symbol: String { self == .addedNewest || self == .addedOldest ? "calendar.badge.clock" : "textformat.abc" }
+    var isFileSize: Bool { self == .sizeAscending || self == .sizeDescending }
+    var symbol: String { isFileSize ? "externaldrive" : self == .addedNewest || self == .addedOldest ? "calendar.badge.clock" : "textformat.abc" }
     var jellyfinField: String { self == .addedNewest || self == .addedOldest ? "DateCreated" : "SortName" }
-    var jellyfinOrder: String { self == .nameAscending || self == .addedOldest ? "Ascending" : "Descending" }
+    // Size isn't a native Jellyfin sort field. Fetch stable pages before sorting locally.
+    var jellyfinOrder: String { isFileSize || self == .nameAscending || self == .addedOldest ? "Ascending" : "Descending" }
     func sorted(_ videos: [Video]) -> [Video] {
         videos.sorted {
+            if isFileSize, let result = MediaFileSize.precedes($0.fileSize, $1.fileSize, descending: self == .sizeDescending) { return result }
             if self == .addedNewest || self == .addedOldest {
                 switch ($0.addedAt, $1.addedAt) {
                 case let (a?, b?) where a != b: return self == .addedNewest ? a > b : a < b

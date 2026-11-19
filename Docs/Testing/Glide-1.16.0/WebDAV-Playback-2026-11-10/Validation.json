@@ -1,0 +1,34 @@
+{
+  "version": "1.16.0 (8)",
+  "timestamp": "2026-11-10T07:41:19.706183+00:00",
+  "core": {
+    "swiftTesting": 268,
+    "suites": 19,
+    "xctest": 7,
+    "httpRotationEnabled": true,
+    "passed": true
+  },
+  "simulator": {
+    "model": "iPhone 17",
+    "os": "26.3.1",
+    "uiTests": 3,
+    "playbackProbeChecks": 23,
+    "passed": true
+  },
+  "device": {
+    "model": "iPhone 13 Pro Max",
+    "os": "27.2",
+    "liveOriginal": true,
+    "checks": 3,
+    "passed": true,
+    "installedMainBundle": "com.songpeng.glide",
+    "sourceModified": false,
+    "finalNormalLaunch": "blocked_by_lock; open from Home normally"
+  },
+  "releaseBuild": true,
+  "signaturesVerified": true,
+  "staticPreflight": true,
+  "temporaryFixturesStopped": true,
+  "gitCommitted": false,
+  "pushed": false
+}

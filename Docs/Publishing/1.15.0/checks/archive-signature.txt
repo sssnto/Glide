@@ -1,0 +1,2 @@
+/Users/songpeng/Library/Developer/Xcode/Archives/2026-11-07/Glide 2026-11-7, 10.37.xcarchive/Products/Applications/Glide.app: valid on disk
+/Users/songpeng/Library/Developer/Xcode/Archives/2026-11-07/Glide 2026-11-7, 10.37.xcarchive/Products/Applications/Glide.app: satisfies its Designated Requirement

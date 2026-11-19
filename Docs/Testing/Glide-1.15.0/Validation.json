@@ -1,0 +1,112 @@
+{
+  "version": "1.15.0 (1)",
+  "date": "2026-10-28",
+  "status": "implemented-and-simulator-acceptance-passed",
+  "published": false,
+  "git": {
+    "committed": false,
+    "pushed": false,
+    "tagged": false
+  },
+  "core": {
+    "passed": 245,
+    "swiftTesting": 238,
+    "xctest": 7,
+    "newRecommendationTests": 5,
+    "log": "Logs/Core-Metadata-Final.log"
+  },
+  "simulator": {
+    "duo": {
+      "device": "iPhone Duo",
+      "os": "iOS 27.1",
+      "runtimeBuild": "24A94425",
+      "officialDeviceHubPoses": [
+        "Closed",
+        "Open",
+        "Partially Open",
+        "Rotate Right"
+      ],
+      "distinctUIFlowsPassed": 3,
+      "logs": [
+        "Logs/Duo-Final-UI.log",
+        "Logs/Duo-Search-Verified.log"
+      ],
+      "checks": [
+        "session identity",
+        "AVPlayerLayer identity",
+        "open count",
+        "paused state",
+        "playback rate",
+        "audio selection",
+        "editing draft",
+        "typed search"
+      ],
+      "earlierFailedRunsRetained": true
+    },
+    "iphone": {
+      "device": "iPhone 17",
+      "os": "iOS 26.3.1",
+      "distinctUIFlowsPassed": 4,
+      "logs": [
+        "Logs/iPhone-Diagnosis.log",
+        "Logs/iPhone-Accepted.log",
+        "Logs/Recommendation-iPhone.log"
+      ],
+      "entireHistoricalBatchPassed": false,
+      "checks": [
+        "recommendation work identity",
+        "playback controls and draft",
+        "original ASS native and compatibility",
+        "clip collection full-video return"
+      ]
+    },
+    "ipad": {
+      "device": "iPad Pro 13-inch (M5)",
+      "os": "iOS 27.0",
+      "distinctUIFlowsPassed": 2,
+      "logs": [
+        "Logs/iPad-Final.log",
+        "Logs/iPad-Controls-Verified.log"
+      ],
+      "initialLaunchInterrupted": true,
+      "controlsRerunPassed": true
+    }
+  },
+  "physicalDuo": {
+    "available": false,
+    "tested": false,
+    "userSelectedSimulatorAcceptance": true
+  },
+  "recommendations": {
+    "implemented": true,
+    "seriesTitle": true,
+    "seasonAndEpisode": true,
+    "episodeTitle": true,
+    "movieTitle": true,
+    "yearAndGenresWhenAvailable": true,
+    "durationAndReasonPreserved": true,
+    "sourceLabeled": true,
+    "legacyVideoDecodePassed": true,
+    "screenshot": "Screenshots/recommendation-media-identity-iPhone.png"
+  },
+  "release": {
+    "status": "passed",
+    "archive": "/tmp/Glide1150-Final.xcarchive",
+    "log": "Logs/Release-Final-Archive.log",
+    "signaturePassed": true,
+    "appAndMobileVLCKitSymbolsPassed": true,
+    "preflightPassed": true,
+    "symbols": "Archive-Symbols.json",
+    "signature": "Release-Signature.txt",
+    "preflight": "Release-Preflight.txt",
+    "uploaded": false
+  },
+  "knownLimitations": [
+    "No physical Duo performance, power, thermal, touch or decoder-performance claims.",
+    "Duo keyboard presentation records an Invalid frame dimension warning; input and cross-pose draft assertions pass, warning origin is not confirmed.",
+    "Failed and interrupted historical runs are retained and not represented as an entirely passing batch.",
+    "Default Duo screenshots can target the inactive display; explicit display 1/3 captures are the visual evidence."
+  ],
+  "privateMediaOrSavedAccountAccess": false,
+  "sourceSnapshot": "Source-Snapshot.json"
+}

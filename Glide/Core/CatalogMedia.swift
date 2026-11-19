@@ -34,6 +34,7 @@ struct CatalogItem: Codable, Identifiable, Equatable, Sendable {
     var UserData: Progress?
     var ProviderIds: [String: String]? = nil
     var id: String { Id }
+    var fileSize: Int64? { MediaFileSize.valid(MediaSources?.first?.Size) }
     struct Person: Codable, Equatable, Sendable {
         var Name: String
         var `Type`: String?
@@ -91,7 +92,7 @@ struct CatalogItem: Codable, Identifiable, Equatable, Sendable {
               resume: Double(UserData?.PlaybackPositionTicks ?? 0) / 10_000_000,
               mediaType: Type, seriesID: SeriesId, seriesTitle: SeriesName,
               seasonNumber: ParentIndexNumber, episodeNumber: IndexNumber, isWatched: UserData?.Played,
-              productionYear: ProductionYear, genres: Genres)
+              productionYear: ProductionYear, genres: Genres, fileSize: fileSize)
     }
     static func episodeOrder(_ items: [CatalogItem]) -> [CatalogItem] {
         items.sorted {

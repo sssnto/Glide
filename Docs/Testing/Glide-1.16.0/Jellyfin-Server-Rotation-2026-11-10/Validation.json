@@ -1,0 +1,48 @@
+{
+  "version": "1.16.0 (10)",
+  "pluginVersion": "1.0.0.0",
+  "jellyfinTarget": "12.2.0",
+  "timestamp": "2026-11-10T11:51:10.476562+00:00",
+  "server": {
+    "officialContainer": "jellyfin/jellyfin:12.2",
+    "platform": "Linux ARM64",
+    "apiChecks": 20,
+    "coreChecks": 16,
+    "coreRuntime": "macOS .NET 10",
+    "largeFileBytes": 536929239,
+    "commandBodyBytes": 258,
+    "largeFileAndRestartChecks": 5,
+    "passed": true
+  },
+  "client": {
+    "swiftTesting": 273,
+    "suites": 21,
+    "xctest": 7,
+    "httpTestsEnabled": true,
+    "uiTestsPassedIndividually": 4,
+    "simulator": "iPhone 17 / iOS 26.3.1",
+    "serverSaveRestore": true,
+    "ordinaryUserDenied": true,
+    "webdavSaveRestoreAndCovers": true,
+    "zoom": true,
+    "releaseBuild": true,
+    "signaturesVerified": true
+  },
+  "device": {
+    "mainInstalled": true,
+    "bundle": "com.songpeng.glide",
+    "automaticLaunch": "blocked_by_lock",
+    "privateNASValidated": false
+  },
+  "deployment": {
+    "userChoice": "manual NAS Docker install",
+    "package": "Server/artifacts/GlideToolkit-1.0.0-Jellyfin-12.2.zip",
+    "zipSHA256": "6e67c97d672c1d4ecb31874d9e4ba3d5720fff8fc8415cb14eb514b1d3b2fe16",
+    "dllSHA256": "ed906927e880461188c85e74a9ee2081473a6633216b0208184dea9f8d80a6ba",
+    "nasInstallationPending": true
+  },
+  "committed": false,
+  "pushed": false,
+  "uploadedToStore": false,
+  "temporaryServicesStopped": true
+}

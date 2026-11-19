@@ -1,0 +1,26 @@
+{
+  "pluginVersion": "1.0.3",
+  "filesystem": "smb2",
+  "state": "completed",
+  "errorCode": null,
+  "failureCode": null,
+  "originalPathExistsAfterJob": true,
+  "publicationMode": "SameDirectoryRename",
+  "checks": [
+    "actual_kernel_smb2_mount",
+    "expected_plugin_version_loaded",
+    "authored_original_matches_fixture",
+    "new_plugin_rotates_with_backup_on_real_smb2",
+    "smb2_output_direction_changes",
+    "other_smb2_file_unchanged",
+    "smb2_rotation_is_idempotent",
+    "smb2_restore_byte_identical",
+    "other_smb2_file_still_unchanged_after_restore",
+    "real_external_smb2_reader_refuses_publication",
+    "smb2_busy_refused_before_backup_or_replacement",
+    "smb2_busy_original_remains_byte_identical"
+  ],
+  "timestamp": "2026-11-10T14:47:15Z",
+  "passed": true,
+  "sourceSHA256": "3c01e7d06cb6f710eef97c7c01a1da224b36579ea0eb17d47093049003a9a8b4"
+}

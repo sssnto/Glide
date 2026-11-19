@@ -1,0 +1,21 @@
+{
+  "audio": "audio-1",
+  "engine": "AVPlayer · 系统播放器",
+  "error": "",
+  "expanded": true,
+  "frameReady": true,
+  "height": 835,
+  "openAttempts": 2,
+  "originalMaterialOnly": true,
+  "rate": 1.5,
+  "requested": false,
+  "session": "D5F02AA8-0318-406F-AC9B-B69421141907",
+  "subtitle": "",
+  "time": 288,
+  "timestamp": "2026-10-28T06:55:22Z",
+  "video": "连续播放 2.mp4",
+  "width": 669,
+  "zoom": 1,
+  "poseAction": "paused-tabletop-verified",
+  "screenshotDisplay": 3
+}

@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "records": [
+    {
+      "file": "native-landscape.json",
+      "fields": {
+        "session": "CE874554-141F-4664-A6B3-474FC8F30175",
+        "layer": "ObjectIdentifier(0x00000001168d8aa0)",
+        "opens": "1",
+        "time": "0",
+        "rate": "1.5",
+        "audio": "audio-0",
+        "requested": "false",
+        "pictureAspect": "1.77778",
+        "croppedFraction": "0.00000"
+      }
+    },
+    {
+      "file": "native-portrait.json",
+      "fields": {
+        "session": "CE874554-141F-4664-A6B3-474FC8F30175",
+        "layer": "ObjectIdentifier(0x00000001168d8aa0)",
+        "opens": "1",
+        "time": "0",
+        "rate": "1.5",
+        "audio": "audio-0",
+        "requested": "false",
+        "pictureAspect": "1.77778",
+        "croppedFraction": "0.00000"
+      }
+    }
+  ]
+}

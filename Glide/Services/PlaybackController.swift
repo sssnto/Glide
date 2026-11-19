@@ -10,6 +10,17 @@ final class PlaybackController {
         guard engine.descriptor.capabilities.contains(.preloading) else { return }
         await warmup.prepare(video, server: library.servers.first { $0.id == video.sourceID })
     }
+    func prepareAdjacent(_ videos: [Video], library: LibraryStore) {
+        guard current?.offlineOnly != true, engine.descriptor.capabilities.contains(.preloading),
+              !pictureInPicture.active, !externalPlaybackActive else { warmup.cancel(); return }
+        warmup.update(videos.map { video in PlaybackWarmup.Target(video: video, server: library.servers.first { $0.id == video.sourceID }) })
+    }
+#if DEBUG
+    func warmupEvidence(_ video: Video, library: LibraryStore) -> (bytes: Int, copyPrimed: Bool, paused: Bool, players: Int) {
+        warmup.evidence(video, server: library.servers.first { $0.id == video.sourceID })
+    }
+#endif
+    func suspendWarmup() { warmup.suspend() }
     func cancelWarmup() { warmup.cancel() }
     @ObservationIgnored private var engine: any PlaybackEngine
     private var engineRevision = 0
@@ -361,6 +372,7 @@ final class PlaybackController {
     init(engine: (any PlaybackEngine)? = nil) {
         self.engine = engine ?? NativePlaybackEngine()
         self.engine.onEvent = { [weak self] event in self?.handle(event) }
+        pictureInPicture.onEvent = { [weak self] event in self?.diagnostic.event(event) }
         subtitles.onSelection = { [weak self] in
             guard let self else { return }
             if subtitles.choice == nil { trackPreferencesApplied = false }
@@ -368,7 +380,7 @@ final class PlaybackController {
         }
         secondarySubtitles.onSelection = { [weak self] in self?.refreshTrackOptions() }
         interruptionObserver = NotificationCenter.default.addObserver(forName: AVAudioSession.interruptionNotification, object: nil, queue: .main) { [weak self] _ in
-            Task { @MainActor in self?.pause() }
+            Task { @MainActor in self?.diagnostic.event("pause_audio_interruption"); self?.pause() }
         }
     }
     private func handle(_ event: PlaybackEngineEvent) {
@@ -649,8 +661,8 @@ final class PlaybackController {
         let retainedLoop = sameVideo ? loop : nil, retainedStart = sameVideo ? loopStart : nil
         let retainedLoopCount = sameVideo ? loopCount : 0
         let server = video.offlineOnly == true ? nil : library.servers.first { $0.id == video.sourceID }
-        let prepared = !recovering && engine.descriptor.capabilities.contains(.preloading) && !tracks.requiresServerSelection ? warmup.take(video, server: server) : nil
-        stop()
+        let prepared = !recovering && !pictureInPicture.active && !externalPlaybackActive && engine.descriptor.capabilities.contains(.preloading) && !tracks.requiresServerSelection ? warmup.take(video, server: server) : nil
+        stop(preservingWarmup: !recovering)
         loop = retainedLoop; loopStart = retainedStart; loopCount = retainedLoopCount
         let recordsProgress = clip == nil && recordsProgress
         self.recordsProgress = recordsProgress
@@ -708,7 +720,7 @@ final class PlaybackController {
         let token = UUID(); generation = token
         watchdog = Task { [weak self] in
             var lastTime = resume; var unchangedSince = Date()
-            var missingFrameSince: Date?
+            var frameWatchdog = PlaybackFrameWatchdog()
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(1))
                 guard !Task.isCancelled, let self, token == self.generation else { return }
@@ -721,18 +733,15 @@ final class PlaybackController {
                     self.tryOriginalTransport(automatic: true)
                     return
                 }
-                // A running audio clock does not prove that video has decoded.
-                // Inspect the actual displayed layer, not AVPlayerItem.readyToPlay.
-                if self.wantsPlayback, self.engine.snapshot.phase == .playing,
-                   !self.engine.snapshot.externalPlayback, !self.engine.snapshot.frameReady {
-                    if missingFrameSince == nil { missingFrameSince = Date() }
-                    if Date().timeIntervalSince(missingFrameSince!) > 6 {
-                        self.diagnostic.event("video_frame_timeout")
-                        if self.recoveryStep == 0 && self.resource?.delivery == .direct { self.learnConversionRoute = true }
-                        self.recoverOrFail("这部视频的画面无法正常解码。", videoFailed: true)
-                        return
-                    }
-                } else { missingFrameSince = nil }
+                let frameSnapshot = self.engine.snapshot
+                if frameWatchdog.shouldRecover(at: Date(), requested: self.wantsPlayback,
+                    playing: frameSnapshot.phase == .playing, frameReady: frameSnapshot.frameReady,
+                    externalPlayback: frameSnapshot.externalPlayback, pictureInPicture: self.pictureInPicture.keepsPlaybackInBackground) {
+                    self.diagnostic.event("video_frame_timeout")
+                    if self.recoveryStep == 0 && self.resource?.delivery == .direct { self.learnConversionRoute = true }
+                    self.recoverOrFail("这部视频的画面无法正常解码。", videoFailed: true)
+                    return
+                }
                 if self.wantsPlayback, !self.receivedFrame, self.recoveryStep == 0, self.supportsTranscoding,
                    self.resource?.delivery == .direct, self.engine.snapshot.hasItem,
                    self.engine.snapshot.phase != .playing, let readyAt = self.resourceReadyAt,
@@ -820,7 +829,16 @@ final class PlaybackController {
                     diagnostic.event("offline_only")
                 }
                 else if !bypassLocalFile, DownloadStore.shared.canReuse(videoID: video.id, sourceID: tracks.mediaSourceID), let local = DownloadStore.shared.localURL(videoID: video.id) { resource = PlaybackResource(url: local, delivery: .local) }
-                else if let prepared, requestedQuality == .automatic { resource = prepared.resource; diagnostic.event("warmup_hit") }
+                else if let prepared, requestedQuality == .automatic, prepared.accepts(tracks) {
+                    resource = prepared.resource; selectedQuality = prepared.quality; diagnostic.event("warmup_hit")
+                    if prepared.quality == .compatible {
+                        recoveryStep = 1; _ = transportRecovery.begin()
+                        diagnostic.requestedQuality = selectedQuality.rawValue
+                        diagnostic.originalTransportAttempts += 1; diagnostic.originalTransportOutcome = "requesting"
+                        diagnostic.event("warmup_original_segments")
+                    }
+                    if prepared.byteCount > 0 { diagnostic.event("warmup_startup_bytes") }
+                }
                 else { resource = try await MediaClient.shared.playback(video: video, server: server, quality: requestedQuality, tracks: tracks) }
                 if !Task.isCancelled, token == generation, server?.kind.isCatalogSource == true, requestedQuality == .automatic,
                    resource.prefersSegmentedTransport, transportRecovery.begin() {
@@ -922,8 +940,9 @@ final class PlaybackController {
                     peakBitrate: selectedQuality == .hd1080 ? 8_000_000 : selectedQuality == .hd720 ? 3_000_000 : 0,
                     inspectWideColor: resource.isTranscoding && NativeColorPolicy.isHDR(range: resource.videoStream?.VideoRangeType, transfer: resource.videoStream?.ColorTransfer))
                 var loadOptions = options; loadOptions.muted = inspectionMode; loadOptions.endTime = clip?.end
-                try await engine.load(resource, preload: selectedQuality == .automatic && engine.descriptor.capabilities.contains(.preloading) ? prepared : nil, options: loadOptions)
+                try await engine.load(resource, preload: (selectedQuality == .automatic || selectedQuality == prepared?.quality) && engine.descriptor.capabilities.contains(.preloading) ? prepared : nil, options: loadOptions)
                 guard !Task.isCancelled, token == generation else { return }
+                engineRevision += 1 // A warmed player is adopted together with its buffered item.
                 refreshTrackOptions()
             } catch {
                 guard !Task.isCancelled, token == generation else { return }
@@ -999,9 +1018,16 @@ final class PlaybackController {
         startReadyItem(); report("Progress")
     }
     func pause() {
+        diagnostic.event("pause_requested")
+        warmup.suspend()
         state("已暂停"); wantsPlayback = false; loading = false
         bufferingTask?.cancel(); finishBuffering(evaluateStall: false)
         engine.pause(); isPlaying = false; save(); report("Progress")
+    }
+    @discardableResult func pauseForBackgroundIfNeeded() -> Bool {
+        if pictureInPicture.keepsPlaybackInBackground { diagnostic.event("background_pip_continue"); return false }
+        if externalPlaybackActive { diagnostic.event("background_external_continue"); return false }
+        diagnostic.event("pause_background"); pause(); return true
     }
     func toggle() { wantsPlayback ? pause() : play() }
     func seek(_ seconds: Double) {
@@ -1102,14 +1128,14 @@ final class PlaybackController {
             catch { if let self, self.generation == token { self.syncError = "观看进度暂未同步到服务器，已保存在本机。" } }
         }
     }
-    func stop() {
+    func stop(preservingWarmup: Bool = false) {
         cancelServerSubtitleSelection()
         clearLoop()
         skips.cancel()
         subtitleCatalogTask?.cancel(); subtitleCatalogTask = nil
         subtitles.cancel(); secondarySubtitles.cancel()
         retryIntent = nil
-        warmup.cancel()
+        if preservingWarmup { warmup.suspend() } else { warmup.cancel() }
         Self.lastDiagnostic = diagnostic
         watchdog?.cancel(); watchdog = nil
         bufferingTask?.cancel(); bufferingTask = nil

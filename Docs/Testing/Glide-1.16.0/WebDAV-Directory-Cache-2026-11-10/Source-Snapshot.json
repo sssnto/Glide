@@ -1,0 +1,12 @@
+{
+  "Glide/Core/DirectoryListingCache.swift": "54012398973bd1a62e0206468b713be037ba6392ee342d1a8827158e7b91bc2e",
+  "Glide/Core/Models.swift": "a0bfc7529a10645e8bf6c4aa99212fa421ecf24b9c9cef9c1bdf9d9a0362f6d0",
+  "Glide/LibraryStore.swift": "3b3d58aefc1a4123832683d5266256d52848414dc8b7422a5ab363c78e8f11bd",
+  "Glide/Views/LibraryView.swift": "0024c917ef159ef8c4e6bc9fcd0647a3f456895d0e185c630a3f6f5cd74841dc",
+  "Glide/Services/SourceProvider.swift": "b7b817d15a14c89beab0eea389d655a4469060b651128a82cfd8d200d67513cd",
+  "Glide/Services/DirectoryCacheQAProbe.swift": "1e44808c802c68fd5d856e858dc67b207c3d216305d8695640cbf86ddc0120d1",
+  "Glide/GlideApp.swift": "6ac600d544a3feb13cb04012ce988b4857f551c6badc98c03ea548d77c1c763c",
+  "Glide.xcodeproj/project.pbxproj": "48bf7166ef6c5cc8f3059aa33ecfd1787cc6aee478ccba27e840582a9cc49eba",
+  "Tests/DirectoryListingCacheTests.swift": "6191e886a889dc8abfe5b88e39c12252431f7a31b09181e8c1c053b666fc1e79",
+  "UITests/GlideUITests.swift": "ac7997dacd2d186361bd55f61b0ffdd0f6211bcb3fba373f87856ad52785d274"
+}

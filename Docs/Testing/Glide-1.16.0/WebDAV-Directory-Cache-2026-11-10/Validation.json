@@ -1,0 +1,22 @@
+{
+  "version": "1.16.0",
+  "build": "6",
+  "corePassed": 262,
+  "cacheCoreTestsIncluded": 7,
+  "simulatorUITestPassed": 1,
+  "simulatorInitialChecksPassed": 11,
+  "simulatorProcessRestartPassed": true,
+  "simulatorInitialDirectoryRequests": 3,
+  "simulatorReentryDirectoryRequests": 0,
+  "realDeviceChecksPassed": 4,
+  "realDeviceVideos": 4311,
+  "realDeviceReentryRequests": 0,
+  "mainInstalled": true,
+  "mainLaunched": true,
+  "releaseBuild": true,
+  "signatures": true,
+  "staticPreflight": true,
+  "privateMediaFilesModified": false,
+  "committed": false,
+  "pushed": false
+}

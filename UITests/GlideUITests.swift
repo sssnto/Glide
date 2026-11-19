@@ -3,6 +3,60 @@ import UIKit
 import Vision
 
 extension GlideUITests {
+    @MainActor func testPublication201Screenshots() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_PUBLICATION_201"] == "1" else { throw XCTSkip("Isolated public demo screenshots only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-v2-preview", "-appAppearance", "light", "-controlsDelay", "120", "-localPlaybackEngine", "avPlayer"]
+        app.launch()
+        XCTAssertTrue(app.buttons["workspace.featured.demo-0"].waitForExistence(timeout: 20), app.debugDescription)
+        publication201Shot("01-Watching")
+        let video = app.buttons["video.demo-0"]
+        workspaceOpen(app.tabBars.buttons["片库"].firstMatch, until: video)
+        XCTAssertTrue(video.waitForExistence(timeout: 10), app.debugDescription)
+        publication201Shot("02-Library")
+        video.tap()
+        let canvas = app.otherElements["player.canvas"].firstMatch
+        clipWaitLabel(canvas, contains: "已显示画面", seconds: 20)
+        let toggle = app.buttons["player.toggle"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 10), app.debugDescription)
+        if toggle.label == "暂停" { toggle.tap() }
+        publication201Shot("03-Fullscreen-Controls")
+        app.buttons["播放设置"].tap()
+        let panel = app.buttons["player.layout.toggle"]
+        if panel.waitForExistence(timeout: 3) {
+            panel.tap()
+            let fullscreen = app.buttons["player.layout.fullscreen"]
+            XCTAssertTrue(fullscreen.waitForExistence(timeout: 8), app.debugDescription)
+            publication201Shot("04-Control-Panel")
+            fullscreen.tap()
+        } else { app.buttons["player.settings.done"].tap() }
+        canvas.tap()
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: toggle)], timeout: 8), .completed)
+        publication201Shot("05-Fullscreen-Picture")
+        app.terminate()
+        app.launchArguments = ["--glide-v2-preview", "--glide-ui-audit", "-appAppearance", "dark"]
+        app.launch()
+        XCTAssertTrue(app.buttons["video.demo-0"].waitForExistence(timeout: 15), app.debugDescription)
+        publication201Shot("06-Library-Dark")
+    }
+    @MainActor private func publication201Shot(_ name: String) {
+        // Duo XCTest screenshots can target the inactive display. The host captures
+        // the selected real framebuffer through simctl, then acknowledges this stage.
+        let root = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("Publishing201")
+        let nonce = UUID().uuidString
+        do {
+            try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+            let data = try JSONSerialization.data(withJSONObject: ["stage": name, "nonce": nonce])
+            try data.write(to: root.appendingPathComponent("stage.json"), options: .atomic)
+        } catch { XCTFail("Cannot publish screenshot stage: \(error)"); return }
+        let captured = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            guard let data = try? Data(contentsOf: root.appendingPathComponent("captured.json")),
+                  let ack = try? JSONSerialization.jsonObject(with: data) as? [String: String] else { return false }
+            return ack["nonce"] == nonce
+        }, object: self)
+        XCTAssertEqual(XCTWaiter.wait(for: [captured], timeout: 45), .completed, "Host must capture \(name) from the active display")
+    }
     @MainActor func testWorkspaceV2NavigationAndPlayback() throws {
         guard ProcessInfo.processInfo.environment["GLIDE_V2_FIXTURE"] == "1" else { throw XCTSkip("Isolated 2.0 preview only") }
         continueAfterFailure=false
@@ -774,6 +828,200 @@ final class GlideUITests: XCTestCase {
             XCTAssertNotNil(before); XCTAssertEqual(before, after)
         }
         clipShot("Duo Paused Playback Continuity", app: app)
+    }
+    @MainActor func testDuoViewportDoesNotCropFittedVideo() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_DUO_VIEWPORT_FIXTURE"] == "1" else { throw XCTSkip("Original video on official simulator displays only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        let engine = ProcessInfo.processInfo.environment["GLIDE_DUO_VIEWPORT_ENGINE"] ?? "avPlayer"
+        app.launchArguments = ["--glide-duo-fixture", "--glide-ui-audit", "--glide-duo-continuity", "--glide-duo-paused", "-controlsDelay", "120", "-localPlaybackEngine", engine]
+        let landscapeVideo = ProcessInfo.processInfo.environment["GLIDE_DUO_VIEWPORT_LANDSCAPE_VIDEO"] == "1"
+        if landscapeVideo { app.launchArguments.append("--glide-duo-landscape") }
+        app.launchArguments.append("--glide-duo-player-metadata")
+        app.launch()
+        let canvas = app.otherElements["player.canvas"].firstMatch
+        clipWaitLabel(canvas, contains: "已显示画面", seconds: 90)
+        func number(_ key: String) -> Double? {
+            (canvas.value as? String ?? "").components(separatedBy: ";").first { $0.hasPrefix(key + "=") }.flatMap { Double($0.dropFirst(key.count + 1)) }
+        }
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            (number("pictureAspect") ?? 0) > 0 && (number("croppedFraction") ?? -1) >= 0
+        }, object: canvas)], timeout: 10), .completed)
+        XCTAssertLessThan(try XCTUnwrap(number("croppedFraction")), 0.005, "Fit mode must preserve the whole decoded picture, including after safe-area changes. \(canvas.value ?? "")")
+        XCTAssertEqual(try XCTUnwrap(number("pictureAspect")), landscapeVideo ? 16.0 / 9.0 : 480.0 / 854.0, accuracy: 0.002)
+        XCTAssertLessThan(app.staticTexts["player.queuePosition"].frame.height, 24, "Long episode metadata must stay on one line")
+        XCTAssertLessThan(app.staticTexts["player.identity.title"].frame.height, 32)
+        XCTAssertTrue(app.buttons["player.rotate"].isHittable)
+        XCTAssertTrue(app.buttons["播放设置"].isHittable)
+        clipShot("Duo fitted viewport", app: app)
+        let initial = canvas.value as? String ?? ""
+        for turn in 1...2 {
+            let rotate = app.buttons["player.rotate"]
+            let previousLabel = rotate.label
+            rotate.tap()
+            // AX reports physical-display coordinates; the rectangle may keep
+            // its dimensions while the interface rotates within that display.
+            XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label != %@", previousLabel), object: rotate)], timeout: 15), .completed)
+            XCTAssertLessThan(try XCTUnwrap(number("croppedFraction")), 0.005)
+            XCTAssertEqual(try XCTUnwrap(number("pictureAspect")), landscapeVideo ? 16.0 / 9.0 : 480.0 / 854.0, accuracy: 0.002)
+            let value = canvas.value as? String ?? ""
+            for key in ["session", "layer", "opens", "rate", "audio", "requested", "time"] {
+                let old = initial.components(separatedBy: ";").first { $0.hasPrefix(key + "=") }
+                XCTAssertNotNil(old)
+                XCTAssertEqual(old, value.components(separatedBy: ";").first { $0.hasPrefix(key + "=") })
+            }
+            XCTAssertTrue(app.buttons["播放设置"].isHittable)
+            clipShot("Duo fitted viewport rotation \(turn)", app: app)
+        }
+    }
+    @MainActor func testDuoFullScreenAndOptionalPanel() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_DUO_FULLSCREEN_FIXTURE"] == "1" else { throw XCTSkip("Official expanded Duo with original material only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-duo-fixture", "--glide-ui-audit", "--glide-duo-continuity", "--glide-duo-paused", "-controlsDelay", "8", "-localPlaybackEngine", "avPlayer"]
+        app.launch()
+        let canvas = app.otherElements["player.canvas"].firstMatch
+        clipWaitLabel(canvas, contains: "已显示画面", seconds: 30)
+        func field(_ key: String) -> String? {
+            (canvas.value as? String ?? "").components(separatedBy: ";").first { $0.hasPrefix(key + "=") }
+        }
+        func waitValue(_ value: String) {
+            XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "value CONTAINS %@", value), object: canvas)], timeout: 15), .completed, app.debugDescription)
+        }
+        waitValue("wide=true;")
+        waitValue("panel=false;")
+        let initial = Dictionary(uniqueKeysWithValues: ["session", "layer", "opens", "rate", "audio", "requested", "time"].compactMap { key in field(key).map { (key, $0) } })
+        XCTAssertEqual(initial["opens"], "opens=1")
+        XCTAssertEqual(initial["requested"], "requested=false")
+        XCTAssertEqual(initial["rate"], "rate=1.5")
+        XCTAssertEqual(initial["audio"], "audio=audio-1")
+        let fullFrame = canvas.frame, window = app.windows.firstMatch.frame
+        XCTAssertGreaterThan(fullFrame.width, window.width * 0.94)
+        XCTAssertGreaterThan(fullFrame.height, window.height * 0.94)
+        XCTAssertFalse(app.buttons["player.layout.fullscreen"].isHittable)
+        clipShot("Duo Expanded Default Full Screen", app: app)
+        app.buttons["播放设置"].tap()
+        let toggle = app.buttons["player.layout.toggle"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 8), app.debugDescription)
+        toggle.tap()
+        let fullscreen = app.buttons["player.layout.fullscreen"]
+        XCTAssertTrue(fullscreen.waitForExistence(timeout: 10), app.debugDescription)
+        waitValue("panel=true;")
+        XCTAssertLessThan(canvas.frame.width * canvas.frame.height, fullFrame.width * fullFrame.height * 0.9)
+        clipShot("Duo Optional Control Panel", app: app)
+        fullscreen.tap()
+        waitValue("panel=false;")
+        XCTAssertEqual(canvas.frame.width, fullFrame.width, accuracy: 2)
+        XCTAssertEqual(canvas.frame.height, fullFrame.height, accuracy: 2)
+        for (key, value) in initial { XCTAssertEqual(field(key), value, "Panel changes must preserve \(key)") }
+        app.buttons["player.toggle"].tap()
+        waitValue("requested=true;")
+        waitValue("controls=false;")
+        XCTAssertFalse(app.buttons["player.toggle"].exists)
+        clipShot("Duo Expanded Auto Hidden Controls", app: app)
+        canvas.tap()
+        waitValue("controls=true;")
+        XCTAssertTrue(app.buttons["player.toggle"].exists)
+        canvas.tap()
+        waitValue("controls=false;")
+        for key in ["session", "layer", "opens", "rate", "audio"] { XCTAssertEqual(field(key), initial[key]) }
+        XCTAssertGreaterThan(Int((field("time") ?? "time=0").dropFirst(5)) ?? 0, 0)
+    }
+    @MainActor func testDuoPictureInPictureAcrossAnotherApp() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_DUO_PIP_FIXTURE"] == "1" else { throw XCTSkip("Original Duo video and system PiP only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-duo-fixture", "--glide-ui-audit", "--glide-duo-continuity", "-controlsDelay", "120", "-localPlaybackEngine", "avPlayer"]
+        app.launch()
+        let canvas = app.otherElements["player.canvas"].firstMatch
+        clipWaitLabel(canvas, contains: "已显示画面", seconds: 30)
+        func field(_ key: String) -> String? {
+            (canvas.value as? String ?? "").components(separatedBy: ";").first { $0.hasPrefix(key + "=") }
+        }
+        let pip = app.buttons["player.quick.pip"].firstMatch
+        XCTAssertTrue(pip.waitForExistence(timeout: 10), app.debugDescription)
+        XCTAssertGreaterThanOrEqual(pip.frame.width, 44)
+        XCTAssertGreaterThanOrEqual(pip.frame.height, 44)
+        if field("pipSupported") == "pipSupported=false" {
+            XCTAssertFalse(pip.isEnabled)
+            throw XCTSkip("Runtime reports AVPictureInPictureController.isPictureInPictureSupported() = false; requires physical device")
+        }
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "enabled == true"), object: pip)], timeout: 20), .completed, app.debugDescription)
+        let identity = Dictionary(uniqueKeysWithValues: ["session", "layer", "opens", "rate", "audio"].compactMap { key in field(key).map { (key, $0) } })
+        let before = Int((field("time") ?? "time=0").dropFirst(5)) ?? 0
+        pip.tap()
+        // Leave immediately: AVKit may still be animating the transition.
+        let other = XCUIApplication(bundleIdentifier: "com.apple.Preferences")
+        other.activate()
+        XCTAssertTrue(other.wait(for: .runningForeground, timeout: 10))
+        let began = Date()
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in Date().timeIntervalSince(began) >= 8 }, object: other)], timeout: 12), .completed)
+        let background = XCTAttachment(string: other.debugDescription); background.name = "Other app with system PiP"; background.lifetime = .keepAlways; add(background)
+        app.activate()
+        XCTAssertTrue(canvas.waitForExistence(timeout: 15), app.debugDescription)
+        XCTAssertEqual(field("requested"), "requested=true")
+        XCTAssertEqual(field("pip"), "pip=true", app.debugDescription)
+        let after = Int((field("time") ?? "time=0").dropFirst(5)) ?? 0
+        XCTAssertGreaterThan(after - before, 8, "Playback must advance while another app is foreground")
+        for (key, value) in identity { XCTAssertEqual(field(key), value) }
+        pip.tap()
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "value CONTAINS %@", "pip=false;"), object: canvas)], timeout: 10), .completed, app.debugDescription)
+        for (key, value) in identity { XCTAssertEqual(field(key), value) }
+        clipShot("Duo Return from System Picture in Picture", app: app)
+    }
+    @MainActor func testGridReflowsAcrossReservedSpaceAndForeground() throws {
+        guard ProcessInfo.processInfo.environment["GLIDE_GRID_LAYOUT_FIXTURE"] == "1" else { throw XCTSkip("Authored grid geometry fixture only") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--glide-grid-layout-fixture", "--glide-ui-audit"]
+        app.launch()
+        let cell = app.buttons["grid.qa.cell.0"]
+        XCTAssertTrue(cell.waitForExistence(timeout: 20), app.debugDescription)
+        cell.tap()
+        XCTAssertEqual(cell.value as? String, "已选择")
+        let metrics = app.staticTexts["grid.qa.metrics"]
+        func values() -> [String: Double] {
+            (metrics.value as? String).flatMap { try? JSONSerialization.jsonObject(with: Data($0.utf8)) as? [String: Double] } ?? [:]
+        }
+        func fits() -> Bool {
+            let v = values()
+            guard let width = v["gridWidth"], let viewport = v["viewportWidth"], viewport > 0, width > 0 else { return false }
+            return width <= viewport - 31 && width >= viewport - 33
+        }
+        func waitForFit(_ stage: String) {
+            XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in fits() }, object: metrics)], timeout: 12), .completed, stage + ": " + String(describing: metrics.value))
+            let v = values()
+            for index in 0..<8 {
+                let card = app.buttons["grid.qa.cell.\(index)"]
+                if card.exists && card.isHittable {
+                    XCTAssertGreaterThanOrEqual(card.frame.minX, (v["viewportMinX"] ?? 0) + 15, stage)
+                    XCTAssertLessThanOrEqual(card.frame.maxX, (v["viewportMaxX"] ?? 0) - 15, stage)
+                }
+            }
+            XCTAssertEqual(cell.value as? String, "已选择", stage)
+            clipShot(stage, app: app)
+        }
+        waitForFit("Grid initial proposal")
+        let initial = values()["viewportWidth"] ?? 0
+        app.buttons["grid.qa.toggleReserve"].tap()
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in (values()["viewportWidth"] ?? initial) < initial - 40 }, object: metrics)], timeout: 8), .completed, String(describing: metrics.value))
+        XCTAssertLessThan(values()["viewportWidth"] ?? initial, initial - 40)
+        waitForFit("Grid after trailing space reservation")
+        for index in 1...3 {
+            // Switching to a real system app verifies the visible transition;
+            // app state can remain foreground on Duo's other display.
+            let settings = XCUIApplication(bundleIdentifier: "com.apple.Preferences")
+            settings.activate()
+            XCTAssertTrue(settings.wait(for: .runningForeground, timeout: 10))
+            XCUIDevice.shared.press(.home)
+            let icon = XCUIApplication(bundleIdentifier: "com.apple.springboard").icons["Glide 兼容验证"].firstMatch
+            if icon.waitForExistence(timeout: 4), icon.isHittable { icon.tap() }
+            else { app.activate() }
+            XCTAssertTrue(metrics.waitForExistence(timeout: 15), app.debugDescription)
+            waitForFit("Grid foreground \(index)")
+        }
+        app.buttons["grid.qa.toggleReserve"].tap()
+        waitForFit("Grid after full width restoration")
     }
     @MainActor func testDuoSearchPose() throws {
         guard ProcessInfo.processInfo.environment["GLIDE_DUO_FIXTURE"] == "1" else { throw XCTSkip("Original Duo material only") }
@@ -1841,6 +2089,123 @@ final class GlideUITests: XCTestCase {
         app.buttons["返回片库"].tap()
         offline.swipeLeft(); app.buttons["删除"].firstMatch.tap()
         XCTAssertFalse(offline.exists)
+    }
+
+    @MainActor func testJellyfinBatchMoveDeleteAndRestoreFromOriginalGrid() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments += ["--glide-file-management-fixture"]
+        app.launch()
+        let begin = app.buttons["rotation.inline.begin"]
+        XCTAssertTrue(begin.waitForExistence(timeout: 30), app.debugDescription)
+        begin.tap()
+        func choose(_ name: String) {
+            let card = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "video.", name)).firstMatch
+            XCTAssertTrue(card.waitForExistence(timeout: 5))
+            let limit = app.buttons["rotation.inline.selectAll"].frame.minY - 35
+            for _ in 0..<5 where card.frame.midY > limit {
+                let scroll = app.scrollViews.containing(.button, identifier: card.identifier).firstMatch
+                let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45))
+                let end = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1))
+                start.press(forDuration: 0.05, thenDragTo: end)
+            }
+            card.tap()
+            let selected = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == %@", "已选择"), object: card)
+            XCTAssertEqual(XCTWaiter.wait(for: [selected], timeout: 5), .completed, app.debugDescription)
+        }
+        choose("move-a"); choose("move-b")
+        workspaceShot("File Management 01 Original Grid Selection", app)
+        app.buttons["files.move"].tap()
+        XCTAssertTrue(app.buttons["files.destination"].waitForExistence(timeout: 15))
+        let rootFolder = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "files.folder.", "Original File QA")).firstMatch
+        workspaceOpen(app.buttons["files.destination"], until: rootFolder)
+        for name in ["Original File QA", "media", "destination"] {
+            let folder = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "files.folder.", name)).firstMatch
+            if folder.waitForExistence(timeout: 5) { folder.tap() }
+        }
+        app.buttons["files.chooseDestination"].tap()
+        workspaceShot("File Management 02 Move Confirmation", app)
+        let confirm = app.buttons["files.confirm"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 10)); XCTAssertTrue(confirm.isEnabled); confirm.tap()
+        app.buttons["在服务器移动"].tap()
+        let restore = app.buttons["files.restore"]
+        XCTAssertTrue(restore.waitForExistence(timeout: 20), app.debugDescription)
+        workspaceShot("File Management 03 Completed Move", app)
+        restore.tap(); app.buttons["在服务器还原"].tap()
+        XCTAssertTrue(app.staticTexts["还原到原目录"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["完成"].firstMatch.tap()
+        XCTAssertTrue(begin.waitForExistence(timeout: 15)); begin.tap()
+        choose("trash-a"); choose("trash-b")
+        app.buttons["files.trash"].tap()
+        XCTAssertTrue(confirm.waitForExistence(timeout: 10)); confirm.tap()
+        workspaceShot("File Management 04 Delete Confirmation", app)
+        app.buttons["删除到服务器回收目录"].tap()
+        XCTAssertTrue(restore.waitForExistence(timeout: 20)); restore.tap()
+        app.buttons["在服务器还原"].tap()
+        XCTAssertTrue(app.staticTexts["还原到原目录"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["完成"].firstMatch.tap()
+        XCTAssertTrue(begin.waitForExistence(timeout: 15))
+    }
+
+    @MainActor func testFileSizeSortCoversWholeJellyfinFolder() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments += ["--glide-file-size-fixture", "--glide-ui-audit"]
+        app.launch()
+        let menu = app.buttons["library.sort"]
+        XCTAssertTrue(menu.waitForExistence(timeout: 35), app.debugDescription)
+        func sort(_ title: String) {
+            menu.press(forDuration: 0.15)
+            let picker = app.buttons["视频排序"]
+            if picker.waitForExistence(timeout: 2), picker.isHittable { picker.tap() }
+            let option = app.buttons[title]
+            XCTAssertTrue(option.waitForExistence(timeout: 5), app.debugDescription)
+            option.press(forDuration: 0.15)
+        }
+        func card(_ name: String) -> XCUIElement {
+            app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@ AND label CONTAINS %@","video.",name)).firstMatch
+        }
+        sort("文件大小：从大到小")
+        let largest = card("size204")
+        XCTAssertTrue(largest.waitForExistence(timeout: 35), app.debugDescription)
+        XCTAssertTrue(largest.isHittable)
+        XCTAssertFalse(largest.label.contains("大小未知"))
+        app.buttons["rotation.inline.begin"].tap()
+        XCTAssertTrue(app.buttons["rotation.inline.selectAll"].label.contains("205"), app.debugDescription)
+        workspaceShot("File Size 01 All Pages Descending", app)
+        app.buttons["rotation.inline.cancel"].tap()
+        sort("文件大小：从小到大")
+        let smallest = card("size000")
+        XCTAssertTrue(smallest.waitForExistence(timeout: 15), app.debugDescription)
+        XCTAssertTrue(smallest.isHittable)
+        XCTAssertFalse(smallest.label.contains("大小未知"))
+        workspaceShot("File Size 02 Ascending", app)
+    }
+
+    @MainActor func testJellyfinFeedSwipeConsumesPreparedStartupBytes() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments += ["--glide-feed-warmup-ui", "-controlsDelay", "30", "-preferredAudioLanguage", "", "-preferredSubtitleLanguage", "", "-forcedSubtitlesOnly", "NO"]
+        app.launch()
+        let canvas = app.otherElements["player.canvas"]
+        XCTAssertTrue(canvas.waitForExistence(timeout: 10))
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "已显示画面"), object: canvas)], timeout: 20), .completed)
+        let elapsed = app.staticTexts["player.elapsed"]
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label >= %@", "00:04"), object: elapsed)], timeout: 12), .completed)
+        if app.buttons["播放设置"].isHittable { canvas.tap() }
+        canvas.swipeUp()
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "direct"), object: canvas)], timeout: 8), .completed)
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "已显示画面"), object: canvas)], timeout: 12), .completed)
+        if !app.buttons["暂停"].isHittable { canvas.tap() }
+        app.buttons["暂停"].tap()
+        app.buttons["播放设置"].tap(); app.buttons["player.diagnostic"].tap()
+        XCTAssertTrue(app.buttons["diagnostic.share"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "warmup_startup_bytes")).firstMatch.exists)
+        app.buttons["完成"].tap()
+        if app.buttons["播放设置"].isHittable { canvas.tap() }
+        canvas.swipeDown()
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "cold"), object: canvas)], timeout: 8), .completed)
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "已显示画面"), object: canvas)], timeout: 15), .completed)
     }
 
     @MainActor func testPreparedLocalNextItem() throws {

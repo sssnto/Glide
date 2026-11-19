@@ -58,6 +58,8 @@ struct Video: Identifiable, Equatable, Codable, Sendable {
     var genres: [String]? = nil
     /// File-source modification date, independent of the library's added date.
     var fileModifiedAt: Date? = nil
+    /// Original/default playback file size in bytes; nil means unavailable.
+    var fileSize: Int64? = nil
 }
 
 struct DAVEntry: Identifiable, Equatable, Codable, Sendable {
@@ -67,8 +69,26 @@ struct DAVEntry: Identifiable, Equatable, Codable, Sendable {
     var createdAt: Date? = nil
     var modifiedAt: Date? = nil
     var artwork: URL? = nil
+    var fileSize: Int64? = nil
     var id: String { url.absoluteString }
     var displayDate: Date? { createdAt ?? modifiedAt }
+}
+
+enum MediaFileSize {
+    static func valid(_ value: Int64?) -> Int64? { value.flatMap { $0 >= 0 ? $0 : nil } }
+    /// A missing value always follows known sizes in either direction.
+    static func precedes(_ first: Int64?, _ second: Int64?, descending: Bool) -> Bool? {
+        switch (valid(first), valid(second)) {
+        case let (a?, b?) where a != b: return descending ? a > b : a < b
+        case (_?, nil): return true
+        case (nil, _?): return false
+        default: return nil
+        }
+    }
+    static func label(_ value: Int64?) -> String {
+        guard let value = valid(value) else { return "大小未知" }
+        return ByteCountFormatter.string(fromByteCount: value, countStyle: .file)
+    }
 }
 
 enum MediaFilePath {
@@ -146,6 +166,8 @@ final class DAVParser: NSObject, XMLParserDelegate {
     private var modifiedAt: Date?
     private var propertyCreatedAt: Date?
     private var propertyModifiedAt: Date?
+    private var fileSize: Int64?
+    private var propertyFileSize: Int64?
     init(base: URL) { self.base = base }
     func parse(_ data: Data) throws -> [DAVEntry] {
         let parser = XMLParser(data: data)
@@ -163,8 +185,8 @@ final class DAVParser: NSObject, XMLParserDelegate {
     }
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String: String]) {
         text = ""
-        if elementName == "response" { href = ""; name = ""; collection = false; valid = false; createdAt = nil; modifiedAt = nil }
-        if elementName == "propstat" { propertyName = ""; propertyCollection = false; propertyCreatedAt = nil; propertyModifiedAt = nil; status = "" }
+        if elementName == "response" { href = ""; name = ""; collection = false; valid = false; createdAt = nil; modifiedAt = nil; fileSize = nil }
+        if elementName == "propstat" { propertyName = ""; propertyCollection = false; propertyCreatedAt = nil; propertyModifiedAt = nil; propertyFileSize = nil; status = "" }
         if elementName == "collection" { propertyCollection = true }
     }
     func parser(_ parser: XMLParser, foundCharacters string: String) { text += string }
@@ -174,6 +196,7 @@ final class DAVParser: NSObject, XMLParserDelegate {
         case "displayname": propertyName = text
         case "creationdate": propertyCreatedAt = MediaTimestamp.parse(text.trimmingCharacters(in: .whitespacesAndNewlines))
         case "getlastmodified": propertyModifiedAt = MediaTimestamp.parse(text.trimmingCharacters(in: .whitespacesAndNewlines))
+        case "getcontentlength": propertyFileSize = MediaFileSize.valid(Int64(text.trimmingCharacters(in: .whitespacesAndNewlines)))
         case "status": status = text
         case "propstat":
             if status.contains(" 200 ") {
@@ -182,11 +205,12 @@ final class DAVParser: NSObject, XMLParserDelegate {
                 collection = collection || propertyCollection
                 createdAt = createdAt ?? propertyCreatedAt
                 modifiedAt = modifiedAt ?? propertyModifiedAt
+                fileSize = fileSize ?? propertyFileSize
             }
         case "response":
             guard valid, !href.isEmpty, let url = URL(string: href, relativeTo: base)?.absoluteURL,
                   ServerURL.sameOrigin(base, url), url.user == nil, url.password == nil else { return }
-            entries.append(DAVEntry(url: url, name: name.isEmpty ? url.lastPathComponent : name, isDirectory: collection, createdAt: createdAt, modifiedAt: modifiedAt))
+            entries.append(DAVEntry(url: url, name: name.isEmpty ? url.lastPathComponent : name, isDirectory: collection, createdAt: createdAt, modifiedAt: modifiedAt, fileSize: collection ? nil : fileSize))
         default: break
         }
         text = ""

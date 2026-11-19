@@ -1,0 +1,11 @@
+{
+  "landscape": [
+    "e162|tap|other|视频画面，向着山野出发，寻找藏在四季里的风景，已显示画面|缩放 1.0 倍，方向 0°;session=87A3E787-162E-4E88-8F45-9D897E8BC8E5;layer=ObjectIdentifier(0x0000000119c059a0);opens=1;time=1;rate=1.5;audio=audio-1;requested=false;wide=false;panel=false;controls=true;pip=false;pipStarting=false;pipPossible=false;pipSupported=false;;pictureAspect=1.77778;croppedFraction=0.00000;|player.canvas",
+    "e197|tap|button|切换竖屏||player.rotate"
+  ],
+  "portrait": [
+    "e174|tap|other|视频画面，向着山野出发，寻找藏在四季里的风景，已显示画面|缩放 1.0 倍，方向 0°;session=87A3E787-162E-4E88-8F45-9D897E8BC8E5;layer=ObjectIdentifier(0x0000000119c059a0);opens=1;time=1;rate=1.5;audio=audio-1;requested=false;wide=false;panel=false;controls=true;pip=false;pipStarting=false;pipPossible=false;pipSupported=false;;pictureAspect=1.77778;croppedFraction=0.00000;|player.canvas",
+    "e209|tap|button|切换横屏||player.rotate"
+  ],
+  "capture": "Runtime AX values plus separately captured unmodified simctl active-display screenshots"
+}

@@ -1,0 +1,175 @@
+{
+  "context": {
+    "allowsCellularInProbe": true,
+    "audioSessionActivated": true,
+    "explicitPathMatched": true,
+    "incidentAliasMatched": true,
+    "jellyfinSourceCount": 2,
+    "matchedDiagnosticFormat": true,
+    "negotiation_automatic": {
+      "container": "mov",
+      "explicitSubtitleIndex": -2,
+      "serverDefaultSubtitleIndex": -1,
+      "supportsDirectPlay": true,
+      "supportsDirectStream": true
+    },
+    "negotiation_compatible": {
+      "audiocodec": "aac",
+      "container": "mov",
+      "explicitSubtitleIndex": -2,
+      "h264-profile": "baseline,constrainedbaseline,main,high",
+      "h264-rangetype": "SDR",
+      "h264-videobitdepth": "8",
+      "hevc-profile": "main",
+      "hevc-videobitdepth": "8",
+      "masterDeclarations": [
+        {
+          "CODECS": "hvc1.1.4.L123.B0,mp4a.40.2",
+          "FRAME-RATE": "60",
+          "RESOLUTION": "1920x1080",
+          "VIDEO-RANGE": "SDR"
+        }
+      ],
+      "segmentcontainer": "mp4",
+      "serverDefaultSubtitleIndex": -1,
+      "supportsDirectPlay": false,
+      "supportsDirectStream": false,
+      "transcodereasons": "DirectPlayError",
+      "videocodec": "h264,hevc"
+    },
+    "negotiation_hd1080": {
+      "allowaudiostreamcopy": "false",
+      "allowvideostreamcopy": "false",
+      "audiocodec": "aac",
+      "container": "mov",
+      "explicitSubtitleIndex": -2,
+      "h264-profile": "baseline,constrainedbaseline,main,high",
+      "h264-rangetype": "SDR",
+      "h264-videobitdepth": "8",
+      "hevc-profile": "main",
+      "hevc-videobitdepth": "8",
+      "masterDeclarations": [
+        {
+          "CODECS": "avc1.42E029,mp4a.40.2",
+          "FRAME-RATE": "60",
+          "RESOLUTION": "1280x720",
+          "VIDEO-RANGE": "SDR"
+        }
+      ],
+      "segmentcontainer": "ts",
+      "serverDefaultSubtitleIndex": -1,
+      "supportsDirectPlay": false,
+      "supportsDirectStream": false,
+      "transcodereasons": "VideoCodecNotSupported,ContainerBitrateExceedsLimit",
+      "videocodec": "h264"
+    },
+    "negotiation_original": {
+      "container": "mov",
+      "explicitSubtitleIndex": -2,
+      "serverDefaultSubtitleIndex": -1,
+      "supportsDirectPlay": true,
+      "supportsDirectStream": true
+    },
+    "recentCandidateCount": 1,
+    "recentFormats": [
+      {
+        "codec": "hevc",
+        "dvProfile": 0,
+        "height": 1080,
+        "range": "SDR",
+        "width": 1920
+      }
+    ],
+    "serverSubtitlesDisabled": false,
+    "serverVersion": "12.2.0",
+    "sourceBitrate": 9885824,
+    "sourceCodec": "hevc",
+    "sourceRange": "SDR",
+    "sourceSubtitleFormats": [],
+    "sourceTransfer": "bt709",
+    "textSubtitleRequested": false
+  },
+  "results": [
+    {
+      "failureReason": "no_negotiated_stream",
+      "negotiationErrors": [
+        {
+          "code": 0,
+          "domain": "ApplicationError"
+        }
+      ],
+      "route": "automatic"
+    },
+    {
+      "actualTime": 55.478516103,
+      "delivery": "direct",
+      "duration": 310.4,
+      "elapsedSeconds": 60.077220583334565,
+      "errors": [],
+      "firstHDRVariantRequested": false,
+      "frameReady": false,
+      "nativeErrorCodes": [],
+      "output": {},
+      "phase": "playing",
+      "ready": true,
+      "route": "original",
+      "subtitleSelected": false,
+      "subtitleTrackCount": 0,
+      "wideColorInspectionEnabled": true
+    },
+    {
+      "actualTime": 2.039351917,
+      "delivery": "audioConversion",
+      "duration": 310.405,
+      "elapsedSeconds": 6.94637408334529,
+      "errors": [],
+      "firstFrameSeconds": 4.905153416679241,
+      "firstHDRVariantRequested": false,
+      "frameReady": true,
+      "nativeErrorCodes": [],
+      "output": {
+        "codec": "hvc1",
+        "evidence": "decodedFrame",
+        "matrix": "ITU_R_709_2",
+        "primaries": "ITU_R_709_2",
+        "transfer": "ITU_R_709_2"
+      },
+      "phase": "playing",
+      "ready": true,
+      "requestedCodec": "copy",
+      "route": "compatible",
+      "subtitleSelected": false,
+      "subtitleTrackCount": 1,
+      "wideColorInspectionEnabled": true
+    },
+    {
+      "actualTime": 0,
+      "delivery": "videoConversion",
+      "duration": 310.405,
+      "elapsedSeconds": 60.05238170834491,
+      "errors": [],
+      "firstHDRVariantRequested": false,
+      "frameReady": false,
+      "nativeErrorCodes": [
+        {
+          "code": -16847,
+          "domain": "CoreMediaErrorDomain"
+        }
+      ],
+      "output": {},
+      "phase": "preparing",
+      "ready": false,
+      "requestedCodec": "h264",
+      "requestedRange": "SDR",
+      "route": "hd1080",
+      "subtitleSelected": false,
+      "subtitleTrackCount": 0,
+      "wideColorInspectionEnabled": true
+    }
+  ],
+  "scope": "Authorized in-app recent-item metadata and short real AVPlayer trials; no credentials, host, URL, title, item identifier or media bytes exported",
+  "stage": "Jellyfin 原片诊断完成",
+  "system": "27.2",
+  "timestamp": "2026-11-17T01:19:33Z",
+  "version": "2.0.0 (4)"
+}

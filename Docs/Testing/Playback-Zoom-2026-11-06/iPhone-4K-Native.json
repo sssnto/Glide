@@ -1,0 +1,31 @@
+{
+  "checks" : {
+    "actual-4k-decoded-size" : true,
+    "foreground-display-callbacks" : true,
+    "frame-ready-without-error" : true,
+    "paused-clock-and-request-preserved" : true,
+    "playback-request-preserved" : true,
+    "playing-clock-advances" : true,
+    "same-media-engine-and-open-count" : true,
+    "same-native-layer-and-player" : true,
+    "zoom-reset" : true
+  },
+  "engine" : "avPlayer",
+  "error" : "",
+  "measurements" : {
+    "decodedHeight" : 2160,
+    "decodedWidth" : 3840,
+    "displayCallbackCount" : 433,
+    "displayCallbackMaxGapMs" : 58.131916681304574,
+    "displayCallbackP95GapMs" : 17.056249896995723,
+    "openAttempts" : 1,
+    "pausedEndTime" : 6.3954015000000002,
+    "pausedTime" : 6.3954015000000002,
+    "playingEndTime" : 6.0011787080000003,
+    "startTime" : 0.50083737500000003
+  },
+  "os" : "27.0.1",
+  "passed" : true,
+  "scope" : "Production PlayerView, actual authored 4K decode; zoom method driven in-app, not physical touch automation; display callback cadence is not video FPS",
+  "timestamp" : "2026-11-06T02:14:19Z"
+}

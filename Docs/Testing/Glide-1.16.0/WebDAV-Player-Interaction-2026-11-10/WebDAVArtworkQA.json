@@ -1,0 +1,18 @@
+[
+  {
+    "count" : 1,
+    "stage" : "candidates"
+  },
+  {
+    "count" : 1,
+    "stage" : "candidates"
+  },
+  {
+    "count" : 359,
+    "stage" : "frame-decoded"
+  },
+  {
+    "count" : 359,
+    "stage" : "frame-decoded"
+  }
+]

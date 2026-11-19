@@ -4,6 +4,12 @@ import Observation
 @MainActor @Observable
 final class LibraryStore {
     let rotationQueue = RotationQueueStore()
+    let fileActions = FileManagementStore()
+    func refreshAfterFileManagement(_ server: MediaServer) async {
+        snapshots = snapshots.filter { !$0.key.hasPrefix(server.id.uuidString + ":") }
+        await MediaCache.shared.clear(server: server)
+        if selectedID == server.id { await reload() }
+    }
     var servers: [MediaServer] = []
     var selectedID: UUID?
     var videos: [Video] = []
@@ -348,7 +354,17 @@ final class LibraryStore {
                 async let folderPage = MediaClient.shared.browse(server: server, parentID: parentID, sort: sort)
                 var preview: VideoPage?
                 if let parentID, LibraryExperience(collectionType: jellyPath.first?.collectionType) == .home {
-                    preview = try await MediaClient.shared.playbackVideos(server: server, parentID: parentID, start: 0, options: options)
+                    if options.sort.isFileSize {
+                        let all = try await ScopedQueueCollector.pages(fetch: { start in
+                            guard generation == self.loadID else { throw CancellationError() }
+                            return try await MediaClient.shared.playbackVideos(server: server, parentID: parentID, start: start, options: options)
+                        }, progress: { count in
+                            if generation == self.loadID { self.scannedVideoCount = count }
+                        })
+                        preview = VideoPage(videos: options.sort.sorted(all), total: all.count, nextIndex: all.count)
+                    } else {
+                        preview = try await MediaClient.shared.playbackVideos(server: server, parentID: parentID, start: 0, options: options)
+                    }
                 } else { preview = nil }
                 var page = try await folderPage
                 while page.nextIndex < min(retainedFolderNext, 1200), page.nextIndex < page.total, parentID != nil {
@@ -475,7 +491,7 @@ final class LibraryStore {
         if let server=selectedServer,server.kind == .webDAV {
             let generation=UUID();loadID=generation
             let key=snapshotKey
-            let cached=await directoryCache.scan(DirectoryCacheIdentity(server),directory:path.last ?? server.address,recursive:browseOptions.includesDescendants)
+            let cached=await directoryCache.scan(DirectoryCacheIdentity(server),directory:path.last ?? server.address,recursive:browseOptions.includesDescendants,requiresFileSize:browseOptions.sort.isFileSize)
             guard !Task.isCancelled,generation==loadID,key==snapshotKey else { return }
             if let cached {
                 videos=browseOptions.sort.sorted(cached.videos.compactMap { try? fileVideo($0,server:server) })
@@ -533,15 +549,16 @@ final class LibraryStore {
             try Task.checkCancellation()
             guard key==snapshotKey else { throw CancellationError() }
             if contentsKey==key,!scanStopped { progress(videos.count);return options.sort.sorted(videos) }
-            if let cached=await directoryCache.scan(DirectoryCacheIdentity(server),directory:path.last ?? server.address,recursive:options.includesDescendants) {
+            if let cached=await directoryCache.scan(DirectoryCacheIdentity(server),directory:path.last ?? server.address,recursive:options.includesDescendants,requiresFileSize:options.sort.isFileSize) {
                 let result=options.sort.sorted(try cached.videos.map { try fileVideo($0,server:server) });progress(result.count);return result
             }
         }
         if server.kind.isCatalogSource {
             guard let parentID = jellyPath.last?.id else { throw MediaError.message("请先选择一个媒体库或目录。") }
-            return try await ScopedQueueCollector.pages(fetch: { start in
+            let all = try await ScopedQueueCollector.pages(fetch: { start in
                 try await MediaClient.shared.playbackVideos(server: server, parentID: parentID, start: start, search: search, options: options)
             }, progress: progress)
+            return options.sort.isFileSize ? options.sort.sorted(all) : all
         }
         let root = path.last ?? server.address
         let provider = try SourceProviders.directories(for: server.kind)
@@ -554,7 +571,7 @@ final class LibraryStore {
         let relative = server.kind == .local ? try LocalMediaIdentity.relativePath(root: server.address, file: entry.url) : nil
         return Video(id: relative.map { LocalMediaIdentity.id(sourceID: server.id, relativePath: $0) } ?? server.id.uuidString + entry.id,
                      title: entry.name, subtitle: server.name, sourceID: server.id, url: entry.url,
-                     artwork: entry.artwork, addedAt: entry.displayDate, localRelativePath: relative, fileModifiedAt: entry.modifiedAt)
+                     artwork: entry.artwork, addedAt: entry.displayDate, localRelativePath: relative, fileModifiedAt: entry.modifiedAt, fileSize: entry.fileSize)
     }
     private func localAncestors(_ relative: String, root: URL) -> [URL] {
         let parts = relative.split(separator: "/")
@@ -564,11 +581,18 @@ final class LibraryStore {
         guard options != browseOptions else { return }
         let onlySort=options.includesDescendants == browseOptions.includesDescendants
         let loaded=contentsKey==snapshotKey
+        let wasFileSize=browseOptions.sort.isFileSize
+        let owner=locationKey
         retainContents()
         browseOptions = options
         directoryPreferences[locationKey] = options
         persistDirectorySettings()
-        if selectedServer?.kind == .webDAV,onlySort {
+        var reuse = selectedServer?.kind.isFileSource == true && onlySort
+        if reuse, loaded, options.sort.isFileSize, let server=selectedServer, server.kind == .webDAV {
+            reuse = await directoryCache.scan(DirectoryCacheIdentity(server),directory:path.last ?? server.address,recursive:options.includesDescendants,requiresFileSize:true) != nil
+            guard locationKey == owner, browseOptions == options else { return }
+        }
+        if reuse || (loaded && onlySort && wasFileSize && options.sort.isFileSize && !hasMore) {
             videos=options.sort.sorted(videos)
             if loaded { contentsKey=snapshotKey }
             return

@@ -1,0 +1,9 @@
+{
+  "version": "2.0.1",
+  "build": "9",
+  "bundleID": "com.songpeng.glide",
+  "buildSucceeded": true,
+  "codesignDeepStrictVerified": true,
+  "mainApp": ".build/FileActionsMain/Build/Products/Release-iphoneos/Glide.app",
+  "deviceInstalled": false
+}

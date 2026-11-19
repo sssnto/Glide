@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-16",
+  "passed": true,
+  "scope": "Authored local fixtures; no private NAS changes",
+  "clientCore": {
+    "xctest": 11,
+    "swiftTesting": 295,
+    "failures": 0
+  },
+  "runtime": {
+    "server": "Jellyfin 12.2.0",
+    "authoredVideos": 205,
+    "test": "testFileSizeSortCoversWholeJellyfinFolder",
+    "checks": [
+      "native_login_and_library_root_browse",
+      "largest_video_beyond_first_200_item_page_appears_first",
+      "all_205_entries_loaded_before_sorting",
+      "size_label_present",
+      "smallest_video_appears_first_after_switching_direction"
+    ]
+  },
+  "releaseBuild": true,
+  "nasPluginUpdateRequired": false,
+  "device": {
+    "qaVersion": "2.0.0 (3)",
+    "signedBuild": true,
+    "installed": true,
+    "mainAppReplaced": false
+  }
+}

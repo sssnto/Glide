@@ -1,0 +1,25 @@
+{
+  "checks" : [
+    "取帧成功且最长边不超过 640",
+    "取帧成功且最长边不超过 640",
+    "取帧成功且最长边不超过 640",
+    "重进与不同显示尺寸复用已有图片，无额外解码",
+    "取帧并发最多两个",
+    "快速离屏任务不启动视频解码",
+    "High 10 与 MKV 均通过兼容内核取帧"
+  ],
+  "error" : "",
+  "live" : false,
+  "os" : "26.3.1",
+  "passed" : true,
+  "stage" : "验证通过",
+  "statistics" : {
+    "cacheHits" : 6,
+    "compatibilityFrames" : 2,
+    "generated" : 3,
+    "nativeFrames" : 1,
+    "peakActive" : 2
+  },
+  "timestamp" : "2026-11-10T08:55:13Z",
+  "version" : "1.16.0 (9)"
+}

@@ -1,0 +1,5 @@
+GlideCompatibilityQA / CompatibilityQA 2.0.0 (5): BUILD SUCCEEDED; installed; exact incident production-controller trial passed.
+Glide / Release 2.0.0 (5): BUILD SUCCEEDED.
+codesign --verify --deep --strict: valid on disk; satisfies Designated Requirement.
+Release build warnings: pre-existing WebDAVPlaybackBridge capture ownership, GlideVLCFrameExtractor enum conversion, and AppIntents metadata extraction without dependency. No build errors.
+Glide / Release 2.0.0 (5): installed successfully over main application after device reconnect. Launch denied by iOS because device was locked; manual opening after unlock remains.

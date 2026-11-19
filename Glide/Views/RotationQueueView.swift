@@ -249,6 +249,7 @@ struct RotationInlineControls: ViewModifier {
     var loaded:[Video]
     @State private var confirming=false
     @State private var receipt:RotationBatchReceipt?
+    @State private var fileOperation: FileOperationPresentation?
     func body(content:Content)->some View {
         content.disabled(selection.submitting)
             .safeAreaInset(edge:.bottom,spacing:0) {
@@ -272,6 +273,15 @@ struct RotationInlineControls: ViewModifier {
                                 .disabled(selection.selected.isEmpty || selection.submitting || server == nil)
                                 .accessibilityIdentifier("rotation.batch.submit")
                         }
+                        if selection.selected.count > 500 { Text("移动和删除每批最多 500 个视频，请减少选择。").font(.caption).foregroundStyle(.secondary) }
+                        if server?.kind == .jellyfin, loaded.contains(where: { $0.mediaType == "Video" }) {
+                            HStack(spacing: 12) {
+                                Button("移动", systemImage: "folder") { presentFiles(.move) }.buttonStyle(.bordered)
+                                    .accessibilityIdentifier("files.move")
+                                Button("删除", systemImage: "trash", role: .destructive) { presentFiles(.trash) }.buttonStyle(.bordered)
+                                    .accessibilityIdentifier("files.trash")
+                            }.controlSize(.large).frame(maxWidth: .infinity).disabled(selection.selected.isEmpty || selection.selected.count > 500 || selection.selected.values.contains(where: { $0.mediaType != "Video" }))
+                        }
                     }.padding(.horizontal,16).padding(.vertical,10).background(.bar)
                         .disabled(selection.submitting)
                 }
@@ -283,12 +293,18 @@ struct RotationInlineControls: ViewModifier {
             .alert("无法加入旋转队列",isPresented:Binding(get:{selection.error != nil},set:{if !$0 {selection.error=nil}})) {
                 Button("知道了") { selection.error=nil }
             } message: { Text(selection.error ?? "") }
+            .sheet(item: $fileOperation, onDismiss: { selection.end() }) { value in
+                if let server { FileOperationComposer(library: library, server: server, operation: value.operation, videos: value.videos) }
+            }
             .sheet(item:$receipt) { value in
                 NavigationStack {
                     RotationBatchDetail(library:library,server:value.server,initial:value.batch)
                         .toolbar { ToolbarItem(placement:.confirmationAction) { Button("完成") { receipt=nil } } }
                 }
             }
+    }
+    @MainActor private func presentFiles(_ operation: FileOperation) {
+        fileOperation = FileOperationPresentation(operation: operation, videos: selection.selected.values.sorted { $0.id < $1.id })
     }
     @MainActor private func submit() async {
         guard let server,!selection.submitting,!selection.selected.isEmpty else { return }

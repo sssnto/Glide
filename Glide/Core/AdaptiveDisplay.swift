@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 
 enum AppSection: String, CaseIterable, Codable, Identifiable, Sendable {
     case home, library, personal, tasks, downloads, sources, settings
@@ -50,5 +51,31 @@ enum VideoViewport {
         let limitX = new.width * (zoom - 1) / 2, limitY = new.height * (zoom - 1) / 2
         return CGSize(width: max(-limitX, min(limitX, offset.width * new.width / old.width)),
                       height: max(-limitY, min(limitY, offset.height * new.height / old.height)))
+    }
+}
+
+/// Occlusions use the current content coordinates; their frames already include margins.
+struct PlayerChromeInsets: Equatable {
+    var top: CGFloat = 0
+    var leading: CGFloat = 0
+    var trailing: CGFloat = 0
+    static func avoiding(size: CGSize, headerHeight: CGFloat, occlusions: [CGRect]) -> Self {
+        guard size.width.isFinite, size.height.isFinite, size.width > 0, size.height > 0,
+              headerHeight.isFinite, headerHeight > 0 else { return Self() }
+        let bounds = CGRect(origin: .zero, size: size)
+        let band = CGRect(x: 0, y: 0, width: size.width, height: min(size.height, headerHeight))
+        let regions = occlusions.compactMap { frame -> CGRect? in
+            guard frame.origin.x.isFinite, frame.origin.y.isFinite, frame.width.isFinite, frame.height.isFinite else { return nil }
+            let visible = frame.intersection(bounds)
+            return visible.isEmpty ? nil : visible
+        }
+        var result = Self()
+        for frame in regions where !frame.intersection(band).isEmpty && frame.height > band.height {
+            if frame.minX == 0, frame.maxX < size.width { result.leading = max(result.leading, frame.maxX) }
+            if frame.maxX == size.width, frame.minX > 0 { result.trailing = max(result.trailing, size.width - frame.minX) }
+        }
+        let header = CGRect(x: result.leading, y: 0, width: max(0, size.width - result.leading - result.trailing), height: band.height)
+        for frame in regions where !frame.intersection(header).isEmpty { result.top = max(result.top, frame.maxY) }
+        return result
     }
 }

@@ -47,6 +47,48 @@ struct JellyfinPlaybackQAProbe: View {
     private func chain(_ error: Error) -> [[String: Any]] {
         PlaybackFailure.chain(error).map { ["domain": $0.domain, "code": $0.code] }
     }
+    private func negotiationFailure(_ error: Error) -> String {
+        guard case MediaError.message(let value) = error else { return "framework_error" }
+        if value.contains("启用转码权限") { return "no_negotiated_stream" }
+        if value.contains("没有可播放的版本") { return "no_playable_source" }
+        if value.contains("登录已失效") { return "credentials_missing" }
+        if value.contains("服务器请求失败") { return "server_http_failure" }
+        return "application_failure"
+    }
+    /// Exact suffix selection for an explicitly authorized incident; private paths stay in-app.
+    @MainActor private func incidentCandidate(_ suffix: String) async throws -> PersonalVideo? {
+        struct Page: Decodable { let Items: [CatalogItem] }
+        let normalized = "/" + suffix.trimmingCharacters(in: CharacterSet(charactersIn:"/")).precomposedStringWithCanonicalMapping
+        let term = URL(fileURLWithPath:suffix).deletingPathExtension().lastPathComponent
+        let alias = UserDefaults.standard.string(forKey:"glideRotationPlaybackServer")
+        let servers = library.servers.filter { $0.kind == .jellyfin }
+        let matching = servers.filter { alias != nil && $0.name.caseInsensitiveCompare(alias!) == .orderedSame }
+        context["incidentAliasMatched"] = !matching.isEmpty
+        for server in (matching.isEmpty ? Array(servers.prefix(4)) : matching) {
+            let recent = library.personalVideos.values.filter { $0.video.sourceID == server.id }.sorted { latestDate($0)>latestDate($1) }
+            for saved in recent.prefix(24) {
+                guard let id=saved.video.remoteID, let detail=try? await MediaClient.shared.catalogDetail(server:server,id:id,refresh:true) else { continue }
+                if detail.MediaSources?.contains(where: { $0.Path?.precomposedStringWithCanonicalMapping.hasSuffix(normalized) == true }) == true {
+                    return PersonalVideo(video:detail.video(server:server))
+                }
+            }
+            var parents:[String?] = [nil]
+            if library.selectedID == server.id { parents += library.jellyPath.map { Optional($0.id) } }
+            if let roots=try? await MediaClient.shared.browse(server:server,parentID:nil) { parents += roots.folders.prefix(20).map { Optional($0.id) } }
+            var seen=Set<String>()
+            for parent in parents where seen.insert(parent ?? "root").inserted {
+                var query=["UserId":server.userID ?? "","Recursive":"true","SearchTerm":term,"Fields":"MediaSources,Path","Limit":"100"]
+                query["ParentId"]=parent
+                guard let token=Credentials.read(server.id) else { continue }
+                let raw=try await MediaClient.shared.request(ServerURL.endpoint(server.address,"Items",query:query),headers:["Authorization":MediaClient.shared.authorization(token,server:server)])
+                let page=try JSONDecoder().decode(Page.self,from:raw)
+                if let detail=page.Items.first(where: { $0.MediaSources?.contains(where: { $0.Path?.precomposedStringWithCanonicalMapping.hasSuffix(normalized) == true }) == true }) {
+                    return PersonalVideo(video:detail.video(server:server))
+                }
+            }
+        }
+        return nil
+    }
     @MainActor private func trial(_ resource: PlaybackResource, name: String) async {
         engine.stop(); errors = []; output = [:]
         engine.onEvent = { event in
@@ -519,6 +561,8 @@ struct JellyfinPlaybackQAProbe: View {
         library.progressSnapshots[value.id]?.updatedAt ?? value.lastPlayedAt ?? Date.distantPast
     }
     @MainActor private func inspectNetwork(_ resource: PlaybackResource, server: MediaServer) async -> [String: Any] {
+        // This helper inspects playlists, never the original video file.
+        guard resource.url.pathExtension.lowercased() == "m3u8" else { return ["skippedNonPlaylist": true] }
         guard let token = Credentials.read(server.id) else { return ["credentialAvailable": false] }
         let auth = MediaClient.shared.authorization(token, server: server)
         func status(_ url: URL, authenticated: Bool) async -> Int {
@@ -577,7 +621,13 @@ struct JellyfinPlaybackQAProbe: View {
         context["jellyfinSourceCount"] = library.servers.filter { $0.kind == .jellyfin }.count
         context["allowsCellularInProbe"] = PlaybackPreferences.cellularPlayback
         save()
-        let candidates = library.personalVideos.values.sorted { latestDate($0) > latestDate($1) }
+        var candidates = library.personalVideos.values.sorted { latestDate($0) > latestDate($1) }
+        if ProcessInfo.processInfo.arguments.contains("--glide-rotation-playback-probe"), let suffix=UserDefaults.standard.string(forKey:"glideRotationPlaybackSuffix") {
+            do {
+                guard let exact=try await incidentCandidate(suffix) else { stage="未找到路径完全匹配的视频";save();return }
+                candidates=[exact];context["explicitPathMatched"]=true
+            } catch { context["incidentSelectionErrors"]=chain(error);stage="指定视频读取未完成";save();return }
+        }
         context["recentCandidateCount"] = candidates.count
         var candidateFormats: [[String: Any]] = []
         for saved in candidates.prefix(12) {
@@ -585,7 +635,7 @@ struct JellyfinPlaybackQAProbe: View {
                   let id = saved.video.remoteID else { continue }
             do {
                 let detail = try await MediaClient.shared.catalogDetail(server: server, id: id, refresh: true)
-                if let series = UserDefaults.standard.string(forKey: "glideInvestigationSeries") {
+                if context["explicitPathMatched"] as? Bool != true, let series = UserDefaults.standard.string(forKey: "glideInvestigationSeries") {
                     guard detail.SeriesName?.contains(series) == true,
                           detail.ParentIndexNumber == UserDefaults.standard.integer(forKey: "glideInvestigationSeason"),
                           detail.IndexNumber == UserDefaults.standard.integer(forKey: "glideInvestigationEpisode") else { continue }
@@ -616,7 +666,7 @@ struct JellyfinPlaybackQAProbe: View {
                     let selection = noSubtitles ? TrackSelection(subtitleIndex: -1) : useText ? TrackSelection(subtitleIndex: text?.Index) : TrackSelection()
                     await productionTrial(video, selection: selection); return
                 }
-                let qualities: [PlaybackQuality] = UserDefaults.standard.bool(forKey: "glideInvestigationOnlyCompatible") ? [.compatible] : noSubtitles || useText ? [.automatic, .compatible] : [.automatic, .compatible, .hd1080]
+                let qualities: [PlaybackQuality] = context["explicitPathMatched"] as? Bool == true ? [.automatic,.original,.compatible,.hd1080] : UserDefaults.standard.bool(forKey: "glideInvestigationOnlyCompatible") ? [.compatible] : noSubtitles || useText ? [.automatic, .compatible] : [.automatic, .compatible, .hd1080]
                 for quality in qualities {
                     MediaClient.qaNegotiationReport = [:]
                     do {
@@ -633,7 +683,7 @@ struct JellyfinPlaybackQAProbe: View {
                         if UserDefaults.standard.bool(forKey: "glideInvestigationDisableFirstHDR") { resource.prefersFirstHDRVariant = false }
                         await trial(resource, name: quality.rawValue)
                         try? await MediaClient.shared.stopTranscoding(server: server, resource: resource)
-                    } catch { context["negotiation_" + quality.rawValue] = MediaClient.qaNegotiationReport; results.append(["route": quality.rawValue, "negotiationErrors": chain(error)]); save() }
+                    } catch { context["negotiation_" + quality.rawValue] = MediaClient.qaNegotiationReport; results.append(["route": quality.rawValue, "negotiationErrors": chain(error),"failureReason":negotiationFailure(error)]); save() }
                 }
                 stage = "Jellyfin 原片诊断完成"; save(); return
             } catch { context["metadataErrors"] = chain(error); save() }
@@ -641,6 +691,7 @@ struct JellyfinPlaybackQAProbe: View {
         stage = "未找到与诊断匹配的最近视频"; save()
     }
     private func matchesDiagnostic(_ stream: CatalogItem.Stream) -> Bool {
+        if context["explicitPathMatched"] as? Bool == true { return stream.Type == "Video" }
         if (UserDefaults.standard.bool(forKey: "glideInvestigationSubtitleDiagnosis") || ProcessInfo.processInfo.arguments.contains("--glide-ass-investigation")), UserDefaults.standard.string(forKey: "glideInvestigationSeries") != nil { return stream.Type == "Video" }
         guard stream.Type == "Video", stream.Codec?.lowercased() == "hevc" else { return false }
         return stream.Width == 3840 && stream.Height == 2160 && stream.DvProfile == 8
@@ -653,6 +704,87 @@ struct JellyfinPlaybackQAProbe: View {
         case .server: "server"
         case .sidecar: "sidecar"
         case .imported: "imported"
+        }
+    }
+}
+
+/// Explicitly launched in the isolated QA application. Exports field shapes only.
+struct JellyfinLoginQAView: View {
+    let library: LibraryStore
+    @State private var address = UserDefaults.standard.string(forKey: "glideLoginAddress") ?? ""
+    @State private var username = ""
+    @State private var password = ""
+    @State private var busy = false
+    @State private var status = "请输入与网页相同的账号密码"
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Jellyfin 登录") {
+                    TextField("服务器地址", text: $address).textInputAutocapitalization(.never).autocorrectionDisabled().keyboardType(.URL)
+                    TextField("用户名", text: $username).textInputAutocapitalization(.never).autocorrectionDisabled()
+                    SecureField("密码", text: $password)
+                    Button(busy ? "正在验证…" : "验证登录") { Task { await check() } }
+                        .disabled(busy || address.isEmpty || username.isEmpty)
+                }
+                Section { Text(status).textSelection(.enabled) }
+                Section { Text("账号密码仅在应用内使用。诊断只记录登录字段是否存在及格式特征，不导出账号、密码或令牌。") }
+            }.disabled(busy).navigationTitle("Jellyfin 登录验证")
+        }.task {
+            UIApplication.shared.isIdleTimerDisabled = true
+            if let url = try? ServerURL.parse(address), let saved = library.servers.first(where: { $0.kind == .jellyfin && ServerURL.sameOrigin($0.address, url) }) {
+                username = saved.username
+                await inspectSavedSession(saved)
+            }
+        }.onDisappear { UIApplication.shared.isIdleTimerDisabled = false }
+    }
+    @MainActor private func inspectSavedSession(_ server: MediaServer) async {
+        guard let token = Credentials.read(server.id) else { return }
+        var report: [String: Any] = ["route": "saved-session", "version": PlaybackPreferences.appVersion]
+        do {
+            let headers = ["Authorization": MediaClient.shared.authorization(token, server: server)]
+            let data = try await MediaClient.shared.request(ServerURL.endpoint(server.address, "Users/Me"), headers: headers)
+            guard let object = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any], let id = object["Id"] as? String else { return }
+            let allowed = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_"))
+            report["userIDLength"] = id.count
+            report["userIDHexadecimal"] = id.utf8.allSatisfy { (48...57).contains($0) || (65...70).contains($0) || (97...102).contains($0) }
+            report["oldCharacterSetAccepts"] = id.unicodeScalars.allSatisfy(allowed.contains)
+            try MediaServerAPI.validateSession(token: token, userID: id)
+            report["validationPassed"] = true
+            let views = try await MediaClient.shared.request(ServerURL.endpoint(server.address, "UserViews", query: ["UserId": id]), headers: headers)
+            let page = (try? JSONSerialization.jsonObject(with: views)) as? [String: Any]
+            report["libraryCount"] = (page?["Items"] as? [Any])?.count ?? -1
+            report["sessionAuthenticated"] = id == server.userID
+        } catch { report["errorDomain"] = (error as NSError).domain; report["errorCode"] = (error as NSError).code }
+        report["timestamp"] = ISO8601DateFormatter().string(from: Date())
+        if let data = try? JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys]) {
+            try? data.write(to: FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("jellyfin-saved-session-investigation.json"), options: .atomic)
+        }
+    }
+    @MainActor private func check() async {
+        busy = true; status = "正在检查登录返回字段"; MediaClient.qaSignInReport = [:]
+        defer { busy = false }
+        var report: [String: Any] = [:]
+        do {
+            let server = MediaServer(name: "Jellyfin 登录验证", kind: .jellyfin, address: try ServerURL.parse(address), username: username)
+            let (token, userID) = try await MediaClient.shared.signIn(server: server, password: password)
+            report = MediaClient.qaSignInReport
+            let headers = ["Authorization": MediaClient.shared.authorization(token, server: server)]
+            let data = try await MediaClient.shared.request(ServerURL.endpoint(server.address, "Users/Me"), headers: headers)
+            let user = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+            report["sessionAuthenticated"] = (user?["Id"] as? String) == userID
+            let views = try await MediaClient.shared.request(ServerURL.endpoint(server.address, "UserViews", query: ["UserId": userID]), headers: headers)
+            let page = (try? JSONSerialization.jsonObject(with: views)) as? [String: Any]
+            report["libraryCount"] = (page?["Items"] as? [Any])?.count ?? -1
+            status = report["sessionAuthenticated"] as? Bool == true ? "登录验证通过" : "登录返回与当前用户不匹配"
+        } catch {
+            report = MediaClient.qaSignInReport
+            report["errorDomain"] = (error as NSError).domain; report["errorCode"] = (error as NSError).code
+            status = error.localizedDescription
+        }
+        report["timestamp"] = ISO8601DateFormatter().string(from: Date())
+        report["version"] = PlaybackPreferences.appVersion
+        if let data = try? JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys]) {
+            try? data.write(to: FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("jellyfin-signin-investigation.json"), options: .atomic)
         }
     }
 }

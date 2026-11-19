@@ -1,0 +1,46 @@
+{
+  "checkedOn": "2026-11-07",
+  "timezone": "Asia/Shanghai",
+  "requests": [
+    {
+      "name": "store",
+      "url": "https://itunes.apple.com/lookup?id=6814679647&country=cn",
+      "status": 200,
+      "bytes": 42,
+      "results": []
+    },
+    {
+      "name": "home",
+      "url": "https://glide.sssnto.cn/",
+      "status": 200,
+      "bytes": 16365
+    },
+    {
+      "name": "support",
+      "url": "https://glide.sssnto.cn/support.html",
+      "status": 200,
+      "bytes": 8365
+    },
+    {
+      "name": "privacy",
+      "url": "https://glide.sssnto.cn/privacy.html",
+      "status": 200,
+      "bytes": 6451
+    }
+  ],
+  "usStore": {
+    "url": "https://itunes.apple.com/lookup?id=6814679647&country=us",
+    "status": 200,
+    "results": [
+      {
+        "trackId": 6814679647,
+        "trackName": "Glide",
+        "version": "1.11.0",
+        "currentVersionReleaseDate": "2026-10-23T15:28:54Z",
+        "minimumOsVersion": "17.0",
+        "trackViewUrl": "https://apps.apple.com/us/app/glide/id6814679647?uo=4"
+      }
+    ]
+  },
+  "interpretation": "US lookup confirms public 1.11.0. CN lookup has no results; this is not interpreted as delisting. No App Store Connect status read."
+}

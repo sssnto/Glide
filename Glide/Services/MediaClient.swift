@@ -15,6 +15,7 @@ final class MediaClient {
     static let shared = MediaClient()
 #if DEBUG
     @MainActor static var qaNegotiationReport: [String: Any] = [:]
+    @MainActor static var qaSignInReport: [String: Any] = [:]
     @MainActor static var qaASSReports: [Int: [String: Any]] = [:]
     @MainActor static var qaASSCheckpoints: [Int: Double] = [:]
 #endif
@@ -150,6 +151,30 @@ final class MediaClient {
         struct User: Decodable { let Id: String }
         struct Result: Decodable { let AccessToken: String; let User: User }
         let data = try await request(ServerURL.endpoint(server.address, "Users/AuthenticateByName"), method: "POST", headers: ["Authorization": authorization(server: server), "Content-Type": "application/json"], body: JSONSerialization.data(withJSONObject: ["Username": server.username, "Pw": password]))
+#if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--glide-login-investigation") {
+            let object = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+            let token = object?["AccessToken"] as? String
+            let userID = (object?["User"] as? [String: Any])?["Id"] as? String
+            let allowed = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_"))
+            let report: [String: Any] = [
+                "jsonObject": object != nil, "responseBytes": data.count,
+                "tokenPresent": token != nil, "tokenLength": token?.count ?? -1,
+                "tokenBlank": token?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true,
+                "tokenHasControls": token?.unicodeScalars.contains(where: CharacterSet.controlCharacters.contains) ?? false,
+                "userIDPresent": userID != nil, "userIDLength": userID?.count ?? -1,
+                "userIDAllowed": userID?.unicodeScalars.allSatisfy(allowed.contains) ?? false,
+                "userIDASCIIAllowed": userID?.utf8.allSatisfy { (48...57).contains($0) || (65...90).contains($0) || (97...122).contains($0) || $0 == 45 || $0 == 95 } ?? false,
+                "userIDHexadecimal": userID?.utf8.allSatisfy { (48...57).contains($0) || (65...70).contains($0) || (97...102).contains($0) } ?? false,
+                "userIDWhitespace": userID?.unicodeScalars.contains(where: CharacterSet.whitespacesAndNewlines.contains) ?? false,
+                "userIDPathSeparators": userID?.contains(where: { "/\\".contains($0) }) ?? false,
+                "userIDBraces": userID?.contains(where: { "{}".contains($0) }) ?? false,
+                "userIDEquals": userID?.contains("=") ?? false,
+                "userIDDot": userID?.contains(".") ?? false
+            ]
+            await MainActor.run { Self.qaSignInReport = report }
+        }
+#endif
         let result = try JSONDecoder().decode(Result.self, from: data)
         try MediaServerAPI.validateSession(token: result.AccessToken, userID: result.User.Id)
         return (result.AccessToken, result.User.Id)
@@ -158,6 +183,8 @@ final class MediaClient {
             var Id: String; var Name: String; var ProductionYear: Int?; var RunTimeTicks: Int64?; var SeriesName: String?; var SeriesId: String?; var IndexNumber: Int?; var ParentIndexNumber: Int?; var DateCreated: String?
             var IsFolder: Bool?; var MediaType: String?; var `Type`: String?; var CollectionType: String?; var ImageTags: [String: String]?
             var Genres: [String]?
+            var MediaSources: [SizeSource]?
+            struct SizeSource: Codable { var Size: Int64? }
             var UserData: Progress?
             struct Progress: Codable { var PlaybackPositionTicks: Int64?; var Played: Bool? }
         }
@@ -191,7 +218,7 @@ final class MediaClient {
         return LibraryPage(folders: folders, videos: videos, total: result.TotalRecordCount, nextIndex: start + result.Items.count)
     }
     private func video(_ item: Item, server: MediaServer) -> Video {
-        Video(id: server.id.uuidString + item.Id, title: item.Name, subtitle: [item.SeriesName, item.ProductionYear.map(String.init), server.name].compactMap { $0 }.joined(separator: " · "), sourceID: server.id, remoteID: item.Id, artwork: ServerURL.endpoint(server.address, "Items/\(item.Id)/Images/Primary", query: ["maxWidth": "700", "quality": "85"]), duration: Double(item.RunTimeTicks ?? 0) / 10_000_000, resume: Double(item.UserData?.PlaybackPositionTicks ?? 0) / 10_000_000, mediaType: item.Type, addedAt: MediaTimestamp.parse(item.DateCreated), seriesID: item.SeriesId, seriesTitle: item.SeriesName, seasonNumber: item.ParentIndexNumber, episodeNumber: item.IndexNumber, isWatched: item.UserData?.Played, productionYear: item.ProductionYear, genres: item.Genres)
+        Video(id: server.id.uuidString + item.Id, title: item.Name, subtitle: [item.SeriesName, item.ProductionYear.map(String.init), server.name].compactMap { $0 }.joined(separator: " · "), sourceID: server.id, remoteID: item.Id, artwork: ServerURL.endpoint(server.address, "Items/\(item.Id)/Images/Primary", query: ["maxWidth": "700", "quality": "85"]), duration: Double(item.RunTimeTicks ?? 0) / 10_000_000, resume: Double(item.UserData?.PlaybackPositionTicks ?? 0) / 10_000_000, mediaType: item.Type, addedAt: MediaTimestamp.parse(item.DateCreated), seriesID: item.SeriesId, seriesTitle: item.SeriesName, seasonNumber: item.ParentIndexNumber, episodeNumber: item.IndexNumber, isWatched: item.UserData?.Played, productionYear: item.ProductionYear, genres: item.Genres, fileSize: MediaFileSize.valid(item.MediaSources?.first?.Size))
     }
     func playbackVideos(server: MediaServer, parentID: String, start: Int, search: String = "", options: BrowseOptions = BrowseOptions()) async throws -> VideoPage {
         guard let token = Credentials.read(server.id), let user = server.userID else { throw MediaError.message("请重新登录 \(server.kind.title)。") }
@@ -211,7 +238,7 @@ final class MediaClient {
         let url = directory ?? server.address
         guard ServerURL.sameOrigin(server.address, url) else { throw MediaError.message("目录地址与服务器不匹配。") }
         let auth = basic(server: server, password: password)
-        let body = Data("<?xml version=\"1.0\"?><d:propfind xmlns:d=\"DAV:\"><d:prop><d:displayname/><d:resourcetype/><d:creationdate/><d:getlastmodified/></d:prop></d:propfind>".utf8)
+        let body = Data("<?xml version=\"1.0\"?><d:propfind xmlns:d=\"DAV:\"><d:prop><d:displayname/><d:resourcetype/><d:creationdate/><d:getlastmodified/><d:getcontentlength/></d:prop></d:propfind>".utf8)
         let data = try await request(url, method: "PROPFIND", headers: ["Authorization": auth, "Depth": "1", "Content-Type": "application/xml; charset=utf-8"], body: body)
         return try DAVParser(base: url).parse(data)
     }
@@ -332,6 +359,17 @@ final class MediaClient {
                 await MainActor.run { Self.qaNegotiationReport["subtitleExtractionNegotiation"] = subtitleNegotiation }
             }
 #endif
+            return resolved
+        }
+        if !directOnly, quality == .automatic, uncertainDirect, source.SupportsDirectPlay == true,
+           !tracks.requiresServerSelection, negotiatedURL == nil {
+            // Jellyfin omits TranscodingUrl when it considers the source directly
+            // playable. hev1 may still produce audio without video in AVPlayer.
+            // Negotiate HLS explicitly; compatible validates video-copy delivery
+            // and binds the retry to this exact version and track selection.
+            var selected = tracks; selected.mediaSourceID = source.Id
+            var resolved = try await playback(video: video, server: server, quality: .compatible, tracks: selected)
+            resolved.resolvedTracks = resolved.resolvedTracks ?? selected
             return resolved
         }
         if quality == .original || (quality == .automatic && source.SupportsDirectPlay == true && !tracks.requiresServerSelection && !uncertainDirect) {

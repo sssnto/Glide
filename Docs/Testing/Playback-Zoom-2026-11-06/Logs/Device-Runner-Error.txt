@@ -1,0 +1,3 @@
+2026-11-06 09:26:06.754488+0800 GlideUITests-Runner[78903:11505145] [Default] Running tests...
+2026-11-06 09:26:25.163694+0800 GlideUITests-Runner[78903:11505169] [DTXConnection] Connection peer refused channel request for "dtxproxy:XCTestDriverInterface:XCTestManager_IDEInterface"; channel canceled <DTXChannel 0x1064695c0 : x1.c1> "dtxproxy:XCTestDriverInterface:XCTestManager_IDEInterface"
+2026-11-06 09:26:25.164385+0800 GlideUITests-Runner[78903:11505169] [Default] Exiting due to IDE disconnection.

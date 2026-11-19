@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "serverVersion": "12.2.0",
+  "scope": "Authored localhost fixture only",
+  "videoCount": 205,
+  "checks": [
+    "mp4_free_padding_preserves_authored_media",
+    "default_media_source_size_matches_file_bytes",
+    "catalog_exceeds_first_200_item_page"
+  ]
+}

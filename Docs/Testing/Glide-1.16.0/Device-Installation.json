@@ -1,0 +1,14 @@
+{
+  "date": "2026-11-10",
+  "version": "1.16.0",
+  "build": "5",
+  "device": "iPhone 13 Pro Max",
+  "qaBundleID": "com.songpeng.glide.rotationqa",
+  "qaInstalled": true,
+  "qaManualLaunchConfirmed": true,
+  "mainBundleID": "com.songpeng.glide",
+  "mainInstalled": true,
+  "mainLaunchConfirmed": true,
+  "credentials": "in-app-only-no-cross-bundle-copy",
+  "privateConnectionExported": false
+}

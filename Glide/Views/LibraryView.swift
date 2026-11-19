@@ -9,7 +9,7 @@ struct PlaySelection: Identifiable {
 }
 
 enum LibrarySheet: String, Identifiable {
-    case sources, help, personal, pins, downloads, settings, links, unified, rotationQueue
+    case sources, help, personal, pins, downloads, settings, links, unified, rotationQueue, fileActions
     var id: String { rawValue }
 }
 
@@ -101,7 +101,7 @@ struct LibraryView: View {
                     }
                     ToolbarItem(placement:.topBarTrailing) {
                         if library.selectedServer?.kind == .jellyfin,!library.jellyPath.isEmpty,showsVideos,!rotationInline.active {
-                            Button("选择") { rotationInline.begin() }.accessibilityLabel("选择视频以批量旋转").accessibilityIdentifier("rotation.inline.begin")
+                            Button("选择") { rotationInline.begin() }.accessibilityLabel("选择视频以移动、删除或旋转").accessibilityIdentifier("rotation.inline.begin")
                         }
                     }
                     ToolbarItem(placement: .topBarTrailing) {
@@ -110,6 +110,8 @@ struct LibraryView: View {
                         } else { Menu {
                             if library.selectedServer?.kind == .jellyfin {
                                 if !library.jellyPath.isEmpty { Button("批量旋转", systemImage: "checkmark.circle") { homeBrowseView = .videos; rotationInline.begin() }.accessibilityIdentifier("rotation.batch.open") }
+                                if !library.jellyPath.isEmpty { Button("批量移动或删除", systemImage: "checkmark.circle") { homeBrowseView = .videos; rotationInline.begin() }.accessibilityIdentifier("files.batch.open") }
+                                Button("文件整理任务", systemImage: "folder.badge.gearshape") { sheet = .fileActions }
                                 Button("旋转任务", systemImage: "list.bullet.rectangle") { sheet = .rotationQueue }
                                 Divider()
                             }
@@ -129,8 +131,8 @@ struct LibraryView: View {
                         .accessibilityIdentifier("library.more") }
                     }
                 }
+                .modifier(RotationInlineControls(library:library,server:library.selectedServer,selection:rotationInline,loaded:filtered))
         }
-        .modifier(RotationInlineControls(library:library,server:library.selectedServer,selection:rotationInline,loaded:filtered))
         .onChange(of:homeBrowseView) { _,value in if value == .directories { rotationInline.end() } }
     }
     private var homeContent: some View {
@@ -190,7 +192,7 @@ struct LibraryView: View {
                                     Text(searchError ?? "搜索失败，请重试。").font(.subheadline)
                                     Button("重试搜索") { filterAttempt += 1 }
                                 }.padding().background(GlideTheme.panel, in: RoundedRectangle(cornerRadius: 16))
-                            } else if library.loading && filtered.isEmpty { ProgressView("正在读取媒体库…").frame(maxWidth: .infinity).padding(30) }
+                            } else if library.loading && filtered.isEmpty { ProgressView(library.browseOptions.sort.isFileSize ? "正在按文件大小排序 · 已读取 \(library.scannedVideoCount) 个" : "正在读取媒体库…").frame(maxWidth: .infinity).padding(30) }
                             else if filtered.isEmpty && library.error == nil {
                                 ContentUnavailableView(favoritesOnly ? "此范围还没有收藏" : search.isEmpty ? "这里还没有视频" : "没有匹配的视频", systemImage: favoritesOnly ? "heart" : "film", description: Text(favoritesOnly ? "播放时点亮爱心，把喜欢的留住。" : "检查媒体库权限，或换一个文件夹。"))
                             } else {
@@ -282,6 +284,10 @@ struct LibraryView: View {
             }
         }) { destination in
             switch destination {
+            case .fileActions:
+                if let server = library.selectedServer {
+                    NavigationStack { FileActionHistoryView(library: library, server: server).toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { sheet = nil } } } }
+                }
             case .rotationQueue:
                 if let server = library.selectedServer {
                     NavigationStack { RotationQueueView(library: library, server: server).toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { sheet = nil } } } }
@@ -484,7 +490,7 @@ struct LibraryView: View {
                 Picker("视频排序",selection:Binding(get:{library.browseOptions.sort},set:{ sort in
                     var options=library.browseOptions;options.sort=sort
                     Task { await library.setBrowseOptions(options) }
-                })) { ForEach(VideoSort.allCases) { sort in Label(sort.title,systemImage:sort.symbol).tag(sort) } }
+                })) { ForEach(VideoSort.allCases) { sort in Label(sort.title,systemImage:sort.symbol).tag(sort) } }.accessibilityIdentifier("library.videoSort")
             }
             Toggle("只看收藏",isOn:$favoritesOnly)
             Picker("播放顺序",selection:$playbackMode) {
@@ -544,6 +550,9 @@ struct LibraryView: View {
                 if library.browseOptions.sort == .addedNewest || library.browseOptions.sort == .addedOldest {
                     Text(video.addedAt?.formatted(date: .numeric, time: .omitted) ?? "无时间信息")
                         .font(.caption2).foregroundStyle(GlideTheme.muted)
+                }
+                if library.browseOptions.sort.isFileSize {
+                    Text(MediaFileSize.label(video.fileSize)).font(.caption2).foregroundStyle(.secondary).monospacedDigit()
                 }
                 if library.resumePosition(video) > 0 && video.duration > 0 { ProgressView(value: min(library.resumePosition(video), video.duration), total: video.duration).tint(GlideTheme.accent) }
         }

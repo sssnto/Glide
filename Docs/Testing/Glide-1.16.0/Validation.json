@@ -1,0 +1,40 @@
+{
+  "version": "1.16.0",
+  "build": "5",
+  "core": {
+    "passed": 255,
+    "rotationCoreIncluded": 6,
+    "rotationHTTPIncluded": 10
+  },
+  "simulatorUI": {
+    "passed": 2,
+    "device": "iPhone 17",
+    "runtime": "iOS 26.3.1",
+    "toolchain": "Xcode 27.1"
+  },
+  "simulatorContract": {
+    "passed": 9
+  },
+  "realNAS": {
+    "passed": 9,
+    "device": "iPhone 13 Pro Max",
+    "build": "5",
+    "userManualConfirmation": true,
+    "decodedRotatedFrame": true,
+    "exactBackupRestore": true,
+    "ownedFixturesCleanup": true,
+    "protection": "independently-verified-destination-etag"
+  },
+  "deviceQABuild": true,
+  "deviceQASignature": true,
+  "mainDeviceBuild": true,
+  "mainInstalled": true,
+  "mainLaunched": true,
+  "releaseBuild": true,
+  "releaseSignature": true,
+  "staticPreflight": true,
+  "userExistingFilesModified": false,
+  "committed": false,
+  "pushed": false,
+  "uploadedToAppStore": false
+}

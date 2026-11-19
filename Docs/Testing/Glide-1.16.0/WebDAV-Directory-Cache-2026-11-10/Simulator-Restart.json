@@ -1,0 +1,12 @@
+{
+  "build" : "6",
+  "checks" : {
+    "processRestartUsesDisk" : true
+  },
+  "counts" : {
+
+  },
+  "live" : false,
+  "result" : "验证通过",
+  "time" : "2026-11-10T03:20:55Z"
+}

@@ -1,0 +1,33 @@
+{
+  "audio": "audio-1",
+  "engine": "AVPlayer · 系统播放器",
+  "error": "",
+  "expanded": true,
+  "frameReady": true,
+  "height": 835,
+  "isPlaying": true,
+  "layer": "ObjectIdentifier(0x000000010db8ceb0)",
+  "openAttempts": 1,
+  "originalMaterialOnly": true,
+  "pipActive": false,
+  "pipDiagnostics": {
+    "audioCategory": "AVAudioSessionCategoryPlayback",
+    "controllerPossible": false,
+    "hasController": false,
+    "observedPossible": false,
+    "pipLayerAttached": false,
+    "pipLayerReady": false,
+    "pipPlayerItemReady": false,
+    "supported": false
+  },
+  "pipStarting": false,
+  "rate": 1.5,
+  "requested": true,
+  "session": "A17BD5BA-24CC-4E20-A192-F206DF783582",
+  "subtitle": "",
+  "time": 7.000434858,
+  "timestamp": "2026-11-18T11:17:13Z",
+  "video": "连续播放 1.mp4",
+  "width": 669,
+  "zoom": 1
+}

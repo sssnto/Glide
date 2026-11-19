@@ -1,0 +1,18 @@
+{
+  "Glide.xcodeproj/project.pbxproj": "86fc02a81737526a9f8f9a4ba693ebd5bd8939079bc975bbf7ccdea9fff5872a",
+  "Glide/Core/WebDAVPlaybackPolicy.swift": "a58f8ddff5e24673e3c5c347a2d28514515c5284be8bc26c2b9447538aa7000f",
+  "Glide/Core/PlaybackEngineModels.swift": "4c0c01951e9fb3a2df213056b26245b80927671afd3e4d52376ecbbb927ce425",
+  "Glide/Services/PlaybackResource.swift": "0bddc5a1bce305c5c97e0c2a85e300a48bc7ed05e328867898aeeb66b0b35bb9",
+  "Glide/Services/MediaClient.swift": "3fe0236cf1a2b6ce43757f6102ff3557eeacdb092ee0a998c7c16804a4802526",
+  "Glide/Services/PlaybackController.swift": "699d583e1dbfd5393a886a0edc05994b667c96bd55f3d7d86e2535877aa4df04",
+  "Glide/Services/NativePlaybackEngine.swift": "d621170279f10060ec3f5931c7d8fc8361737a98491b40d6fef45398ea876c60",
+  "Glide/Services/Compatibility/VLCPlaybackEngine.swift": "84b4587ca1ad0731d607de586e1d6f48967a6391fb75d919b743450e4d10ad91",
+  "Glide/Services/Compatibility/WebDAVPlaybackBridge.swift": "4aedd1740bc7d7305023f46a32c77cd329b6d52b650d77b7ff12e83ca7536462",
+  "Glide/Services/WebDAVPlaybackQAProbe.swift": "ca30e4df2fd0931b1822968f5869abd48ac4acaacd7dd12f414f00f09f2aa70b",
+  "Glide/Views/PlayerView.swift": "0fcfef597f4fdf647ecb5d777d3c2a5df6975ba9355c2d11c3873df014f55120",
+  "Glide/GlideApp.swift": "4500bdc6e0edf7cc5af84856b3d0aba355743f3b19b4f9c65ba8ec9ab6b0d0d6",
+  "Glide/LibraryStore.swift": "bc4943f2a36b77ce0a4c9b6849d3981a75d573c8aaed1725b110bf2b217ce9e4",
+  "UITests/GlideUITests.swift": "15246d9e4ff74b49895f10a4f906fca8fd76cd322298830b509b9ea1357f7487",
+  "Tests/WebDAVPlaybackPolicyTests.swift": "530e41ce533316c41c7db2e9fad63fdd23593059bbcd0a663ceb7c7e94497491",
+  "Scripts/webdav_playback_fixture.py": "5dad956d6f075b8f90cc79cbc2c3f126de2abead9ae609f662398a6d9b79ad90"
+}

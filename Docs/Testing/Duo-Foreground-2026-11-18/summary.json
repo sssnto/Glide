@@ -1,0 +1,56 @@
+{
+  "ordinary_iPhone": {
+    "runtime": "iOS 26.3",
+    "test": "grid resize + Home/activate x3 + restore width",
+    "passed": true,
+    "resultBundle": ".build/GridLayout-After.xcresult"
+  },
+  "Duo": {
+    "runtime": "iOS 27.1",
+    "visibleDisplayPixels": [
+      1398,
+      2034
+    ],
+    "test": "grid resize + Settings/Springboard return x3 + restore width",
+    "passed": true,
+    "selectedStateRetained": true,
+    "resultBundle": ".build/GridLayout-Duo-SystemApp.xcresult"
+  },
+  "core": {
+    "passed": 7
+  },
+  "mainCandidate": "2.0.1 (9)",
+  "DuoPhysicalInstall": "pending connection and device provisioning",
+  "foldRotation": {
+    "method": "Device Hub official Closed / Partially Open / Open / Rotate Right",
+    "playerPassed": true,
+    "openAttempts": 1,
+    "pausedPositionToleranceSeconds": 0.15,
+    "libraryManualFold": "not performed after renewed Mac lock; expanded foreground automation passed"
+  },
+  "DuoExpanded": {
+    "runtime": "iOS 27.1",
+    "officialPose": "Open + Rotate Right",
+    "test": "resize + Settings/Springboard return x3 + restore width",
+    "passed": true,
+    "resultBundle": ".build/GridLayout-Duo-Open-Rotated.xcresult",
+    "visualEvidence": "Default XCTest images captured inactive screen; geometry assertions passed"
+  },
+  "player": {
+    "runtime": "iOS 27.1",
+    "officialPose": "Open",
+    "resultBundle": ".build/DuoPlayer-Fullscreen-03.xcresult",
+    "passed": true,
+    "checks": [
+      "default canvas width/height > 94% app window",
+      "optional panel roundtrip",
+      "paused time, session, AVPlayerLayer identity, open count, audio and rate retained",
+      "auto hide, tap reveal and tap hide",
+      "playback clock advances"
+    ],
+    "testControlDelaySeconds": 8,
+    "productionControlDelay": "unchanged user preference"
+  },
+  "mainBuildSucceeded": true,
+  "mainCodesignVerified": true
+}

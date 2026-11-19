@@ -1,0 +1,20 @@
+{
+  "errorCode": 0,
+  "errorDomain": "Glide.MediaError",
+  "jsonObject": true,
+  "responseBytes": 2994,
+  "timestamp": "2026-11-18T01:25:45Z",
+  "tokenBlank": false,
+  "tokenHasControls": false,
+  "tokenLength": 32,
+  "tokenPresent": true,
+  "userIDAllowed": false,
+  "userIDBraces": false,
+  "userIDDot": false,
+  "userIDEquals": false,
+  "userIDLength": 32,
+  "userIDPathSeparators": false,
+  "userIDPresent": true,
+  "userIDWhitespace": false,
+  "version": "2.0.1 (6)"
+}

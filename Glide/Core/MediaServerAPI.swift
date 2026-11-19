@@ -47,10 +47,14 @@ enum MediaServerAPI {
         return parts.url ?? url
     }
     static func validateSession(token: String, userID: String) throws {
-        let allowed = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_"))
+        // User identifiers are opaque ASCII path components. Checking bytes also
+        // avoids platform CharacterSet membership differences for ordinary UUIDs.
+        let safeUserID = !userID.isEmpty && userID.utf8.allSatisfy {
+            (48...57).contains($0) || (65...90).contains($0) || (97...122).contains($0) || $0 == 45 || $0 == 95
+        }
         guard !token.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
               !token.unicodeScalars.contains(where: CharacterSet.controlCharacters.contains),
-              !userID.isEmpty, userID.unicodeScalars.allSatisfy(allowed.contains) else {
+              safeUserID else {
             throw MediaError.message("服务器未返回有效的登录凭据，请检查地址与服务器版本。")
         }
     }

@@ -1,0 +1,33 @@
+{
+  "audio": "audio-2",
+  "engine": "\u517c\u5bb9\u64ad\u653e \u00b7 VLC",
+  "error": "",
+  "expanded": false,
+  "frameReady": true,
+  "height": 644,
+  "isPlaying": false,
+  "layer": "ObjectIdentifier(0x000000011cc5dc20)",
+  "openAttempts": 1,
+  "originalMaterialOnly": true,
+  "pipActive": false,
+  "pipDiagnostics": {
+    "audioCategory": "AVAudioSessionCategoryPlayback",
+    "controllerPossible": false,
+    "hasController": false,
+    "observedPossible": false,
+    "pipLayerAttached": false,
+    "pipLayerReady": false,
+    "pipPlayerItemReady": false,
+    "supported": false
+  },
+  "pipStarting": false,
+  "rate": 1.5,
+  "requested": false,
+  "session": "9C461B66-47B7-4EA5-97ED-78DB0785D93F",
+  "subtitle": "",
+  "time": 6.16,
+  "timestamp": "2026-11-19T01:58:54Z",
+  "video": "\u5411\u7740\u5c71\u91ce\u51fa\u53d1\uff0c\u5bfb\u627e\u85cf\u5728\u56db\u5b63\u91cc\u7684\u98ce\u666f",
+  "width": 382,
+  "zoom": 1
+}

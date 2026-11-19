@@ -206,10 +206,31 @@ final class GestureVideoView: UIView, UIGestureRecognizerDelegate {
         if contentView.transform != transform { contentView.transform = transform }
         CATransaction.commit()
     }
+    override var accessibilityValue: String? {
+        get {
+#if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--glide-duo-fixture"), let window {
+                let picture = contentView.convert(subtitleRect, to: window)
+                var visible = picture.intersection(window.bounds)
+                var ancestor: UIView? = self
+                while let view = ancestor, view !== window {
+                    if view.clipsToBounds { visible = visible.intersection(view.convert(view.bounds, to: window)) }
+                    ancestor = view.superview
+                }
+                let area = picture.width * picture.height
+                let cropped = area > 0 ? 1 - max(0, visible.width * visible.height) / area : -1
+                let aspect = subtitleRect.height > 0 ? subtitleRect.width / subtitleRect.height : 0
+                return (super.accessibilityValue ?? "") + String(format: ";pictureAspect=%.5f;croppedFraction=%.5f;", aspect, cropped)
+            }
+#endif
+            return super.accessibilityValue
+        }
+        set { super.accessibilityValue = newValue }
+    }
     private func updateAccessibilityValue() {
         let rendered = assCanvas.presentedLayerCount + secondaryASSCanvas.presentedLayerCount
         let value = String(format: "缩放 %.1f 倍", zoom) + "，方向 \(quarterTurn.degrees)°" + (rendered > 0 ? "，ASS已渲染 \(rendered) 层" : "") + evidenceContext
-        if accessibilityValue != value { accessibilityValue = value }
+        if super.accessibilityValue != value { super.accessibilityValue = value }
     }
     @objc private func twoTapped() { if !locked { onToggle?() } }
     func setZoomScale(_ value: CGFloat) {

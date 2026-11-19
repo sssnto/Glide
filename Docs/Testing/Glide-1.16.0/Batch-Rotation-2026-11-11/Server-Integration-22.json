@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "serverVersion": "12.2.0",
+  "pluginVersion": "1.1.0",
+  "checks": [
+    "batch_plugin_110_available",
+    "http_batch_submit_is_idempotent",
+    "http_changed_body_rejected",
+    "progress_poll_omits_thousand_item_detail_payload",
+    "http_pause_keeps_pending_files",
+    "real_container_restart_preserves_paused_queue",
+    "batch_counts_include_missing_item_without_aborting_valid_videos",
+    "detail_matches_summary_counts",
+    "item_status_accepts_canonical_and_dashed_ids",
+    "list_states_include_saved_revision_and_badge",
+    "regenerated_preview_applies_saved_rotation_matrix",
+    "derived_preview_is_cached",
+    "server_saved_clockwise_once_0",
+    "server_saved_clockwise_once_1",
+    "server_saved_clockwise_once_2",
+    "http_retry_does_not_repeat_successful_rotations",
+    "batch_child_backup_can_be_restored_1c053d",
+    "batch_child_backup_can_be_restored_f228ea",
+    "batch_child_backup_can_be_restored_8396e5",
+    "restore_changes_revision_badge_and_preview_geometry",
+    "all_batch_videos_restore_byte_identically_including_large_file",
+    "unauthorized_user_cannot_read_or_dispatch_batches"
+  ],
+  "largeFixtureBytes": 67167183,
+  "timestamp": "2026-11-11T01:45:02Z"
+}

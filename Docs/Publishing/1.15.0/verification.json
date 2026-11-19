@@ -1,0 +1,88 @@
+{
+  "version": "1.15.0",
+  "build": "3",
+  "preparedOn": "2026-11-07",
+  "fieldChecks": {
+    "name": {
+      "characters": 11,
+      "limitCharacters": 30,
+      "passed": true
+    },
+    "subtitle": {
+      "characters": 13,
+      "limitCharacters": 30,
+      "passed": true
+    },
+    "promotional-text": {
+      "characters": 92,
+      "limitCharacters": 170,
+      "passed": true
+    },
+    "release-notes": {
+      "characters": 606,
+      "limitCharacters": 4000,
+      "passed": true
+    },
+    "release-notes-1.15-only": {
+      "characters": 208,
+      "limitCharacters": 4000,
+      "passed": true
+    },
+    "description": {
+      "characters": 1463,
+      "limitCharacters": 4000,
+      "passed": true
+    },
+    "keywords": {
+      "utf8Bytes": 90,
+      "limitUTF8Bytes": 100,
+      "passed": true
+    },
+    "review-notes-en": {
+      "utf8Bytes": 3147,
+      "limitUTF8Bytes": 4000,
+      "passed": true
+    }
+  },
+  "officialSources": [
+    "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information/",
+    "https://developer.apple.com/help/app-store-connect/reference/app-information/app-information/",
+    "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/"
+  ],
+  "archive": {
+    "path": "/Users/songpeng/Library/Developer/Xcode/Archives/2026-11-07/Glide 2026-11-7, 10.37.xcarchive",
+    "version": "1.15.0",
+    "build": "3",
+    "created": "2026-11-07 02:37:41"
+  },
+  "publicStoreBaseline": "1.11.0 (US public lookup)",
+  "appStoreConnectRead": false,
+  "formalScreenshotsCreated": false,
+  "actionsPerformedThisTask": {
+    "uploaded": false,
+    "submittedForReview": false,
+    "websitePublished": false
+  },
+  "materialSHA256": {
+    "README.md": "482dc2db75190c238c94f6595d4a109fd3787c17d5547ae95b6bb558c1c2feda",
+    "checks/archive-identity.json": "612c1b96c8f06ba901a3986bdca9b5b0046e4aa21be171f6f13abd0ab1415653",
+    "checks/archive-signature.txt": "51b9d6b4cc0545f876933f49466a64acc03282709d43d32c7c2a1a55c8012fc5",
+    "checks/archive-symbols.json": "e1220d913195f1907560e4a8758e2c63521835c7101f22a38230399df4c724f2",
+    "checks/public-state.json": "3d4f81162b7ba7a96f0675dc21db73acb1bc21abf24e5f8bc90668179c10bcec",
+    "checks/release-preflight.txt": "70440f5ab0d6aaf5aa53fe56d9445ec8fde11f96893b571c52a83f37a83122ed",
+    "metadata-zh-Hans.json": "888239a6e5c1eb1db5f83bd1a9569f97719050560338a07b41bc8c67342220f8",
+    "release-readiness.md": "50b9b5da2239bbeaeef6c986666d496bd2a85a09f500fd5ce7f5c2cf5ee7ebae",
+    "review-notes-en.txt": "759a057bd29bb6e354b6379eca357b7261d038c949643f98581eb2154669afe7",
+    "screenshot-brief.md": "c6b8534a2764030bd154863f2f0ee590859c10605da7efa6d03243cb98a6dc9b",
+    "zh-Hans/announcement.txt": "9ed2905036108be20d1273b6c78b2a7342ac854657ae4a90350b30def39aae3b",
+    "zh-Hans/description.txt": "e2489a2ae4836b0f47f41b146437e617346ba8f6af1a928fe669d8f6bb262ac8",
+    "zh-Hans/keywords.txt": "be96fe96af347ac0ce9bcd8c9ae4cce20f8134ae38135a528aad9b7d8d703cb1",
+    "zh-Hans/name.txt": "f2caef819c196557f1bdba78a00e56d5e2fbc2cdd8fb91741f6063244964ad26",
+    "zh-Hans/promotional-text.txt": "d8bc8ba346f3d326c7c165a563c0a0a782de721602e64d7e4ea5805441cae57b",
+    "zh-Hans/release-notes-1.15-only.txt": "21e83510c5976ad7fb0f90b119779621a7524357280daaf89bf607a9f6fd7893",
+    "zh-Hans/release-notes.txt": "28a9cdb6051c02a67978c887bf23274b378c0bc6363c910727d90f3440d6cd21",
+    "zh-Hans/subtitle.txt": "0b33140e308c71a7add85ce1eaa2c35d0c42a695740d77461d2271ffeecf4693",
+    "zh-Hans/testflight-what-to-test.txt": "25ae8bd08ea5d69cb0df7c93561e0201d67c0f12d46d5555a6ddb65edb5bfacc"
+  },
+  "relativeLinksChecked": true
+}

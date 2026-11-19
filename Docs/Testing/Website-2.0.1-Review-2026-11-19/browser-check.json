@@ -1,0 +1,23 @@
+{
+  "browser": "Existing Google Chrome, native CUA controls",
+  "desktop": {
+    "passed": true,
+    "scope": "Homepage status and Duo section visual inspection"
+  },
+  "compact": {
+    "passed": true,
+    "width": 390,
+    "height": 844,
+    "scope": "Responsive Duo heading, description, image and single-column gallery inspected"
+  },
+  "interaction": {
+    "previewAnchor": true,
+    "featurePanelTaskVisible": true,
+    "faqBrowserCheck": false
+  },
+  "limitations": [
+    "In-app browser connection returned native pipe unavailable; native Chrome used instead.",
+    "No automated DOM overflow measurements or mobile device emulation of touch inputs.",
+    "Screenshot evidence displayed in tool output; no additional screenshot files saved."
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "checks" : {
+    "ass-and-video-share-transformed-host" : false,
+    "decoder-and-autoresizing-child-keep-viewport" : true,
+    "invalid-scale-rejected" : true,
+    "native-and-ass-share-host" : true,
+    "native-layer-player-and-bounds-stable" : true,
+    "pinch-does-not-relayout-decoder" : false,
+    "real-resize-keeps-zoom" : true,
+    "real-resize-updates-decoder-and-child" : true,
+    "reset-restores-unit-scale-and-offset" : true
+  },
+  "decoderGeometryWrites" : {
+    "bounds" : 0,
+    "frame" : 959,
+    "transform" : 1918
+  },
+  "passed" : false,
+  "scope" : "Actual GestureVideoView and UIKit autoresizing; geometry regression, not measured video FPS",
+  "synchronousLoopMilliseconds" : 6.6633750684559345,
+  "timestamp" : "2026-11-06T01:17:22Z",
+  "zoomUpdates" : 480
+}

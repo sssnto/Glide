@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "serverVersion": "12.2.0",
+  "checks": [
+    "plugin_loaded_by_official_jellyfin_12_2",
+    "bounded_lossless_formats",
+    "rotation_completed_with_backup",
+    "actual_server_file_direction_changed",
+    "ffprobe_confirms_clockwise_90_degrees_composed_with_existing_direction",
+    "original_file_permissions_preserved",
+    "unselected_media_file_untouched",
+    "repeated_post_is_idempotent_no_double_rotation",
+    "same_request_id_with_changed_body_rejected",
+    "changed_original_version_rejected",
+    "invalid_media_source_rejected",
+    "ordinary_user_denied_by_default",
+    "unauthorized_user_cannot_query_write_job",
+    "explicit_reader_authorization_accepts_compact_user_id",
+    "verify_endpoint_is_read_only",
+    "restore_is_byte_identical_to_original",
+    "reconnecting_client_can_query_persisted_history",
+    "api_results_contain_no_paths_or_credentials",
+    "active_playback_prevents_original_replacement",
+    "waiting_job_completes_after_playback_stops_and_restores"
+  ],
+  "sourceSHA256": "3c01e7d06cb6f710eef97c7c01a1da224b36579ea0eb17d47093049003a9a8b4",
+  "rotatedSHA256": "3b1eeae43f5b9dc797751505c6606000626efdcadfece70af3794e6e82d12d10",
+  "timestamp": "2026-11-10T13:40:01Z"
+}

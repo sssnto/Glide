@@ -1,0 +1,23 @@
+{
+  "version": "1.16.0 (11)",
+  "time": "2026-11-10T12:43:44Z",
+  "serverVersion": "12.2.0",
+  "capability": {
+    "available": true,
+    "pluginVersion": "1.0.0",
+    "protocolVersion": 1,
+    "reason": null
+  },
+  "capabilityStatus": 200,
+  "matchedExactFile": true,
+  "detailStatus": 200,
+  "fileRead": {
+    "container": "mp4",
+    "declaredLength": 4096,
+    "prefixBytes": 4096,
+    "status": 206
+  },
+  "playbackInfoStatus": 200,
+  "userConfirmedPlaybackRecovered": true,
+  "oldTaskStillNeedsVerification": true
+}

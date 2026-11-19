@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "checks": [
+    "rotation_completed",
+    "backup_byte_identical",
+    "file_size_unchanged",
+    "all_bytes_outside_matrix_identical",
+    "restore_exact_original",
+    "restore_preserves_previous_version",
+    "reject_file_changed",
+    "stale_request_keeps_original",
+    "reject_test_interrupt",
+    "interrupted_before_commit_keeps_original",
+    "restart_does_not_repeat_uncommitted_rotation",
+    "restart_recognizes_already_committed_output",
+    "ambiguous_restart_is_read_only",
+    "reject_outside_library",
+    "reject_symbolic_link",
+    "cancelled_before_commit_keeps_original"
+  ],
+  "timestamp": "2026-11-10T11:31:34.910173Z"
+}

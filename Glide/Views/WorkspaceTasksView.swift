@@ -5,6 +5,7 @@ struct WorkspaceTasksView:View {
     let library:LibraryStore
     @State private var downloads=DownloadStore.shared
     @State private var rotations:[WorkspaceRotationTask]=[]
+    @State private var files:[WorkspaceFileTask]=[]
     @State private var filter=WorkspaceTaskFilter.active
     @State private var errors:[String]=[]
     @State private var refreshing=false
@@ -18,8 +19,9 @@ struct WorkspaceTasksView:View {
     private var rotationTasks:[WorkspaceRotationTask] {
         rotations.filter { filter.includes(active:$0.batch.active,attention:$0.batch.failed>0 || $0.batch.needsVerification>0 || $0.batch.state == "paused") }
     }
-    private var activeCount:Int { downloads.entries.filter(Self.isActive).count + rotations.filter { $0.batch.active }.count }
-    private var attentionCount:Int { downloads.entries.filter(Self.needsAttention).count + rotations.filter { $0.batch.failed>0 || $0.batch.needsVerification>0 || $0.batch.state == "paused" }.count }
+    private var fileTasks:[WorkspaceFileTask] { files.filter { filter.includes(active:$0.batch.active,attention:$0.batch.attention) } }
+    private var activeCount:Int { downloads.entries.filter(Self.isActive).count + rotations.filter { $0.batch.active }.count + files.filter { $0.batch.active }.count }
+    private var attentionCount:Int { downloads.entries.filter(Self.needsAttention).count + rotations.filter { $0.batch.failed>0 || $0.batch.needsVerification>0 || $0.batch.state == "paused" }.count + files.filter { $0.batch.attention }.count }
     var body:some View {
         List {
             Section {
@@ -37,14 +39,23 @@ struct WorkspaceTasksView:View {
                     } icon: { Image(systemName:"arrow.down.circle") }
                 }.accessibilityIdentifier("workspace.offline")
             }
+            if library.servers.contains(where: { $0.kind == .jellyfin }) {
+                Section("文件整理") {
+                    ForEach(library.servers.filter { $0.kind == .jellyfin }) { server in
+                        NavigationLink { FileActionHistoryView(library: library, server: server) } label: {
+                            Label("移动、删除与还原 · " + server.name, systemImage: "folder.badge.gearshape")
+                        }.accessibilityIdentifier("workspace.files." + server.id.uuidString)
+                    }
+                }
+            }
             Section {
                 Picker("任务筛选",selection:$filter) {
                     ForEach(WorkspaceTaskFilter.allCases) { value in Text(value.rawValue).tag(value) }
                 }.pickerStyle(.segmented).listRowBackground(Color.clear).listRowInsets(EdgeInsets(top:4,leading:0,bottom:4,trailing:0))
             }
-            if downloadTasks.isEmpty && rotationTasks.isEmpty && !refreshing {
+            if downloadTasks.isEmpty && rotationTasks.isEmpty && fileTasks.isEmpty && !refreshing {
                 Section {
-                    ContentUnavailableView(filter == .active ? "当前没有进行中的任务":filter == .attention ? "当前没有待处理任务":"还没有任务",systemImage:filter == .attention ? "checkmark.circle":"tray",description:Text("下载和服务器旋转任务会集中显示在这里。"))
+                    ContentUnavailableView(filter == .active ? "当前没有进行中的任务":filter == .attention ? "当前没有待处理任务":"还没有任务",systemImage:filter == .attention ? "checkmark.circle":"tray",description:Text("下载、服务器旋转和文件整理任务会集中显示在这里。"))
                 }.listRowBackground(Color.clear)
             }
             if !downloadTasks.isEmpty {
@@ -64,6 +75,18 @@ struct WorkspaceTasksView:View {
                     }
                 }
             }
+            if !fileTasks.isEmpty {
+                Section("服务器文件整理 · \(fileTasks.count)") {
+                    ForEach(fileTasks) { task in
+                        NavigationLink { FileActionDetailView(library:library,server:task.server,initial:task.batch) } label: {
+                            VStack(alignment:.leading,spacing:4) {
+                                Text(task.server.name).font(.caption).foregroundStyle(.secondary)
+                                FileActionSummary(batch:task.batch)
+                            }
+                        }.accessibilityIdentifier("workspace.fileBatch."+task.batch.id.uuidString)
+                    }
+                }
+            }
             if !errors.isEmpty {
                 Section("连接状态") { ForEach(errors,id:\.self) { Text($0).font(.footnote).foregroundStyle(.secondary) } }
             }
@@ -79,7 +102,7 @@ struct WorkspaceTasksView:View {
                 guard visible,phase == .active else { return }
                 repeat {
                     await refresh()
-                    do { try await Task.sleep(for:.seconds(rotations.contains { $0.batch.active } ? 5:30)) } catch { return }
+                    do { try await Task.sleep(for:.seconds(rotations.contains { $0.batch.active } || files.contains { $0.batch.active } ? 5:30)) } catch { return }
                 } while !Task.isCancelled
             }
     }
@@ -93,6 +116,7 @@ struct WorkspaceTasksView:View {
         guard !refreshing else { return };refreshing=true
         defer { refreshing=false }
         var result:[WorkspaceRotationTask]=[],failures:[String]=[],seen=Set<UUID>()
+        var fileResult:[WorkspaceFileTask]=[]
         // Bounded sequential GETs: no media scan, POST retry, source switching, or thumbnail work.
         for server in library.servers where server.kind == .jellyfin {
             guard !Task.isCancelled else { return }
@@ -110,9 +134,20 @@ struct WorkspaceTasksView:View {
                 // Keep the last known state when a source is temporarily unavailable.
                 result.append(contentsOf:rotations.filter { $0.server.id == server.id && seen.insert($0.batch.batchId).inserted })
             }
+            do {
+                _ = try await FileManagementClient(server:server).capability()
+                let batches = try await library.fileActions.list(server)
+                fileResult.append(contentsOf:batches.map { WorkspaceFileTask(server:server,batch:$0) })
+            } catch let failure as FileManagementFailure where ["plugin_missing","protocol_unsupported","file_management_disabled","permission_denied"].contains(failure.code) {
+                // Older plugins and users without explicit file access have no file tasks.
+            } catch {
+                guard !Task.isCancelled else { return }
+                failures.append(server.name+"：暂时无法更新文件整理任务，下拉可重试。")
+                fileResult.append(contentsOf:files.filter { $0.server.id == server.id })
+            }
         }
         guard !Task.isCancelled else { return }
-        rotations=result.sorted { $0.batch.updatedAt > $1.batch.updatedAt };errors=failures
+        rotations=result.sorted { $0.batch.updatedAt > $1.batch.updatedAt };files=fileResult.sorted { $0.batch.updatedAt > $1.batch.updatedAt };errors=failures
     }
     private static func isActive(_ entry:OfflineDownload)->Bool { ["准备资料","等待下载","下载中","校验中"].contains(entry.state) }
     private static func needsAttention(_ entry:OfflineDownload)->Bool { ["已暂停","下载失败","已中断","文件已移除"].contains(entry.state) }
@@ -126,6 +161,11 @@ private struct WorkspaceRotationTask:Identifiable {
     let server:MediaServer
     let batch:RotationBatch
     var id:UUID { batch.batchId }
+}
+private struct WorkspaceFileTask:Identifiable {
+    let server:MediaServer
+    let batch:FileActionBatch
+    var id:String { server.id.uuidString+batch.id.uuidString }
 }
 private struct WorkspaceDownloadRow:View {
     let entry:OfflineDownload

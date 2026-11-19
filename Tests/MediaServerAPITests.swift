@@ -152,6 +152,18 @@ struct MediaServerAPITests {
         #expect(throws: (any Error).self) { try MediaServerAPI.validateSession(token: "token", userID: "../other") }
         #expect(throws: (any Error).self) { try MediaServerAPI.validateSession(token: "token\nInjected", userID: "user") }
     }
+    @Test func normalJellyfinAndEmbySessionsPassValidation() throws {
+        for userID in ["0123456789abcdef0123456789abcdef", "01234567-89ab-cdef-0123-456789abcdef", "fixture-user", "user_123", "123"] {
+            for token in ["abcdef0123456789abcdef0123456789", "eyJhbGciOiJIUzI1NiJ9.payload.signature", "opaque+/value="] {
+                try MediaServerAPI.validateSession(token: token, userID: userID)
+            }
+        }
+    }
+    @Test func sessionUserIdentifiersCannotChangeTheRequestPath() {
+        for userID in ["", ".", "..", "user/id", "user\\id", "user?id", "user#id", "user%2fid", "user\n", " user", "user ", "ｕｓｅｒ"] {
+            #expect(throws: (any Error).self) { try MediaServerAPI.validateSession(token: "fixture-token", userID: userID) }
+        }
+    }
     @Test func embyRoutesPreservePrefixAndPlaybackSession() throws {
         #expect(MediaServerAPI.viewsPath(kind: .emby, userID: "user") == "Users/user/Views")
         let url = MediaServerAPI.directURL(server: server, itemID: "item", sourceID: "source", sessionID: "session", deviceID: "device", token: "a+b&c#d")

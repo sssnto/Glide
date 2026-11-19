@@ -1,0 +1,19 @@
+{
+  "audio" : "audio-1",
+  "engine" : "AVPlayer · 系统播放器",
+  "error" : "",
+  "expanded" : true,
+  "frameReady" : true,
+  "height" : 635,
+  "openAttempts" : 1,
+  "originalMaterialOnly" : true,
+  "rate" : 1.5,
+  "requested" : false,
+  "session" : "F03552B4-5BF6-4223-AE4A-DA3388C7D125",
+  "subtitle" : "",
+  "time" : 0,
+  "timestamp" : "2026-11-18T06:45:07Z",
+  "video" : "连续播放 1.mp4",
+  "width" : 867,
+  "zoom" : 1
+}
